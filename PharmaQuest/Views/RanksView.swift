@@ -1,19 +1,14 @@
 import SwiftUI
+import Auth
 
 struct RanksView: View {
     let gameVM: GameViewModel
+    @Environment(SupabaseService.self) private var supabase
     @State private var selectedTab: RanksTab = .league
-
-    private let mockLeaderboard: [LeaderboardEntry] = [
-        LeaderboardEntry(id: "1", username: "PharmAce", avatarAnimal: "hare.fill", xpThisWeek: 1250, streak: 14, rank: 1),
-        LeaderboardEntry(id: "2", username: "MedStudent99", avatarAnimal: "tortoise.fill", xpThisWeek: 980, streak: 7, rank: 2),
-        LeaderboardEntry(id: "3", username: "DrugMaster", avatarAnimal: "bird.fill", xpThisWeek: 870, streak: 12, rank: 3),
-        LeaderboardEntry(id: "4", username: "PillPro", avatarAnimal: "cat.fill", xpThisWeek: 750, streak: 5, rank: 4),
-        LeaderboardEntry(id: "5", username: "RxQueen", avatarAnimal: "fish.fill", xpThisWeek: 680, streak: 9, rank: 5),
-        LeaderboardEntry(id: "6", username: "NurseNinja", avatarAnimal: "ant.fill", xpThisWeek: 620, streak: 3, rank: 6),
-        LeaderboardEntry(id: "7", username: "CardioKing", avatarAnimal: "ladybug.fill", xpThisWeek: 550, streak: 8, rank: 7),
-        LeaderboardEntry(id: "8", username: "StudyBuddy", avatarAnimal: "hare.fill", xpThisWeek: 480, streak: 2, rank: 8),
-    ]
+    @State private var leaderboard: [LeaderboardRecord] = []
+    @State private var friends: [LeaderboardRecord] = []
+    @State private var showAddFriend: Bool = false
+    @State private var isLoadingLeaderboard: Bool = false
 
     enum RanksTab: String, CaseIterable {
         case league = "League"
@@ -56,7 +51,7 @@ struct RanksView: View {
                         HStack {
                             Image(systemName: "clock.fill")
                                 .foregroundStyle(.white.opacity(0.7))
-                            Text("Week ends in 5d 12h 19m")
+                            Text("Week ends in \(weekTimeRemaining)")
                                 .font(.subheadline.bold())
                                 .foregroundStyle(.white)
                         }
@@ -69,7 +64,7 @@ struct RanksView: View {
 
                         HStack(spacing: 20) {
                             VStack(spacing: 2) {
-                                Text("#\(min(24, mockLeaderboard.count + 1))")
+                                Text("#\(userRank)")
                                     .font(.title.bold())
                                     .foregroundStyle(AppTheme.warningYellow)
                                 Text("League Rank")
@@ -159,7 +154,37 @@ struct RanksView: View {
             }
             .background(Color(.systemGroupedBackground))
             .scrollIndicators(.hidden)
+            .task {
+                await loadLeaderboard()
+            }
+            .sheet(isPresented: $showAddFriend) {
+                AddFriendSheet()
+            }
         }
+    }
+
+    private var userRank: Int {
+        if let idx = leaderboard.firstIndex(where: { $0.id == supabase.currentUser?.id.uuidString }) {
+            return idx + 1
+        }
+        return leaderboard.count + 1
+    }
+
+    private var weekTimeRemaining: String {
+        let calendar = Calendar.current
+        let now = Date()
+        guard let endOfWeek = calendar.nextDate(after: now, matching: DateComponents(hour: 0, weekday: 2), matchingPolicy: .nextTime) else {
+            return "5d 12h"
+        }
+        let components = calendar.dateComponents([.day, .hour, .minute], from: now, to: endOfWeek)
+        return "\(components.day ?? 0)d \(components.hour ?? 0)h \(components.minute ?? 0)m"
+    }
+
+    private func loadLeaderboard() async {
+        isLoadingLeaderboard = true
+        leaderboard = await supabase.fetchLeaderboard()
+        friends = await supabase.fetchFriends()
+        isLoadingLeaderboard = false
     }
 
     @ViewBuilder
@@ -177,44 +202,83 @@ struct RanksView: View {
             .background(AppTheme.primaryBlue.opacity(0.05))
             .clipShape(.rect(cornerRadius: 10))
 
-            ForEach(mockLeaderboard) { entry in
-                LeaderboardRow(entry: entry, isCurrentUser: false)
+            if isLoadingLeaderboard {
+                ProgressView()
+                    .padding(40)
+            } else if leaderboard.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "trophy.fill")
+                        .font(.largeTitle)
+                        .foregroundStyle(.secondary)
+                    Text("Leaderboard Loading...")
+                        .font(.headline)
+                    Text("Complete quizzes to earn XP and climb the ranks!")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(32)
+            } else {
+                ForEach(Array(leaderboard.enumerated()), id: \.element.id) { index, entry in
+                    let isCurrentUser = entry.id == supabase.currentUser?.id.uuidString
+                    LeaderboardRow(
+                        entry: LeaderboardEntry(id: entry.id, username: entry.username, avatarAnimal: entry.avatarAnimal, xpThisWeek: entry.weeklyXP, streak: entry.currentStreak, rank: index + 1),
+                        isCurrentUser: isCurrentUser
+                    )
+                }
             }
-
-            LeaderboardRow(
-                entry: LeaderboardEntry(id: "me", username: "You", avatarAnimal: "person.fill", xpThisWeek: gameVM.totalXP, streak: gameVM.currentStreak, rank: mockLeaderboard.count + 1),
-                isCurrentUser: true
-            )
         }
     }
 
     @ViewBuilder
     private var friendsContent: some View {
         VStack(spacing: 16) {
-            VStack(spacing: 12) {
-                Image(systemName: "person.2.fill")
-                    .font(.largeTitle)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.5))
-                Text("Add Friends")
-                    .font(.headline)
-                Text("Connect with classmates to compare progress and compete!")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
+            if friends.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "person.2.fill")
+                        .font(.largeTitle)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.5))
+                    Text("Add Friends")
+                        .font(.headline)
+                    Text("Connect with classmates to compare progress and compete!")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
 
-                Button {
-                } label: {
-                    Text("Find Friends")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(AppTheme.primaryBlue)
-                        .clipShape(Capsule())
+                    Button {
+                        showAddFriend = true
+                    } label: {
+                        Text("Find Friends")
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 10)
+                            .background(AppTheme.primaryBlue)
+                            .clipShape(Capsule())
+                    }
+                }
+                .padding(24)
+                .cardStyle()
+            } else {
+                HStack {
+                    Text("Friends (\(friends.count))")
+                        .font(.headline)
+                    Spacer()
+                    Button {
+                        showAddFriend = true
+                    } label: {
+                        Image(systemName: "person.badge.plus")
+                            .foregroundStyle(AppTheme.primaryBlue)
+                    }
+                }
+
+                ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
+                    LeaderboardRow(
+                        entry: LeaderboardEntry(id: friend.id, username: friend.username, avatarAnimal: friend.avatarAnimal, xpThisWeek: friend.weeklyXP, streak: friend.currentStreak, rank: index + 1),
+                        isCurrentUser: false
+                    )
                 }
             }
-            .padding(24)
-            .cardStyle()
         }
     }
 
@@ -234,16 +298,18 @@ struct RanksView: View {
                     SchoolRankRow(rank: 3, name: "Ohio State University", xp: 32100, color: Color(hex: "CD7F32"))
                 }
 
-                HStack {
-                    Image(systemName: "building.columns.fill")
-                        .foregroundStyle(AppTheme.primaryBlue)
-                    Text("Select your school in Profile to participate")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if gameVM.schoolName.isEmpty {
+                    HStack {
+                        Image(systemName: "building.columns.fill")
+                            .foregroundStyle(AppTheme.primaryBlue)
+                        Text("Select your school in Profile to participate")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(10)
+                    .background(AppTheme.primaryBlue.opacity(0.05))
+                    .clipShape(.rect(cornerRadius: 8))
                 }
-                .padding(10)
-                .background(AppTheme.primaryBlue.opacity(0.05))
-                .clipShape(.rect(cornerRadius: 8))
             }
             .padding(16)
             .cardStyle()
@@ -258,18 +324,11 @@ struct RanksView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Profession Battle")
                             .font(.headline.bold())
-                        Text("Boost your profession's monthly score")
+                        Text("Donate coins to boost your profession!")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock.fill")
-                            .font(.caption)
-                        Text("Ends in 4d 13h")
-                            .font(.caption.bold())
-                    }
-                    .foregroundStyle(.secondary)
                 }
 
                 HStack(spacing: 0) {
@@ -278,7 +337,7 @@ struct RanksView: View {
                     PrizePodium(place: "3rd", coins: 100, color: Color(hex: "CD7F32"), icon: "star.fill")
                 }
 
-                Text("Eligibility: donate at least 100 coins total this month.")
+                Text("Donate at least 100 coins this month to qualify for prizes.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -292,10 +351,33 @@ struct RanksView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         Spacer()
-                        Text("Pharmacy")
+                        Text(gameVM.selectedProfession.rawValue)
                             .font(.subheadline.bold())
                             .foregroundStyle(AppTheme.primaryBlue)
                     }
+
+                    Button {
+                        Task {
+                            let success = await supabase.donateToProfession(amount: 10)
+                            if success {
+                                gameVM.coins = supabase.currentProfile?.coins ?? gameVM.coins
+                                gameVM.save()
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "bitcoinsign.circle.fill")
+                                .foregroundStyle(AppTheme.accentOrange)
+                            Text("Donate 10 Coins")
+                                .font(.subheadline.bold())
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(gameVM.coins >= 10 ? AppTheme.primaryBlue : Color(.systemFill))
+                        .clipShape(.rect(cornerRadius: 12))
+                    }
+                    .disabled(gameVM.coins < 10)
                 }
             }
             .padding(16)
@@ -408,5 +490,116 @@ struct PrizePodium: View {
             }
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+struct AddFriendSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(SupabaseService.self) private var supabase
+    @State private var searchText: String = ""
+    @State private var searchResults: [LeaderboardRecord] = []
+    @State private var isSearching: Bool = false
+    @State private var sentRequest: Bool = false
+    @State private var errorMessage: String?
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                HStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    TextField("Search by username...", text: $searchText)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .onSubmit {
+                            Task { await search() }
+                        }
+                }
+                .padding(12)
+                .background(Color(.secondarySystemGroupedBackground))
+                .clipShape(.rect(cornerRadius: 12))
+                .padding(.horizontal)
+
+                if isSearching {
+                    ProgressView()
+                        .padding(40)
+                } else if searchResults.isEmpty && !searchText.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "person.fill.questionmark")
+                            .font(.largeTitle)
+                            .foregroundStyle(.secondary)
+                        Text("No users found")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(40)
+                } else {
+                    List(searchResults, id: \.id) { user in
+                        HStack(spacing: 12) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(.tertiarySystemFill))
+                                    .frame(width: 40, height: 40)
+                                Image(systemName: user.avatarAnimal)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(user.username)
+                                    .font(.subheadline.weight(.medium))
+                                Text("Lv.\(user.level) • \(user.profession)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            Button {
+                                Task {
+                                    do {
+                                        try await supabase.sendFriendRequest(toUsername: user.username)
+                                        sentRequest = true
+                                    } catch {
+                                        errorMessage = error.localizedDescription
+                                    }
+                                }
+                            } label: {
+                                Text("Add")
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 6)
+                                    .background(AppTheme.primaryBlue)
+                                    .clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .listStyle(.plain)
+                }
+
+                Spacer()
+            }
+            .padding(.top, 16)
+            .navigationTitle("Find Friends")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .alert("Request Sent!", isPresented: $sentRequest) {
+                Button("OK") {}
+            } message: {
+                Text("Your friend request has been sent.")
+            }
+        }
+    }
+
+    private func search() async {
+        guard !searchText.isEmpty else { return }
+        isSearching = true
+        searchResults = await supabase.searchUsers(query: searchText)
+        isSearching = false
     }
 }

@@ -2,28 +2,39 @@ import SwiftUI
 
 struct ProfileView: View {
     let gameVM: GameViewModel
-    @State private var selectedProfession: Profession = .pharmacy
-    @State private var username: String = "Student"
-    @State private var schoolName: String = ""
+    @Environment(SupabaseService.self) private var supabase
     @State private var showEditProfile: Bool = false
+    @State private var showAvatarCustomization: Bool = false
+    @State private var showSignOutAlert: Bool = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 0) {
                     VStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .fill(.white.opacity(0.15))
-                                .frame(width: 90, height: 90)
-                            Image(systemName: "person.crop.circle.fill")
-                                .font(.system(size: 60))
-                                .foregroundStyle(.white.opacity(0.9))
+                        Button {
+                            showAvatarCustomization = true
+                        } label: {
+                            ZStack(alignment: .bottomTrailing) {
+                                AvatarDisplayView(
+                                    animal: gameVM.avatarAnimal,
+                                    eyes: gameVM.avatarEyes,
+                                    mouth: gameVM.avatarMouth,
+                                    accessory: gameVM.avatarAccessory,
+                                    size: 90
+                                )
+
+                                Image(systemName: "pencil.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(.white)
+                                    .background(Circle().fill(AppTheme.primaryBlue).frame(width: 26, height: 26))
+                            }
                         }
+                        .buttonStyle(.plain)
 
                         VStack(spacing: 4) {
                             HStack(spacing: 6) {
-                                Text(username)
+                                Text(gameVM.username)
                                     .font(.title2.bold())
                                     .foregroundStyle(.white)
 
@@ -104,12 +115,12 @@ struct ProfileView: View {
                                 showEditProfile = true
                             } label: {
                                 HStack(spacing: 12) {
-                                    Image(systemName: selectedProfession.iconName)
+                                    Image(systemName: gameVM.selectedProfession.iconName)
                                         .font(.title3)
                                         .foregroundStyle(AppTheme.xpPurple)
 
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(selectedProfession.rawValue)
+                                        Text(gameVM.selectedProfession.rawValue)
                                             .font(.subheadline.weight(.medium))
                                         Text("Tap to change")
                                             .font(.caption)
@@ -144,9 +155,9 @@ struct ProfileView: View {
                                         .foregroundStyle(AppTheme.primaryBlue)
 
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(schoolName.isEmpty ? "Select your school" : schoolName)
+                                        Text(gameVM.schoolName.isEmpty ? "Select your school" : gameVM.schoolName)
                                             .font(.subheadline.weight(.medium))
-                                            .foregroundStyle(schoolName.isEmpty ? .secondary : .primary)
+                                            .foregroundStyle(gameVM.schoolName.isEmpty ? .secondary : .primary)
                                     }
 
                                     Spacer()
@@ -178,6 +189,7 @@ struct ProfileView: View {
                         .cardStyle()
 
                         Button {
+                            showSignOutAlert = true
                         } label: {
                             HStack {
                                 Image(systemName: "rectangle.portrait.and.arrow.right")
@@ -200,7 +212,20 @@ struct ProfileView: View {
             .background(Color(.systemGroupedBackground))
             .scrollIndicators(.hidden)
             .sheet(isPresented: $showEditProfile) {
-                EditProfileSheet(profession: $selectedProfession, schoolName: $schoolName)
+                EditProfileSheet(gameVM: gameVM)
+            }
+            .sheet(isPresented: $showAvatarCustomization) {
+                AvatarCustomizationView(gameVM: gameVM)
+            }
+            .alert("Sign Out", isPresented: $showSignOutAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Sign Out", role: .destructive) {
+                    Task {
+                        try? await supabase.signOut()
+                    }
+                }
+            } message: {
+                Text("Are you sure you want to sign out?")
             }
         }
     }
@@ -255,12 +280,25 @@ struct AchievementBadge: View {
 
 struct EditProfileSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Binding var profession: Profession
-    @Binding var schoolName: String
+    let gameVM: GameViewModel
+    @State private var profession: Profession
+    @State private var schoolName: String
+    @State private var username: String
+
+    init(gameVM: GameViewModel) {
+        self.gameVM = gameVM
+        _profession = State(initialValue: gameVM.selectedProfession)
+        _schoolName = State(initialValue: gameVM.schoolName)
+        _username = State(initialValue: gameVM.username)
+    }
 
     var body: some View {
         NavigationStack {
             Form {
+                Section("Display Name") {
+                    TextField("Username", text: $username)
+                }
+
                 Section("Profession") {
                     ForEach(Profession.allCases, id: \.self) { prof in
                         Button {
@@ -289,7 +327,17 @@ struct EditProfileSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button("Save") {
+                        gameVM.username = username
+                        gameVM.selectedProfession = profession
+                        gameVM.schoolName = schoolName
+                        gameVM.save()
+                        gameVM.syncToCloud()
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
                 }
             }
         }

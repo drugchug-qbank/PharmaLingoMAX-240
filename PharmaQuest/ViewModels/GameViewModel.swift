@@ -19,6 +19,19 @@ class GameViewModel {
     var lastActiveDate: Date?
     var lastHeartLossDate: Date?
 
+    var avatarAnimal: String = "hare.fill"
+    var avatarEyes: String = "default"
+    var avatarMouth: String = "default"
+    var avatarAccessory: String = "none"
+    var ownedAvatars: Set<String> = ["hare.fill", "tortoise.fill"]
+    var ownedEyes: Set<String> = ["default"]
+    var ownedMouths: Set<String> = ["default"]
+    var ownedAccessories: Set<String> = ["none"]
+
+    var username: String = "Student"
+    var selectedProfession: Profession = .pharmacy
+    var schoolName: String = ""
+
     var dailyQuests: [DailyQuest] = [
         DailyQuest(id: "dq1", title: "Complete 1 Lesson", description: "Finish any lesson or practice", iconName: "book.fill", target: 1, current: 0, coinReward: 20),
         DailyQuest(id: "dq2", title: "5 Combo Streak", description: "Get 5 correct in a row", iconName: "flame.fill", target: 5, current: 0, coinReward: 10),
@@ -141,6 +154,7 @@ class GameViewModel {
         }
 
         save()
+        syncToCloud()
     }
 
     func recordConsecutiveCorrect(_ count: Int) {
@@ -161,6 +175,12 @@ class GameViewModel {
 
     func needsLearning(_ subsectionId: String) -> Bool {
         !hasSeenLearning.contains(subsectionId)
+    }
+
+    func syncToCloud() {
+        Task {
+            await SupabaseService.shared.syncGameState(from: self)
+        }
     }
 
     private func checkStreak() {
@@ -217,6 +237,17 @@ class GameViewModel {
             "questionsCorrect": questionsCorrect,
             "lastActiveDate": lastActiveDate?.timeIntervalSince1970 ?? 0,
             "lastHeartLossDate": lastHeartLossDate?.timeIntervalSince1970 ?? 0,
+            "avatarAnimal": avatarAnimal,
+            "avatarEyes": avatarEyes,
+            "avatarMouth": avatarMouth,
+            "avatarAccessory": avatarAccessory,
+            "ownedAvatars": Array(ownedAvatars),
+            "ownedEyes": Array(ownedEyes),
+            "ownedMouths": Array(ownedMouths),
+            "ownedAccessories": Array(ownedAccessories),
+            "username": username,
+            "selectedProfession": selectedProfession.rawValue,
+            "schoolName": schoolName,
         ]
         UserDefaults.standard.set(state, forKey: userDefaultsKey)
     }
@@ -237,5 +268,68 @@ class GameViewModel {
         lastActiveDate = lastActiveInterval > 0 ? Date(timeIntervalSince1970: lastActiveInterval) : nil
         let lastHeartInterval = state["lastHeartLossDate"] as? Double ?? 0
         lastHeartLossDate = lastHeartInterval > 0 ? Date(timeIntervalSince1970: lastHeartInterval) : nil
+        avatarAnimal = state["avatarAnimal"] as? String ?? "hare.fill"
+        avatarEyes = state["avatarEyes"] as? String ?? "default"
+        avatarMouth = state["avatarMouth"] as? String ?? "default"
+        avatarAccessory = state["avatarAccessory"] as? String ?? "none"
+        ownedAvatars = Set(state["ownedAvatars"] as? [String] ?? ["hare.fill", "tortoise.fill"])
+        ownedEyes = Set(state["ownedEyes"] as? [String] ?? ["default"])
+        ownedMouths = Set(state["ownedMouths"] as? [String] ?? ["default"])
+        ownedAccessories = Set(state["ownedAccessories"] as? [String] ?? ["none"])
+        username = state["username"] as? String ?? "Student"
+        if let profRaw = state["selectedProfession"] as? String, let prof = Profession(rawValue: profRaw) {
+            selectedProfession = prof
+        }
+        schoolName = state["schoolName"] as? String ?? ""
+    }
+
+    func loadFromProfile(_ profile: UserProfile) {
+        username = profile.username
+        if let prof = Profession(rawValue: profile.profession) {
+            selectedProfession = prof
+        }
+        schoolName = profile.school
+        avatarAnimal = profile.avatarAnimal
+        avatarEyes = profile.avatarEyes
+        avatarMouth = profile.avatarMouth
+        avatarAccessory = profile.avatarAccessory
+        totalXP = profile.totalXP
+        coins = profile.coins
+        currentStreak = profile.currentStreak
+        streakSaves = profile.streakSaves
+        hearts = profile.hearts
+        questionsAnswered = profile.questionsAnswered
+        questionsCorrect = profile.questionsCorrect
+
+        let decoder = JSONDecoder()
+        if let data = profile.completedSubsections.data(using: .utf8),
+           let arr = try? decoder.decode([String].self, from: data) {
+            completedSubsections = Set(arr)
+        }
+        if let data = profile.subsectionStars.data(using: .utf8),
+           let dict = try? decoder.decode([String: Int].self, from: data) {
+            subsectionStars = dict
+        }
+        if let data = profile.hasSeenLearning.data(using: .utf8),
+           let arr = try? decoder.decode([String].self, from: data) {
+            hasSeenLearning = Set(arr)
+        }
+        if let data = profile.ownedAvatars.data(using: .utf8),
+           let arr = try? decoder.decode([String].self, from: data) {
+            ownedAvatars = Set(arr)
+        }
+        if let data = profile.ownedEyes.data(using: .utf8),
+           let arr = try? decoder.decode([String].self, from: data) {
+            ownedEyes = Set(arr)
+        }
+        if let data = profile.ownedMouths.data(using: .utf8),
+           let arr = try? decoder.decode([String].self, from: data) {
+            ownedMouths = Set(arr)
+        }
+        if let data = profile.ownedAccessories.data(using: .utf8),
+           let arr = try? decoder.decode([String].self, from: data) {
+            ownedAccessories = Set(arr)
+        }
+        save()
     }
 }

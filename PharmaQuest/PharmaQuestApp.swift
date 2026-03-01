@@ -2,9 +2,12 @@ import SwiftUI
 
 @main
 struct PharmaQuestApp: App {
+    @State private var supabase = SupabaseService.shared
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environment(supabase)
         }
     }
 }

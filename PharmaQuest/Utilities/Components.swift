@@ -6,7 +6,7 @@ struct HeaderBar: View {
     var body: some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("PharmaQuest")
+                Text("PharmaLingo")
                     .font(.title2.bold())
                     .foregroundStyle(.white)
                 Text("Top 300 Drugs")

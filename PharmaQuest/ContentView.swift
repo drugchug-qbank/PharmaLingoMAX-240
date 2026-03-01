@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var gameVM = GameViewModel()
     @State private var selectedTab: Int = 0
+    @Environment(SupabaseService.self) private var supabase
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -23,5 +24,10 @@ struct ContentView: View {
             }
         }
         .tint(AppTheme.primaryBlue)
+        .task {
+            if let profile = supabase.currentProfile {
+                gameVM.loadFromProfile(profile)
+            }
+        }
     }
 }

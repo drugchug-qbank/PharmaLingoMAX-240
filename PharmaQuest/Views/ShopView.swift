@@ -5,6 +5,7 @@ struct ShopView: View {
     @State private var showPurchaseAlert: Bool = false
     @State private var purchaseMessage: String = ""
     @State private var bounceHearts: Bool = false
+    @State private var showAvatarShop: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -165,16 +166,29 @@ struct ShopView: View {
                                     .foregroundStyle(AppTheme.successGreen)
                                 Text("Avatar Shop")
                                     .font(.title3.bold())
+                                Spacer()
+                                Button {
+                                    showAvatarShop = true
+                                } label: {
+                                    Text("Open")
+                                        .font(.caption.bold())
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 6)
+                                        .background(AppTheme.successGreen)
+                                        .clipShape(Capsule())
+                                }
                             }
-                            Text("Coming soon! Customize your avatar with new animals, eyes, and accessories.")
+
+                            Text("Customize your avatar with new animals, eyes, and accessories!")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
 
                             HStack(spacing: 16) {
-                                AvatarShopPreview(icon: "hare.fill", label: "Animals", price: "500")
-                                AvatarShopPreview(icon: "eyes", label: "Eyes", price: "200")
-                                AvatarShopPreview(icon: "mouth.fill", label: "Mouths", price: "200")
-                                AvatarShopPreview(icon: "crown.fill", label: "Hats", price: "300")
+                                AvatarShopPreview(icon: "hare.fill", label: "Animals", price: "300+")
+                                AvatarShopPreview(icon: "eyes", label: "Eyes", price: "150+")
+                                AvatarShopPreview(icon: "mouth.fill", label: "Mouths", price: "150+")
+                                AvatarShopPreview(icon: "crown.fill", label: "Hats", price: "200+")
                             }
                         }
                         .padding(16)
@@ -191,6 +205,9 @@ struct ShopView: View {
                 Button("OK") { }
             } message: {
                 Text(purchaseMessage)
+            }
+            .sheet(isPresented: $showAvatarShop) {
+                AvatarCustomizationView(gameVM: gameVM)
             }
         }
     }
