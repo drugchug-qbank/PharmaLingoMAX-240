@@ -1,10 +1,20 @@
 import SwiftUI
 
+nonisolated enum LearnPresentation: Identifiable, Hashable {
+    case learning(Subsection)
+    case quiz(Subsection)
+
+    nonisolated var id: String {
+        switch self {
+        case .learning(let s): "learning-\(s.id)"
+        case .quiz(let s): "quiz-\(s.id)"
+        }
+    }
+}
+
 struct LearnView: View {
     let gameVM: GameViewModel
-    @State private var showQuiz: Bool = false
-    @State private var showLearning: Bool = false
-    @State private var selectedSubsection: Subsection?
+    @State private var activePresentation: LearnPresentation?
     @State private var selectedModule: DrugModule?
 
     var body: some View {
@@ -23,7 +33,9 @@ struct LearnView: View {
                                 moduleIndex: index,
                                 gameVM: gameVM
                             ) {
-                                selectedModule = module
+                                withAnimation {
+                                    selectedModule = module
+                                }
                             }
                         }
                     }
@@ -38,31 +50,28 @@ struct LearnView: View {
                     module: module,
                     gameVM: gameVM,
                     onSubsectionTap: { subsection in
-                        selectedSubsection = subsection
                         if gameVM.needsLearning(subsection.id) && !subsection.learningSlides.isEmpty {
-                            showLearning = true
+                            activePresentation = .learning(subsection)
                         } else {
-                            showQuiz = true
+                            activePresentation = .quiz(subsection)
                         }
                     }
                 )
             }
-            .fullScreenCover(isPresented: $showLearning) {
-                if let sub = selectedSubsection {
+            .fullScreenCover(item: $activePresentation) { presentation in
+                switch presentation {
+                case .learning(let sub):
                     LearningSlideView(
                         subsection: sub,
                         gameVM: gameVM,
                         onComplete: {
-                            showLearning = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                showQuiz = true
+                            activePresentation = nil
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                                activePresentation = .quiz(sub)
                             }
                         }
                     )
-                }
-            }
-            .fullScreenCover(isPresented: $showQuiz) {
-                if let sub = selectedSubsection {
+                case .quiz(let sub):
                     QuizView(subsection: sub, gameVM: gameVM)
                 }
             }
