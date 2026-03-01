@@ -22,6 +22,8 @@ class AuthViewModel {
         !email.isEmpty && !password.isEmpty
     }
 
+    var showConfirmation: Bool = false
+
     func signUp() async {
         guard isSignUpValid else {
             errorMessage = "Please fill in all fields. Password must be at least 6 characters."
@@ -39,6 +41,8 @@ class AuthViewModel {
                 username: username,
                 profession: selectedProfession.rawValue
             )
+        } catch let error as SupabaseServiceError where error == .emailConfirmationRequired {
+            showConfirmation = true
         } catch {
             errorMessage = error.localizedDescription
             showError = true

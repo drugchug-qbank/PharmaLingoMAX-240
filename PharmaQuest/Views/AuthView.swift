@@ -99,6 +99,13 @@ struct AuthView: View {
         } message: {
             Text(authVM.errorMessage ?? "Something went wrong")
         }
+        .alert("Check Your Email", isPresented: $authVM.showConfirmation) {
+            Button("OK") {
+                authVM.isSignUp = false
+            }
+        } message: {
+            Text("We sent a confirmation link to \(authVM.email). Please confirm your email, then sign in.")
+        }
     }
 
     @ViewBuilder

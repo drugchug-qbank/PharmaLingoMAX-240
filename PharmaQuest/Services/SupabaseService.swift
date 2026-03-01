@@ -108,6 +108,23 @@ nonisolated struct FriendRequest: Codable, Sendable {
     }
 }
 
+nonisolated enum SupabaseServiceError: Error, LocalizedError, Sendable {
+    case emailConfirmationRequired
+    case userNotFound
+    case profileCreateFailed
+
+    nonisolated var errorDescription: String? {
+        switch self {
+        case .emailConfirmationRequired:
+            return "Please check your email to confirm your account, then sign in."
+        case .userNotFound:
+            return "User not found."
+        case .profileCreateFailed:
+            return "Failed to create profile. Please try again."
+        }
+    }
+}
+
 nonisolated struct SchoolRanking: Codable, Sendable {
     let school: String
     let totalXP: Int
@@ -172,11 +189,16 @@ class SupabaseService {
             email: email,
             password: password
         )
-        currentUser = response.user
+
+        guard let session = response.session else {
+            throw SupabaseServiceError.emailConfirmationRequired
+        }
+
+        currentUser = session.user
         isAuthenticated = true
 
         let profile = UserProfile(
-            id: response.user.id.uuidString,
+            id: session.user.id.uuidString.lowercased(),
             username: username,
             profession: profession,
             school: "",
@@ -230,7 +252,7 @@ class SupabaseService {
     }
 
     func fetchProfile() async {
-        guard let userId = currentUser?.id.uuidString else { return }
+        guard let userId = currentUser?.id.uuidString.lowercased() else { return }
         do {
             let profile: UserProfile = try await client.from("profiles")
                 .select()
