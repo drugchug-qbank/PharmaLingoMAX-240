@@ -1,61 +1,27 @@
-//
-//  ContentView.swift
-//  PharmaQuest
-//
-//  Created by Rork on March 1, 2026.
-//
-
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @State private var gameVM = GameViewModel()
+    @State private var selectedTab: Int = 0
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
+        TabView(selection: $selectedTab) {
+            Tab("Learn", systemImage: "book.fill", value: 0) {
+                LearnView(gameVM: gameVM)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+            Tab("Practice", systemImage: "brain.head.profile.fill", value: 1) {
+                PracticeView(gameVM: gameVM)
             }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            Tab("Ranks", systemImage: "trophy.fill", value: 2) {
+                RanksView(gameVM: gameVM)
+            }
+            Tab("Shop", systemImage: "bag.fill", value: 3) {
+                ShopView(gameVM: gameVM)
+            }
+            Tab("Profile", systemImage: "person.fill", value: 4) {
+                ProfileView(gameVM: gameVM)
             }
         }
+        .tint(AppTheme.primaryBlue)
     }
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }

@@ -1,0 +1,244 @@
+import SwiftUI
+
+struct QuizView: View {
+    let subsection: Subsection
+    let gameVM: GameViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var quizVM: QuizViewModel?
+    @State private var showResult: Bool = false
+    @State private var showNoHeartsAlert: Bool = false
+    @State private var bounceCorrect: Bool = false
+    @State private var shakeWrong: Bool = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            if let quizVM {
+                if showResult {
+                    QuizResultView(quizVM: quizVM, gameVM: gameVM, onDismiss: { dismiss() })
+                } else {
+                    quizHeader(quizVM: quizVM)
+                    progressBar(quizVM: quizVM)
+
+                    ScrollView {
+                        if let question = quizVM.currentQuestion {
+                            VStack(spacing: 20) {
+                                questionTypeLabel(question.type)
+
+                                Text(question.questionText)
+                                    .font(.title3.bold())
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+                                    .fixedSize(horizontal: false, vertical: true)
+
+                                questionContent(question: question, quizVM: quizVM)
+
+                                if quizVM.hasAnswered {
+                                    feedbackView(quizVM: quizVM, question: question)
+                                }
+                            }
+                            .padding(.vertical, 20)
+                        }
+                    }
+
+                    bottomBar(quizVM: quizVM)
+                }
+            } else {
+                ProgressView("Loading quiz...")
+            }
+        }
+        .background(Color(.systemBackground))
+        .onAppear { setupQuiz() }
+        .sensoryFeedback(.success, trigger: bounceCorrect)
+        .sensoryFeedback(.error, trigger: shakeWrong)
+    }
+
+    private func setupQuiz() {
+        if gameVM.hearts <= 0 {
+            showNoHeartsAlert = true
+            return
+        }
+        let count = subsection.isMasteryQuiz ? 30 : 12
+        let questions = DrugDataService.shared.questionsForQuiz(
+            subsectionId: subsection.id,
+            completedSubsections: gameVM.completedSubsections,
+            count: count
+        )
+        quizVM = QuizViewModel(
+            subsectionId: subsection.id,
+            title: subsection.title,
+            isMastery: subsection.isMasteryQuiz,
+            questions: questions
+        )
+    }
+
+    @ViewBuilder
+    private func quizHeader(quizVM: QuizViewModel) -> some View {
+        HStack {
+            Button { dismiss() } label: {
+                Image(systemName: "xmark")
+                    .font(.title3.bold())
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Text(quizVM.subsectionTitle)
+                .font(.subheadline.bold())
+
+            Spacer()
+
+            HStack(spacing: 4) {
+                ForEach(0..<gameVM.maxHearts, id: \.self) { i in
+                    Image(systemName: i < gameVM.hearts ? "heart.fill" : "heart")
+                        .font(.caption)
+                        .foregroundStyle(i < gameVM.hearts ? AppTheme.heartRed : Color(.tertiaryLabel))
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 12)
+    }
+
+    @ViewBuilder
+    private func progressBar(quizVM: QuizViewModel) -> some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color(.systemFill))
+                    .frame(height: 8)
+                Capsule()
+                    .fill(AppTheme.primaryBlue)
+                    .frame(width: max(geo.size.width * quizVM.progress, 8), height: 8)
+                    .animation(.spring(duration: 0.4), value: quizVM.progress)
+            }
+        }
+        .frame(height: 8)
+        .padding(.horizontal)
+    }
+
+    @ViewBuilder
+    private func questionTypeLabel(_ type: QuestionType) -> some View {
+        let (text, color): (String, Color) = {
+            switch type {
+            case .trueFalse: ("True or False", AppTheme.successGreen)
+            case .fillBlank: ("Fill in the Blank", AppTheme.primaryBlue)
+            case .multipleChoice: ("Multiple Choice", AppTheme.xpPurple)
+            case .matching: ("Matching", AppTheme.accentOrange)
+            case .selectAll: ("Select All That Apply", AppTheme.heartRed)
+            }
+        }()
+
+        Text(text.uppercased())
+            .font(.caption.bold())
+            .foregroundStyle(color)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .background(color.opacity(0.1))
+            .clipShape(Capsule())
+    }
+
+    @ViewBuilder
+    private func questionContent(question: Question, quizVM: QuizViewModel) -> some View {
+        switch question.type {
+        case .trueFalse:
+            TrueFalseQuestionView(quizVM: quizVM)
+        case .fillBlank:
+            FillBlankQuestionView(quizVM: quizVM)
+        case .multipleChoice:
+            MultipleChoiceQuestionView(quizVM: quizVM)
+        case .selectAll:
+            SelectAllQuestionView(quizVM: quizVM)
+        case .matching:
+            MatchingQuestionView(quizVM: quizVM)
+        }
+    }
+
+    @ViewBuilder
+    private func feedbackView(quizVM: QuizViewModel, question: Question) -> some View {
+        VStack(spacing: 8) {
+            HStack {
+                Image(systemName: quizVM.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
+                    .font(.title2)
+                Text(quizVM.isCorrect ? "Correct!" : "Incorrect")
+                    .font(.headline)
+            }
+            .foregroundStyle(quizVM.isCorrect ? AppTheme.successGreen : AppTheme.heartRed)
+
+            Text(question.explanation)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .background((quizVM.isCorrect ? AppTheme.successGreen : AppTheme.heartRed).opacity(0.08))
+        .clipShape(.rect(cornerRadius: 12))
+        .padding(.horizontal)
+        .transition(.scale.combined(with: .opacity))
+    }
+
+    @ViewBuilder
+    private func bottomBar(quizVM: QuizViewModel) -> some View {
+        VStack(spacing: 0) {
+            Divider()
+            if quizVM.hasAnswered {
+                Button {
+                    if !quizVM.isCorrect {
+                        gameVM.loseHeart()
+                    }
+                    gameVM.recordConsecutiveCorrect(quizVM.maxConsecutive)
+
+                    if gameVM.hearts <= 0 {
+                        dismiss()
+                        return
+                    }
+
+                    if quizVM.currentIndex >= quizVM.questions.count - 1 {
+                        gameVM.completeSubsection(
+                            quizVM.subsectionId,
+                            score: quizVM.score,
+                            correctCount: quizVM.correctCount,
+                            totalCount: quizVM.totalQuestions
+                        )
+                        withAnimation { showResult = true }
+                    } else {
+                        withAnimation(.spring(duration: 0.3)) {
+                            quizVM.nextQuestion()
+                        }
+                    }
+                } label: {
+                    Text("Continue")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(AppTheme.primaryBlue)
+                        .clipShape(.rect(cornerRadius: 14))
+                }
+                .padding(20)
+            } else {
+                Button {
+                    withAnimation(.spring(duration: 0.3)) {
+                        quizVM.submitAnswer()
+                    }
+                    if quizVM.isCorrect {
+                        bounceCorrect.toggle()
+                    } else {
+                        shakeWrong.toggle()
+                    }
+                } label: {
+                    Text("Check Answer")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(quizVM.canSubmit() ? AppTheme.successGreen : Color(.systemFill))
+                        .clipShape(.rect(cornerRadius: 14))
+                }
+                .disabled(!quizVM.canSubmit())
+                .padding(20)
+            }
+        }
+    }
+}
