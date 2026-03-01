@@ -1,20 +1,38 @@
 import SwiftUI
 
 enum AppTheme {
-    static let primaryBlue = Color(red: 0.11, green: 0.53, blue: 0.93)
-    static let darkBlue = Color(red: 0.05, green: 0.28, blue: 0.63)
-    static let lightBlue = Color(red: 0.88, green: 0.94, blue: 1.0)
-    static let accentOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
-    static let heartRed = Color(red: 0.9, green: 0.22, blue: 0.21)
-    static let successGreen = Color(red: 0.18, green: 0.72, blue: 0.35)
-    static let warningYellow = Color(red: 1.0, green: 0.8, blue: 0.0)
-    static let xpPurple = Color(red: 0.56, green: 0.27, blue: 0.87)
+    static let primaryBlue = Color(red: 0.22, green: 0.56, blue: 0.96)
+    static let darkBlue = Color(red: 0.10, green: 0.35, blue: 0.78)
+    static let lightBlue = Color(red: 0.85, green: 0.93, blue: 1.0)
+    static let headerBlue = Color(red: 0.15, green: 0.45, blue: 0.88)
+    static let accentOrange = Color(red: 1.0, green: 0.58, blue: 0.0)
+    static let heartRed = Color(red: 0.95, green: 0.25, blue: 0.25)
+    static let successGreen = Color(red: 0.30, green: 0.78, blue: 0.35)
+    static let warningYellow = Color(red: 1.0, green: 0.78, blue: 0.0)
+    static let xpPurple = Color(red: 0.58, green: 0.30, blue: 0.92)
+    static let funPink = Color(red: 0.96, green: 0.34, blue: 0.55)
+    static let funTeal = Color(red: 0.18, green: 0.80, blue: 0.75)
+    static let funCoral = Color(red: 1.0, green: 0.42, blue: 0.38)
+
+    static let moduleColors: [Color] = [
+        heartRed, primaryBlue, successGreen, xpPurple,
+        accentOrange, funPink, funTeal, funCoral
+    ]
+
+    static func moduleColor(for index: Int) -> Color {
+        moduleColors[index % moduleColors.count]
+    }
 
     static var headerGradient: LinearGradient {
         LinearGradient(
-            colors: [darkBlue, primaryBlue],
+            colors: [Color(red: 0.12, green: 0.40, blue: 0.85), Color(red: 0.22, green: 0.56, blue: 0.96)],
             startPoint: .topLeading, endPoint: .bottomTrailing
         )
+    }
+
+    static let funFont: Font = .system(.body, design: .rounded)
+    static func funFont(_ style: Font.TextStyle, weight: Font.Weight = .regular) -> Font {
+        .system(style, design: .rounded, weight: weight)
     }
 }
 
@@ -43,16 +61,30 @@ extension Color {
 }
 
 struct CardModifier: ViewModifier {
+    var borderColor: Color? = nil
+
     func body(content: Content) -> some View {
         content
             .background(Color(.secondarySystemGroupedBackground))
-            .clipShape(.rect(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+            .clipShape(.rect(cornerRadius: 18))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18)
+                    .stroke(borderColor ?? .clear, lineWidth: borderColor != nil ? 2.5 : 0)
+            )
+            .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 4)
     }
 }
 
 extension View {
-    func cardStyle() -> some View {
-        modifier(CardModifier())
+    func cardStyle(borderColor: Color? = nil) -> some View {
+        modifier(CardModifier(borderColor: borderColor))
+    }
+
+    func funHeading() -> some View {
+        self.font(AppTheme.funFont(.title2, weight: .bold))
+    }
+
+    func funBody() -> some View {
+        self.font(AppTheme.funFont(.body, weight: .medium))
     }
 }

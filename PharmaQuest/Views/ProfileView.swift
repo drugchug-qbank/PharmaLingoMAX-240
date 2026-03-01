@@ -35,11 +35,11 @@ struct ProfileView: View {
                         VStack(spacing: 4) {
                             HStack(spacing: 6) {
                                 Text(gameVM.username)
-                                    .font(.title2.bold())
+                                    .font(AppTheme.funFont(.title2, weight: .heavy))
                                     .foregroundStyle(.white)
 
                                 Text("Lv.\(gameVM.level)")
-                                    .font(.caption.bold())
+                                    .font(AppTheme.funFont(.caption, weight: .heavy))
                                     .foregroundStyle(AppTheme.darkBlue)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 3)
@@ -48,7 +48,7 @@ struct ProfileView: View {
                             }
 
                             Text("Level \(gameVM.level) • \(gameVM.totalXP) XP")
-                                .font(.subheadline)
+                                .font(AppTheme.funFont(.subheadline, weight: .medium))
                                 .foregroundStyle(.white.opacity(0.8))
                         }
                     }
@@ -66,25 +66,20 @@ struct ProfileView: View {
                         .cardStyle()
 
                         VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Image(systemName: "flame.fill")
-                                    .foregroundStyle(AppTheme.accentOrange)
-                                Text("Streak Status")
-                                    .font(.headline)
-                                Spacer()
-                                if gameVM.streakSaves > 0 {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "shield.checkered")
-                                            .font(.caption)
-                                        Text("\(gameVM.streakSaves) save\(gameVM.streakSaves == 1 ? "" : "s")")
-                                            .font(.caption.bold())
-                                    }
-                                    .foregroundStyle(AppTheme.xpPurple)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(AppTheme.xpPurple.opacity(0.1))
-                                    .clipShape(Capsule())
+                            FunSectionHeader(icon: "flame.fill", title: "Streak Status", color: AppTheme.accentOrange)
+
+                            if gameVM.streakSaves > 0 {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "shield.checkered")
+                                        .font(.caption)
+                                    Text("\(gameVM.streakSaves) save\(gameVM.streakSaves == 1 ? "" : "s")")
+                                        .font(AppTheme.funFont(.caption, weight: .heavy))
                                 }
+                                .foregroundStyle(AppTheme.xpPurple)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(AppTheme.xpPurple.opacity(0.1))
+                                .clipShape(Capsule())
                             }
 
                             HStack(spacing: 8) {
@@ -92,9 +87,9 @@ struct ProfileView: View {
                                     .foregroundStyle(gameVM.currentStreak > 0 ? AppTheme.successGreen : .secondary)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(gameVM.currentStreak > 0 ? "Streak active!" : "Start your streak today!")
-                                        .font(.subheadline.weight(.medium))
+                                        .font(AppTheme.funFont(.subheadline, weight: .bold))
                                     Text("\(gameVM.currentStreak) day\(gameVM.currentStreak == 1 ? "" : "s") in a row")
-                                        .font(.caption)
+                                        .font(AppTheme.funFont(.caption, weight: .medium))
                                         .foregroundStyle(.secondary)
                                 }
                                 Spacer()
@@ -104,12 +99,9 @@ struct ProfileView: View {
                         .cardStyle()
 
                         VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("PROFESSION")
-                                    .font(.caption.bold())
-                                    .foregroundStyle(AppTheme.xpPurple)
-                                Spacer()
-                            }
+                            Text("PROFESSION")
+                                .font(AppTheme.funFont(.caption, weight: .heavy))
+                                .foregroundStyle(AppTheme.xpPurple)
 
                             Button {
                                 showEditProfile = true
@@ -121,9 +113,9 @@ struct ProfileView: View {
 
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(gameVM.selectedProfession.rawValue)
-                                            .font(.subheadline.weight(.medium))
+                                            .font(AppTheme.funFont(.subheadline, weight: .bold))
                                         Text("Tap to change")
-                                            .font(.caption)
+                                            .font(AppTheme.funFont(.caption, weight: .medium))
                                             .foregroundStyle(.secondary)
                                     }
 
@@ -139,12 +131,9 @@ struct ProfileView: View {
                         .cardStyle()
 
                         VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("YOUR SCHOOL")
-                                    .font(.caption.bold())
-                                    .foregroundStyle(AppTheme.primaryBlue)
-                                Spacer()
-                            }
+                            Text("YOUR SCHOOL")
+                                .font(AppTheme.funFont(.caption, weight: .heavy))
+                                .foregroundStyle(AppTheme.primaryBlue)
 
                             Button {
                                 showEditProfile = true
@@ -156,7 +145,7 @@ struct ProfileView: View {
 
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(gameVM.schoolName.isEmpty ? "Select your school" : gameVM.schoolName)
-                                            .font(.subheadline.weight(.medium))
+                                            .font(AppTheme.funFont(.subheadline, weight: .bold))
                                             .foregroundStyle(gameVM.schoolName.isEmpty ? .secondary : .primary)
                                     }
 
@@ -173,7 +162,7 @@ struct ProfileView: View {
 
                         VStack(alignment: .leading, spacing: 12) {
                             Text("ACHIEVEMENTS")
-                                .font(.caption.bold())
+                                .font(AppTheme.funFont(.caption, weight: .heavy))
                                 .foregroundStyle(.secondary)
 
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
@@ -195,16 +184,16 @@ struct ProfileView: View {
                                 Image(systemName: "rectangle.portrait.and.arrow.right")
                                 Text("Sign Out")
                             }
-                            .font(.subheadline)
+                            .font(AppTheme.funFont(.subheadline, weight: .medium))
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                             .background(Color(.tertiarySystemFill))
-                            .clipShape(.rect(cornerRadius: 12))
+                            .clipShape(.rect(cornerRadius: 14))
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
@@ -243,9 +232,9 @@ struct ProfileStatItem: View {
                 .font(.title3)
                 .foregroundStyle(color)
             Text(value)
-                .font(.headline)
+                .font(AppTheme.funFont(.headline, weight: .heavy))
             Text(label)
-                .font(.caption)
+                .font(AppTheme.funFont(.caption, weight: .medium))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
@@ -263,16 +252,16 @@ struct AchievementBadge: View {
             ZStack {
                 Circle()
                     .fill(isUnlocked ? AppTheme.warningYellow.opacity(0.15) : Color(.tertiarySystemFill))
-                    .frame(width: 48, height: 48)
+                    .frame(width: 50, height: 50)
                 Image(systemName: icon)
                     .font(.title3)
                     .foregroundStyle(isUnlocked ? AppTheme.warningYellow : Color(.tertiaryLabel))
             }
             Text(title)
-                .font(.caption.bold())
+                .font(AppTheme.funFont(.caption, weight: .heavy))
                 .foregroundStyle(isUnlocked ? .primary : .secondary)
             Text(subtitle)
-                .font(.caption2)
+                .font(AppTheme.funFont(.caption2, weight: .medium))
                 .foregroundStyle(.secondary)
         }
     }
@@ -297,6 +286,7 @@ struct EditProfileSheet: View {
             Form {
                 Section("Display Name") {
                     TextField("Username", text: $username)
+                        .font(AppTheme.funFont(.body, weight: .medium))
                 }
 
                 Section("Profession") {
@@ -308,6 +298,7 @@ struct EditProfileSheet: View {
                                 Image(systemName: prof.iconName)
                                     .foregroundStyle(AppTheme.primaryBlue)
                                 Text(prof.rawValue)
+                                    .font(AppTheme.funFont(.body, weight: .medium))
                                     .foregroundStyle(.primary)
                                 Spacer()
                                 if profession == prof {
@@ -321,6 +312,7 @@ struct EditProfileSheet: View {
 
                 Section("School") {
                     TextField("Enter your school name", text: $schoolName)
+                        .font(AppTheme.funFont(.body, weight: .medium))
                 }
             }
             .navigationTitle("Edit Profile")

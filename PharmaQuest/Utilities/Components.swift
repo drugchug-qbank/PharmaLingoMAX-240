@@ -4,25 +4,38 @@ struct HeaderBar: View {
     let gameVM: GameViewModel
 
     var body: some View {
-        HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("PharmaLingo")
-                    .font(.title2.bold())
-                    .foregroundStyle(.white)
-                Text("Top 300 Drugs")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.8))
-            }
+        VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                AvatarDisplayView(
+                    animal: gameVM.avatarAnimal,
+                    eyes: gameVM.avatarEyes,
+                    mouth: gameVM.avatarMouth,
+                    accessory: gameVM.avatarAccessory,
+                    size: 44
+                )
 
-            Spacer()
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("PharmaLingo")
+                        .font(AppTheme.funFont(.title3, weight: .heavy))
+                        .foregroundStyle(.white)
+                    Text("Top 300 Drugs")
+                        .font(AppTheme.funFont(.caption2, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.75))
+                }
 
-            HStack(spacing: 12) {
-                StatBadge(iconName: "flame.fill", value: "\(gameVM.currentStreak)", color: AppTheme.accentOrange)
-                StatBadge(iconName: "heart.fill", value: "\(gameVM.hearts)", color: AppTheme.heartRed)
+                Spacer()
+
+                HStack(spacing: 10) {
+                    StatBadge(iconName: "flame.fill", value: "\(gameVM.currentStreak)", color: AppTheme.accentOrange)
+                    StatBadge(iconName: "heart.fill", value: "\(gameVM.hearts)", color: AppTheme.heartRed)
+                    StatBadge(iconName: "bitcoinsign.circle.fill", value: "\(gameVM.coins)", color: AppTheme.warningYellow)
+                }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+
+            XPProgressBar(gameVM: gameVM)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
         .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
     }
 }
@@ -35,15 +48,15 @@ struct StatBadge: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: iconName)
-                .font(.caption.bold())
+                .font(AppTheme.funFont(.caption2, weight: .bold))
                 .foregroundStyle(color)
             Text(value)
-                .font(.subheadline.bold())
+                .font(AppTheme.funFont(.caption, weight: .heavy))
                 .foregroundStyle(.white)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(.white.opacity(0.15))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(.white.opacity(0.18))
         .clipShape(Capsule())
     }
 }
@@ -52,30 +65,29 @@ struct XPProgressBar: View {
     let gameVM: GameViewModel
 
     var body: some View {
-        VStack(spacing: 4) {
-            HStack {
-                Text("Lv.\(gameVM.level)")
-                    .font(.caption.bold())
-                    .foregroundStyle(.white)
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule()
-                            .fill(.white.opacity(0.2))
-                            .frame(height: 8)
-                        Capsule()
-                            .fill(AppTheme.warningYellow)
-                            .frame(width: max(geo.size.width * gameVM.xpProgress, 8), height: 8)
-                    }
+        HStack(spacing: 8) {
+            Text("Lv.\(gameVM.level)")
+                .font(AppTheme.funFont(.caption, weight: .heavy))
+                .foregroundStyle(AppTheme.warningYellow)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(.white.opacity(0.2))
+                        .frame(height: 10)
+                    Capsule()
+                        .fill(
+                            LinearGradient(colors: [AppTheme.warningYellow, AppTheme.accentOrange], startPoint: .leading, endPoint: .trailing)
+                        )
+                        .frame(width: max(geo.size.width * gameVM.xpProgress, 10), height: 10)
                 }
-                .frame(height: 8)
-                Text("\(gameVM.xpInCurrentLevel)/\(gameVM.xpForNextLevel) XP")
-                    .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.8))
             }
+            .frame(height: 10)
+            Text("\(gameVM.xpInCurrentLevel)/\(gameVM.xpForNextLevel) XP")
+                .font(AppTheme.funFont(.caption2, weight: .bold))
+                .foregroundStyle(.white.opacity(0.8))
         }
-        .padding(.horizontal)
-        .padding(.bottom, 8)
-        .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
+        .padding(.horizontal, 16)
+        .padding(.bottom, 10)
     }
 }
 
@@ -84,10 +96,10 @@ struct StarRating: View {
     let maxStars: Int = 5
 
     var body: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 3) {
             ForEach(0..<maxStars, id: \.self) { index in
                 Image(systemName: index < stars ? "star.fill" : "star")
-                    .font(.caption2)
+                    .font(AppTheme.funFont(.caption2, weight: .bold))
                     .foregroundStyle(index < stars ? AppTheme.warningYellow : Color(.tertiaryLabel))
             }
         }
@@ -117,11 +129,55 @@ struct CoinDisplay: View {
     let amount: Int
 
     var body: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 3) {
             Image(systemName: "bitcoinsign.circle.fill")
                 .foregroundStyle(AppTheme.accentOrange)
             Text("\(amount)")
-                .font(.subheadline.bold())
+                .font(AppTheme.funFont(.subheadline, weight: .bold))
         }
+    }
+}
+
+struct FunSectionHeader: View {
+    let icon: String
+    let title: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(AppTheme.funFont(.title3, weight: .bold))
+                .foregroundStyle(color)
+            Text(title)
+                .font(AppTheme.funFont(.title3, weight: .bold))
+        }
+    }
+}
+
+struct FunPageHeader: View {
+    let title: String
+    let subtitle: String
+    let icon: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                if let icon {
+                    Image(systemName: icon)
+                        .font(AppTheme.funFont(.title2, weight: .bold))
+                        .foregroundStyle(.white)
+                }
+                Text(title)
+                    .font(AppTheme.funFont(.largeTitle, weight: .heavy))
+                    .foregroundStyle(.white)
+            }
+            Text(subtitle)
+                .font(AppTheme.funFont(.subheadline, weight: .medium))
+                .foregroundStyle(.white.opacity(0.8))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 16)
+        .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
     }
 }

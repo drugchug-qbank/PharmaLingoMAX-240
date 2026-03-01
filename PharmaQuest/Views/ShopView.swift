@@ -11,23 +11,7 @@ struct ShopView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 0) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Image(systemName: "bag.fill")
-                                .font(.title2)
-                                .foregroundStyle(.white)
-                            Text("Shop")
-                                .font(.largeTitle.bold())
-                                .foregroundStyle(.white)
-                        }
-                        Text("Power up your learning!")
-                            .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.8))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.vertical, 16)
-                    .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
+                    FunPageHeader(title: "Shop", subtitle: "Power up your learning!", icon: "bag.fill")
 
                     VStack(spacing: 16) {
                         HStack(spacing: 0) {
@@ -49,15 +33,10 @@ struct ShopView: View {
                         .padding(.vertical, 8)
 
                         VStack(alignment: .leading, spacing: 14) {
-                            HStack {
-                                Image(systemName: "heart.fill")
-                                    .foregroundStyle(AppTheme.heartRed)
-                                Text("Hearts")
-                                    .font(.title3.bold())
-                            }
+                            FunSectionHeader(icon: "heart.fill", title: "Hearts", color: AppTheme.heartRed)
 
                             Text("Need more hearts? Buy them with coins or watch a short ad!")
-                                .font(.subheadline)
+                                .font(AppTheme.funFont(.subheadline, weight: .medium))
                                 .foregroundStyle(.secondary)
 
                             ShopItemRow(
@@ -116,12 +95,7 @@ struct ShopView: View {
                         .cardStyle()
 
                         VStack(alignment: .leading, spacing: 14) {
-                            HStack {
-                                Image(systemName: "shield.checkered")
-                                    .foregroundStyle(AppTheme.xpPurple)
-                                Text("Power-Ups")
-                                    .font(.title3.bold())
-                            }
+                            FunSectionHeader(icon: "shield.checkered", title: "Power-Ups", color: AppTheme.xpPurple)
 
                             ShopItemRow(
                                 icon: "flame.fill",
@@ -162,16 +136,13 @@ struct ShopView: View {
 
                         VStack(alignment: .leading, spacing: 14) {
                             HStack {
-                                Image(systemName: "person.crop.circle.fill")
-                                    .foregroundStyle(AppTheme.successGreen)
-                                Text("Avatar Shop")
-                                    .font(.title3.bold())
+                                FunSectionHeader(icon: "person.crop.circle.fill", title: "Avatar Shop", color: AppTheme.successGreen)
                                 Spacer()
                                 Button {
                                     showAvatarShop = true
                                 } label: {
                                     Text("Open")
-                                        .font(.caption.bold())
+                                        .font(AppTheme.funFont(.caption, weight: .heavy))
                                         .foregroundStyle(.white)
                                         .padding(.horizontal, 14)
                                         .padding(.vertical, 6)
@@ -181,7 +152,7 @@ struct ShopView: View {
                             }
 
                             Text("Customize your avatar with new animals, eyes, and accessories!")
-                                .font(.subheadline)
+                                .font(AppTheme.funFont(.subheadline, weight: .medium))
                                 .foregroundStyle(.secondary)
 
                             HStack(spacing: 16) {
@@ -194,7 +165,7 @@ struct ShopView: View {
                         .padding(16)
                         .cardStyle()
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
@@ -225,9 +196,9 @@ struct ShopStatBadge: View {
                 .font(.title2)
                 .foregroundStyle(color)
             Text(value)
-                .font(.headline.bold())
+                .font(AppTheme.funFont(.headline, weight: .heavy))
             Text(label)
-                .font(.caption)
+                .font(AppTheme.funFont(.caption, weight: .medium))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
@@ -255,9 +226,9 @@ struct ShopItemRow: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(AppTheme.funFont(.subheadline, weight: .bold))
                     Text(subtitle)
-                        .font(.caption)
+                        .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.secondary)
                 }
 
@@ -269,17 +240,17 @@ struct ShopItemRow: View {
                             .font(.caption)
                     }
                     Text(price)
-                        .font(.subheadline.bold())
+                        .font(AppTheme.funFont(.subheadline, weight: .heavy))
                 }
                 .foregroundStyle(priceColor)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(priceColor.opacity(0.1))
+                .background(priceColor.opacity(0.12))
                 .clipShape(Capsule())
             }
             .padding(14)
             .background(Color(.tertiarySystemFill))
-            .clipShape(.rect(cornerRadius: 12))
+            .clipShape(.rect(cornerRadius: 14))
             .opacity(isEnabled ? 1 : 0.5)
         }
         .buttonStyle(.plain)
@@ -303,14 +274,14 @@ struct AvatarShopPreview: View {
                     .foregroundStyle(.secondary)
             }
             Text(label)
-                .font(.caption2)
+                .font(AppTheme.funFont(.caption2, weight: .bold))
                 .foregroundStyle(.secondary)
             HStack(spacing: 2) {
                 Image(systemName: "bitcoinsign.circle.fill")
                     .font(.caption2)
                     .foregroundStyle(AppTheme.accentOrange)
                 Text(price)
-                    .font(.caption2.bold())
+                    .font(AppTheme.funFont(.caption2, weight: .heavy))
             }
         }
         .frame(maxWidth: .infinity)

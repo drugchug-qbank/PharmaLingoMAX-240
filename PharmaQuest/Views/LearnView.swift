@@ -5,39 +5,48 @@ struct LearnView: View {
     @State private var showQuiz: Bool = false
     @State private var showLearning: Bool = false
     @State private var selectedSubsection: Subsection?
+    @State private var selectedModule: DrugModule?
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 0) {
                     HeaderBar(gameVM: gameVM)
-                    XPProgressBar(gameVM: gameVM)
 
                     VStack(spacing: 16) {
                         DailyQuestsCard(quests: gameVM.dailyQuests)
                             .padding(.top, 16)
 
-                        ForEach(gameVM.modules) { module in
+                        ForEach(Array(gameVM.modules.enumerated()), id: \.element.id) { index, module in
                             ModuleCard(
                                 module: module,
-                                gameVM: gameVM,
-                                onSubsectionTap: { subsection in
-                                    selectedSubsection = subsection
-                                    if gameVM.needsLearning(subsection.id) && !subsection.learningSlides.isEmpty {
-                                        showLearning = true
-                                    } else {
-                                        showQuiz = true
-                                    }
-                                }
-                            )
+                                moduleIndex: index,
+                                gameVM: gameVM
+                            ) {
+                                selectedModule = module
+                            }
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 16)
                     .padding(.bottom, 32)
                 }
             }
             .background(Color(.systemGroupedBackground))
             .scrollIndicators(.hidden)
+            .navigationDestination(item: $selectedModule) { module in
+                ModuleDetailView(
+                    module: module,
+                    gameVM: gameVM,
+                    onSubsectionTap: { subsection in
+                        selectedSubsection = subsection
+                        if gameVM.needsLearning(subsection.id) && !subsection.learningSlides.isEmpty {
+                            showLearning = true
+                        } else {
+                            showQuiz = true
+                        }
+                    }
+                )
+            }
             .fullScreenCover(isPresented: $showLearning) {
                 if let sub = selectedSubsection {
                     LearningSlideView(
@@ -69,39 +78,41 @@ struct DailyQuestsCard: View {
             HStack {
                 Image(systemName: "star.circle.fill")
                     .foregroundStyle(AppTheme.warningYellow)
-                    .font(.title3)
+                    .font(AppTheme.funFont(.title3, weight: .bold))
                 Text("Daily Quests")
-                    .font(.headline)
+                    .font(AppTheme.funFont(.headline, weight: .bold))
                 Spacer()
+                Image(systemName: "ellipsis.circle.fill")
+                    .foregroundStyle(.secondary)
             }
 
             ForEach(quests) { quest in
                 HStack(spacing: 12) {
                     ZStack {
-                        ProgressRing(progress: quest.progress, size: 32, lineWidth: 3, color: quest.isComplete ? AppTheme.successGreen : AppTheme.primaryBlue)
+                        ProgressRing(progress: quest.progress, size: 34, lineWidth: 3.5, color: quest.isComplete ? AppTheme.successGreen : AppTheme.primaryBlue)
                         if quest.isComplete {
                             Image(systemName: "checkmark")
-                                .font(.caption2.bold())
+                                .font(AppTheme.funFont(.caption2, weight: .heavy))
                                 .foregroundStyle(AppTheme.successGreen)
                         }
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(quest.title)
-                            .font(.subheadline.weight(.medium))
+                            .font(AppTheme.funFont(.subheadline, weight: .semibold))
                         Text("\(quest.current)/\(quest.target)")
-                            .font(.caption)
+                            .font(AppTheme.funFont(.caption, weight: .medium))
                             .foregroundStyle(.secondary)
                     }
 
                     Spacer()
 
-                    HStack(spacing: 2) {
+                    HStack(spacing: 3) {
                         Image(systemName: "bitcoinsign.circle.fill")
                             .foregroundStyle(AppTheme.accentOrange)
                             .font(.caption)
                         Text("+\(quest.coinReward)")
-                            .font(.subheadline.bold())
+                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
                             .foregroundStyle(AppTheme.accentOrange)
                     }
                 }
@@ -114,170 +125,101 @@ struct DailyQuestsCard: View {
 
 struct ModuleCard: View {
     let module: DrugModule
+    let moduleIndex: Int
     let gameVM: GameViewModel
-    let onSubsectionTap: (Subsection) -> Void
-
-    @State private var isExpanded: Bool = false
+    let onTap: () -> Void
 
     private var isUnlocked: Bool { gameVM.isModuleUnlocked(module) }
     private var progress: Double { gameVM.moduleProgress(module) }
-    private var moduleColor: Color { Color(hex: module.accentColorHex) }
+    private var moduleColor: Color { AppTheme.moduleColor(for: moduleIndex) }
+
+    private var statusLabel: String {
+        if progress >= 1.0 { return "COMPLETE" }
+        if progress > 0 { return "IN PROGRESS" }
+        return ""
+    }
 
     var body: some View {
-        VStack(spacing: 0) {
-            Button {
-                if isUnlocked {
-                    withAnimation(.spring(duration: 0.3)) {
-                        isExpanded.toggle()
-                    }
-                }
-            } label: {
+        Button(action: {
+            if isUnlocked { onTap() }
+        }) {
+            VStack(spacing: 0) {
                 HStack(spacing: 14) {
                     ZStack {
                         Circle()
                             .fill(isUnlocked ? moduleColor.opacity(0.15) : Color(.tertiarySystemFill))
-                            .frame(width: 50, height: 50)
+                            .frame(width: 54, height: 54)
                         Image(systemName: module.iconName)
-                            .font(.title3)
+                            .font(AppTheme.funFont(.title3, weight: .bold))
                             .foregroundStyle(isUnlocked ? moduleColor : .secondary)
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("MODULE \(module.number)")
-                            .font(.caption.bold())
-                            .foregroundStyle(isUnlocked ? moduleColor : .secondary)
+                        HStack(spacing: 8) {
+                            Text("MODULE \(module.number)")
+                                .font(AppTheme.funFont(.caption, weight: .heavy))
+                                .foregroundStyle(isUnlocked ? moduleColor : .secondary)
+
+                            if !statusLabel.isEmpty {
+                                Text(statusLabel)
+                                    .font(AppTheme.funFont(.caption2, weight: .heavy))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(progress >= 1.0 ? AppTheme.successGreen : AppTheme.accentOrange)
+                                    .clipShape(Capsule())
+                            }
+                        }
+
                         Text(module.title)
-                            .font(.headline)
+                            .font(AppTheme.funFont(.headline, weight: .bold))
                             .foregroundStyle(isUnlocked ? .primary : .secondary)
+
                         Text(module.subtitle)
-                            .font(.caption)
+                            .font(AppTheme.funFont(.caption, weight: .medium))
                             .foregroundStyle(.secondary)
                     }
 
                     Spacer()
 
                     if isUnlocked {
-                        VStack(alignment: .trailing, spacing: 4) {
+                        VStack(alignment: .trailing, spacing: 6) {
                             if progress > 0 {
                                 Text("\(Int(progress * 100))%")
-                                    .font(.caption.bold())
+                                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
                                     .foregroundStyle(moduleColor)
                             }
-                            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            Image(systemName: "chevron.right.circle.fill")
+                                .font(.title3)
+                                .foregroundStyle(moduleColor.opacity(0.6))
                         }
                     } else {
                         Image(systemName: "lock.fill")
+                            .font(.title3)
                             .foregroundStyle(.secondary)
                     }
                 }
                 .padding(16)
-            }
-            .buttonStyle(.plain)
 
-            if isUnlocked && progress > 0 {
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .fill(moduleColor.opacity(0.1))
-                            .frame(height: 4)
-                        Rectangle()
-                            .fill(moduleColor)
-                            .frame(width: geo.size.width * progress, height: 4)
+                if isUnlocked && progress > 0 {
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(moduleColor.opacity(0.15))
+                                .frame(height: 6)
+                            Capsule()
+                                .fill(moduleColor)
+                                .frame(width: geo.size.width * progress, height: 6)
+                        }
                     }
-                }
-                .frame(height: 4)
-                .padding(.horizontal, 16)
-            }
-
-            if isExpanded {
-                VStack(spacing: 2) {
-                    ForEach(module.subsections) { subsection in
-                        SubsectionRow(
-                            subsection: subsection,
-                            gameVM: gameVM,
-                            moduleColor: moduleColor,
-                            onTap: { onSubsectionTap(subsection) }
-                        )
-                    }
-                }
-                .padding(.horizontal, 12)
-                .padding(.bottom, 12)
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
-        }
-        .cardStyle()
-        .opacity(isUnlocked ? 1 : 0.6)
-        .onAppear {
-            if isUnlocked && progress > 0 && progress < 1 {
-                isExpanded = true
-            }
-        }
-    }
-}
-
-struct SubsectionRow: View {
-    let subsection: Subsection
-    let gameVM: GameViewModel
-    let moduleColor: Color
-    let onTap: () -> Void
-
-    private var isUnlocked: Bool { gameVM.isSubsectionUnlocked(subsection) }
-    private var stars: Int { gameVM.starsFor(subsection.id) }
-    private var isCompleted: Bool { gameVM.completedSubsections.contains(subsection.id) }
-
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(isCompleted ? moduleColor.opacity(0.15) : Color(.tertiarySystemFill))
-                        .frame(width: 40, height: 40)
-                    if isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(moduleColor)
-                    } else if isUnlocked {
-                        Image(systemName: subsection.iconName)
-                            .font(.subheadline)
-                            .foregroundStyle(moduleColor)
-                    } else {
-                        Image(systemName: "lock.fill")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(subsection.title)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(isUnlocked ? .primary : .secondary)
-                    if stars > 0 {
-                        StarRating(stars: stars)
-                    } else {
-                        Text(subsection.description)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
-                }
-
-                Spacer()
-
-                if isUnlocked && !isCompleted {
-                    Text("START")
-                        .font(.caption.bold())
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(moduleColor)
-                        .clipShape(Capsule())
+                    .frame(height: 6)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
                 }
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 8)
         }
         .buttonStyle(.plain)
-        .disabled(!isUnlocked || gameVM.hearts <= 0)
+        .cardStyle(borderColor: isUnlocked ? moduleColor.opacity(0.4) : nil)
+        .opacity(isUnlocked ? 1 : 0.55)
     }
 }

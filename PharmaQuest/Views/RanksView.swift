@@ -34,13 +34,13 @@ struct RanksView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Leaderboard")
-                                    .font(.largeTitle.bold())
+                                    .font(AppTheme.funFont(.largeTitle, weight: .heavy))
                                     .foregroundStyle(.white)
                                 HStack(spacing: 4) {
                                     Image(systemName: "shield.fill")
                                         .foregroundStyle(Color(hex: "CD7F32"))
                                     Text("Bronze League")
-                                        .font(.subheadline)
+                                        .font(AppTheme.funFont(.subheadline, weight: .bold))
                                         .foregroundStyle(.white.opacity(0.8))
                                 }
                             }
@@ -52,7 +52,7 @@ struct RanksView: View {
                             Image(systemName: "clock.fill")
                                 .foregroundStyle(.white.opacity(0.7))
                             Text("Week ends in \(weekTimeRemaining)")
-                                .font(.subheadline.bold())
+                                .font(AppTheme.funFont(.subheadline, weight: .bold))
                                 .foregroundStyle(.white)
                         }
                         .padding(.horizontal, 16)
@@ -65,10 +65,10 @@ struct RanksView: View {
                         HStack(spacing: 20) {
                             VStack(spacing: 2) {
                                 Text("#\(userRank)")
-                                    .font(.title.bold())
+                                    .font(AppTheme.funFont(.title, weight: .heavy))
                                     .foregroundStyle(AppTheme.warningYellow)
                                 Text("League Rank")
-                                    .font(.caption)
+                                    .font(AppTheme.funFont(.caption, weight: .medium))
                                     .foregroundStyle(.white.opacity(0.7))
                             }
 
@@ -79,11 +79,11 @@ struct RanksView: View {
                                     Image(systemName: "bolt.fill")
                                         .foregroundStyle(AppTheme.warningYellow)
                                     Text("\(gameVM.totalXP)")
-                                        .font(.title2.bold())
+                                        .font(AppTheme.funFont(.title2, weight: .heavy))
                                         .foregroundStyle(.white)
                                 }
                                 Text("This Week")
-                                    .font(.caption)
+                                    .font(AppTheme.funFont(.caption, weight: .medium))
                                     .foregroundStyle(.white.opacity(0.7))
                             }
 
@@ -94,11 +94,11 @@ struct RanksView: View {
                                     Image(systemName: "flame.fill")
                                         .foregroundStyle(AppTheme.accentOrange)
                                     Text("\(gameVM.currentStreak)")
-                                        .font(.title2.bold())
+                                        .font(AppTheme.funFont(.title2, weight: .heavy))
                                         .foregroundStyle(.white)
                                 }
                                 Text("Streak")
-                                    .font(.caption)
+                                    .font(AppTheme.funFont(.caption, weight: .medium))
                                     .foregroundStyle(.white.opacity(0.7))
                             }
                         }
@@ -121,13 +121,13 @@ struct RanksView: View {
                                         Image(systemName: tab.icon)
                                             .font(.subheadline)
                                         Text(tab.rawValue)
-                                            .font(.caption.bold())
+                                            .font(AppTheme.funFont(.caption, weight: .heavy))
                                     }
                                     .foregroundStyle(selectedTab == tab ? AppTheme.primaryBlue : .secondary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 10)
                                     .background(selectedTab == tab ? AppTheme.primaryBlue.opacity(0.1) : .clear)
-                                    .clipShape(.rect(cornerRadius: 10))
+                                    .clipShape(.rect(cornerRadius: 12))
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -147,7 +147,7 @@ struct RanksView: View {
                             professionContent
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
@@ -194,13 +194,13 @@ struct RanksView: View {
                 Image(systemName: "info.circle.fill")
                     .foregroundStyle(AppTheme.primaryBlue)
                 Text("Top 10 get promoted! Bottom 10 get demoted.")
-                    .font(.caption)
+                    .font(AppTheme.funFont(.caption, weight: .bold))
                     .foregroundStyle(.secondary)
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppTheme.primaryBlue.opacity(0.05))
-            .clipShape(.rect(cornerRadius: 10))
+            .background(AppTheme.primaryBlue.opacity(0.06))
+            .clipShape(.rect(cornerRadius: 12))
 
             if isLoadingLeaderboard {
                 ProgressView()
@@ -211,9 +211,9 @@ struct RanksView: View {
                         .font(.largeTitle)
                         .foregroundStyle(.secondary)
                     Text("Leaderboard Loading...")
-                        .font(.headline)
+                        .font(AppTheme.funFont(.headline, weight: .bold))
                     Text("Complete quizzes to earn XP and climb the ranks!")
-                        .font(.subheadline)
+                        .font(AppTheme.funFont(.subheadline, weight: .medium))
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -236,12 +236,12 @@ struct RanksView: View {
             if friends.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "person.2.fill")
-                        .font(.largeTitle)
+                        .font(.system(size: 44))
                         .foregroundStyle(AppTheme.primaryBlue.opacity(0.5))
                     Text("Add Friends")
-                        .font(.headline)
+                        .font(AppTheme.funFont(.headline, weight: .bold))
                     Text("Connect with classmates to compare progress and compete!")
-                        .font(.subheadline)
+                        .font(AppTheme.funFont(.subheadline, weight: .medium))
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
 
@@ -249,7 +249,7 @@ struct RanksView: View {
                         showAddFriend = true
                     } label: {
                         Text("Find Friends")
-                            .font(.subheadline.bold())
+                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 10)
@@ -262,7 +262,7 @@ struct RanksView: View {
             } else {
                 HStack {
                     Text("Friends (\(friends.count))")
-                        .font(.headline)
+                        .font(AppTheme.funFont(.headline, weight: .bold))
                     Spacer()
                     Button {
                         showAddFriend = true
@@ -286,10 +286,10 @@ struct RanksView: View {
     private var schoolContent: some View {
         VStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 12) {
-                Text("School Rankings")
-                    .font(.headline)
+                FunSectionHeader(icon: "building.columns.fill", title: "School Rankings", color: AppTheme.primaryBlue)
+
                 Text("Represent your school! All XP earned this month counts toward your school's ranking.")
-                    .font(.subheadline)
+                    .font(AppTheme.funFont(.subheadline, weight: .medium))
                     .foregroundStyle(.secondary)
 
                 VStack(spacing: 8) {
@@ -303,12 +303,12 @@ struct RanksView: View {
                         Image(systemName: "building.columns.fill")
                             .foregroundStyle(AppTheme.primaryBlue)
                         Text("Select your school in Profile to participate")
-                            .font(.caption)
+                            .font(AppTheme.funFont(.caption, weight: .bold))
                             .foregroundStyle(.secondary)
                     }
                     .padding(10)
-                    .background(AppTheme.primaryBlue.opacity(0.05))
-                    .clipShape(.rect(cornerRadius: 8))
+                    .background(AppTheme.primaryBlue.opacity(0.06))
+                    .clipShape(.rect(cornerRadius: 10))
                 }
             }
             .padding(16)
@@ -323,9 +323,9 @@ struct RanksView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Profession Battle")
-                            .font(.headline.bold())
+                            .font(AppTheme.funFont(.headline, weight: .heavy))
                         Text("Donate coins to boost your profession!")
-                            .font(.caption)
+                            .font(AppTheme.funFont(.caption, weight: .medium))
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
@@ -338,21 +338,21 @@ struct RanksView: View {
                 }
 
                 Text("Donate at least 100 coins this month to qualify for prizes.")
-                    .font(.caption)
+                    .font(AppTheme.funFont(.caption, weight: .bold))
                     .foregroundStyle(.secondary)
 
                 Divider()
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Your Contribution")
-                        .font(.subheadline.bold())
+                        .font(AppTheme.funFont(.subheadline, weight: .bold))
                     HStack {
                         Text("You represent")
-                            .font(.subheadline)
+                            .font(AppTheme.funFont(.subheadline, weight: .medium))
                             .foregroundStyle(.secondary)
                         Spacer()
                         Text(gameVM.selectedProfession.rawValue)
-                            .font(.subheadline.bold())
+                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
                             .foregroundStyle(AppTheme.primaryBlue)
                     }
 
@@ -369,13 +369,13 @@ struct RanksView: View {
                             Image(systemName: "bitcoinsign.circle.fill")
                                 .foregroundStyle(AppTheme.accentOrange)
                             Text("Donate 10 Coins")
-                                .font(.subheadline.bold())
+                                .font(AppTheme.funFont(.subheadline, weight: .heavy))
                         }
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(gameVM.coins >= 10 ? AppTheme.primaryBlue : Color(.systemFill))
-                        .clipShape(.rect(cornerRadius: 12))
+                        .clipShape(.rect(cornerRadius: 14))
                     }
                     .disabled(gameVM.coins < 10)
                 }
@@ -393,14 +393,14 @@ struct LeaderboardRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Text("#\(entry.rank)")
-                .font(.subheadline.bold())
+                .font(AppTheme.funFont(.subheadline, weight: .heavy))
                 .foregroundStyle(rankColor)
                 .frame(width: 30)
 
             ZStack {
                 Circle()
                     .fill(isCurrentUser ? AppTheme.primaryBlue.opacity(0.15) : Color(.tertiarySystemFill))
-                    .frame(width: 36, height: 36)
+                    .frame(width: 38, height: 38)
                 Image(systemName: entry.avatarAnimal)
                     .font(.subheadline)
                     .foregroundStyle(isCurrentUser ? AppTheme.primaryBlue : .secondary)
@@ -408,14 +408,14 @@ struct LeaderboardRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.username)
-                    .font(.subheadline.weight(.medium))
+                    .font(AppTheme.funFont(.subheadline, weight: .bold))
                     .foregroundStyle(isCurrentUser ? AppTheme.primaryBlue : .primary)
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
                         .font(.caption2)
                         .foregroundStyle(AppTheme.accentOrange)
                     Text("\(entry.streak)")
-                        .font(.caption)
+                        .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -423,13 +423,13 @@ struct LeaderboardRow: View {
             Spacer()
 
             Text("\(entry.xpThisWeek) XP")
-                .font(.subheadline.bold())
+                .font(AppTheme.funFont(.subheadline, weight: .heavy))
                 .foregroundStyle(isCurrentUser ? AppTheme.primaryBlue : .primary)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 12)
-        .background(isCurrentUser ? AppTheme.primaryBlue.opacity(0.05) : .clear)
-        .clipShape(.rect(cornerRadius: 10))
+        .background(isCurrentUser ? AppTheme.primaryBlue.opacity(0.06) : .clear)
+        .clipShape(.rect(cornerRadius: 12))
     }
 
     private var rankColor: Color {
@@ -451,20 +451,20 @@ struct SchoolRankRow: View {
     var body: some View {
         HStack(spacing: 10) {
             Text("#\(rank)")
-                .font(.subheadline.bold())
+                .font(AppTheme.funFont(.subheadline, weight: .heavy))
                 .foregroundStyle(color)
                 .frame(width: 28)
             Text(name)
-                .font(.subheadline)
+                .font(AppTheme.funFont(.subheadline, weight: .medium))
                 .lineLimit(1)
             Spacer()
             Text("\(xp) XP")
-                .font(.caption.bold())
+                .font(AppTheme.funFont(.caption, weight: .heavy))
                 .foregroundStyle(.secondary)
         }
         .padding(10)
         .background(Color(.tertiarySystemFill))
-        .clipShape(.rect(cornerRadius: 8))
+        .clipShape(.rect(cornerRadius: 10))
     }
 }
 
@@ -480,13 +480,13 @@ struct PrizePodium: View {
                 .font(.title2)
                 .foregroundStyle(color)
             Text(place)
-                .font(.headline.bold())
+                .font(AppTheme.funFont(.headline, weight: .heavy))
             HStack(spacing: 2) {
                 Image(systemName: "bitcoinsign.circle.fill")
                     .font(.caption)
                     .foregroundStyle(AppTheme.accentOrange)
                 Text("+\(coins)")
-                    .font(.caption.bold())
+                    .font(AppTheme.funFont(.caption, weight: .heavy))
             }
         }
         .frame(maxWidth: .infinity)
@@ -509,6 +509,7 @@ struct AddFriendSheet: View {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.secondary)
                     TextField("Search by username...", text: $searchText)
+                        .font(AppTheme.funFont(.body, weight: .medium))
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .onSubmit {
@@ -517,7 +518,7 @@ struct AddFriendSheet: View {
                 }
                 .padding(12)
                 .background(Color(.secondarySystemGroupedBackground))
-                .clipShape(.rect(cornerRadius: 12))
+                .clipShape(.rect(cornerRadius: 14))
                 .padding(.horizontal)
 
                 if isSearching {
@@ -529,7 +530,7 @@ struct AddFriendSheet: View {
                             .font(.largeTitle)
                             .foregroundStyle(.secondary)
                         Text("No users found")
-                            .font(.headline)
+                            .font(AppTheme.funFont(.headline, weight: .bold))
                             .foregroundStyle(.secondary)
                     }
                     .padding(40)
@@ -546,9 +547,9 @@ struct AddFriendSheet: View {
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(user.username)
-                                    .font(.subheadline.weight(.medium))
+                                    .font(AppTheme.funFont(.subheadline, weight: .bold))
                                 Text("Lv.\(user.level) • \(user.profession)")
-                                    .font(.caption)
+                                    .font(AppTheme.funFont(.caption, weight: .medium))
                                     .foregroundStyle(.secondary)
                             }
 
@@ -565,7 +566,7 @@ struct AddFriendSheet: View {
                                 }
                             } label: {
                                 Text("Add")
-                                    .font(.caption.bold())
+                                    .font(AppTheme.funFont(.caption, weight: .heavy))
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 6)

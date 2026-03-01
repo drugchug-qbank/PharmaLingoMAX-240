@@ -29,20 +29,20 @@ struct FillBlankQuestionView: View {
             if let selected = quizVM.selectedAnswer {
                 HStack {
                     Text("Your answer:")
-                        .font(.subheadline)
+                        .font(AppTheme.funFont(.subheadline, weight: .medium))
                         .foregroundStyle(.secondary)
                     Text(selected)
-                        .font(.headline)
+                        .font(AppTheme.funFont(.headline, weight: .bold))
                         .foregroundStyle(AppTheme.primaryBlue)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(AppTheme.primaryBlue.opacity(0.1))
-                        .clipShape(.rect(cornerRadius: 10))
+                        .background(AppTheme.primaryBlue.opacity(0.12))
+                        .clipShape(.rect(cornerRadius: 12))
                 }
             } else {
                 HStack {
-                    Text("Drag an option to fill the blank")
-                        .font(.subheadline)
+                    Text("Tap an option to fill the blank")
+                        .font(AppTheme.funFont(.subheadline, weight: .medium))
                         .foregroundStyle(.secondary)
                 }
                 .padding(.vertical, 8)
@@ -107,21 +107,21 @@ struct SelectAllQuestionView: View {
                     } label: {
                         HStack(spacing: 12) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(checkboxBorderColor(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered), lineWidth: 2)
-                                    .frame(width: 24, height: 24)
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(checkboxBorderColor(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered), lineWidth: 2.5)
+                                    .frame(width: 26, height: 26)
                                 if isSelected {
-                                    RoundedRectangle(cornerRadius: 6)
+                                    RoundedRectangle(cornerRadius: 8)
                                         .fill(checkboxFillColor(isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered))
-                                        .frame(width: 24, height: 24)
+                                        .frame(width: 26, height: 26)
                                     Image(systemName: "checkmark")
-                                        .font(.caption.bold())
+                                        .font(AppTheme.funFont(.caption, weight: .heavy))
                                         .foregroundStyle(.white)
                                 }
                             }
 
                             Text(option)
-                                .font(.body)
+                                .font(AppTheme.funFont(.body, weight: .medium))
                                 .foregroundStyle(.primary)
                                 .multilineTextAlignment(.leading)
 
@@ -139,10 +139,10 @@ struct SelectAllQuestionView: View {
                         }
                         .padding(14)
                         .background(selectAllBackground(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered))
-                        .clipShape(.rect(cornerRadius: 12))
+                        .clipShape(.rect(cornerRadius: 14))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(selectAllBorder(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered), lineWidth: 2)
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(selectAllBorder(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered), lineWidth: 2.5)
                         )
                     }
                     .buttonStyle(.plain)
@@ -173,16 +173,16 @@ struct SelectAllQuestionView: View {
         if showResult && isCorrect {
             return AppTheme.successGreen.opacity(0.05)
         }
-        return isSelected ? AppTheme.primaryBlue.opacity(0.05) : Color(.tertiarySystemFill)
+        return isSelected ? AppTheme.primaryBlue.opacity(0.06) : Color(.tertiarySystemFill)
     }
 
     private func selectAllBorder(isSelected: Bool, isCorrect: Bool, showResult: Bool) -> Color {
         if showResult {
-            if isCorrect { return AppTheme.successGreen.opacity(0.5) }
-            if isSelected && !isCorrect { return AppTheme.heartRed.opacity(0.5) }
+            if isCorrect { return AppTheme.successGreen.opacity(0.6) }
+            if isSelected && !isCorrect { return AppTheme.heartRed.opacity(0.6) }
             return .clear
         }
-        return isSelected ? AppTheme.primaryBlue.opacity(0.5) : .clear
+        return isSelected ? AppTheme.primaryBlue.opacity(0.6) : .clear
     }
 }
 
@@ -192,8 +192,8 @@ struct MatchingQuestionView: View {
     var body: some View {
         if let question = quizVM.currentQuestion {
             VStack(spacing: 16) {
-                Text("Tap a term on the left, then its match on the right")
-                    .font(.caption)
+                Text("Tap a term, then its match")
+                    .font(AppTheme.funFont(.caption, weight: .bold))
                     .foregroundStyle(.secondary)
 
                 HStack(alignment: .top, spacing: 12) {
@@ -207,16 +207,16 @@ struct MatchingQuestionView: View {
                                 quizVM.selectMatchItem(pair.left, isLeft: true)
                             } label: {
                                 Text(pair.left)
-                                    .font(.subheadline.weight(.medium))
+                                    .font(AppTheme.funFont(.subheadline, weight: .semibold))
                                     .foregroundStyle(isMatched ? .white : .primary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .padding(.horizontal, 8)
                                     .background(matchLeftColor(isMatched: isMatched, isSelected: isSelectedLeft, pair: pair))
-                                    .clipShape(.rect(cornerRadius: 10))
+                                    .clipShape(.rect(cornerRadius: 12))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(isSelectedLeft ? AppTheme.primaryBlue : .clear, lineWidth: 2)
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(isSelectedLeft ? AppTheme.primaryBlue : .clear, lineWidth: 2.5)
                                     )
                             }
                             .buttonStyle(.plain)
@@ -232,13 +232,13 @@ struct MatchingQuestionView: View {
                                 quizVM.selectMatchItem(right, isLeft: false)
                             } label: {
                                 Text(right)
-                                    .font(.subheadline.weight(.medium))
+                                    .font(AppTheme.funFont(.subheadline, weight: .semibold))
                                     .foregroundStyle(isMatched ? .white : .primary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .padding(.horizontal, 8)
                                     .background(matchRightColor(isMatched: isMatched, right: right))
-                                    .clipShape(.rect(cornerRadius: 10))
+                                    .clipShape(.rect(cornerRadius: 12))
                             }
                             .buttonStyle(.plain)
                         }
@@ -251,9 +251,12 @@ struct MatchingQuestionView: View {
                         quizVM.matchedPairs.removeAll()
                         quizVM.selectedMatchLeft = nil
                     } label: {
-                        Text("Reset Matches")
-                            .font(.caption)
-                            .foregroundStyle(AppTheme.heartRed)
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.counterclockwise")
+                            Text("Reset")
+                        }
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(AppTheme.heartRed)
                     }
                 }
             }
@@ -289,7 +292,7 @@ struct OptionButton: View {
         Button(action: action) {
             HStack {
                 Text(text)
-                    .font(.body.weight(.medium))
+                    .font(AppTheme.funFont(.body, weight: .semibold))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
                 Spacer()
@@ -300,10 +303,10 @@ struct OptionButton: View {
             }
             .padding(16)
             .background(backgroundColor)
-            .clipShape(.rect(cornerRadius: 12))
+            .clipShape(.rect(cornerRadius: 14))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(borderColor, lineWidth: 2)
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(borderColor, lineWidth: 2.5)
             )
         }
         .buttonStyle(.plain)
@@ -338,16 +341,17 @@ struct OptionChip: View {
     var body: some View {
         Button(action: action) {
             Text(text)
-                .font(.subheadline.weight(.medium))
+                .font(AppTheme.funFont(.subheadline, weight: .bold))
                 .foregroundStyle(isSelected ? .white : .primary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
                 .background(chipBackground)
-                .clipShape(.rect(cornerRadius: 12))
+                .clipShape(.rect(cornerRadius: 14))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(chipBorder, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(chipBorder, lineWidth: 2.5)
                 )
+                .shadow(color: isSelected ? chipBackground.opacity(0.3) : .clear, radius: 4, y: 2)
         }
         .buttonStyle(.plain)
     }

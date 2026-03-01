@@ -9,18 +9,7 @@ struct PracticeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 0) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Practice")
-                            .font(.largeTitle.bold())
-                            .foregroundStyle(.white)
-                        Text("Strengthen your knowledge!")
-                            .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.8))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.vertical, 16)
-                    .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
+                    FunPageHeader(title: "Practice", subtitle: "Strengthen your knowledge!", icon: "brain.head.profile.fill")
 
                     VStack(spacing: 14) {
                         PracticeCard(
@@ -62,12 +51,7 @@ struct PracticeView: View {
                         .cardStyle()
 
                         VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .foregroundStyle(AppTheme.accentOrange)
-                                Text("Review Mistakes")
-                                    .font(.headline)
-                            }
+                            FunSectionHeader(icon: "exclamationmark.triangle.fill", title: "Review Mistakes", color: AppTheme.accentOrange)
 
                             let mistakeCount = gameVM.questionsAnswered - gameVM.questionsCorrect
                             HStack(spacing: 12) {
@@ -77,9 +61,9 @@ struct PracticeView: View {
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("\(mistakeCount) mistakes this week")
-                                        .font(.subheadline.weight(.medium))
+                                        .font(AppTheme.funFont(.subheadline, weight: .semibold))
                                     Text("\(max(0, mistakeCount / 3)) drugs to review")
-                                        .font(.caption)
+                                        .font(AppTheme.funFont(.caption, weight: .medium))
                                         .foregroundStyle(.secondary)
                                 }
 
@@ -91,12 +75,12 @@ struct PracticeView: View {
                             }
                             .padding(14)
                             .background(Color(.tertiarySystemFill))
-                            .clipShape(.rect(cornerRadius: 12))
+                            .clipShape(.rect(cornerRadius: 14))
                         }
                         .padding(16)
                         .cardStyle()
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
@@ -138,10 +122,10 @@ struct PracticeCard: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
-                        .font(.headline.bold())
+                        .font(AppTheme.funFont(.headline, weight: .heavy))
                         .foregroundStyle(.white)
                     Text(subtitle)
-                        .font(.caption)
+                        .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.white.opacity(0.85))
                 }
 
@@ -149,7 +133,7 @@ struct PracticeCard: View {
 
                 if let count = badgeCount, count > 0 {
                     Text("\(count)")
-                        .font(.caption.bold())
+                        .font(AppTheme.funFont(.caption, weight: .heavy))
                         .foregroundStyle(gradient[0])
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -159,8 +143,8 @@ struct PracticeCard: View {
             }
             .padding(18)
             .background(LinearGradient(colors: gradient, startPoint: .leading, endPoint: .trailing))
-            .clipShape(.rect(cornerRadius: 16))
-            .shadow(color: gradient[0].opacity(0.3), radius: 8, x: 0, y: 4)
+            .clipShape(.rect(cornerRadius: 18))
+            .shadow(color: gradient[0].opacity(0.35), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
     }
@@ -178,9 +162,9 @@ struct PracticeStatItem: View {
                 .font(.title3)
                 .foregroundStyle(color)
             Text(value)
-                .font(.headline)
+                .font(AppTheme.funFont(.headline, weight: .heavy))
             Text(label)
-                .font(.caption)
+                .font(AppTheme.funFont(.caption, weight: .medium))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)

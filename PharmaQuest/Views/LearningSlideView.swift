@@ -16,15 +16,15 @@ struct LearningSlideView: View {
                 Button {
                     onComplete()
                 } label: {
-                    Image(systemName: "xmark")
-                        .font(.title3.bold())
-                        .foregroundStyle(.white)
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(.white.opacity(0.8))
                 }
 
                 Spacer()
 
                 Text("\(currentSlide + 1) of \(slides.count)")
-                    .font(.subheadline.bold())
+                    .font(AppTheme.funFont(.subheadline, weight: .bold))
                     .foregroundStyle(.white.opacity(0.8))
 
                 Spacer()
@@ -37,12 +37,14 @@ struct LearningSlideView: View {
                 ZStack(alignment: .leading) {
                     Rectangle().fill(Color.white.opacity(0.3))
                     Rectangle()
-                        .fill(AppTheme.warningYellow)
+                        .fill(
+                            LinearGradient(colors: [AppTheme.warningYellow, AppTheme.accentOrange], startPoint: .leading, endPoint: .trailing)
+                        )
                         .frame(width: geo.size.width * Double(currentSlide + 1) / Double(max(slides.count, 1)))
                         .animation(.spring(duration: 0.3), value: currentSlide)
                 }
             }
-            .frame(height: 4)
+            .frame(height: 6)
             .background(AppTheme.primaryBlue)
 
             if !slides.isEmpty {
@@ -55,12 +57,12 @@ struct LearningSlideView: View {
                                 .font(.title2)
                                 .foregroundStyle(AppTheme.warningYellow)
                             Text(slide.title)
-                                .font(.title2.bold())
+                                .font(AppTheme.funFont(.title2, weight: .heavy))
                         }
                         .padding(.top, 8)
 
                         Text(slide.content)
-                            .font(.body)
+                            .font(AppTheme.funFont(.body, weight: .medium))
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
 
@@ -72,27 +74,27 @@ struct LearningSlideView: View {
                                         .font(.subheadline)
                                         .padding(.top, 2)
                                     Text(point)
-                                        .font(.subheadline)
+                                        .font(AppTheme.funFont(.subheadline, weight: .medium))
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
                         }
                         .padding(16)
                         .background(AppTheme.successGreen.opacity(0.08))
-                        .clipShape(.rect(cornerRadius: 12))
+                        .clipShape(.rect(cornerRadius: 14))
 
                         if !slide.highlightText.isEmpty {
                             HStack {
                                 Image(systemName: "star.fill")
                                     .foregroundStyle(AppTheme.accentOrange)
                                 Text(slide.highlightText)
-                                    .font(.headline)
+                                    .font(AppTheme.funFont(.headline, weight: .bold))
                                     .foregroundStyle(AppTheme.darkBlue)
                             }
                             .padding(16)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(AppTheme.warningYellow.opacity(0.15))
-                            .clipShape(.rect(cornerRadius: 12))
+                            .clipShape(.rect(cornerRadius: 14))
                         }
                     }
                     .padding(20)
@@ -112,11 +114,11 @@ struct LearningSlideView: View {
                 }
             } label: {
                 Text(isLastSlide ? "Start Quiz" : "Continue")
-                    .font(.headline)
+                    .font(AppTheme.funFont(.headline, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(AppTheme.primaryBlue)
+                    .background(isLastSlide ? AppTheme.successGreen : AppTheme.primaryBlue)
                     .clipShape(.rect(cornerRadius: 14))
             }
             .padding(20)

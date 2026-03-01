@@ -9,10 +9,13 @@ struct QuizView: View {
     @State private var showNoHeartsAlert: Bool = false
     @State private var bounceCorrect: Bool = false
     @State private var shakeWrong: Bool = false
+    @State private var hasNoQuestions: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
-            if let quizVM {
+            if hasNoQuestions {
+                noQuestionsView
+            } else if let quizVM {
                 if showResult {
                     QuizResultView(quizVM: quizVM, gameVM: gameVM, onDismiss: { dismiss() })
                 } else {
@@ -25,7 +28,7 @@ struct QuizView: View {
                                 questionTypeLabel(question.type)
 
                                 Text(question.questionText)
-                                    .font(.title3.bold())
+                                    .font(AppTheme.funFont(.title3, weight: .bold))
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal)
                                     .fixedSize(horizontal: false, vertical: true)
@@ -43,13 +46,57 @@ struct QuizView: View {
                     bottomBar(quizVM: quizVM)
                 }
             } else {
-                ProgressView("Loading quiz...")
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.3)
+                    Text("Loading quiz...")
+                        .font(AppTheme.funFont(.headline, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .background(Color(.systemBackground))
         .onAppear { setupQuiz() }
         .sensoryFeedback(.success, trigger: bounceCorrect)
         .sensoryFeedback(.error, trigger: shakeWrong)
+        .alert("No Hearts!", isPresented: $showNoHeartsAlert) {
+            Button("OK") { dismiss() }
+        } message: {
+            Text("You need hearts to take a quiz. Wait for them to regenerate or visit the shop!")
+        }
+    }
+
+    private var noQuestionsView: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "hammer.fill")
+                .font(.system(size: 56))
+                .foregroundStyle(AppTheme.accentOrange)
+
+            Text("Coming Soon!")
+                .font(AppTheme.funFont(.title, weight: .heavy))
+
+            Text("Questions for \"\(subsection.title)\" are being crafted. Check back soon!")
+                .font(AppTheme.funFont(.body, weight: .medium))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+
+            Button {
+                dismiss()
+            } label: {
+                Text("Go Back")
+                    .font(AppTheme.funFont(.headline, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(AppTheme.primaryBlue)
+                    .clipShape(.rect(cornerRadius: 14))
+            }
+            .padding(.horizontal, 40)
+            .padding(.top, 8)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func setupQuiz() {
@@ -63,6 +110,12 @@ struct QuizView: View {
             completedSubsections: gameVM.completedSubsections,
             count: count
         )
+
+        if questions.isEmpty {
+            hasNoQuestions = true
+            return
+        }
+
         quizVM = QuizViewModel(
             subsectionId: subsection.id,
             title: subsection.title,
@@ -75,15 +128,15 @@ struct QuizView: View {
     private func quizHeader(quizVM: QuizViewModel) -> some View {
         HStack {
             Button { dismiss() } label: {
-                Image(systemName: "xmark")
-                    .font(.title3.bold())
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title2)
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
             Text(quizVM.subsectionTitle)
-                .font(.subheadline.bold())
+                .font(AppTheme.funFont(.subheadline, weight: .bold))
 
             Spacer()
 
@@ -105,14 +158,16 @@ struct QuizView: View {
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(Color(.systemFill))
-                    .frame(height: 8)
+                    .frame(height: 10)
                 Capsule()
-                    .fill(AppTheme.primaryBlue)
-                    .frame(width: max(geo.size.width * quizVM.progress, 8), height: 8)
+                    .fill(
+                        LinearGradient(colors: [AppTheme.successGreen, AppTheme.funTeal], startPoint: .leading, endPoint: .trailing)
+                    )
+                    .frame(width: max(geo.size.width * quizVM.progress, 10), height: 10)
                     .animation(.spring(duration: 0.4), value: quizVM.progress)
             }
         }
-        .frame(height: 8)
+        .frame(height: 10)
         .padding(.horizontal)
     }
 
@@ -129,11 +184,11 @@ struct QuizView: View {
         }()
 
         Text(text.uppercased())
-            .font(.caption.bold())
+            .font(AppTheme.funFont(.caption, weight: .heavy))
             .foregroundStyle(color)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 4)
-            .background(color.opacity(0.1))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 5)
+            .background(color.opacity(0.12))
             .clipShape(Capsule())
     }
 
@@ -160,12 +215,12 @@ struct QuizView: View {
                 Image(systemName: quizVM.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .font(.title2)
                 Text(quizVM.isCorrect ? "Correct!" : "Incorrect")
-                    .font(.headline)
+                    .font(AppTheme.funFont(.headline, weight: .heavy))
             }
             .foregroundStyle(quizVM.isCorrect ? AppTheme.successGreen : AppTheme.heartRed)
 
             Text(question.explanation)
-                .font(.subheadline)
+                .font(AppTheme.funFont(.subheadline, weight: .medium))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -173,7 +228,7 @@ struct QuizView: View {
         .padding(16)
         .frame(maxWidth: .infinity)
         .background((quizVM.isCorrect ? AppTheme.successGreen : AppTheme.heartRed).opacity(0.08))
-        .clipShape(.rect(cornerRadius: 12))
+        .clipShape(.rect(cornerRadius: 14))
         .padding(.horizontal)
         .transition(.scale.combined(with: .opacity))
     }
@@ -209,7 +264,7 @@ struct QuizView: View {
                     }
                 } label: {
                     Text("Continue")
-                        .font(.headline)
+                        .font(AppTheme.funFont(.headline, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
@@ -229,7 +284,7 @@ struct QuizView: View {
                     }
                 } label: {
                     Text("Check Answer")
-                        .font(.headline)
+                        .font(AppTheme.funFont(.headline, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)

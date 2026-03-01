@@ -32,20 +32,20 @@ struct QuizResultView: View {
 
                     VStack(spacing: 2) {
                         Text("\(Int(quizVM.score * 100))%")
-                            .font(.system(.title, design: .rounded, weight: .bold))
+                            .font(.system(.title, design: .rounded, weight: .heavy))
                             .foregroundStyle(passed ? AppTheme.successGreen : AppTheme.heartRed)
                         Text("\(quizVM.correctCount)/\(quizVM.totalQuestions)")
-                            .font(.caption)
+                            .font(AppTheme.funFont(.caption, weight: .bold))
                             .foregroundStyle(.secondary)
                     }
                 }
 
                 VStack(spacing: 8) {
                     Text(resultTitle)
-                        .font(.title.bold())
+                        .font(AppTheme.funFont(.title, weight: .heavy))
 
                     Text(resultSubtitle)
-                        .font(.subheadline)
+                        .font(AppTheme.funFont(.subheadline, weight: .medium))
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -75,7 +75,7 @@ struct QuizResultView: View {
                                 Image(systemName: "flame.fill")
                                     .foregroundStyle(AppTheme.accentOrange)
                                 Text("Best streak: \(quizVM.maxConsecutive) in a row!")
-                                    .font(.subheadline.bold())
+                                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
                                     .foregroundStyle(AppTheme.accentOrange)
                             }
                             .padding(10)
@@ -104,7 +104,7 @@ struct QuizResultView: View {
             Divider()
             Button(action: onDismiss) {
                 Text(passed ? "Continue" : "Try Again")
-                    .font(.headline)
+                    .font(AppTheme.funFont(.headline, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -152,16 +152,16 @@ struct RewardItem: View {
                 Image(systemName: icon)
                     .foregroundStyle(color)
                 Text(value)
-                    .font(.title3.bold())
+                    .font(AppTheme.funFont(.title3, weight: .heavy))
             }
             Text(label)
-                .font(.caption)
+                .font(AppTheme.funFont(.caption, weight: .bold))
                 .foregroundStyle(.secondary)
         }
         .frame(width: 100)
         .padding(.vertical, 12)
         .background(color.opacity(0.08))
-        .clipShape(.rect(cornerRadius: 12))
+        .clipShape(.rect(cornerRadius: 14))
     }
 }
 
@@ -173,15 +173,15 @@ struct StatBox: View {
     var body: some View {
         VStack(spacing: 4) {
             Text(value)
-                .font(.title3.bold())
+                .font(AppTheme.funFont(.title3, weight: .heavy))
                 .foregroundStyle(color)
             Text(label)
-                .font(.caption)
+                .font(AppTheme.funFont(.caption, weight: .bold))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(Color(.tertiarySystemFill))
-        .clipShape(.rect(cornerRadius: 10))
+        .clipShape(.rect(cornerRadius: 12))
     }
 }

@@ -32,11 +32,11 @@ struct AuthView: View {
                             .symbolEffect(.pulse, options: .repeating)
 
                         Text("PharmaLingo")
-                            .font(.system(.largeTitle, design: .rounded, weight: .heavy))
+                            .font(AppTheme.funFont(.largeTitle, weight: .heavy))
                             .foregroundStyle(.white)
 
                         Text("Master the Top 300 Drugs")
-                            .font(.subheadline)
+                            .font(AppTheme.funFont(.subheadline, weight: .bold))
                             .foregroundStyle(.white.opacity(0.8))
                     }
 
@@ -62,7 +62,7 @@ struct AuthView: View {
                                         .tint(.white)
                                 } else {
                                     Text(authVM.isSignUp ? "Create Account" : "Sign In")
-                                        .font(.headline)
+                                        .font(AppTheme.funFont(.headline, weight: .bold))
                                 }
                             }
                             .foregroundStyle(.white)
@@ -80,7 +80,7 @@ struct AuthView: View {
                             }
                         } label: {
                             Text(authVM.isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up")
-                                .font(.subheadline)
+                                .font(AppTheme.funFont(.subheadline, weight: .bold))
                                 .foregroundStyle(.white.opacity(0.9))
                         }
                     }
@@ -126,7 +126,7 @@ struct AuthView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("I am a...")
-                    .font(.subheadline.bold())
+                    .font(AppTheme.funFont(.subheadline, weight: .bold))
                     .foregroundStyle(.primary)
 
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -139,7 +139,7 @@ struct AuthView: View {
                                     Image(systemName: prof.iconName)
                                         .font(.caption)
                                     Text(prof.rawValue)
-                                        .font(.caption.bold())
+                                        .font(AppTheme.funFont(.caption, weight: .heavy))
                                 }
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
