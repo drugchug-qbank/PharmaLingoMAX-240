@@ -431,6 +431,42 @@ class GameViewModel {
     private let userDefaultsKey = "pharmaquest_game_state"
     private let masteryDefaultsKey = "pharmaquest_mastery_map"
 
+    func resetToDefaults() {
+        hearts = 5
+        coins = 50
+        totalXP = 0
+        currentStreak = 0
+        streakSaves = 0
+        subsectionStars = [:]
+        completedSubsections = []
+        hasSeenLearning = []
+        questionsAnswered = 0
+        questionsCorrect = 0
+        consecutiveCorrect = 0
+        lastActiveDate = nil
+        lastHeartLossDate = nil
+        avatarAnimal = "beaver"
+        avatarEyes = "normal"
+        avatarMouth = "smile"
+        avatarAccessory = "none"
+        avatarBodyColor = ""
+        avatarBgColor = ""
+        ownedAvatars = ["beaver", "bird", "bunny", "cat"]
+        ownedEyes = ["normal", "happy", "big"]
+        ownedMouths = ["smile", "bigSmile", "tiny"]
+        ownedAccessories = ["none"]
+        username = "Student"
+        selectedProfession = .pharmacy
+        schoolName = ""
+        dailyQuests = []
+        lastQuestDate = ""
+        masteryMap = [:]
+        streakExtended = false
+        previousStreak = 0
+        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        UserDefaults.standard.removeObject(forKey: masteryDefaultsKey)
+    }
+
     func recordQuestionAttempt(question: Question, isCorrect: Bool) {
         let key = question.masteryKey
         var record = masteryMap[key] ?? MasteryRecord()

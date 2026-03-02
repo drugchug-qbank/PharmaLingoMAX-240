@@ -271,6 +271,7 @@ struct ProfileView: View {
             .alert("Sign Out", isPresented: $showSignOutAlert) {
                 Button("Cancel", role: .cancel) {}
                 Button("Sign Out", role: .destructive) {
+                    gameVM.resetToDefaults()
                     Task {
                         try? await supabase.signOut()
                     }
