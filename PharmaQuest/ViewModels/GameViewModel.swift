@@ -139,12 +139,27 @@ class GameViewModel {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         let today = formatter.string(from: Date())
-        if lastQuestDate != today {
-            let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
-            let setIndex = dayOfYear % Self.allQuestPool.count
-            dailyQuests = Self.allQuestPool[setIndex]
+        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
+        let setIndex = dayOfYear % Self.allQuestPool.count
+        let isNewDay = lastQuestDate != today
+        dailyQuests = Self.allQuestPool[setIndex]
+        if isNewDay {
             lastQuestDate = today
             save()
+        } else {
+            restoreQuestProgress()
+        }
+    }
+
+    private func restoreQuestProgress() {
+        guard let state = UserDefaults.standard.dictionary(forKey: userDefaultsKey),
+              let questProgress = state["dailyQuestProgress"] as? [[String: Any]] else { return }
+        for progress in questProgress {
+            if let id = progress["id"] as? String, let current = progress["current"] as? Int {
+                if let idx = dailyQuests.firstIndex(where: { $0.id == id }) {
+                    dailyQuests[idx].current = current
+                }
+            }
         }
     }
 
