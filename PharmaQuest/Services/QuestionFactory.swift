@@ -198,15 +198,11 @@ struct QuestionFactory {
         guard !drug.indications.isEmpty else { return [] }
         var qs: [Question] = []
 
-        let vignetteData = buildVignette(for: drug)
+        let vignetteData = buildTightVignette(for: drug, allDrugs: allDrugs)
 
         if let vignette = vignetteData {
-            let otherDrugs = allDrugs.filter { $0.id != drug.id }
-            let distractorNames = Array(otherDrugs.shuffledStable(seed: drug.id + "vig1").prefix(3).map { "\($0.genericName) (\($0.brandName))" })
-            guard distractorNames.count >= 2 else { return qs }
-
             let correctLabel = "\(drug.genericName) (\(drug.brandName))"
-            let opts = (distractorNames + [correctLabel]).shuffledStable(seed: drug.id + "vig1_o")
+            let opts = (vignette.distractorLabels + [correctLabel]).shuffledStable(seed: drug.id + "vig1_o")
 
             qs.append(.multipleChoice(
                 id: "gen_\(sid)_\(drug.id)_vig_ind",
@@ -224,30 +220,25 @@ struct QuestionFactory {
         }
 
         if drug.indications.count >= 2 {
-            let secondIndication = drug.indications[1]
-            let otherDrugsWithout = allDrugs.filter { $0.id != drug.id && !$0.indications.contains(secondIndication) }
-            let distractors = Array(otherDrugsWithout.shuffledStable(seed: drug.id + "vig2").prefix(3).map { "\($0.genericName) (\($0.brandName))" })
-            guard distractors.count >= 2 else { return qs }
+            let secondVignette = buildSecondaryVignette(for: drug, allDrugs: allDrugs)
+            if let vignette = secondVignette {
+                let correctLabel = "\(drug.genericName) (\(drug.brandName))"
+                let opts = (vignette.distractorLabels + [correctLabel]).shuffledStable(seed: drug.id + "vig2_o")
 
-            let correctLabel = "\(drug.genericName) (\(drug.brandName))"
-            let opts = (distractors + [correctLabel]).shuffledStable(seed: drug.id + "vig2_o")
-
-            let vignetteMap = indicationToVignetteStem()
-            let stem = vignetteMap[secondIndication] ?? "A patient needs treatment for \(secondIndication)."
-
-            qs.append(.multipleChoice(
-                id: "gen_\(sid)_\(drug.id)_vig_ind2",
-                subsectionId: sid,
-                difficulty: .hard,
-                question: "\(stem) Which medication is appropriate?",
-                options: opts,
-                answer: correctLabel,
-                explanation: "\(drug.genericName) is indicated for \(secondIndication). Its full indication list includes: \(drug.indications.joined(separator: ", ")). Key takeaway: Many drugs have multiple approved indications — knowing secondary uses gives you a clinical edge.",
-                objective: .indication,
-                relatedDrugIds: [drug.id],
-                tags: [secondIndication, drug.drugClass],
-                source: .generated
-            ))
+                qs.append(.multipleChoice(
+                    id: "gen_\(sid)_\(drug.id)_vig_ind2",
+                    subsectionId: sid,
+                    difficulty: .hard,
+                    question: vignette.stem,
+                    options: opts,
+                    answer: correctLabel,
+                    explanation: "\(vignette.rationale) Key takeaway: \(vignette.takeaway)",
+                    objective: .indication,
+                    relatedDrugIds: [drug.id],
+                    tags: [drug.indications[1], drug.drugClass],
+                    source: .generated
+                ))
+            }
         }
 
         return qs
@@ -571,20 +562,147 @@ struct QuestionFactory {
         let stem: String
         let rationale: String
         let takeaway: String
+        let distractorLabels: [String]
     }
 
-    private func buildVignette(for drug: Drug) -> VignetteResult? {
+    private func buildTightVignette(for drug: Drug, allDrugs: [Drug]) -> VignetteResult? {
         guard let primaryIndication = drug.indications.first else { return nil }
 
-        let vignetteMap = indicationToVignetteStem()
-        let clinicalStem = vignetteMap[primaryIndication] ?? "A patient presents requiring treatment for \(primaryIndication)."
+        let sameClassDrugs = allDrugs.filter { $0.drugClass == drug.drugClass && $0.id != drug.id }
+        let differentClassDrugs = allDrugs.filter { $0.drugClass != drug.drugClass && $0.id != drug.id }
 
-        let seWarning = drug.sideEffects.isEmpty ? "" : " The prescriber should also counsel about potential adverse effects such as \(drug.sideEffects.prefix(2).joined(separator: " and "))."
+        var eliminationClues: [String] = []
+        var distractorLabels: [String] = []
+        var rationale = "\(drug.genericName) (\(drug.brandName)) is a \(drug.drugClass) indicated for \(primaryIndication)."
+
+        let uniqueIndications = drug.indications.filter { ind in
+            !sameClassDrugs.contains(where: { $0.indications.contains(ind) })
+        }
+        let uniqueSEs = drug.sideEffects.filter { se in
+            !sameClassDrugs.contains(where: { $0.sideEffects.contains(se) })
+        }
+        let uniquePearls = drug.clinicalPearls
+
+        if !differentClassDrugs.isEmpty {
+            let wrongClassDrug = differentClassDrugs.shuffledStable(seed: drug.id + "vig_wc").first!
+            distractorLabels.append("\(wrongClassDrug.genericName) (\(wrongClassDrug.brandName))")
+
+            if !wrongClassDrug.indications.contains(primaryIndication) {
+                eliminationClues.append("The patient needs treatment for \(primaryIndication), which rules out \(wrongClassDrug.drugClass) agents like \(wrongClassDrug.genericName).")
+            } else {
+                eliminationClues.append("\(wrongClassDrug.genericName) is a \(wrongClassDrug.drugClass), a different class than needed here.")
+            }
+        }
+
+        if sameClassDrugs.count >= 1 {
+            let classmate = sameClassDrugs.shuffledStable(seed: drug.id + "vig_cm").first!
+            let classmateLabel = "\(classmate.genericName) (\(classmate.brandName))"
+
+            if !distractorLabels.contains(classmateLabel) {
+                if let uniqueInd = uniqueIndications.first, !classmate.indications.contains(uniqueInd) {
+                    eliminationClues.append("Among \(drug.drugClass) drugs, \(drug.genericName) specifically has evidence for \(uniqueInd), unlike \(classmate.genericName).")
+                    distractorLabels.append(classmateLabel)
+                } else if let pearl = uniquePearls.first {
+                    eliminationClues.append("\(drug.genericName) is distinguished by: \(pearl).")
+                    distractorLabels.append(classmateLabel)
+                } else {
+                    distractorLabels.append(classmateLabel)
+                }
+            }
+        }
+
+        let remaining = (differentClassDrugs + sameClassDrugs)
+            .filter { d in !distractorLabels.contains("\(d.genericName) (\(d.brandName))") }
+            .shuffledStable(seed: drug.id + "vig_rem")
+        for d in remaining {
+            if distractorLabels.count >= 3 { break }
+            distractorLabels.append("\(d.genericName) (\(d.brandName))")
+        }
+
+        guard distractorLabels.count >= 2 else { return nil }
+
+        let vignetteMap = indicationToVignetteStem()
+        var stem = vignetteMap[primaryIndication] ?? "A patient presents requiring treatment for \(primaryIndication)."
+
+        var additionalClues: [String] = []
+
+        if let classmateInDistractors = sameClassDrugs.first(where: { d in distractorLabels.contains("\(d.genericName) (\(d.brandName))") }) {
+            let classmateUniqueSE = classmateInDistractors.sideEffects.first(where: { !drug.sideEffects.contains($0) })
+            let drugUniqueSE = drug.sideEffects.first(where: { !classmateInDistractors.sideEffects.contains($0) })
+
+            if let cuSE = classmateUniqueSE {
+                additionalClues.append("The patient has a history of \(cuSE.lowercased()), so certain agents should be avoided.")
+                rationale += " \(classmateInDistractors.genericName) is less appropriate because it is associated with \(cuSE.lowercased())."
+            } else if let duSE = drugUniqueSE, uniqueIndications.isEmpty {
+                additionalClues.append("The patient tolerates \(duSE.lowercased()) well based on prior use.")
+            }
+
+            if let uniqueInd = uniqueIndications.first, !classmateInDistractors.indications.contains(uniqueInd) {
+                additionalClues.append("The patient also has \(uniqueInd.lowercased()), making a dual-benefit agent preferred.")
+                rationale += " \(drug.genericName) covers both \(primaryIndication) and \(uniqueInd), providing dual benefit."
+            }
+        }
+
+        if let wrongClassDrug = differentClassDrugs.first(where: { d in distractorLabels.contains("\(d.genericName) (\(d.brandName))") }) {
+            if !wrongClassDrug.indications.contains(primaryIndication) {
+                rationale += " \(wrongClassDrug.genericName) is a \(wrongClassDrug.drugClass) not indicated for \(primaryIndication)."
+            }
+        }
+
+        if !additionalClues.isEmpty {
+            stem += " " + additionalClues.joined(separator: " ")
+        }
+        stem += " Which of the following medications would be most appropriate?"
+
+        let takeaway: String
+        if !uniqueIndications.isEmpty {
+            takeaway = "When multiple drugs in the same class are options, look for unique indications or patient-specific factors (comorbidities, side effect history) to narrow the choice."
+        } else if !uniqueSEs.isEmpty {
+            takeaway = "Patient history of side effects can eliminate otherwise appropriate drugs. Always check tolerability before selecting an agent."
+        } else {
+            takeaway = "Match the clinical scenario details — indication, comorbidities, and tolerability — to find the best-fit drug."
+        }
+
+        return VignetteResult(stem: stem, rationale: rationale, takeaway: takeaway, distractorLabels: Array(distractorLabels.prefix(3)))
+    }
+
+    private func buildSecondaryVignette(for drug: Drug, allDrugs: [Drug]) -> VignetteResult? {
+        guard drug.indications.count >= 2 else { return nil }
+        let secondIndication = drug.indications[1]
+
+        let otherDrugsWithout = allDrugs.filter { $0.id != drug.id && !$0.indications.contains(secondIndication) }
+        guard otherDrugsWithout.count >= 2 else { return nil }
+
+        let distractors = Array(otherDrugsWithout.shuffledStable(seed: drug.id + "vig2d").prefix(3))
+        let distractorLabels = distractors.map { "\($0.genericName) (\($0.brandName))" }
+        guard distractorLabels.count >= 2 else { return nil }
+
+        let vignetteMap = indicationToVignetteStem()
+        var stem = vignetteMap[secondIndication] ?? "A patient needs treatment for \(secondIndication)."
+
+        var eliminationNotes: [String] = []
+        for d in distractors.prefix(2) {
+            if !d.indications.contains(secondIndication) {
+                eliminationNotes.append("\(d.genericName) (\(d.drugClass)) is not indicated for \(secondIndication).")
+            }
+        }
+
+        if drug.indications.contains(drug.indications[0]) && drug.indications[0] != secondIndication {
+            stem += " The patient also has \(drug.indications[0].lowercased()), making a single agent that covers both conditions ideal."
+        }
+
+        stem += " Which medication is most appropriate?"
+
+        var rationale = "\(drug.genericName) is indicated for \(secondIndication) and also covers \(drug.indications[0])."
+        if !eliminationNotes.isEmpty {
+            rationale += " " + eliminationNotes.joined(separator: " ")
+        }
 
         return VignetteResult(
-            stem: "\(clinicalStem) Which of the following medications would be most appropriate?",
-            rationale: "\(drug.genericName) (\(drug.brandName)) is a \(drug.drugClass) indicated for \(primaryIndication).\(seWarning)",
-            takeaway: "Match the clinical scenario to the drug's primary indication and class to identify the best therapeutic choice."
+            stem: stem,
+            rationale: rationale,
+            takeaway: "When a patient has multiple conditions, prefer a single agent that addresses more than one — reducing polypharmacy while maximizing therapeutic benefit.",
+            distractorLabels: Array(distractorLabels.prefix(3))
         )
     }
 

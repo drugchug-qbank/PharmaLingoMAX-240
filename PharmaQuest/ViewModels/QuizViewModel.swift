@@ -9,9 +9,9 @@ class QuizViewModel {
     var currentIndex: Int = 0
     var selectedAnswer: String?
     var selectedAnswers: Set<String> = []
-    var matchedPairs: [String: String] = [:]
+    var matchedPairs: [String: Int] = [:]
     var selectedMatchLeft: String?
-    var shuffledRightOptions: [String] = []
+    var shuffledRightOptions: [(index: Int, value: String)] = []
     var shuffledOptions: [String] = []
     var hasAnswered: Bool = false
     var isCorrect: Bool = false
@@ -55,7 +55,8 @@ class QuizViewModel {
             return
         }
         if q.type == .matching {
-            shuffledRightOptions = q.matchingPairs.map(\.right).shuffled()
+            let rights = q.matchingPairs.map(\.right).shuffled()
+            shuffledRightOptions = rights.enumerated().map { (index: $0.offset, value: $0.element) }
             shuffledOptions = []
         } else if !q.options.isEmpty {
             shuffledOptions = q.options.shuffled()
@@ -76,9 +77,7 @@ class QuizViewModel {
         case .selectAll:
             isCorrect = selectedAnswers == question.correctAnswers
         case .matching:
-            isCorrect = question.matchingPairs.allSatisfy { pair in
-                matchedPairs[pair.left] == pair.right
-            }
+            isCorrect = validateMatchingAnswer(question: question)
         }
 
         if isCorrect {
@@ -151,12 +150,35 @@ class QuizViewModel {
         }
     }
 
-    func selectMatchItem(_ item: String, isLeft: Bool) {
+    func selectMatchItem(_ item: String, isLeft: Bool, rightIndex: Int? = nil) {
         if isLeft {
             selectedMatchLeft = item
-        } else if let left = selectedMatchLeft {
-            matchedPairs[left] = item
+        } else if let left = selectedMatchLeft, let idx = rightIndex {
+            matchedPairs[left] = idx
             selectedMatchLeft = nil
         }
+    }
+
+    func rightValueForLeft(_ left: String) -> String? {
+        guard let idx = matchedPairs[left] else { return nil }
+        return shuffledRightOptions.first(where: { $0.index == idx })?.value
+    }
+
+    func isRightIndexMatched(_ index: Int) -> Bool {
+        matchedPairs.values.contains(index)
+    }
+
+    private func validateMatchingAnswer(question: Question) -> Bool {
+        let pairs = question.matchingPairs
+        guard matchedPairs.count == pairs.count else { return false }
+
+        var usedRightIndices = Set<Int>()
+        for pair in pairs {
+            guard let matchedIdx = matchedPairs[pair.left] else { return false }
+            let matchedValue = shuffledRightOptions.first(where: { $0.index == matchedIdx })?.value
+            guard matchedValue == pair.right else { return false }
+            usedRightIndices.insert(matchedIdx)
+        }
+        return usedRightIndices.count == pairs.count
     }
 }

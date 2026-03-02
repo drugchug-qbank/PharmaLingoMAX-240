@@ -224,20 +224,20 @@ struct MatchingQuestionView: View {
                     }
 
                     VStack(spacing: 8) {
-                        ForEach(quizVM.shuffledRightOptions, id: \.self) { right in
-                            let isMatched = quizVM.matchedPairs.values.contains(right)
+                        ForEach(quizVM.shuffledRightOptions, id: \.index) { item in
+                            let isMatched = quizVM.isRightIndexMatched(item.index)
 
                             Button {
                                 guard !quizVM.hasAnswered else { return }
-                                quizVM.selectMatchItem(right, isLeft: false)
+                                quizVM.selectMatchItem(item.value, isLeft: false, rightIndex: item.index)
                             } label: {
-                                Text(right)
+                                Text(item.value)
                                     .font(AppTheme.funFont(.subheadline, weight: .semibold))
                                     .foregroundStyle(isMatched ? .white : .primary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .padding(.horizontal, 8)
-                                    .background(matchRightColor(isMatched: isMatched, right: right))
+                                    .background(matchRightColor(isMatched: isMatched, rightIndex: item.index))
                                     .clipShape(.rect(cornerRadius: 12))
                             }
                             .buttonStyle(.plain)
@@ -265,17 +265,21 @@ struct MatchingQuestionView: View {
 
     private func matchLeftColor(isMatched: Bool, isSelected: Bool, pair: MatchingPair) -> Color {
         if quizVM.hasAnswered {
-            let isCorrectMatch = quizVM.matchedPairs[pair.left] == pair.right
+            let matchedValue = quizVM.rightValueForLeft(pair.left)
+            let isCorrectMatch = matchedValue == pair.right
             return isMatched ? (isCorrectMatch ? AppTheme.successGreen : AppTheme.heartRed) : Color(.tertiarySystemFill)
         }
         return isMatched ? AppTheme.primaryBlue : Color(.tertiarySystemFill)
     }
 
-    private func matchRightColor(isMatched: Bool, right: String) -> Color {
+    private func matchRightColor(isMatched: Bool, rightIndex: Int) -> Color {
         if quizVM.hasAnswered && isMatched {
-            let matchedLeft = quizVM.matchedPairs.first { $0.value == right }?.key
-            let correctPair = quizVM.currentQuestion?.matchingPairs.first { $0.left == matchedLeft }
-            return correctPair?.right == right ? AppTheme.successGreen : AppTheme.heartRed
+            let matchedLeft = quizVM.matchedPairs.first { $0.value == rightIndex }?.key
+            if let left = matchedLeft {
+                let correctPair = quizVM.currentQuestion?.matchingPairs.first { $0.left == left }
+                let rightValue = quizVM.shuffledRightOptions.first(where: { $0.index == rightIndex })?.value
+                return correctPair?.right == rightValue ? AppTheme.successGreen : AppTheme.heartRed
+            }
         }
         return isMatched ? AppTheme.primaryBlue : Color(.tertiarySystemFill)
     }
