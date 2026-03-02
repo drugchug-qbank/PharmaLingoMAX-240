@@ -141,7 +141,7 @@ struct ProfileView: View {
                             .buttonStyle(.plain)
                         }
                         .padding(16)
-                        .cardStyle()
+                        .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.5))
 
                         VStack(alignment: .leading, spacing: 12) {
                             Text("YOUR SCHOOL")
@@ -171,12 +171,12 @@ struct ProfileView: View {
                             .buttonStyle(.plain)
                         }
                         .padding(16)
-                        .cardStyle()
+                        .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
 
                         VStack(alignment: .leading, spacing: 12) {
                             Text("ACHIEVEMENTS")
                                 .font(AppTheme.funFont(.caption, weight: .heavy))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(AppTheme.heartRed)
 
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                 AchievementBadge(icon: "flame.fill", title: "On Fire", subtitle: "7-day streak", isUnlocked: gameVM.currentStreak >= 7)
@@ -188,7 +188,7 @@ struct ProfileView: View {
                             }
                         }
                         .padding(16)
-                        .cardStyle()
+                        .cardStyle(borderColor: AppTheme.heartRed.opacity(0.5))
 
                         Button {
                             showSignOutAlert = true

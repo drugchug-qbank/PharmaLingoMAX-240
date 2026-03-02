@@ -60,6 +60,10 @@ struct RanksView: View {
                         .frame(maxWidth: .infinity)
                         .background(.white.opacity(0.15))
                         .clipShape(.rect(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(.white.opacity(0.6), lineWidth: 3)
+                        )
                         .padding(.horizontal)
 
                         HStack(spacing: 20) {
@@ -106,6 +110,10 @@ struct RanksView: View {
                         .frame(maxWidth: .infinity)
                         .background(.white.opacity(0.1))
                         .clipShape(.rect(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(.white.opacity(0.6), lineWidth: 3)
+                        )
                         .padding(.horizontal)
                     }
                     .padding(.vertical, 16)
@@ -135,6 +143,10 @@ struct RanksView: View {
                         .padding(4)
                         .background(Color(.tertiarySystemFill))
                         .clipShape(.rect(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(AppTheme.primaryBlue.opacity(0.5), lineWidth: 3)
+                        )
 
                         switch selectedTab {
                         case .league:

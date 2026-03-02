@@ -725,7 +725,167 @@ struct DrugDataService {
             subsections: [m8Sub8a, m8Sub8b, m8Sub8c, m8Mastery]
         )
 
-        self.modules = [module1, module2, module3, module4, module5, module6, module7, module8]
+        let m9Sub9a = Subsection(
+            id: "9a", moduleId: "m9", code: "9a",
+            title: "Corticosteroids & DMARDs",
+            description: "Prednisone, methotrexate, and biologics",
+            iconName: "figure.walk",
+            drugs: [
+                Drug(id: "d163", genericName: "Prednisone", brandName: "Deltasone", drugClass: "Corticosteroid", suffix: "", indications: ["Inflammatory conditions", "Autoimmune diseases", "Asthma exacerbations", "Transplant rejection"], sideEffects: ["Hyperglycemia", "Osteoporosis", "Adrenal suppression", "Cushing syndrome", "Immunosuppression"], clinicalPearls: ["Taper slowly if used >2 weeks", "Take in the morning to mimic cortisol cycle", "Monitor blood glucose"]),
+                Drug(id: "d164", genericName: "Methylprednisolone", brandName: "Medrol/Solu-Medrol", drugClass: "Corticosteroid", suffix: "", indications: ["Acute inflammation", "MS exacerbations", "Transplant rejection"], sideEffects: ["Hyperglycemia", "Insomnia", "GI upset"], clinicalPearls: ["IV (Solu-Medrol) for acute flares", "Medrol Dosepak for short courses"]),
+                Drug(id: "d165", genericName: "Dexamethasone", brandName: "Decadron", drugClass: "Corticosteroid", suffix: "", indications: ["Cerebral edema", "Croup", "Chemotherapy N/V", "COVID-19"], sideEffects: ["Hyperglycemia", "Insomnia", "Immunosuppression"], clinicalPearls: ["Most potent corticosteroid", "Long half-life (36-72 hours)", "No mineralocorticoid activity"]),
+                Drug(id: "d166", genericName: "Hydrocortisone", brandName: "Cortef/Solu-Cortef", drugClass: "Corticosteroid", suffix: "", indications: ["Adrenal insufficiency", "Inflammatory conditions"], sideEffects: ["Fluid retention", "Hyperglycemia"], clinicalPearls: ["Physiologic replacement for adrenal insufficiency", "Most mineralocorticoid activity of corticosteroids"]),
+                Drug(id: "d167", genericName: "Methotrexate", brandName: "Trexall/Rheumatrex", drugClass: "DMARD / Antimetabolite", suffix: "", indications: ["Rheumatoid arthritis", "Psoriasis", "Ectopic pregnancy", "Cancer"], sideEffects: ["Hepatotoxicity", "Bone marrow suppression", "Mucositis", "Pulmonary fibrosis", "Teratogenic"], clinicalPearls: ["Take folic acid to reduce side effects", "Weekly dosing for RA (NOT daily)", "Monitor CBC, LFTs, renal function"]),
+                Drug(id: "d168", genericName: "Hydroxychloroquine", brandName: "Plaquenil", drugClass: "DMARD", suffix: "", indications: ["RA", "SLE", "Malaria"], sideEffects: ["Retinal toxicity", "GI upset", "QT prolongation"], clinicalPearls: ["Annual eye exams required (retinal toxicity)", "One of few drugs safe in pregnancy for SLE"]),
+                Drug(id: "d169", genericName: "Adalimumab", brandName: "Humira", drugClass: "Anti-TNF Biologic", suffix: "", indications: ["RA", "Psoriasis", "Crohn's", "UC"], sideEffects: ["Infection risk", "Injection site reactions", "TB reactivation"], clinicalPearls: ["Most prescribed biologic worldwide", "Screen for TB before starting", "SubQ injection q2 weeks"]),
+                Drug(id: "d170", genericName: "Etanercept", brandName: "Enbrel", drugClass: "Anti-TNF Biologic", suffix: "", indications: ["RA", "Psoriasis", "Ankylosing spondylitis"], sideEffects: ["Infection risk", "Injection site reactions"], clinicalPearls: ["TNF receptor fusion protein", "SubQ injection weekly", "Screen for TB"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls9a_1", title: "Corticosteroids: Anti-inflammatory Powerhouses", content: "Corticosteroids suppress inflammation and immune function but have significant side effects.", bulletPoints: ["Taper slowly if used >2 weeks (adrenal suppression)", "Side effects: hyperglycemia, osteoporosis, Cushing's", "Potency: dexamethasone > methylprednisolone > prednisone > hydrocortisone", "Take in the morning to mimic natural cortisol"], highlightText: "Corticosteroids: TAPER if >2 weeks. Monitor glucose."),
+                LearningSlide(id: "ls9a_2", title: "DMARDs & Biologics for Autoimmune Disease", content: "Disease-modifying agents target the underlying immune process.", bulletPoints: ["Methotrexate: anchor drug for RA, give folic acid, weekly dosing", "Hydroxychloroquine: annual eye exams for retinal toxicity", "Anti-TNF biologics (adalimumab, etanercept): screen for TB", "All DMARDs/biologics increase infection risk"], highlightText: "MTX = weekly + folic acid | Anti-TNF = screen TB"),
+            ]
+        )
+
+        let m9Sub9b = Subsection(
+            id: "9b", moduleId: "m9", code: "9b",
+            title: "Osteoporosis & Gout Agents",
+            description: "Bisphosphonates, denosumab, allopurinol",
+            iconName: "figure.stand",
+            drugs: [
+                Drug(id: "d171", genericName: "Alendronate", brandName: "Fosamax", drugClass: "Bisphosphonate", suffix: "-dronate", indications: ["Osteoporosis", "Paget's disease"], sideEffects: ["Esophageal irritation", "Jaw osteonecrosis", "Atypical femur fractures"], clinicalPearls: ["Take in AM with full glass of water", "Stay upright 30 min after taking", "Weekly dosing available"]),
+                Drug(id: "d172", genericName: "Risedronate", brandName: "Actonel", drugClass: "Bisphosphonate", suffix: "-dronate", indications: ["Osteoporosis"], sideEffects: ["Esophageal irritation", "Musculoskeletal pain"], clinicalPearls: ["Weekly or monthly dosing", "Same administration rules as alendronate"]),
+                Drug(id: "d173", genericName: "Zoledronic acid", brandName: "Reclast", drugClass: "Bisphosphonate (IV)", suffix: "-dronate", indications: ["Osteoporosis", "Paget's disease", "Bone metastases"], sideEffects: ["Flu-like symptoms", "Renal impairment", "Jaw osteonecrosis"], clinicalPearls: ["IV once yearly for osteoporosis", "Check renal function before infusion", "Hydrate well before and after"]),
+                Drug(id: "d174", genericName: "Denosumab", brandName: "Prolia", drugClass: "RANK-L Inhibitor", suffix: "", indications: ["Osteoporosis", "Bone metastases (Xgeva)"], sideEffects: ["Hypocalcemia", "Jaw osteonecrosis", "Atypical fractures"], clinicalPearls: ["SubQ injection q6 months", "MUST not delay doses (rebound fractures)", "Check calcium and vitamin D levels"]),
+                Drug(id: "d175", genericName: "Teriparatide", brandName: "Forteo", drugClass: "PTH Analog", suffix: "", indications: ["Severe osteoporosis"], sideEffects: ["Hypercalcemia", "Orthostatic hypotension", "Leg cramps"], clinicalPearls: ["Anabolic (builds bone)", "Max 2 years of use", "Black Box: osteosarcoma in rats"]),
+                Drug(id: "d176", genericName: "Allopurinol", brandName: "Zyloprim", drugClass: "Xanthine Oxidase Inhibitor", suffix: "", indications: ["Chronic gout", "Hyperuricemia", "Tumor lysis syndrome prophylaxis"], sideEffects: ["Rash", "SJS/TEN", "Hepatotoxicity"], clinicalPearls: ["Start low, go slow", "HLA-B*5801 testing in high-risk populations", "Do NOT start during acute gout flare"]),
+                Drug(id: "d177", genericName: "Febuxostat", brandName: "Uloric", drugClass: "Xanthine Oxidase Inhibitor", suffix: "", indications: ["Chronic gout"], sideEffects: ["CV events", "Hepatotoxicity", "Rash"], clinicalPearls: ["Alternative to allopurinol", "Black Box: increased CV death risk", "No renal dose adjustment needed"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls9b_1", title: "Bisphosphonates: Bone Protection", content: "Bisphosphonates inhibit osteoclasts, reducing bone resorption.", bulletPoints: ["All end in -dronate (alendronate, risedronate, zoledronic acid)", "Oral: take AM, upright 30 min, full glass of water", "Rare but serious: jaw osteonecrosis, atypical femur fractures", "Zoledronic acid (Reclast): IV once yearly"], highlightText: "-dronate = Bisphosphonate. Upright 30 min!"),
+                LearningSlide(id: "ls9b_2", title: "Beyond Bisphosphonates & Gout Management", content: "Alternative osteoporosis and gout agents.", bulletPoints: ["Denosumab (Prolia): RANK-L inhibitor, SubQ q6 months", "Teriparatide (Forteo): anabolic agent, max 2 years", "Allopurinol: first-line urate-lowering, start low go slow", "Never start allopurinol during acute gout flare"], highlightText: "Allopurinol: NOT during acute flare | HLA-B*5801 testing"),
+            ]
+        )
+
+        let m9Sub9c = Subsection(
+            id: "9c", moduleId: "m9", code: "9c",
+            title: "Immunosuppressants",
+            description: "Transplant and autoimmune agents",
+            iconName: "shield.lefthalf.filled",
+            drugs: [
+                Drug(id: "d178", genericName: "Tacrolimus", brandName: "Prograf", drugClass: "Calcineurin Inhibitor", suffix: "", indications: ["Transplant rejection prophylaxis", "Atopic dermatitis (topical)"], sideEffects: ["Nephrotoxicity", "Hyperglycemia", "Tremor", "Hypertension", "Hyperkalemia"], clinicalPearls: ["Narrow therapeutic index", "Monitor trough levels", "Metabolized by CYP3A4"]),
+                Drug(id: "d179", genericName: "Cyclosporine", brandName: "Neoral/Sandimmune", drugClass: "Calcineurin Inhibitor", suffix: "", indications: ["Transplant rejection", "RA", "Psoriasis"], sideEffects: ["Nephrotoxicity", "Hypertension", "Gingival hyperplasia", "Hirsutism"], clinicalPearls: ["Neoral and Sandimmune are NOT interchangeable", "Monitor trough levels", "Avoid grapefruit (CYP3A4)"]),
+                Drug(id: "d180", genericName: "Mycophenolate mofetil", brandName: "CellCept", drugClass: "Antimetabolite", suffix: "", indications: ["Transplant rejection prophylaxis", "Lupus nephritis"], sideEffects: ["GI upset", "Bone marrow suppression", "Teratogenic"], clinicalPearls: ["REMS: pregnancy prevention required", "Monitor CBC regularly", "Part of most transplant regimens"]),
+                Drug(id: "d181", genericName: "Azathioprine", brandName: "Imuran", drugClass: "Antimetabolite", suffix: "", indications: ["Transplant rejection", "RA", "IBD", "SLE"], sideEffects: ["Bone marrow suppression", "Hepatotoxicity", "GI upset", "Infection risk"], clinicalPearls: ["Check TPMT before starting (toxicity risk)", "Avoid allopurinol (increases toxicity)", "Monitor CBC and LFTs"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls9c_1", title: "Calcineurin Inhibitors", content: "Tacrolimus and cyclosporine are cornerstones of transplant immunosuppression.", bulletPoints: ["Both cause nephrotoxicity (dose-limiting)", "Tacrolimus: more potent, causes diabetes", "Cyclosporine: gingival hyperplasia, hirsutism", "Both: monitor trough levels, CYP3A4 interactions"], highlightText: "Calcineurin inhibitors: nephrotoxicity + monitor levels"),
+                LearningSlide(id: "ls9c_2", title: "Antimetabolites in Transplant", content: "Mycophenolate and azathioprine prevent organ rejection.", bulletPoints: ["Mycophenolate (CellCept): first-line, teratogenic (REMS)", "Azathioprine (Imuran): check TPMT before starting", "Azathioprine + allopurinol = dangerous interaction", "Both: monitor CBC for bone marrow suppression"], highlightText: "CellCept: REMS | Imuran: check TPMT, avoid allopurinol"),
+            ]
+        )
+
+        let m9Mastery = Subsection(
+            id: "9d", moduleId: "m9", code: "9d",
+            title: "Mastery: Immune & Bone",
+            description: "30-question comprehensive review",
+            iconName: "trophy.fill",
+            drugs: [],
+            isMasteryQuiz: true,
+            learningSlides: []
+        )
+
+        let module9 = DrugModule(
+            id: "m9", number: 9,
+            title: "Immune & Bone",
+            subtitle: "Steroids, DMARDs & Osteoporosis",
+            iconName: "figure.walk",
+            accentColorHex: "00ACC1",
+            subsections: [m9Sub9a, m9Sub9b, m9Sub9c, m9Mastery]
+        )
+
+        let m10Sub10a = Subsection(
+            id: "10a", moduleId: "m10", code: "10a",
+            title: "Contraceptives & HRT",
+            description: "Oral contraceptives, IUDs, and hormone therapy",
+            iconName: "heart.circle.fill",
+            drugs: [
+                Drug(id: "d182", genericName: "Ethinyl estradiol/Norgestimate", brandName: "Ortho Tri-Cyclen", drugClass: "Combined Oral Contraceptive", suffix: "", indications: ["Contraception", "Acne"], sideEffects: ["VTE risk", "Headache", "Nausea", "Breast tenderness"], clinicalPearls: ["Estrogen + progestin combination", "Increased VTE risk (especially with smoking)", "Contraindicated if >35 and smoking"]),
+                Drug(id: "d183", genericName: "Norethindrone", brandName: "Micronor/Camila", drugClass: "Progestin-Only Pill", suffix: "", indications: ["Contraception"], sideEffects: ["Irregular bleeding", "Headache"], clinicalPearls: ["Mini-pill: take at same time daily", "Safe in breastfeeding", "No estrogen-related VTE risk"]),
+                Drug(id: "d184", genericName: "Medroxyprogesterone (depot)", brandName: "Depo-Provera", drugClass: "Injectable Progestin", suffix: "", indications: ["Contraception", "Endometriosis"], sideEffects: ["Weight gain", "Bone density loss", "Irregular bleeding"], clinicalPearls: ["IM injection every 3 months", "Black Box: bone density loss with long-term use", "Return to fertility may be delayed"]),
+                Drug(id: "d185", genericName: "Levonorgestrel IUD", brandName: "Mirena", drugClass: "Intrauterine Progestin", suffix: "", indications: ["Contraception", "Heavy menstrual bleeding"], sideEffects: ["Irregular bleeding", "Headache", "Ovarian cysts"], clinicalPearls: ["Effective 5-8 years depending on type", "Reduces menstrual bleeding", "Most effective reversible contraception"]),
+                Drug(id: "d186", genericName: "Conjugated estrogens", brandName: "Premarin", drugClass: "Estrogen", suffix: "", indications: ["Menopausal vasomotor symptoms", "Osteoporosis prevention", "Vaginal atrophy"], sideEffects: ["VTE risk", "Breast cancer risk", "Endometrial cancer (without progestin)"], clinicalPearls: ["Must add progestin if patient has uterus", "Lowest effective dose for shortest duration", "WHI trial changed HRT practice"]),
+                Drug(id: "d187", genericName: "Raloxifene", brandName: "Evista", drugClass: "SERM", suffix: "", indications: ["Osteoporosis prevention", "Breast cancer risk reduction"], sideEffects: ["VTE risk", "Hot flashes", "Leg cramps"], clinicalPearls: ["Estrogen agonist on bone, antagonist on breast/uterus", "Does NOT treat hot flashes (may worsen)", "Reduces breast cancer risk"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls10a_1", title: "Hormonal Contraception", content: "Contraceptives vary by hormone content, route, and duration.", bulletPoints: ["Combined (estrogen + progestin): highest efficacy pills but VTE risk", "Progestin-only: safe in breastfeeding and smokers >35", "Depo-Provera: q3 month injection, bone density loss", "Mirena IUD: most effective reversible contraception"], highlightText: "COC: no smoking >35 | IUD: most effective reversible"),
+                LearningSlide(id: "ls10a_2", title: "HRT & SERMs", content: "Hormone replacement for menopause and osteoporosis.", bulletPoints: ["Conjugated estrogens (Premarin): must add progestin if uterus present", "Lowest dose, shortest duration principle", "Raloxifene (Evista): SERM, bone agonist, breast antagonist", "Raloxifene does NOT help hot flashes"], highlightText: "HRT: add progestin if uterus | SERM: bone + breast"),
+            ]
+        )
+
+        let m10Sub10b = Subsection(
+            id: "10b", moduleId: "m10", code: "10b",
+            title: "Prostate & Urologic Agents",
+            description: "BPH, overactive bladder, and ED",
+            iconName: "cross.fill",
+            drugs: [
+                Drug(id: "d188", genericName: "Tamsulosin", brandName: "Flomax", drugClass: "Alpha-1 Blocker", suffix: "-osin", indications: ["BPH"], sideEffects: ["Orthostatic hypotension", "Dizziness", "Retrograde ejaculation", "Intraoperative floppy iris"], clinicalPearls: ["Most prescribed BPH medication", "Selective alpha-1A blocker", "Take 30 min after same meal daily"]),
+                Drug(id: "d189", genericName: "Finasteride", brandName: "Proscar/Propecia", drugClass: "5-Alpha Reductase Inhibitor", suffix: "-steride", indications: ["BPH", "Male pattern baldness"], sideEffects: ["Sexual dysfunction", "Decreased PSA", "Teratogenic"], clinicalPearls: ["Reduces prostate size over 6-12 months", "Lowers PSA by ~50% (double PSA for screening)", "Women should not handle crushed tablets"]),
+                Drug(id: "d190", genericName: "Dutasteride", brandName: "Avodart", drugClass: "5-Alpha Reductase Inhibitor", suffix: "-steride", indications: ["BPH"], sideEffects: ["Sexual dysfunction", "Decreased PSA"], clinicalPearls: ["Inhibits both type 1 and type 2 5-alpha reductase", "Longer half-life than finasteride", "Combination with tamsulosin (Jalyn)"]),
+                Drug(id: "d191", genericName: "Oxybutynin", brandName: "Ditropan", drugClass: "Anticholinergic", suffix: "", indications: ["Overactive bladder", "Urinary urgency/frequency"], sideEffects: ["Dry mouth", "Constipation", "Blurred vision", "Cognitive impairment in elderly"], clinicalPearls: ["Avoid in elderly (anticholinergic burden)", "Topical/transdermal forms have fewer side effects", "Extended-release preferred"]),
+                Drug(id: "d192", genericName: "Mirabegron", brandName: "Myrbetriq", drugClass: "Beta-3 Agonist", suffix: "", indications: ["Overactive bladder"], sideEffects: ["Hypertension", "UTI", "Headache"], clinicalPearls: ["Alternative to anticholinergics for OAB", "No anticholinergic side effects", "Monitor blood pressure"]),
+                Drug(id: "d193", genericName: "Sildenafil", brandName: "Viagra", drugClass: "PDE-5 Inhibitor", suffix: "-afil", indications: ["Erectile dysfunction", "Pulmonary arterial hypertension (Revatio)"], sideEffects: ["Headache", "Flushing", "Visual changes", "Hypotension"], clinicalPearls: ["NEVER combine with nitrates (severe hypotension)", "Also treats PAH as Revatio", "Onset 30-60 min, take on empty stomach"]),
+                Drug(id: "d194", genericName: "Tadalafil", brandName: "Cialis", drugClass: "PDE-5 Inhibitor", suffix: "-afil", indications: ["Erectile dysfunction", "BPH", "PAH"], sideEffects: ["Headache", "Back pain", "Flushing"], clinicalPearls: ["Longest acting PDE-5 inhibitor (36 hours)", "Daily low-dose option for BPH", "NEVER combine with nitrates"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls10b_1", title: "BPH Medications", content: "Two main drug classes treat benign prostatic hyperplasia.", bulletPoints: ["Alpha-1 blockers (-osin): tamsulosin, relax smooth muscle", "5-alpha reductase inhibitors (-steride): shrink prostate over months", "Combination therapy (Jalyn): dutasteride + tamsulosin", "Alpha blockers work fast; 5-ARIs take 6-12 months"], highlightText: "-osin = fast relief | -steride = shrinks prostate"),
+                LearningSlide(id: "ls10b_2", title: "OAB & Erectile Dysfunction", content: "Overactive bladder and ED have effective pharmacologic treatments.", bulletPoints: ["Oxybutynin: anticholinergic, avoid in elderly", "Mirabegron: beta-3 agonist alternative, no anticholinergic effects", "PDE-5 inhibitors (-afil): NEVER with nitrates", "Tadalafil: also treats BPH, longest acting"], highlightText: "PDE-5 + Nitrates = CONTRAINDICATED"),
+            ]
+        )
+
+        let m10Sub10c = Subsection(
+            id: "10c", moduleId: "m10", code: "10c",
+            title: "Vitamins, Antidotes & Misc",
+            description: "Essential supplements and emergency agents",
+            iconName: "leaf.fill",
+            drugs: [
+                Drug(id: "d195", genericName: "Vitamin D (cholecalciferol)", brandName: "D3", drugClass: "Vitamin", suffix: "", indications: ["Vitamin D deficiency", "Osteoporosis prevention"], sideEffects: ["Hypercalcemia (toxic doses)"], clinicalPearls: ["D3 preferred over D2", "Often given with calcium for bone health", "Goal 25-OH vitamin D >30 ng/mL"]),
+                Drug(id: "d196", genericName: "Iron (ferrous sulfate)", brandName: "Feosol", drugClass: "Iron Supplement", suffix: "", indications: ["Iron deficiency anemia"], sideEffects: ["Constipation", "Dark stools", "GI upset"], clinicalPearls: ["Take on empty stomach with vitamin C", "Separate from levothyroxine, antacids, and tetracyclines", "Liquid can stain teeth"]),
+                Drug(id: "d197", genericName: "Potassium chloride", brandName: "K-Dur/Klor-Con", drugClass: "Electrolyte", suffix: "", indications: ["Hypokalemia"], sideEffects: ["GI irritation", "Hyperkalemia"], clinicalPearls: ["Take with food and full glass of water", "Monitor K+ levels", "Wax-matrix tablets reduce GI irritation"]),
+                Drug(id: "d198", genericName: "Epinephrine", brandName: "EpiPen", drugClass: "Sympathomimetic", suffix: "", indications: ["Anaphylaxis", "Cardiac arrest", "Severe asthma"], sideEffects: ["Tachycardia", "Hypertension", "Tremor", "Anxiety"], clinicalPearls: ["First-line for anaphylaxis - IM thigh", "Autoinjector for patient self-administration", "ACLS: 1 mg IV q3-5 min for cardiac arrest"]),
+                Drug(id: "d199", genericName: "Atropine", brandName: "AtroPen", drugClass: "Anticholinergic", suffix: "", indications: ["Symptomatic bradycardia", "Organophosphate poisoning"], sideEffects: ["Tachycardia", "Dry mouth", "Urinary retention", "Mydriasis"], clinicalPearls: ["ACLS: first-line for symptomatic bradycardia", "Pre-op to reduce secretions", "Antidote for organophosphate/nerve agent poisoning"]),
+                Drug(id: "d200", genericName: "Flumazenil", brandName: "Romazicon", drugClass: "Benzodiazepine Antagonist", suffix: "", indications: ["Benzodiazepine overdose reversal"], sideEffects: ["Seizures", "Nausea", "Agitation"], clinicalPearls: ["Can precipitate seizures in benzo-dependent patients", "Short half-life: may need repeat doses", "Use cautiously if co-ingestion suspected"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls10c_1", title: "Essential Supplements", content: "Common vitamin and mineral supplements with important counseling points.", bulletPoints: ["Vitamin D3: goal >30 ng/mL, pair with calcium for bone health", "Iron: take on empty stomach + vitamin C, causes constipation", "Potassium: take with food, monitor levels", "Separate iron from levothyroxine and antacids"], highlightText: "Iron + Vitamin C = better absorption"),
+                LearningSlide(id: "ls10c_2", title: "Emergency Antidotes & Agents", content: "Know the key reversal agents and emergency drugs.", bulletPoints: ["Epinephrine: #1 for anaphylaxis, IM in thigh", "Atropine: symptomatic bradycardia, organophosphate poisoning", "Flumazenil: benzo reversal (seizure risk in dependent patients)", "Naloxone: opioid reversal (covered in Module 8)"], highlightText: "Epi = anaphylaxis | Atropine = bradycardia"),
+            ]
+        )
+
+        let m10Mastery = Subsection(
+            id: "10d", moduleId: "m10", code: "10d",
+            title: "Mastery: Reproductive & Misc",
+            description: "30-question comprehensive review",
+            iconName: "trophy.fill",
+            drugs: [],
+            isMasteryQuiz: true,
+            learningSlides: []
+        )
+
+        let module10 = DrugModule(
+            id: "m10", number: 10,
+            title: "Reproductive & Misc",
+            subtitle: "Hormones, Urology & Antidotes",
+            iconName: "leaf.fill",
+            accentColorHex: "AD1457",
+            subsections: [m10Sub10a, m10Sub10b, m10Sub10c, m10Mastery]
+        )
+
+        self.modules = [module1, module2, module3, module4, module5, module6, module7, module8, module9, module10]
 
         var bank: [String: [Question]] = [:]
 
@@ -1186,6 +1346,102 @@ struct DrugDataService {
             return mastery
         }()
 
+        bank["9a"] = [
+            .trueFalse(id: "q9a_1", subsectionId: "9a", question: "Corticosteroids should be tapered if used for more than 2 weeks.", answer: true, explanation: "Abrupt discontinuation after prolonged use can cause adrenal crisis."),
+            .multipleChoice(id: "q9a_2", subsectionId: "9a", question: "Which corticosteroid is the most potent?", options: ["Dexamethasone", "Prednisone", "Hydrocortisone", "Methylprednisolone"], answer: "Dexamethasone", explanation: "Dexamethasone is the most potent corticosteroid with the longest half-life."),
+            .fillBlank(id: "q9a_3", subsectionId: "9a", question: "The brand name of prednisone is _____.", options: ["Deltasone", "Medrol", "Decadron", "Cortef"], answer: "Deltasone", explanation: "Prednisone is sold as Deltasone."),
+            .multipleChoice(id: "q9a_4", subsectionId: "9a", question: "Methotrexate for RA is dosed:", options: ["Weekly", "Daily", "Twice daily", "Monthly"], answer: "Weekly", explanation: "MTX for RA is given WEEKLY. Daily dosing is a dangerous error."),
+            .trueFalse(id: "q9a_5", subsectionId: "9a", question: "Folic acid is given with methotrexate to reduce side effects.", answer: true, explanation: "Folic acid supplementation reduces MTX-related mucositis and cytopenias."),
+            .multipleChoice(id: "q9a_6", subsectionId: "9a", question: "Hydroxychloroquine requires monitoring of:", options: ["Eyes (retinal toxicity)", "Kidneys", "Liver only", "Blood glucose"], answer: "Eyes (retinal toxicity)", explanation: "Annual eye exams are required to screen for retinal toxicity."),
+            .fillBlank(id: "q9a_7", subsectionId: "9a", question: "The brand name of adalimumab is _____.", options: ["Humira", "Enbrel", "Remicade", "Plaquenil"], answer: "Humira", explanation: "Adalimumab is sold as Humira."),
+            .selectAll(id: "q9a_8", subsectionId: "9a", question: "Select ALL anti-TNF biologics:", options: ["Adalimumab", "Etanercept", "Infliximab", "Methotrexate"], correctAnswers: ["Adalimumab", "Etanercept", "Infliximab"], explanation: "Methotrexate is a DMARD, not a biologic anti-TNF agent."),
+            .matching(id: "q9a_9", subsectionId: "9a", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Prednisone", right: "Deltasone"), MatchingPair(left: "Methotrexate", right: "Trexall"), MatchingPair(left: "Adalimumab", right: "Humira"), MatchingPair(left: "Hydroxychloroquine", right: "Plaquenil")], explanation: "Key immunology drug brand-generic pairs."),
+            .multipleChoice(id: "q9a_10", subsectionId: "9a", question: "Before starting anti-TNF therapy, you must screen for:", options: ["Tuberculosis", "Diabetes", "Hypothyroidism", "Anemia"], answer: "Tuberculosis", explanation: "Anti-TNF agents can reactivate latent TB."),
+            .trueFalse(id: "q9a_11", subsectionId: "9a", difficulty: .medium, question: "Dexamethasone has significant mineralocorticoid activity.", answer: false, explanation: "Dexamethasone has virtually no mineralocorticoid activity."),
+        ]
+
+        bank["9b"] = [
+            .fillBlank(id: "q9b_1", subsectionId: "9b", question: "Bisphosphonates end in _____.", options: ["-dronate", "-statin", "-pril", "-olol"], answer: "-dronate", explanation: "The -dronate suffix identifies bisphosphonates."),
+            .trueFalse(id: "q9b_2", subsectionId: "9b", question: "Patients must stay upright for 30 minutes after taking oral bisphosphonates.", answer: true, explanation: "This prevents esophageal irritation and ulceration."),
+            .multipleChoice(id: "q9b_3", subsectionId: "9b", question: "The brand name of alendronate is:", options: ["Fosamax", "Actonel", "Reclast", "Prolia"], answer: "Fosamax", explanation: "Alendronate is sold as Fosamax."),
+            .multipleChoice(id: "q9b_4", subsectionId: "9b", question: "Denosumab (Prolia) is administered:", options: ["SubQ every 6 months", "Oral daily", "IV yearly", "IM monthly"], answer: "SubQ every 6 months", explanation: "Prolia is a subcutaneous injection given every 6 months."),
+            .trueFalse(id: "q9b_5", subsectionId: "9b", question: "Allopurinol should be started during an acute gout flare.", answer: false, explanation: "Starting allopurinol during acute gout can worsen the flare."),
+            .multipleChoice(id: "q9b_6", subsectionId: "9b", question: "Which genetic test should be done before starting allopurinol in high-risk populations?", options: ["HLA-B*5801", "CYP2C19", "TPMT", "HLA-B*1502"], answer: "HLA-B*5801", explanation: "HLA-B*5801 testing reduces risk of severe hypersensitivity reactions."),
+            .fillBlank(id: "q9b_7", subsectionId: "9b", question: "The brand name of allopurinol is _____.", options: ["Zyloprim", "Uloric", "Colcrys", "Fosamax"], answer: "Zyloprim", explanation: "Allopurinol is sold as Zyloprim."),
+            .selectAll(id: "q9b_8", subsectionId: "9b", question: "Select ALL bisphosphonates:", options: ["Alendronate", "Risedronate", "Zoledronic acid", "Denosumab"], correctAnswers: ["Alendronate", "Risedronate", "Zoledronic acid"], explanation: "Denosumab is a RANK-L inhibitor, not a bisphosphonate."),
+            .matching(id: "q9b_9", subsectionId: "9b", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Alendronate", right: "Fosamax"), MatchingPair(left: "Denosumab", right: "Prolia"), MatchingPair(left: "Allopurinol", right: "Zyloprim"), MatchingPair(left: "Teriparatide", right: "Forteo")], explanation: "Key bone and gout drug brand names."),
+            .multipleChoice(id: "q9b_10", subsectionId: "9b", difficulty: .hard, question: "Teriparatide (Forteo) is limited to how many years of use?", options: ["2 years", "5 years", "10 years", "No limit"], answer: "2 years", explanation: "Teriparatide is limited to 2 years due to osteosarcoma risk in animal studies."),
+        ]
+
+        bank["9c"] = [
+            .trueFalse(id: "q9c_1", subsectionId: "9c", question: "Both tacrolimus and cyclosporine can cause nephrotoxicity.", answer: true, explanation: "Nephrotoxicity is the dose-limiting side effect of both calcineurin inhibitors."),
+            .multipleChoice(id: "q9c_2", subsectionId: "9c", question: "The brand name of tacrolimus is:", options: ["Prograf", "Neoral", "CellCept", "Imuran"], answer: "Prograf", explanation: "Tacrolimus is sold as Prograf."),
+            .fillBlank(id: "q9c_3", subsectionId: "9c", question: "The brand name of mycophenolate mofetil is _____.", options: ["CellCept", "Prograf", "Imuran", "Neoral"], answer: "CellCept", explanation: "Mycophenolate mofetil is sold as CellCept."),
+            .multipleChoice(id: "q9c_4", subsectionId: "9c", question: "Before starting azathioprine, you should check:", options: ["TPMT levels", "CYP2C19", "HLA-B*5801", "INR"], answer: "TPMT levels", explanation: "Low TPMT activity increases risk of severe myelosuppression."),
+            .trueFalse(id: "q9c_5", subsectionId: "9c", question: "Azathioprine can be safely combined with allopurinol.", answer: false, explanation: "Allopurinol inhibits azathioprine metabolism, causing dangerous toxicity."),
+            .multipleChoice(id: "q9c_6", subsectionId: "9c", question: "Cyclosporine uniquely causes:", options: ["Gingival hyperplasia and hirsutism", "Diabetes", "Pulmonary fibrosis", "Retinal toxicity"], answer: "Gingival hyperplasia and hirsutism", explanation: "Gingival hyperplasia and hirsutism are distinctive cyclosporine side effects."),
+            .selectAll(id: "q9c_7", subsectionId: "9c", question: "Select ALL calcineurin inhibitors:", options: ["Tacrolimus", "Cyclosporine", "Mycophenolate", "Azathioprine"], correctAnswers: ["Tacrolimus", "Cyclosporine"], explanation: "Mycophenolate and azathioprine are antimetabolites."),
+            .matching(id: "q9c_8", subsectionId: "9c", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Tacrolimus", right: "Prograf"), MatchingPair(left: "Cyclosporine", right: "Neoral"), MatchingPair(left: "Mycophenolate", right: "CellCept"), MatchingPair(left: "Azathioprine", right: "Imuran")], explanation: "Key immunosuppressant brand-generic pairs."),
+            .fillBlank(id: "q9c_9", subsectionId: "9c", question: "The brand name of azathioprine is _____.", options: ["Imuran", "CellCept", "Prograf", "Neoral"], answer: "Imuran", explanation: "Azathioprine is sold as Imuran."),
+            .trueFalse(id: "q9c_10", subsectionId: "9c", difficulty: .medium, question: "Mycophenolate (CellCept) has a REMS for pregnancy prevention.", answer: true, explanation: "CellCept is teratogenic and requires a REMS program."),
+        ]
+
+        bank["9d"] = {
+            var mastery: [Question] = []
+            for (key, questions) in bank where key.hasPrefix("9") && key != "9d" {
+                mastery.append(contentsOf: questions.prefix(6))
+            }
+            return mastery
+        }()
+
+        bank["10a"] = [
+            .trueFalse(id: "q10a_1", subsectionId: "10a", question: "Combined oral contraceptives are contraindicated in women >35 who smoke.", answer: true, explanation: "Estrogen increases VTE risk, compounded by smoking and age >35."),
+            .multipleChoice(id: "q10a_2", subsectionId: "10a", question: "Which contraceptive is the most effective reversible method?", options: ["IUD (Mirena)", "Oral pill", "Depo-Provera", "Condom"], answer: "IUD (Mirena)", explanation: "IUDs have the highest efficacy among reversible contraceptives."),
+            .fillBlank(id: "q10a_3", subsectionId: "10a", question: "The brand name of levonorgestrel IUD is _____.", options: ["Mirena", "Depo-Provera", "Ortho Tri-Cyclen", "Evista"], answer: "Mirena", explanation: "The levonorgestrel IUD is sold as Mirena."),
+            .multipleChoice(id: "q10a_4", subsectionId: "10a", question: "When prescribing estrogen HRT to a woman with a uterus, you must also give:", options: ["Progestin", "Testosterone", "Thyroid hormone", "Vitamin D"], answer: "Progestin", explanation: "Unopposed estrogen increases endometrial cancer risk; progestin protects."),
+            .trueFalse(id: "q10a_5", subsectionId: "10a", question: "Raloxifene (Evista) helps treat hot flashes.", answer: false, explanation: "Raloxifene may actually worsen hot flashes. It's used for osteoporosis/breast cancer risk."),
+            .multipleChoice(id: "q10a_6", subsectionId: "10a", question: "Depo-Provera is given:", options: ["IM every 3 months", "Daily oral", "Weekly injection", "Yearly implant"], answer: "IM every 3 months", explanation: "Depo-Provera is an IM injection given every 3 months."),
+            .selectAll(id: "q10a_7", subsectionId: "10a", question: "Select ALL risks of combined oral contraceptives:", options: ["VTE", "Stroke", "Breast cancer", "Osteoporosis"], correctAnswers: ["VTE", "Stroke", "Breast cancer"], explanation: "COCs do not cause osteoporosis; they may be protective."),
+            .matching(id: "q10a_8", subsectionId: "10a", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Conjugated estrogens", right: "Premarin"), MatchingPair(left: "Raloxifene", right: "Evista"), MatchingPair(left: "Levonorgestrel IUD", right: "Mirena"), MatchingPair(left: "Depot medroxyprogesterone", right: "Depo-Provera")], explanation: "Key reproductive drug brand names."),
+            .fillBlank(id: "q10a_9", subsectionId: "10a", question: "The brand name of raloxifene is _____.", options: ["Evista", "Premarin", "Mirena", "Fosamax"], answer: "Evista", explanation: "Raloxifene is sold as Evista."),
+            .multipleChoice(id: "q10a_10", subsectionId: "10a", difficulty: .medium, question: "Which progestin-only method is safe during breastfeeding?", options: ["Norethindrone (Micronor)", "Ortho Tri-Cyclen", "Premarin", "Raloxifene"], answer: "Norethindrone (Micronor)", explanation: "Progestin-only pills are safe during breastfeeding."),
+        ]
+
+        bank["10b"] = [
+            .fillBlank(id: "q10b_1", subsectionId: "10b", question: "Alpha-1 blockers for BPH end in _____.", options: ["-osin", "-olol", "-pril", "-statin"], answer: "-osin", explanation: "Alpha-1 blockers like tamsulosin end in -osin."),
+            .multipleChoice(id: "q10b_2", subsectionId: "10b", question: "The brand name of tamsulosin is:", options: ["Flomax", "Proscar", "Avodart", "Ditropan"], answer: "Flomax", explanation: "Tamsulosin is sold as Flomax."),
+            .trueFalse(id: "q10b_3", subsectionId: "10b", question: "PDE-5 inhibitors can be safely combined with nitrates.", answer: false, explanation: "NEVER combine PDE-5 inhibitors with nitrates - causes severe hypotension."),
+            .multipleChoice(id: "q10b_4", subsectionId: "10b", question: "5-alpha reductase inhibitors take how long to work?", options: ["6-12 months", "1-2 days", "1-2 weeks", "24 hours"], answer: "6-12 months", explanation: "5-ARIs shrink the prostate gradually over 6-12 months."),
+            .multipleChoice(id: "q10b_5", subsectionId: "10b", question: "The brand name of sildenafil is:", options: ["Viagra", "Cialis", "Flomax", "Myrbetriq"], answer: "Viagra", explanation: "Sildenafil is sold as Viagra."),
+            .trueFalse(id: "q10b_6", subsectionId: "10b", question: "Oxybutynin should be avoided in elderly patients due to anticholinergic effects.", answer: true, explanation: "Anticholinergic burden in elderly causes confusion and falls."),
+            .multipleChoice(id: "q10b_7", subsectionId: "10b", question: "Mirabegron (Myrbetriq) works as a:", options: ["Beta-3 agonist", "Alpha-1 blocker", "Anticholinergic", "PDE-5 inhibitor"], answer: "Beta-3 agonist", explanation: "Mirabegron is a beta-3 adrenergic agonist for overactive bladder."),
+            .fillBlank(id: "q10b_8", subsectionId: "10b", question: "The brand name of finasteride is _____.", options: ["Proscar", "Flomax", "Avodart", "Viagra"], answer: "Proscar", explanation: "Finasteride is sold as Proscar (BPH) or Propecia (hair loss)."),
+            .selectAll(id: "q10b_9", subsectionId: "10b", question: "Select ALL PDE-5 inhibitors:", options: ["Sildenafil", "Tadalafil", "Tamsulosin", "Finasteride"], correctAnswers: ["Sildenafil", "Tadalafil"], explanation: "Tamsulosin is an alpha blocker; finasteride is a 5-ARI."),
+            .matching(id: "q10b_10", subsectionId: "10b", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Tamsulosin", right: "Flomax"), MatchingPair(left: "Finasteride", right: "Proscar"), MatchingPair(left: "Sildenafil", right: "Viagra"), MatchingPair(left: "Tadalafil", right: "Cialis")], explanation: "Key urology drug brand names."),
+            .multipleChoice(id: "q10b_11", subsectionId: "10b", difficulty: .medium, question: "Which PDE-5 inhibitor has the longest duration of action?", options: ["Tadalafil", "Sildenafil", "Vardenafil", "Avanafil"], answer: "Tadalafil", explanation: "Tadalafil (Cialis) lasts up to 36 hours."),
+        ]
+
+        bank["10c"] = [
+            .multipleChoice(id: "q10c_1", subsectionId: "10c", question: "The first-line treatment for anaphylaxis is:", options: ["Epinephrine IM", "Diphenhydramine IV", "Methylprednisolone IV", "Albuterol nebulizer"], answer: "Epinephrine IM", explanation: "Epinephrine IM in the thigh is always first-line for anaphylaxis."),
+            .fillBlank(id: "q10c_2", subsectionId: "10c", question: "The brand name of the epinephrine autoinjector is _____.", options: ["EpiPen", "AtroPen", "Narcan", "Romazicon"], answer: "EpiPen", explanation: "Epinephrine autoinjector is sold as EpiPen."),
+            .trueFalse(id: "q10c_3", subsectionId: "10c", question: "Iron supplements should be taken with vitamin C to enhance absorption.", answer: true, explanation: "Vitamin C converts ferric iron to ferrous form, improving absorption."),
+            .multipleChoice(id: "q10c_4", subsectionId: "10c", question: "Atropine is first-line for:", options: ["Symptomatic bradycardia", "Tachycardia", "Hypertension", "Seizures"], answer: "Symptomatic bradycardia", explanation: "Atropine is first-line per ACLS for symptomatic bradycardia."),
+            .trueFalse(id: "q10c_5", subsectionId: "10c", question: "Flumazenil can precipitate seizures in benzodiazepine-dependent patients.", answer: true, explanation: "Rapid benzo reversal in dependent patients can trigger seizures."),
+            .multipleChoice(id: "q10c_6", subsectionId: "10c", question: "Iron supplements commonly cause:", options: ["Constipation and dark stools", "Diarrhea and light stools", "Hyperkalemia", "Hypercalcemia"], answer: "Constipation and dark stools", explanation: "Iron is notorious for causing constipation and black/dark stools."),
+            .fillBlank(id: "q10c_7", subsectionId: "10c", question: "The brand name of flumazenil is _____.", options: ["Romazicon", "Narcan", "EpiPen", "AtroPen"], answer: "Romazicon", explanation: "Flumazenil is sold as Romazicon."),
+            .selectAll(id: "q10c_8", subsectionId: "10c", question: "Select ALL emergency reversal agents:", options: ["Naloxone", "Flumazenil", "Epinephrine", "Metformin"], correctAnswers: ["Naloxone", "Flumazenil"], explanation: "Naloxone reverses opioids; flumazenil reverses benzos. Epinephrine treats anaphylaxis but isn't a reversal agent."),
+            .matching(id: "q10c_9", subsectionId: "10c", question: "Match antidote to poisoning:", pairs: [MatchingPair(left: "Naloxone", right: "Opioid overdose"), MatchingPair(left: "Flumazenil", right: "Benzo overdose"), MatchingPair(left: "N-acetylcysteine", right: "APAP overdose"), MatchingPair(left: "Atropine", right: "Organophosphate")], explanation: "Key antidote-poisoning pairs."),
+            .multipleChoice(id: "q10c_9b", subsectionId: "10c", question: "Vitamin D goal level is:", options: [">30 ng/mL", ">10 ng/mL", ">50 ng/mL", ">100 ng/mL"], answer: ">30 ng/mL", explanation: "Target 25-OH vitamin D level is >30 ng/mL."),
+        ]
+
+        bank["10d"] = {
+            var mastery: [Question] = []
+            for (key, questions) in bank where key.hasPrefix("10") && key != "10d" {
+                mastery.append(contentsOf: questions.prefix(6))
+            }
+            return mastery
+        }()
+
         self.questionBank = bank
     }
 
@@ -1216,5 +1472,88 @@ struct DrugDataService {
 
     func subsection(for id: String) -> Subsection? {
         modules.flatMap(\.subsections).first { $0.id == id }
+    }
+
+    func brandBlitzQuestions(completedSubsections: Set<String>, count: Int = 15) -> [Question] {
+        var availableDrugs: [Drug] = []
+        for module in modules {
+            for sub in module.subsections where !sub.isMasteryQuiz {
+                if completedSubsections.contains(sub.id) || sub.id == modules[0].subsections[0].id {
+                    availableDrugs.append(contentsOf: sub.drugs)
+                }
+            }
+        }
+        if availableDrugs.count < 4 {
+            availableDrugs = modules.flatMap { $0.subsections.flatMap { $0.drugs } }
+        }
+        let shuffledDrugs = availableDrugs.shuffled()
+        var questions: [Question] = []
+        for (idx, drug) in shuffledDrugs.prefix(count * 2).enumerated() {
+            let qId = "bb_\(idx)"
+            let questionType = idx % 5
+            switch questionType {
+            case 0:
+                let wrongOptions = availableDrugs.filter { $0.id != drug.id }.shuffled().prefix(3).map { $0.brandName }
+                let allOptions = ([drug.brandName] + wrongOptions).shuffled()
+                questions.append(.multipleChoice(
+                    id: qId, subsectionId: "brand_blitz", difficulty: .easy,
+                    question: "What is the brand name of \(drug.genericName)?",
+                    options: allOptions, answer: drug.brandName,
+                    explanation: "\(drug.genericName) is sold as \(drug.brandName)."
+                ))
+            case 1:
+                let wrongOptions = availableDrugs.filter { $0.id != drug.id }.shuffled().prefix(3).map { $0.genericName }
+                let allOptions = ([drug.genericName] + wrongOptions).shuffled()
+                questions.append(.multipleChoice(
+                    id: qId, subsectionId: "brand_blitz", difficulty: .easy,
+                    question: "What is the generic name of \(drug.brandName)?",
+                    options: allOptions, answer: drug.genericName,
+                    explanation: "\(drug.brandName) is the brand name for \(drug.genericName)."
+                ))
+            case 2:
+                let wrongOptions = availableDrugs.filter { $0.id != drug.id }.shuffled().prefix(3).map { $0.brandName }
+                let allOptions = ([drug.brandName] + wrongOptions).shuffled()
+                questions.append(.fillBlank(
+                    id: qId, subsectionId: "brand_blitz", difficulty: .easy,
+                    question: "The brand name of \(drug.genericName) is _____.",
+                    options: allOptions, answer: drug.brandName,
+                    explanation: "\(drug.genericName) is sold as \(drug.brandName)."
+                ))
+            case 3:
+                let correctBrand = drug.brandName.components(separatedBy: "/").first ?? drug.brandName
+                let isTrue = Bool.random()
+                if isTrue {
+                    questions.append(.trueFalse(
+                        id: qId, subsectionId: "brand_blitz", difficulty: .easy,
+                        question: "The brand name of \(drug.genericName) is \(correctBrand).",
+                        answer: true,
+                        explanation: "Correct! \(drug.genericName) is sold as \(drug.brandName)."
+                    ))
+                } else {
+                    let wrongDrug = availableDrugs.filter { $0.id != drug.id }.randomElement()
+                    let wrongBrand = wrongDrug?.brandName.components(separatedBy: "/").first ?? "Unknown"
+                    questions.append(.trueFalse(
+                        id: qId, subsectionId: "brand_blitz", difficulty: .easy,
+                        question: "The brand name of \(drug.genericName) is \(wrongBrand).",
+                        answer: false,
+                        explanation: "\(drug.genericName) is actually sold as \(drug.brandName), not \(wrongBrand)."
+                    ))
+                }
+            default:
+                let matchDrugs = shuffledDrugs.filter { $0.id != drug.id }.prefix(3)
+                var pairs = [MatchingPair(left: drug.genericName, right: drug.brandName)]
+                for d in matchDrugs {
+                    pairs.append(MatchingPair(left: d.genericName, right: d.brandName))
+                }
+                questions.append(.matching(
+                    id: qId, subsectionId: "brand_blitz", difficulty: .easy,
+                    question: "Match each generic name to its brand name:",
+                    pairs: pairs,
+                    explanation: "Brand-generic matching for key drugs."
+                ))
+            }
+            if questions.count >= count { break }
+        }
+        return Array(questions.prefix(count)).shuffled()
     }
 }

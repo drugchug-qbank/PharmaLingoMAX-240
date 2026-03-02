@@ -53,7 +53,7 @@ struct PracticeView: View {
                             PracticeStatItem(icon: "chart.line.uptrend.xyaxis", value: "\(gameVM.lessonsCompleted)", label: "Lessons", color: AppTheme.successGreen)
                         }
                         .padding(16)
-                        .cardStyle()
+                        .cardStyle(borderColor: AppTheme.successGreen.opacity(0.5))
 
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
@@ -129,7 +129,7 @@ struct PracticeView: View {
                             .clipShape(.rect(cornerRadius: 14))
                         }
                         .padding(16)
-                        .cardStyle()
+                        .cardStyle(borderColor: AppTheme.accentOrange.opacity(0.5))
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -142,7 +142,7 @@ struct PracticeView: View {
                 quickPracticeQuiz
             }
             .fullScreenCover(isPresented: $showBrandBlitz) {
-                quickPracticeQuiz
+                BrandBlitzQuizView(gameVM: gameVM)
             }
             .sheet(isPresented: $showMasteryDetail) {
                 DrugMasteryListView(drugs: allDrugs, gameVM: gameVM)

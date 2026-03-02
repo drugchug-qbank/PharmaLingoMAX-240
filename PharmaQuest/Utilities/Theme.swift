@@ -15,8 +15,9 @@ enum AppTheme {
     static let funCoral = Color(red: 1.0, green: 0.42, blue: 0.38)
 
     static let moduleColors: [Color] = [
-        heartRed, primaryBlue, successGreen, xpPurple,
-        accentOrange, funPink, funTeal, funCoral
+        heartRed, primaryBlue, xpPurple, funTeal,
+        accentOrange, Color(hex: "0288D1"), Color(hex: "7B1FA2"), Color(hex: "C62828"),
+        Color(hex: "00ACC1"), Color(hex: "AD1457")
     ]
 
     static func moduleColor(for index: Int) -> Color {

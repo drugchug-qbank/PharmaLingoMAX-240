@@ -20,7 +20,7 @@ struct ShopView: View {
                             ShopStatBadge(icon: "bolt.fill", value: "\(gameVM.totalXP)", label: "XP", color: AppTheme.primaryBlue)
                         }
                         .padding(14)
-                        .cardStyle()
+                        .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
 
                         HStack(spacing: 6) {
                             ForEach(0..<gameVM.maxHearts, id: \.self) { i in
@@ -92,7 +92,7 @@ struct ShopView: View {
                             }
                         }
                         .padding(16)
-                        .cardStyle()
+                        .cardStyle(borderColor: AppTheme.heartRed.opacity(0.5))
 
                         VStack(alignment: .leading, spacing: 14) {
                             FunSectionHeader(icon: "shield.checkered", title: "Power-Ups", color: AppTheme.xpPurple)
@@ -132,7 +132,7 @@ struct ShopView: View {
                             }
                         }
                         .padding(16)
-                        .cardStyle()
+                        .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.5))
 
                         VStack(alignment: .leading, spacing: 14) {
                             HStack {
