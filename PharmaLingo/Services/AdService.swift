@@ -23,8 +23,10 @@ class AdService: NSObject {
     }
 
     func initializeSDK() {
-        MobileAds.shared.start()
-        Task { await loadAd() }
+        Task {
+            _ = await MobileAds.shared.start()
+            await loadAd()
+        }
     }
 
     func loadAd() async {

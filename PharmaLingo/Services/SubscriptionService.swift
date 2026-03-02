@@ -14,7 +14,15 @@ class SubscriptionService {
         Task { await checkSubscriptionStatus() }
     }
 
+    private var isConfigured: Bool {
+        Purchases.isConfigured
+    }
+
     func checkSubscriptionStatus() async {
+        guard isConfigured else {
+            isProUser = false
+            return
+        }
         do {
             let customerInfo = try await Purchases.shared.customerInfo()
             isProUser = customerInfo.entitlements["pro"]?.isActive == true
@@ -24,6 +32,7 @@ class SubscriptionService {
     }
 
     func fetchOfferings() async {
+        guard isConfigured else { return }
         isLoading = true
         errorMessage = nil
         do {
@@ -35,6 +44,7 @@ class SubscriptionService {
     }
 
     func purchase(package: Package) async -> Bool {
+        guard isConfigured else { return false }
         do {
             let result = try await Purchases.shared.purchase(package: package)
             let active = result.customerInfo.entitlements["pro"]?.isActive == true
@@ -47,6 +57,7 @@ class SubscriptionService {
     }
 
     func restorePurchases() async -> Bool {
+        guard isConfigured else { return false }
         do {
             let customerInfo = try await Purchases.shared.restorePurchases()
             let active = customerInfo.entitlements["pro"]?.isActive == true
