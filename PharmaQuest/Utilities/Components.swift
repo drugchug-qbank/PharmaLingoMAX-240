@@ -23,7 +23,7 @@ struct HeaderBar: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 AvatarDisplayView(
                     animal: gameVM.avatarAnimal,
                     eyes: gameVM.avatarEyes,
@@ -31,25 +31,35 @@ struct HeaderBar: View {
                     accessory: gameVM.avatarAccessory,
                     bodyColor: gameVM.avatarBodyColor,
                     backgroundColor: gameVM.avatarBgColor,
-                    size: 44
+                    size: 130
                 )
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("PharmaLingo")
-                        .font(AppTheme.funFont(.title, weight: .heavy))
+                        .font(AppTheme.funFont(.title2, weight: .heavy))
                         .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                     Text(randomMotivation)
                         .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.white.opacity(0.8))
+                        .lineLimit(1)
                 }
 
                 Spacer()
 
-                HStack(spacing: 8) {
-                    HeaderStatPill(iconName: "flame.fill", value: "\(gameVM.currentStreak)", color: AppTheme.accentOrange)
-                    HeaderStatPill(iconName: "heart.fill", value: "\(gameVM.hearts)", color: AppTheme.heartRed)
-                    HeaderStatPill(iconName: "bitcoinsign.circle.fill", value: "\(gameVM.coins)", color: AppTheme.warningYellow)
+                HStack(spacing: 4) {
+                    Image(systemName: "flame.fill")
+                        .font(.title2)
+                        .foregroundStyle(AppTheme.accentOrange)
+                    Text("\(gameVM.currentStreak)")
+                        .font(AppTheme.funFont(.title2, weight: .heavy))
+                        .foregroundStyle(.white)
                 }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(.white.opacity(0.18))
+                .clipShape(Capsule())
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)

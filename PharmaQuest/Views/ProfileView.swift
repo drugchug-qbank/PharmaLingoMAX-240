@@ -78,22 +78,8 @@ struct ProfileView: View {
                         .cardStyle()
 
                         VStack(alignment: .leading, spacing: 12) {
-                            FunSectionHeader(icon: "flame.fill", title: "Streak Status", color: AppTheme.accentOrange)
-
-                            HStack(spacing: 8) {
-                                if gameVM.streakSaves > 0 {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "shield.checkered")
-                                            .font(.caption)
-                                        Text("\(gameVM.streakSaves) save\(gameVM.streakSaves == 1 ? "" : "s")")
-                                            .font(AppTheme.funFont(.caption, weight: .heavy))
-                                    }
-                                    .foregroundStyle(AppTheme.xpPurple)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(AppTheme.xpPurple.opacity(0.1))
-                                    .clipShape(Capsule())
-                                }
+                            HStack {
+                                FunSectionHeader(icon: "flame.fill", title: "Streak Status", color: AppTheme.accentOrange)
 
                                 Spacer()
 
@@ -123,6 +109,20 @@ struct ProfileView: View {
                                     .background(AppTheme.accentOrange.opacity(0.12))
                                     .clipShape(Capsule())
                                 }
+                            }
+
+                            if gameVM.streakSaves > 0 {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "shield.checkered")
+                                        .font(.caption)
+                                    Text("\(gameVM.streakSaves) save\(gameVM.streakSaves == 1 ? "" : "s")")
+                                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                                }
+                                .foregroundStyle(AppTheme.xpPurple)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(AppTheme.xpPurple.opacity(0.1))
+                                .clipShape(Capsule())
                             }
 
                             HStack(spacing: 12) {
