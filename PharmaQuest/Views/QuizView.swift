@@ -10,11 +10,33 @@ struct QuizView: View {
     @State private var bounceCorrect: Bool = false
     @State private var shakeWrong: Bool = false
     @State private var hasNoQuestions: Bool = false
+    @State private var showOutOfHearts: Bool = false
+    @State private var showPaywall: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
             if hasNoQuestions {
                 noQuestionsView
+            } else if showOutOfHearts {
+                OutOfHeartsView(
+                    gameVM: gameVM,
+                    onWatchAd: {
+                        gameVM.addHeart()
+                        showOutOfHearts = false
+                    },
+                    onBuyHearts: {
+                        if gameVM.spendCoins(300) {
+                            gameVM.refillHearts()
+                            showOutOfHearts = false
+                        }
+                    },
+                    onGetPro: {
+                        showPaywall = true
+                    },
+                    onQuit: {
+                        dismiss()
+                    }
+                )
             } else if let quizVM {
                 if showResult {
                     QuizResultView(quizVM: quizVM, gameVM: gameVM, onDismiss: { dismiss() })
@@ -64,6 +86,19 @@ struct QuizView: View {
             Button("OK") { dismiss() }
         } message: {
             Text("You need hearts to take a quiz. Wait for them to regenerate or visit the shop!")
+        }
+        .sheet(isPresented: $showPaywall) {
+            ProPaywallView()
+        }
+        .onChange(of: showPaywall) { _, newValue in
+            if !newValue {
+                Task {
+                    await gameVM.refreshProStatus()
+                    if gameVM.isProUser {
+                        showOutOfHearts = false
+                    }
+                }
+            }
         }
     }
 
@@ -245,8 +280,8 @@ struct QuizView: View {
                     }
                     gameVM.recordConsecutiveCorrect(quizVM.maxConsecutive)
 
-                    if gameVM.hearts <= 0 {
-                        dismiss()
+                    if gameVM.hearts <= 0 && !gameVM.hasUnlimitedHearts {
+                        withAnimation { showOutOfHearts = true }
                         return
                     }
 

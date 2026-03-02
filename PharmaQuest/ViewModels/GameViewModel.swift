@@ -4,6 +4,7 @@ import SwiftUI
 class GameViewModel {
     var hearts: Int = 5
     let maxHearts: Int = 5
+    var isProUser: Bool = false
     var coins: Int = 50
     var totalXP: Int = 0
     var currentStreak: Int = 0
@@ -109,6 +110,29 @@ class GameViewModel {
         checkStreak()
         regenerateHearts()
         refreshDailyQuests()
+        Task { await refreshProStatus() }
+    }
+
+    func refreshProStatus() async {
+        let service = SubscriptionService.shared
+        await service.checkSubscriptionStatus()
+        isProUser = service.isProUser
+    }
+
+    var effectiveHearts: Int {
+        isProUser ? maxHearts : hearts
+    }
+
+    var hasUnlimitedHearts: Bool {
+        isProUser
+    }
+
+    func xpMultiplier() -> Double {
+        isProUser ? 1.5 : 1.0
+    }
+
+    func coinMultiplier() -> Double {
+        isProUser ? 1.5 : 1.0
     }
 
     private func refreshDailyQuests() {

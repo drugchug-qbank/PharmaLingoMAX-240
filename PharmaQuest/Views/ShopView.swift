@@ -6,6 +6,7 @@ struct ShopView: View {
     @State private var purchaseMessage: String = ""
     @State private var bounceHearts: Bool = false
     @State private var showAvatarShop: Bool = false
+    @State private var showPaywall: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -42,63 +43,142 @@ struct ShopView: View {
                         }
                         .padding(.vertical, 8)
 
+                        if !gameVM.isProUser {
+                            Button { showPaywall = true } label: {
+                                HStack(spacing: 14) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(
+                                                LinearGradient(
+                                                    colors: [AppTheme.warningYellow, AppTheme.accentOrange],
+                                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                                )
+                                            )
+                                            .frame(width: 44, height: 44)
+                                        Image(systemName: "crown.fill")
+                                            .font(.title3)
+                                            .foregroundStyle(.white)
+                                    }
+
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text("PharmaLingo Pro")
+                                            .font(AppTheme.funFont(.headline, weight: .heavy))
+                                            .foregroundStyle(.white)
+                                        Text("Unlimited hearts, 50% bonus XP & more")
+                                            .font(AppTheme.funFont(.caption, weight: .medium))
+                                            .foregroundStyle(.white.opacity(0.85))
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.white.opacity(0.7))
+                                }
+                                .padding(16)
+                                .background(
+                                    LinearGradient(
+                                        colors: [AppTheme.xpPurple, AppTheme.funPink],
+                                        startPoint: .leading, endPoint: .trailing
+                                    )
+                                )
+                                .clipShape(.rect(cornerRadius: 18))
+                                .shadow(color: AppTheme.xpPurple.opacity(0.3), radius: 8, x: 0, y: 4)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            HStack(spacing: 12) {
+                                Image(systemName: "crown.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(AppTheme.warningYellow)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("PharmaLingo Pro Active")
+                                        .font(AppTheme.funFont(.headline, weight: .heavy))
+                                    Text("Unlimited hearts & 50% bonus XP")
+                                        .font(AppTheme.funFont(.caption, weight: .medium))
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "checkmark.seal.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(AppTheme.successGreen)
+                            }
+                            .padding(16)
+                            .cardStyle(borderColor: AppTheme.warningYellow.opacity(0.5))
+                        }
+
                         VStack(alignment: .leading, spacing: 14) {
                             FunSectionHeader(icon: "heart.fill", title: "Hearts", color: AppTheme.heartRed)
 
-                            Text("Need more hearts? Buy them with coins or watch a short ad!")
-                                .font(AppTheme.funFont(.subheadline, weight: .medium))
-                                .foregroundStyle(.secondary)
+                            if gameVM.isProUser {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "infinity")
+                                        .font(.title2)
+                                        .foregroundStyle(AppTheme.heartRed)
+                                    Text("Unlimited hearts with Pro!")
+                                        .font(AppTheme.funFont(.subheadline, weight: .bold))
+                                        .foregroundStyle(AppTheme.heartRed)
+                                }
+                                .padding(14)
+                                .frame(maxWidth: .infinity)
+                                .background(AppTheme.heartRed.opacity(0.08))
+                                .clipShape(.rect(cornerRadius: 14))
+                            } else {
+                                Text("Need more hearts? Buy them with coins or watch a short ad!")
+                                    .font(AppTheme.funFont(.subheadline, weight: .medium))
+                                    .foregroundStyle(.secondary)
 
-                            ShopItemRow(
-                                icon: "heart.fill",
-                                iconColor: AppTheme.heartRed,
-                                title: "+1 Heart",
-                                subtitle: "Get one extra heart",
-                                price: "30",
-                                priceIcon: "bitcoinsign.circle.fill",
-                                priceColor: AppTheme.accentOrange,
-                                isEnabled: gameVM.coins >= 30 && gameVM.hearts < gameVM.maxHearts
-                            ) {
-                                if gameVM.spendCoins(30) {
+                                ShopItemRow(
+                                    icon: "heart.fill",
+                                    iconColor: AppTheme.heartRed,
+                                    title: "+1 Heart",
+                                    subtitle: "Get one extra heart",
+                                    price: "100",
+                                    priceIcon: "bitcoinsign.circle.fill",
+                                    priceColor: AppTheme.accentOrange,
+                                    isEnabled: gameVM.coins >= 100 && gameVM.hearts < gameVM.maxHearts
+                                ) {
+                                    if gameVM.spendCoins(100) {
+                                        gameVM.addHeart()
+                                        bounceHearts.toggle()
+                                        purchaseMessage = "You got +1 heart!"
+                                        showPurchaseAlert = true
+                                    }
+                                }
+
+                                ShopItemRow(
+                                    icon: "heart.circle.fill",
+                                    iconColor: AppTheme.heartRed,
+                                    title: "Full Refill",
+                                    subtitle: "Restore all 5 hearts",
+                                    price: "300",
+                                    priceIcon: "bitcoinsign.circle.fill",
+                                    priceColor: AppTheme.accentOrange,
+                                    isEnabled: gameVM.coins >= 300 && gameVM.hearts < gameVM.maxHearts
+                                ) {
+                                    if gameVM.spendCoins(300) {
+                                        gameVM.refillHearts()
+                                        bounceHearts.toggle()
+                                        purchaseMessage = "Hearts fully restored!"
+                                        showPurchaseAlert = true
+                                    }
+                                }
+
+                                ShopItemRow(
+                                    icon: "play.circle.fill",
+                                    iconColor: AppTheme.successGreen,
+                                    title: "Watch Ad",
+                                    subtitle: "Watch a short ad for +1 heart",
+                                    price: "FREE",
+                                    priceIcon: nil,
+                                    priceColor: AppTheme.successGreen,
+                                    isEnabled: gameVM.hearts < gameVM.maxHearts
+                                ) {
                                     gameVM.addHeart()
                                     bounceHearts.toggle()
-                                    purchaseMessage = "You got +1 heart!"
+                                    purchaseMessage = "You earned +1 heart!"
                                     showPurchaseAlert = true
                                 }
-                            }
-
-                            ShopItemRow(
-                                icon: "heart.circle.fill",
-                                iconColor: AppTheme.heartRed,
-                                title: "Full Refill",
-                                subtitle: "Restore all 5 hearts",
-                                price: "100",
-                                priceIcon: "bitcoinsign.circle.fill",
-                                priceColor: AppTheme.accentOrange,
-                                isEnabled: gameVM.coins >= 100 && gameVM.hearts < gameVM.maxHearts
-                            ) {
-                                if gameVM.spendCoins(100) {
-                                    gameVM.refillHearts()
-                                    bounceHearts.toggle()
-                                    purchaseMessage = "Hearts fully restored!"
-                                    showPurchaseAlert = true
-                                }
-                            }
-
-                            ShopItemRow(
-                                icon: "play.circle.fill",
-                                iconColor: AppTheme.successGreen,
-                                title: "Watch Ad",
-                                subtitle: "Watch a short ad for +1 heart",
-                                price: "FREE",
-                                priceIcon: nil,
-                                priceColor: AppTheme.successGreen,
-                                isEnabled: gameVM.hearts < gameVM.maxHearts
-                            ) {
-                                gameVM.addHeart()
-                                bounceHearts.toggle()
-                                purchaseMessage = "You earned +1 heart!"
-                                showPurchaseAlert = true
                             }
                         }
                         .padding(16)
@@ -189,6 +269,14 @@ struct ShopView: View {
             }
             .sheet(isPresented: $showAvatarShop) {
                 AvatarCustomizationView(gameVM: gameVM)
+            }
+            .sheet(isPresented: $showPaywall) {
+                ProPaywallView()
+            }
+            .onChange(of: showPaywall) { _, newValue in
+                if !newValue {
+                    Task { await gameVM.refreshProStatus() }
+                }
             }
         }
     }
