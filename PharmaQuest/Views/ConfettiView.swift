@@ -58,9 +58,19 @@ struct ConfettiView: View {
 
 struct StreakFlameView: View {
     let streak: Int
+    let previousStreak: Int
     @State private var flameScale: CGFloat = 0.3
     @State private var flameOpacity: Double = 0
     @State private var pulseFlame: Bool = false
+    @State private var displayedStreak: Int
+    @State private var showPlus: Bool = false
+    @State private var counterFinished: Bool = false
+
+    init(streak: Int, previousStreak: Int = 0) {
+        self.streak = streak
+        self.previousStreak = previousStreak
+        self._displayedStreak = State(initialValue: previousStreak)
+    }
 
     var body: some View {
         VStack(spacing: 8) {
@@ -88,20 +98,52 @@ struct StreakFlameView: View {
                     )
                     .scaleEffect(flameScale)
                     .opacity(flameOpacity)
+
+                if showPlus {
+                    Text("+1")
+                        .font(AppTheme.funFont(.title3, weight: .heavy))
+                        .foregroundStyle(AppTheme.warningYellow)
+                        .offset(x: 36, y: -30)
+                        .transition(.asymmetric(
+                            insertion: .scale.combined(with: .opacity),
+                            removal: .opacity
+                        ))
+                }
             }
 
-            Text("\(streak) Day Streak!")
-                .font(AppTheme.funFont(.title2, weight: .heavy))
-                .foregroundStyle(AppTheme.accentOrange)
-                .scaleEffect(flameScale)
-                .opacity(flameOpacity)
+            HStack(spacing: 0) {
+                Text("\(displayedStreak)")
+                    .font(AppTheme.funFont(.title, weight: .heavy))
+                    .foregroundStyle(AppTheme.accentOrange)
+                    .contentTransition(.numericText(countsDown: false))
+                    .animation(.spring(response: 0.4, dampingFraction: 0.7), value: displayedStreak)
+
+                Text(" Day Streak!")
+                    .font(AppTheme.funFont(.title2, weight: .heavy))
+                    .foregroundStyle(AppTheme.accentOrange)
+            }
+            .scaleEffect(flameScale)
+            .opacity(flameOpacity)
         }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
                 flameScale = 1.0
                 flameOpacity = 1.0
             }
-            withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true).delay(0.6)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    showPlus = true
+                }
+                withAnimation {
+                    displayedStreak = streak
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    withAnimation {
+                        showPlus = false
+                    }
+                }
+            }
+            withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true).delay(0.8)) {
                 pulseFlame = true
             }
         }

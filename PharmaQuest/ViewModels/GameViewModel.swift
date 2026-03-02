@@ -125,6 +125,7 @@ class GameViewModel {
     }
 
     var streakExtended: Bool = false
+    var previousStreak: Int = 0
 
     func completeSubsection(_ subsectionId: String, score: Double, correctCount: Int, totalCount: Int, xpEarned: Int = 0, coinsEarned: Int = 0) {
         questionsAnswered += totalCount
@@ -190,6 +191,7 @@ class GameViewModel {
     func updateStreak() {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
+        previousStreak = currentStreak
         if let lastActive = lastActiveDate {
             let lastDay = calendar.startOfDay(for: lastActive)
             let daysDiff = calendar.dateComponents([.day], from: lastDay, to: today).day ?? 0

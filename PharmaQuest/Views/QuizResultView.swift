@@ -105,7 +105,7 @@ struct QuizResultView: View {
                     }
 
                     if showStreak && gameVM.streakExtended {
-                        StreakFlameView(streak: gameVM.currentStreak)
+                        StreakFlameView(streak: gameVM.currentStreak, previousStreak: gameVM.previousStreak)
                             .transition(.scale.combined(with: .opacity))
                     }
 
