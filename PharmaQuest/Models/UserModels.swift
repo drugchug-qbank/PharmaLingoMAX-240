@@ -64,6 +64,9 @@ nonisolated struct LeaderboardEntry: Identifiable, Sendable {
     let id: String
     let username: String
     let avatarAnimal: String
+    let avatarEyes: String
+    let avatarMouth: String
+    let avatarAccessory: String
     let xpThisWeek: Int
     let streak: Int
     let rank: Int

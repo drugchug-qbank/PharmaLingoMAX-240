@@ -121,19 +121,19 @@ struct AvatarCustomizationView: View {
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     )
 
-                    VStack(spacing: 12) {
+                    VStack(spacing: 16) {
                         AvatarDisplayView(
                             animal: selectedAnimal,
                             eyes: selectedEyes,
                             mouth: selectedMouth,
                             accessory: selectedAccessory,
-                            size: 150
+                            size: 280
                         )
 
                         CoinDisplay(amount: gameVM.coins)
                     }
                 }
-                .frame(height: 220)
+                .frame(height: 380)
 
                 HStack(spacing: 0) {
                     ForEach(AvatarTab.allCases, id: \.self) { tab in
@@ -228,6 +228,7 @@ struct AvatarCustomizationView: View {
                         gameVM.avatarMouth = selectedMouth
                         gameVM.avatarAccessory = selectedAccessory
                         gameVM.save()
+                        gameVM.syncToCloud()
                         dismiss()
                     }
                     .font(.headline)

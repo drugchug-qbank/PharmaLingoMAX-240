@@ -67,6 +67,9 @@ nonisolated struct LeaderboardRecord: Codable, Sendable {
     let id: String
     let username: String
     let avatarAnimal: String
+    let avatarEyes: String
+    let avatarMouth: String
+    let avatarAccessory: String
     let weeklyXP: Int
     let currentStreak: Int
     let level: Int
@@ -76,6 +79,9 @@ nonisolated struct LeaderboardRecord: Codable, Sendable {
     enum CodingKeys: String, CodingKey {
         case id, username
         case avatarAnimal = "avatar_animal"
+        case avatarEyes = "avatar_eyes"
+        case avatarMouth = "avatar_mouth"
+        case avatarAccessory = "avatar_accessory"
         case weeklyXP = "weekly_xp"
         case currentStreak = "current_streak"
         case level, profession, school
@@ -285,7 +291,18 @@ class SupabaseService {
         let completedData = (try? encoder.encode(Array(gameVM.completedSubsections))) ?? Data()
         let starsData = (try? encoder.encode(gameVM.subsectionStars)) ?? Data()
         let learningData = (try? encoder.encode(Array(gameVM.hasSeenLearning))) ?? Data()
+        let ownedAvatarsData = (try? encoder.encode(Array(gameVM.ownedAvatars))) ?? Data()
+        let ownedEyesData = (try? encoder.encode(Array(gameVM.ownedEyes))) ?? Data()
+        let ownedMouthsData = (try? encoder.encode(Array(gameVM.ownedMouths))) ?? Data()
+        let ownedAccessoriesData = (try? encoder.encode(Array(gameVM.ownedAccessories))) ?? Data()
 
+        profile.username = gameVM.username
+        profile.profession = gameVM.selectedProfession.rawValue
+        profile.school = gameVM.schoolName
+        profile.avatarAnimal = gameVM.avatarAnimal
+        profile.avatarEyes = gameVM.avatarEyes
+        profile.avatarMouth = gameVM.avatarMouth
+        profile.avatarAccessory = gameVM.avatarAccessory
         profile.totalXP = gameVM.totalXP
         profile.coins = gameVM.coins
         profile.currentStreak = gameVM.currentStreak
@@ -298,6 +315,10 @@ class SupabaseService {
         profile.completedSubsections = String(data: completedData, encoding: .utf8) ?? "[]"
         profile.subsectionStars = String(data: starsData, encoding: .utf8) ?? "{}"
         profile.hasSeenLearning = String(data: learningData, encoding: .utf8) ?? "[]"
+        profile.ownedAvatars = String(data: ownedAvatarsData, encoding: .utf8) ?? "[]"
+        profile.ownedEyes = String(data: ownedEyesData, encoding: .utf8) ?? "[]"
+        profile.ownedMouths = String(data: ownedMouthsData, encoding: .utf8) ?? "[]"
+        profile.ownedAccessories = String(data: ownedAccessoriesData, encoding: .utf8) ?? "[]"
 
         await updateProfile(profile)
     }
@@ -305,7 +326,7 @@ class SupabaseService {
     func fetchLeaderboard() async -> [LeaderboardRecord] {
         do {
             let records: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, weekly_xp, current_streak, level, profession, school")
+                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
                 .order("weekly_xp", ascending: false)
                 .limit(30)
                 .execute()
@@ -331,7 +352,7 @@ class SupabaseService {
             guard !friendIds.isEmpty else { return [] }
 
             let records: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, weekly_xp, current_streak, level, profession, school")
+                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
                 .in("id", values: friendIds)
                 .order("weekly_xp", ascending: false)
                 .execute()
@@ -398,7 +419,7 @@ class SupabaseService {
     func searchUsers(query: String) async -> [LeaderboardRecord] {
         do {
             let results: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, weekly_xp, current_streak, level, profession, school")
+                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
                 .ilike("username", pattern: "%\(query)%")
                 .limit(20)
                 .execute()

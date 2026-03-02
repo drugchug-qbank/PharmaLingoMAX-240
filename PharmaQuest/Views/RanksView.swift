@@ -234,7 +234,7 @@ struct RanksView: View {
                 ForEach(Array(leaderboard.enumerated()), id: \.element.id) { index, entry in
                     let isCurrentUser = entry.id == supabase.currentUser?.id.uuidString
                     LeaderboardRow(
-                        entry: LeaderboardEntry(id: entry.id, username: entry.username, avatarAnimal: entry.avatarAnimal, xpThisWeek: entry.weeklyXP, streak: entry.currentStreak, rank: index + 1),
+                        entry: LeaderboardEntry(id: entry.id, username: entry.username, avatarAnimal: entry.avatarAnimal, avatarEyes: entry.avatarEyes, avatarMouth: entry.avatarMouth, avatarAccessory: entry.avatarAccessory, xpThisWeek: entry.weeklyXP, streak: entry.currentStreak, rank: index + 1),
                         isCurrentUser: isCurrentUser
                     )
                 }
@@ -286,7 +286,7 @@ struct RanksView: View {
 
                 ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
                     LeaderboardRow(
-                        entry: LeaderboardEntry(id: friend.id, username: friend.username, avatarAnimal: friend.avatarAnimal, xpThisWeek: friend.weeklyXP, streak: friend.currentStreak, rank: index + 1),
+                        entry: LeaderboardEntry(id: friend.id, username: friend.username, avatarAnimal: friend.avatarAnimal, avatarEyes: friend.avatarEyes, avatarMouth: friend.avatarMouth, avatarAccessory: friend.avatarAccessory, xpThisWeek: friend.weeklyXP, streak: friend.currentStreak, rank: index + 1),
                         isCurrentUser: false
                     )
                 }
@@ -505,9 +505,9 @@ struct LeaderboardRow: View {
 
             AvatarDisplayView(
                 animal: entry.avatarAnimal,
-                eyes: "none",
-                mouth: "none",
-                accessory: "none",
+                eyes: entry.avatarEyes,
+                mouth: entry.avatarMouth,
+                accessory: entry.avatarAccessory,
                 size: 38
             )
 
@@ -644,9 +644,9 @@ struct AddFriendSheet: View {
                         HStack(spacing: 12) {
                             AvatarDisplayView(
                                 animal: user.avatarAnimal,
-                                eyes: "none",
-                                mouth: "none",
-                                accessory: "none",
+                                eyes: user.avatarEyes,
+                                mouth: user.avatarMouth,
+                                accessory: user.avatarAccessory,
                                 size: 40
                             )
 
