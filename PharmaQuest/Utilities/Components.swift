@@ -33,13 +33,13 @@ struct HeaderBar: View {
                         bodyHex: gameVM.avatarBodyColor,
                         bgHex: gameVM.avatarBgColor
                     ),
-                    size: 130,
+                    size: 110,
                     showIdleAnimation: true
                 )
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("PharmaLingo")
-                        .font(AppTheme.funFont(.title2, weight: .heavy))
+                        .font(AppTheme.funFont(.title, weight: .heavy))
                         .foregroundStyle(.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
