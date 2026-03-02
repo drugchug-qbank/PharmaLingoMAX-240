@@ -428,8 +428,16 @@ class GameViewModel {
         }
     }
 
-    private let userDefaultsKey = "pharmaquest_game_state"
-    private let masteryDefaultsKey = "pharmaquest_mastery_map"
+    private var currentUserId: String?
+
+    private var userDefaultsKey: String {
+        if let uid = currentUserId { return "pharmaquest_game_state_\(uid)" }
+        return "pharmaquest_game_state"
+    }
+    private var masteryDefaultsKey: String {
+        if let uid = currentUserId { return "pharmaquest_mastery_map_\(uid)" }
+        return "pharmaquest_mastery_map"
+    }
 
     func resetToDefaults() {
         hearts = 5
@@ -463,8 +471,7 @@ class GameViewModel {
         masteryMap = [:]
         streakExtended = false
         previousStreak = 0
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
-        UserDefaults.standard.removeObject(forKey: masteryDefaultsKey)
+        currentUserId = nil
     }
 
     func recordQuestionAttempt(question: Question, isCorrect: Bool) {
@@ -574,6 +581,7 @@ class GameViewModel {
     }
 
     func loadFromProfile(_ profile: UserProfile) {
+        currentUserId = profile.id
         username = profile.username
         if let prof = Profession(rawValue: profile.profession) {
             selectedProfession = prof

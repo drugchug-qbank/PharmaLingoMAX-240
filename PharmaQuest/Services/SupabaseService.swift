@@ -344,8 +344,8 @@ class SupabaseService {
             password: password
         )
         currentUser = session.user
-        isAuthenticated = true
         await fetchProfile()
+        isAuthenticated = true
     }
 
     func signOut() async throws {

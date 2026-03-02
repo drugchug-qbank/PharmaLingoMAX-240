@@ -29,5 +29,10 @@ struct ContentView: View {
                 gameVM.loadFromProfile(profile)
             }
         }
+        .onChange(of: supabase.currentProfile?.id) { _, newId in
+            if let profile = supabase.currentProfile, newId != nil {
+                gameVM.loadFromProfile(profile)
+            }
+        }
     }
 }
