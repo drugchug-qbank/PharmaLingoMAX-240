@@ -274,15 +274,16 @@ class SupabaseService {
     var isLoading: Bool = true
 
     private init() {
-        let url = Config.EXPO_PUBLIC_SUPABASE_URL.isEmpty
+        let urlString = Config.EXPO_PUBLIC_SUPABASE_URL.isEmpty
             ? "https://placeholder.supabase.co"
             : Config.EXPO_PUBLIC_SUPABASE_URL
         let key = Config.EXPO_PUBLIC_SUPABASE_ANON_KEY.isEmpty
             ? "placeholder-key"
             : Config.EXPO_PUBLIC_SUPABASE_ANON_KEY
 
+        let url = URL(string: urlString) ?? URL(string: "https://placeholder.supabase.co")!
         client = SupabaseClient(
-            supabaseURL: URL(string: url)!,
+            supabaseURL: url,
             supabaseKey: key
         )
     }

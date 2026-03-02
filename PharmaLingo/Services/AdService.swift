@@ -24,8 +24,12 @@ class AdService: NSObject {
 
     func initializeSDK() {
         Task {
-            _ = await MobileAds.shared.start()
-            await loadAd()
+            do {
+                _ = await MobileAds.shared.start()
+                await loadAd()
+            } catch {
+                print("AdService: Failed to initialize SDK: \(error)")
+            }
         }
     }
 

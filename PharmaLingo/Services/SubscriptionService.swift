@@ -10,9 +10,7 @@ class SubscriptionService {
     var isLoading: Bool = false
     var errorMessage: String?
 
-    private init() {
-        Task { await checkSubscriptionStatus() }
-    }
+    private init() {}
 
     private var isConfigured: Bool {
         Purchases.isConfigured
