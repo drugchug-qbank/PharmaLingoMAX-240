@@ -41,14 +41,14 @@
 			path = PharmaLingo;
 			sourceTree = "<group>";
 		};
-		105FC58C2E9EAD3200EA8BCF /* PharmaQuestTests */ = {
+		105FC58C2E9EAD3200EA8BCF /* PharmaLingoTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PharmaQuestTests;
+			path = PharmaLingoTests;
 			sourceTree = "<group>";
 		};
-		105FC5962E9EAD3200EA8BCF /* PharmaQuestUITests */ = {
+		105FC5962E9EAD3200EA8BCF /* PharmaLingoUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PharmaQuestUITests;
+			path = PharmaLingoUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -85,8 +85,8 @@
 			isa = PBXGroup;
 			children = (
 				105FC57C2E9EAD3100EA8BCF /* PharmaLingo */,
-				105FC58C2E9EAD3200EA8BCF /* PharmaQuestTests */,
-				105FC5962E9EAD3200EA8BCF /* PharmaQuestUITests */,
+				105FC58C2E9EAD3200EA8BCF /* PharmaLingoTests */,
+				105FC5962E9EAD3200EA8BCF /* PharmaLingoUITests */,
 				105FC57B2E9EAD3100EA8BCF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -143,7 +143,7 @@
 				105FC58B2E9EAD3200EA8BCF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				105FC58C2E9EAD3200EA8BCF /* PharmaQuestTests */,
+				105FC58C2E9EAD3200EA8BCF /* PharmaLingoTests */,
 			);
 			name = PharmaLingo;
 			packageProductDependencies = (
@@ -166,7 +166,7 @@
 				105FC5952E9EAD3200EA8BCF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				105FC5962E9EAD3200EA8BCF /* PharmaQuestUITests */,
+				105FC5962E9EAD3200EA8BCF /* PharmaLingoUITests */,
 			);
 			name = PharmaLingo;
 			packageProductDependencies = (
@@ -430,7 +430,10 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.rork.pharmaquest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -464,7 +467,10 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.rork.pharmaquest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -492,7 +498,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PharmaQuest.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PharmaQuest";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PharmaLingo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PharmaLingo";
 			};
 			name = Debug;
 		};
@@ -514,7 +520,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PharmaQuest.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PharmaQuest";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PharmaLingo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PharmaLingo";
 			};
 			name = Release;
 		};
@@ -534,7 +540,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = PharmaQuest;
+				TEST_TARGET_NAME = PharmaLingo;
 			};
 			name = Debug;
 		};
@@ -554,7 +560,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = PharmaQuest;
+				TEST_TARGET_NAME = PharmaLingo;
 			};
 			name = Release;
 		};
