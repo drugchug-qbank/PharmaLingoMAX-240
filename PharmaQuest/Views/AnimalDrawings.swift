@@ -710,6 +710,8 @@ struct AnimalAvatarView: View {
         let leftX: CGFloat = s * 0.32
         let rightX: CGFloat = s * 0.58
         let eyeSize: CGFloat = s * 0.09
+        let outlineColor = Color.black.opacity(0.10)
+        let outlineW: CGFloat = max(1.0, s * 0.006)
 
         switch style {
         case .normal:
@@ -717,41 +719,59 @@ struct AnimalAvatarView: View {
             let whiteR = CGRect(x: rightX - eyeSize * 0.3, y: eyeY - eyeSize * 0.3, width: eyeSize * 1.6, height: eyeSize * 1.7)
             context.fill(Path(ellipseIn: whiteL), with: .color(.white))
             context.fill(Path(ellipseIn: whiteR), with: .color(.white))
-            context.fill(Path(ellipseIn: CGRect(x: leftX, y: eyeY, width: eyeSize, height: eyeSize * 1.1)), with: .color(.black.opacity(0.85)))
-            context.fill(Path(ellipseIn: CGRect(x: rightX, y: eyeY, width: eyeSize, height: eyeSize * 1.1)), with: .color(.black.opacity(0.85)))
-            let shineSize = eyeSize * 0.40
-            context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.42, y: eyeY + eyeSize * 0.10, width: shineSize, height: shineSize)), with: .color(.white))
-            context.fill(Path(ellipseIn: CGRect(x: rightX + eyeSize * 0.42, y: eyeY + eyeSize * 0.10, width: shineSize, height: shineSize)), with: .color(.white))
-            let shine2 = eyeSize * 0.20
-            context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.12, y: eyeY + eyeSize * 0.60, width: shine2, height: shine2)), with: .color(.white.opacity(0.55)))
-            context.fill(Path(ellipseIn: CGRect(x: rightX + eyeSize * 0.12, y: eyeY + eyeSize * 0.60, width: shine2, height: shine2)), with: .color(.white.opacity(0.55)))
+            context.stroke(Path(ellipseIn: whiteL), with: .color(outlineColor), lineWidth: outlineW)
+            context.stroke(Path(ellipseIn: whiteR), with: .color(outlineColor), lineWidth: outlineW)
+            let irisL = CGRect(x: leftX - eyeSize * 0.05, y: eyeY - eyeSize * 0.05, width: eyeSize * 1.1, height: eyeSize * 1.2)
+            let irisR = CGRect(x: rightX - eyeSize * 0.05, y: eyeY - eyeSize * 0.05, width: eyeSize * 1.1, height: eyeSize * 1.2)
+            context.fill(Path(ellipseIn: irisL), with: .color(Color(hex: "2C2C2C")))
+            context.fill(Path(ellipseIn: irisR), with: .color(Color(hex: "2C2C2C")))
+            let pupilSize = eyeSize * 0.65
+            let pupilOffX = eyeSize * 0.18
+            let pupilOffY = eyeSize * 0.22
+            context.fill(Path(ellipseIn: CGRect(x: leftX + pupilOffX, y: eyeY + pupilOffY, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.92)))
+            context.fill(Path(ellipseIn: CGRect(x: rightX + pupilOffX, y: eyeY + pupilOffY, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.92)))
+            let shineSize = eyeSize * 0.42
+            context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.40, y: eyeY + eyeSize * 0.05, width: shineSize, height: shineSize)), with: .color(.white))
+            context.fill(Path(ellipseIn: CGRect(x: rightX + eyeSize * 0.40, y: eyeY + eyeSize * 0.05, width: shineSize, height: shineSize)), with: .color(.white))
+            let shine2 = eyeSize * 0.22
+            context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.08, y: eyeY + eyeSize * 0.62, width: shine2, height: shine2)), with: .color(.white.opacity(0.60)))
+            context.fill(Path(ellipseIn: CGRect(x: rightX + eyeSize * 0.08, y: eyeY + eyeSize * 0.62, width: shine2, height: shine2)), with: .color(.white.opacity(0.60)))
 
         case .happy:
             var arcL = Path()
-            arcL.move(to: CGPoint(x: leftX - eyeSize * 0.15, y: eyeY + eyeSize * 0.5))
-            arcL.addQuadCurve(to: CGPoint(x: leftX + eyeSize * 1.15, y: eyeY + eyeSize * 0.5), control: CGPoint(x: leftX + eyeSize * 0.5, y: eyeY - eyeSize * 0.4))
-            context.stroke(arcL, with: .color(.black.opacity(0.85)), lineWidth: s * 0.030)
+            arcL.move(to: CGPoint(x: leftX - eyeSize * 0.2, y: eyeY + eyeSize * 0.5))
+            arcL.addQuadCurve(to: CGPoint(x: leftX + eyeSize * 1.2, y: eyeY + eyeSize * 0.5), control: CGPoint(x: leftX + eyeSize * 0.5, y: eyeY - eyeSize * 0.5))
+            context.stroke(arcL, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.032)
             var arcR = Path()
-            arcR.move(to: CGPoint(x: rightX - eyeSize * 0.15, y: eyeY + eyeSize * 0.5))
-            arcR.addQuadCurve(to: CGPoint(x: rightX + eyeSize * 1.15, y: eyeY + eyeSize * 0.5), control: CGPoint(x: rightX + eyeSize * 0.5, y: eyeY - eyeSize * 0.4))
-            context.stroke(arcR, with: .color(.black.opacity(0.85)), lineWidth: s * 0.030)
+            arcR.move(to: CGPoint(x: rightX - eyeSize * 0.2, y: eyeY + eyeSize * 0.5))
+            arcR.addQuadCurve(to: CGPoint(x: rightX + eyeSize * 1.2, y: eyeY + eyeSize * 0.5), control: CGPoint(x: rightX + eyeSize * 0.5, y: eyeY - eyeSize * 0.5))
+            context.stroke(arcR, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.032)
 
         case .big:
-            let bigSize = eyeSize * 1.9
-            let bigY = eyeY - eyeSize * 0.45
-            let bigLX = leftX - eyeSize * 0.45
-            let bigRX = rightX - eyeSize * 0.45
-            context.fill(Path(ellipseIn: CGRect(x: bigLX, y: bigY, width: bigSize, height: bigSize)), with: .color(.white))
-            context.fill(Path(ellipseIn: CGRect(x: bigRX, y: bigY, width: bigSize, height: bigSize)), with: .color(.white))
-            context.stroke(Path(ellipseIn: CGRect(x: bigLX, y: bigY, width: bigSize, height: bigSize)), with: .color(.black.opacity(0.15)), lineWidth: 1)
-            context.stroke(Path(ellipseIn: CGRect(x: bigRX, y: bigY, width: bigSize, height: bigSize)), with: .color(.black.opacity(0.15)), lineWidth: 1)
-            let pupilSize = bigSize * 0.55
-            let pupilOff = bigSize * 0.28
-            context.fill(Path(ellipseIn: CGRect(x: bigLX + pupilOff, y: bigY + pupilOff * 0.8, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.85)))
-            context.fill(Path(ellipseIn: CGRect(x: bigRX + pupilOff, y: bigY + pupilOff * 0.8, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.85)))
-            let shSize = pupilSize * 0.38
-            context.fill(Path(ellipseIn: CGRect(x: bigLX + pupilOff + pupilSize * 0.32, y: bigY + pupilOff * 0.8 + pupilSize * 0.10, width: shSize, height: shSize)), with: .color(.white))
-            context.fill(Path(ellipseIn: CGRect(x: bigRX + pupilOff + pupilSize * 0.32, y: bigY + pupilOff * 0.8 + pupilSize * 0.10, width: shSize, height: shSize)), with: .color(.white))
+            let bigSize = eyeSize * 2.0
+            let bigY = eyeY - eyeSize * 0.50
+            let bigLX = leftX - eyeSize * 0.50
+            let bigRX = rightX - eyeSize * 0.50
+            let bigL = CGRect(x: bigLX, y: bigY, width: bigSize, height: bigSize)
+            let bigR = CGRect(x: bigRX, y: bigY, width: bigSize, height: bigSize)
+            context.fill(Path(ellipseIn: bigL), with: .color(.white))
+            context.fill(Path(ellipseIn: bigR), with: .color(.white))
+            context.stroke(Path(ellipseIn: bigL), with: .color(outlineColor), lineWidth: outlineW)
+            context.stroke(Path(ellipseIn: bigR), with: .color(outlineColor), lineWidth: outlineW)
+            let irisSize = bigSize * 0.6
+            let irisOff = (bigSize - irisSize) / 2
+            context.fill(Path(ellipseIn: CGRect(x: bigLX + irisOff, y: bigY + irisOff * 0.7, width: irisSize, height: irisSize)), with: .color(Color(hex: "2C2C2C")))
+            context.fill(Path(ellipseIn: CGRect(x: bigRX + irisOff, y: bigY + irisOff * 0.7, width: irisSize, height: irisSize)), with: .color(Color(hex: "2C2C2C")))
+            let pupilSize = bigSize * 0.38
+            let pupilOff = bigSize * 0.32
+            context.fill(Path(ellipseIn: CGRect(x: bigLX + pupilOff, y: bigY + pupilOff * 0.75, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.92)))
+            context.fill(Path(ellipseIn: CGRect(x: bigRX + pupilOff, y: bigY + pupilOff * 0.75, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.92)))
+            let shSize = pupilSize * 0.45
+            context.fill(Path(ellipseIn: CGRect(x: bigLX + pupilOff + pupilSize * 0.30, y: bigY + pupilOff * 0.75 + pupilSize * 0.08, width: shSize, height: shSize)), with: .color(.white))
+            context.fill(Path(ellipseIn: CGRect(x: bigRX + pupilOff + pupilSize * 0.30, y: bigY + pupilOff * 0.75 + pupilSize * 0.08, width: shSize, height: shSize)), with: .color(.white))
+            let sh2 = pupilSize * 0.22
+            context.fill(Path(ellipseIn: CGRect(x: bigLX + pupilOff + pupilSize * 0.08, y: bigY + pupilOff * 0.75 + pupilSize * 0.55, width: sh2, height: sh2)), with: .color(.white.opacity(0.55)))
+            context.fill(Path(ellipseIn: CGRect(x: bigRX + pupilOff + pupilSize * 0.08, y: bigY + pupilOff * 0.75 + pupilSize * 0.55, width: sh2, height: sh2)), with: .color(.white.opacity(0.55)))
 
         case .sleepy:
             var lidL = Path()
@@ -774,13 +794,19 @@ struct AnimalAvatarView: View {
         case .wink:
             let whiteL = CGRect(x: leftX - eyeSize * 0.3, y: eyeY - eyeSize * 0.3, width: eyeSize * 1.6, height: eyeSize * 1.7)
             context.fill(Path(ellipseIn: whiteL), with: .color(.white))
-            context.fill(Path(ellipseIn: CGRect(x: leftX, y: eyeY, width: eyeSize, height: eyeSize * 1.1)), with: .color(.black.opacity(0.85)))
-            let shineSize = eyeSize * 0.40
-            context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.42, y: eyeY + eyeSize * 0.10, width: shineSize, height: shineSize)), with: .color(.white))
+            context.stroke(Path(ellipseIn: whiteL), with: .color(outlineColor), lineWidth: outlineW)
+            let irisWL = CGRect(x: leftX - eyeSize * 0.05, y: eyeY - eyeSize * 0.05, width: eyeSize * 1.1, height: eyeSize * 1.2)
+            context.fill(Path(ellipseIn: irisWL), with: .color(Color(hex: "2C2C2C")))
+            let pupilW = eyeSize * 0.65
+            context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.18, y: eyeY + eyeSize * 0.22, width: pupilW, height: pupilW)), with: .color(.black.opacity(0.92)))
+            let shineSize = eyeSize * 0.42
+            context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.40, y: eyeY + eyeSize * 0.05, width: shineSize, height: shineSize)), with: .color(.white))
+            let sh2w = eyeSize * 0.20
+            context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.08, y: eyeY + eyeSize * 0.60, width: sh2w, height: sh2w)), with: .color(.white.opacity(0.55)))
             var winkArc = Path()
-            winkArc.move(to: CGPoint(x: rightX - eyeSize * 0.15, y: eyeY + eyeSize * 0.5))
-            winkArc.addQuadCurve(to: CGPoint(x: rightX + eyeSize * 1.15, y: eyeY + eyeSize * 0.5), control: CGPoint(x: rightX + eyeSize * 0.5, y: eyeY - eyeSize * 0.3))
-            context.stroke(winkArc, with: .color(.black.opacity(0.85)), lineWidth: s * 0.030)
+            winkArc.move(to: CGPoint(x: rightX - eyeSize * 0.2, y: eyeY + eyeSize * 0.5))
+            winkArc.addQuadCurve(to: CGPoint(x: rightX + eyeSize * 1.2, y: eyeY + eyeSize * 0.5), control: CGPoint(x: rightX + eyeSize * 0.5, y: eyeY - eyeSize * 0.4))
+            context.stroke(winkArc, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.032)
 
         case .stars:
             drawStar(context: &context, center: CGPoint(x: leftX + eyeSize * 0.5, y: eyeY + eyeSize * 0.5), radius: eyeSize * 0.95, color: Color(hex: "FFD54F"))
@@ -816,19 +842,25 @@ struct AnimalAvatarView: View {
             context.stroke(browR, with: .color(.black.opacity(0.65)), lineWidth: s * 0.030)
 
         case .surprised:
-            let bigSize = eyeSize * 1.8
-            let bigY = eyeY - eyeSize * 0.35
-            context.fill(Path(ellipseIn: CGRect(x: leftX - eyeSize * 0.35, y: bigY, width: bigSize, height: bigSize)), with: .color(.white))
-            context.fill(Path(ellipseIn: CGRect(x: rightX - eyeSize * 0.35, y: bigY, width: bigSize, height: bigSize)), with: .color(.white))
-            context.stroke(Path(ellipseIn: CGRect(x: leftX - eyeSize * 0.35, y: bigY, width: bigSize, height: bigSize)), with: .color(.black.opacity(0.15)), lineWidth: 1)
-            context.stroke(Path(ellipseIn: CGRect(x: rightX - eyeSize * 0.35, y: bigY, width: bigSize, height: bigSize)), with: .color(.black.opacity(0.15)), lineWidth: 1)
-            let pupilSize = bigSize * 0.48
+            let bigSize = eyeSize * 1.9
+            let bigY = eyeY - eyeSize * 0.40
+            let sL = CGRect(x: leftX - eyeSize * 0.40, y: bigY, width: bigSize, height: bigSize)
+            let sR = CGRect(x: rightX - eyeSize * 0.40, y: bigY, width: bigSize, height: bigSize)
+            context.fill(Path(ellipseIn: sL), with: .color(.white))
+            context.fill(Path(ellipseIn: sR), with: .color(.white))
+            context.stroke(Path(ellipseIn: sL), with: .color(outlineColor), lineWidth: outlineW)
+            context.stroke(Path(ellipseIn: sR), with: .color(outlineColor), lineWidth: outlineW)
+            let irisS = bigSize * 0.55
+            let irisOff = (bigSize - irisS) / 2
+            context.fill(Path(ellipseIn: CGRect(x: leftX - eyeSize * 0.40 + irisOff, y: bigY + irisOff * 0.85, width: irisS, height: irisS)), with: .color(Color(hex: "2C2C2C")))
+            context.fill(Path(ellipseIn: CGRect(x: rightX - eyeSize * 0.40 + irisOff, y: bigY + irisOff * 0.85, width: irisS, height: irisS)), with: .color(Color(hex: "2C2C2C")))
+            let pupilSize = bigSize * 0.35
             let pupilOff = (bigSize - pupilSize) / 2
-            context.fill(Path(ellipseIn: CGRect(x: leftX - eyeSize * 0.35 + pupilOff, y: bigY + pupilOff, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.85)))
-            context.fill(Path(ellipseIn: CGRect(x: rightX - eyeSize * 0.35 + pupilOff, y: bigY + pupilOff, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.85)))
-            let shSize = pupilSize * 0.38
-            context.fill(Path(ellipseIn: CGRect(x: leftX - eyeSize * 0.35 + pupilOff + pupilSize * 0.28, y: bigY + pupilOff + pupilSize * 0.08, width: shSize, height: shSize)), with: .color(.white))
-            context.fill(Path(ellipseIn: CGRect(x: rightX - eyeSize * 0.35 + pupilOff + pupilSize * 0.28, y: bigY + pupilOff + pupilSize * 0.08, width: shSize, height: shSize)), with: .color(.white))
+            context.fill(Path(ellipseIn: CGRect(x: leftX - eyeSize * 0.40 + pupilOff, y: bigY + pupilOff * 0.85, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.92)))
+            context.fill(Path(ellipseIn: CGRect(x: rightX - eyeSize * 0.40 + pupilOff, y: bigY + pupilOff * 0.85, width: pupilSize, height: pupilSize)), with: .color(.black.opacity(0.92)))
+            let shSize = pupilSize * 0.45
+            context.fill(Path(ellipseIn: CGRect(x: leftX - eyeSize * 0.40 + pupilOff + pupilSize * 0.28, y: bigY + pupilOff * 0.85 + pupilSize * 0.06, width: shSize, height: shSize)), with: .color(.white))
+            context.fill(Path(ellipseIn: CGRect(x: rightX - eyeSize * 0.40 + pupilOff + pupilSize * 0.28, y: bigY + pupilOff * 0.85 + pupilSize * 0.06, width: shSize, height: shSize)), with: .color(.white))
 
         case .cool:
             let glassW = eyeSize * 2.1
@@ -860,19 +892,26 @@ struct AnimalAvatarView: View {
         switch style {
         case .smile:
             var path = Path()
-            path.move(to: CGPoint(x: centerX - mouthW, y: mouthY))
-            path.addQuadCurve(to: CGPoint(x: centerX + mouthW, y: mouthY), control: CGPoint(x: centerX, y: mouthY + s * 0.09))
-            context.stroke(path, with: .color(.black.opacity(0.70)), lineWidth: s * 0.024)
+            path.move(to: CGPoint(x: centerX - mouthW * 1.1, y: mouthY))
+            path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.1, y: mouthY), control: CGPoint(x: centerX, y: mouthY + s * 0.10))
+            context.stroke(path, with: .color(Color(hex: "2C2C2C").opacity(0.80)), lineWidth: s * 0.026)
 
         case .bigSmile:
             var path = Path()
             path.move(to: CGPoint(x: centerX - mouthW * 1.4, y: mouthY - s * 0.01))
-            path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.4, y: mouthY - s * 0.01), control: CGPoint(x: centerX, y: mouthY + s * 0.14))
+            path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.4, y: mouthY - s * 0.01), control: CGPoint(x: centerX, y: mouthY + s * 0.15))
             path.closeSubpath()
-            context.fill(path, with: .color(.black.opacity(0.70)))
+            context.fill(path, with: .color(Color(hex: "2C2C2C").opacity(0.80)))
+            var teethTop = Path()
+            teethTop.move(to: CGPoint(x: centerX - mouthW * 1.4, y: mouthY - s * 0.01))
+            teethTop.addLine(to: CGPoint(x: centerX + mouthW * 1.4, y: mouthY - s * 0.01))
+            teethTop.addLine(to: CGPoint(x: centerX + mouthW * 1.4, y: mouthY + s * 0.018))
+            teethTop.addLine(to: CGPoint(x: centerX - mouthW * 1.4, y: mouthY + s * 0.018))
+            teethTop.closeSubpath()
+            context.fill(teethTop, with: .color(.white.opacity(0.90)))
             var tongue = Path()
-            tongue.addEllipse(in: CGRect(x: centerX - s * 0.05, y: mouthY + s * 0.02, width: s * 0.10, height: s * 0.07))
-            context.fill(tongue, with: .color(Color(hex: "E91E63").opacity(0.60)))
+            tongue.addEllipse(in: CGRect(x: centerX - s * 0.055, y: mouthY + s * 0.025, width: s * 0.11, height: s * 0.075))
+            context.fill(tongue, with: .color(Color(hex: "E57373")))
 
         case .tongue:
             var path = Path()

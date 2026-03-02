@@ -126,12 +126,16 @@ nonisolated enum AccessoryType: String, CaseIterable, Sendable {
 
 enum AvatarColorPalette {
     static let bodyColors: [(name: String, hex: String)] = [
-        ("Red", "EF5350"), ("Orange", "FF7043"), ("Amber", "FFA726"),
-        ("Yellow", "FFEE58"), ("Lime", "D4E157"), ("Green", "66BB6A"),
-        ("Teal", "26A69A"), ("Cyan", "26C6DA"), ("Blue", "42A5F5"),
-        ("Indigo", "5C6BC0"), ("Purple", "AB47BC"), ("Pink", "EC407A"),
-        ("Brown", "8D6E63"), ("Gray", "BDBDBD"), ("Cream", "FFF8E1"),
+        ("Red", "EF5350"), ("Coral", "FF7043"), ("Orange", "FFA726"),
+        ("Amber", "FFB74D"), ("Yellow", "FFEE58"), ("Lime", "D4E157"),
+        ("Green", "66BB6A"), ("Sage", "A5D6A7"), ("Teal", "26A69A"),
+        ("Cyan", "26C6DA"), ("Sky", "4FC3F7"), ("Blue", "42A5F5"),
+        ("Indigo", "5C6BC0"), ("Purple", "AB47BC"), ("Lilac", "CE93D8"),
+        ("Pink", "EC407A"), ("Rose", "F48FB1"), ("Blush", "FFCDD2"),
+        ("Brown", "8D6E63"), ("Mocha", "A1887F"), ("Tan", "D7CCC8"),
+        ("Gray", "BDBDBD"), ("Slate", "90A4AE"), ("Cream", "FFF8E1"),
         ("Peach", "FFCCBC"), ("Lavender", "D1C4E9"), ("Mint", "B2DFDB"),
+        ("Cloud", "ECEFF1"),
     ]
 
     static let backgroundColors: [(name: String, hex: String)] = [
@@ -139,5 +143,9 @@ enum AvatarColorPalette {
         ("Soft Green", "E8F5E9"), ("Soft Purple", "F3E5F5"), ("Soft Orange", "FFF3E0"),
         ("White", "FFFFFF"), ("Light Gray", "F5F5F5"), ("Coral", "FFCCBC"),
         ("Mint", "E0F2F1"), ("Lavender", "EDE7F6"), ("Peach", "FBE9E7"),
+        ("Sky", "BBDEFB"), ("Rose", "F8BBD0"), ("Butter", "FFF59D"),
+        ("Sage", "C8E6C9"), ("Lilac", "E1BEE7"), ("Powder", "B3E5FC"),
+        ("Sand", "FFECB3"), ("Ice", "E0F7FA"), ("Blush", "FCE4EC"),
+        ("Slate", "CFD8DC"), ("Cream", "FFFDE7"), ("Cloud", "FAFAFA"),
     ]
 }

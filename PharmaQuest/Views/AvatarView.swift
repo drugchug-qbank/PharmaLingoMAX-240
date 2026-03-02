@@ -19,46 +19,19 @@ struct AvatarDisplayView: View {
         self.size = size
     }
 
-    private var animalType: AnimalType {
-        AnimalType(rawValue: animal) ?? .beaver
-    }
-
-    private var eyeStyle: EyeStyle {
-        EyeStyle(rawValue: eyes) ?? .normal
-    }
-
-    private var mouthStyleValue: MouthStyle {
-        MouthStyle(rawValue: mouth) ?? .smile
-    }
-
-    private var accessoryType: AccessoryType {
-        AccessoryType(rawValue: accessory) ?? .none
-    }
-
-    private var resolvedBodyColor: Color {
-        if bodyColor.isEmpty {
-            return Color(hex: animalType.defaultColorHex)
-        }
-        return Color(hex: bodyColor)
-    }
-
-    private var resolvedBgColor: Color {
-        if backgroundColor.isEmpty {
-            return Color(hex: "E3F2FD")
-        }
-        return Color(hex: backgroundColor)
+    private var configuration: AvatarConfiguration {
+        AvatarConfiguration(
+            animal: animal,
+            eyes: eyes,
+            mouth: mouth,
+            accessory: accessory,
+            bodyHex: bodyColor,
+            bgHex: backgroundColor
+        )
     }
 
     var body: some View {
-        AnimalAvatarView(
-            animalType: animalType,
-            bodyColor: resolvedBodyColor,
-            backgroundColor: resolvedBgColor,
-            eyeStyle: eyeStyle,
-            mouthStyle: mouthStyleValue,
-            accessory: accessoryType,
-            size: size
-        )
+        AvatarRendererView(configuration: configuration, size: size)
     }
 }
 
@@ -74,6 +47,7 @@ struct AvatarCustomizationView: View {
     @State private var selectedBgColor: String
     @State private var showPurchaseAlert: Bool = false
     @State private var purchaseMessage: String = ""
+    @State private var previewBounce: Bool = false
 
     enum AvatarTab: String, CaseIterable {
         case animals = "Animal"
@@ -105,6 +79,17 @@ struct AvatarCustomizationView: View {
         _selectedBgColor = State(initialValue: gameVM.avatarBgColor.isEmpty ? "E3F2FD" : gameVM.avatarBgColor)
     }
 
+    private var previewConfig: AvatarConfiguration {
+        AvatarConfiguration(
+            animal: selectedAnimal.rawValue,
+            eyes: selectedEyes.rawValue,
+            mouth: selectedMouth.rawValue,
+            accessory: selectedAccessory.rawValue,
+            bodyHex: selectedBodyColor,
+            bgHex: selectedBgColor
+        )
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -124,16 +109,15 @@ struct AvatarCustomizationView: View {
                     )
 
                     VStack(spacing: 12) {
-                        AnimalAvatarView(
-                            animalType: selectedAnimal,
-                            bodyColor: Color(hex: selectedBodyColor),
-                            backgroundColor: Color(hex: selectedBgColor),
-                            eyeStyle: selectedEyes,
-                            mouthStyle: selectedMouth,
-                            accessory: selectedAccessory,
-                            size: 220
+                        AvatarRendererView(
+                            configuration: previewConfig,
+                            size: 220,
+                            showIdleAnimation: true
                         )
-                        .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
+                        .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 8)
+                        .shadow(color: Color(hex: selectedBgColor).opacity(0.3), radius: 24, x: 0, y: 4)
+                        .scaleEffect(previewBounce ? 1.04 : 1.0)
+                        .animation(.spring(duration: 0.3, bounce: 0.5), value: previewBounce)
 
                         HStack(spacing: 16) {
                             CoinDisplay(amount: gameVM.coins)
@@ -190,6 +174,14 @@ struct AvatarCustomizationView: View {
         }
     }
 
+    private func triggerBounce() {
+        previewBounce = true
+        Task {
+            try? await Task.sleep(for: .seconds(0.15))
+            previewBounce = false
+        }
+    }
+
     private var tabBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 4) {
@@ -227,13 +219,15 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            AnimalAvatarView(
-                                animalType: animal,
-                                bodyColor: Color(hex: animal.defaultColorHex),
-                                backgroundColor: Color(hex: "F5F5F5"),
-                                eyeStyle: .normal,
-                                mouthStyle: .smile,
-                                accessory: .none,
+                            CachedAvatarView(
+                                configuration: AvatarConfiguration(
+                                    animal: animal.rawValue,
+                                    eyes: "normal",
+                                    mouth: "smile",
+                                    accessory: "none",
+                                    bodyHex: animal.defaultColorHex,
+                                    bgHex: "F5F5F5"
+                                ),
                                 size: 60
                             )
 
@@ -267,14 +261,17 @@ struct AvatarCustomizationView: View {
                         }
                     }
                     .padding(6)
-                    .background(isSelected ? AppTheme.primaryBlue.opacity(0.08) : .clear)
+                    .background(isSelected ? AppTheme.primaryBlue.opacity(0.10) : Color(.tertiarySystemFill).opacity(0.5))
                     .clipShape(.rect(cornerRadius: 12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(isSelected ? AppTheme.primaryBlue : .clear, lineWidth: 2.5)
                     )
+                    .scaleEffect(isSelected ? 1.03 : 1.0)
+                    .animation(.spring(duration: 0.25, bounce: 0.4), value: isSelected)
                 }
                 .buttonStyle(.plain)
+                .sensoryFeedback(.selection, trigger: isSelected)
             }
         }
         .padding()
@@ -291,21 +288,9 @@ struct AvatarCustomizationView: View {
                     withAnimation(.spring(duration: 0.2)) {
                         selectedBodyColor = selectedAnimal.defaultColorHex
                     }
+                    triggerBounce()
                 } label: {
-                    VStack(spacing: 4) {
-                        ZStack {
-                            Circle()
-                                .fill(Color(hex: selectedAnimal.defaultColorHex))
-                                .frame(width: 44, height: 44)
-                            if selectedBodyColor == selectedAnimal.defaultColorHex {
-                                Circle().stroke(AppTheme.primaryBlue, lineWidth: 3).frame(width: 50, height: 50)
-                                Image(systemName: "checkmark").font(.caption.bold()).foregroundStyle(.white)
-                            }
-                        }
-                        Text("Default")
-                            .font(.system(size: 9, weight: .medium))
-                            .foregroundStyle(.secondary)
-                    }
+                    colorCell(hex: selectedAnimal.defaultColorHex, name: "Default", isSelected: selectedBodyColor == selectedAnimal.defaultColorHex)
                 }
                 .buttonStyle(.plain)
 
@@ -314,23 +299,9 @@ struct AvatarCustomizationView: View {
                         withAnimation(.spring(duration: 0.2)) {
                             selectedBodyColor = color.hex
                         }
+                        triggerBounce()
                     } label: {
-                        VStack(spacing: 4) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color(hex: color.hex))
-                                    .frame(width: 44, height: 44)
-                                    .shadow(color: Color(hex: color.hex).opacity(0.3), radius: 3)
-                                if selectedBodyColor == color.hex {
-                                    Circle().stroke(AppTheme.primaryBlue, lineWidth: 3).frame(width: 50, height: 50)
-                                    Image(systemName: "checkmark").font(.caption.bold()).foregroundStyle(.white)
-                                }
-                            }
-                            Text(color.name)
-                                .font(.system(size: 9, weight: .medium))
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
+                        colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
                     }
                     .buttonStyle(.plain)
                 }
@@ -352,25 +323,9 @@ struct AvatarCustomizationView: View {
                         withAnimation(.spring(duration: 0.2)) {
                             selectedBgColor = color.hex
                         }
+                        triggerBounce()
                     } label: {
-                        VStack(spacing: 4) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color(hex: color.hex))
-                                    .frame(width: 44, height: 44)
-                                    .overlay(
-                                        Circle().stroke(Color(.systemGray4), lineWidth: 0.5)
-                                    )
-                                if selectedBgColor == color.hex {
-                                    Circle().stroke(AppTheme.primaryBlue, lineWidth: 3).frame(width: 50, height: 50)
-                                    Image(systemName: "checkmark").font(.caption.bold()).foregroundStyle(AppTheme.primaryBlue)
-                                }
-                            }
-                            Text(color.name)
-                                .font(.system(size: 9, weight: .medium))
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
+                        colorCell(hex: color.hex, name: color.name, isSelected: selectedBgColor == color.hex, showBorder: true)
                     }
                     .buttonStyle(.plain)
                 }
@@ -378,6 +333,33 @@ struct AvatarCustomizationView: View {
             .padding(.horizontal)
         }
         .padding(.vertical)
+    }
+
+    private func colorCell(hex: String, name: String, isSelected: Bool, showBorder: Bool = false) -> some View {
+        VStack(spacing: 4) {
+            ZStack {
+                Circle()
+                    .fill(Color(hex: hex))
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        Circle().stroke(showBorder ? Color(.systemGray4) : .clear, lineWidth: 0.5)
+                    )
+                    .shadow(color: Color(hex: hex).opacity(isSelected ? 0.4 : 0.15), radius: isSelected ? 5 : 2)
+                if isSelected {
+                    Circle().stroke(AppTheme.primaryBlue, lineWidth: 3).frame(width: 50, height: 50)
+                    Image(systemName: "checkmark")
+                        .font(.caption.bold())
+                        .foregroundStyle(.white)
+                        .shadow(color: .black.opacity(0.3), radius: 1)
+                }
+            }
+            .scaleEffect(isSelected ? 1.08 : 1.0)
+            .animation(.spring(duration: 0.2, bounce: 0.4), value: isSelected)
+            Text(name)
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
     }
 
     private var eyeGrid: some View {
@@ -390,13 +372,15 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            AnimalAvatarView(
-                                animalType: selectedAnimal,
-                                bodyColor: Color(hex: selectedBodyColor),
-                                backgroundColor: Color(hex: selectedBgColor),
-                                eyeStyle: eye,
-                                mouthStyle: selectedMouth,
-                                accessory: .none,
+                            CachedAvatarView(
+                                configuration: AvatarConfiguration(
+                                    animal: selectedAnimal.rawValue,
+                                    eyes: eye.rawValue,
+                                    mouth: selectedMouth.rawValue,
+                                    accessory: "none",
+                                    bodyHex: selectedBodyColor,
+                                    bgHex: selectedBgColor
+                                ),
                                 size: 60
                             )
                             if !isOwned {
@@ -410,14 +394,17 @@ struct AvatarCustomizationView: View {
                         priceLabel(price: eye.price, isOwned: isOwned, isSelected: isSelected)
                     }
                     .padding(6)
-                    .background(isSelected ? AppTheme.primaryBlue.opacity(0.08) : .clear)
+                    .background(isSelected ? AppTheme.primaryBlue.opacity(0.10) : Color(.tertiarySystemFill).opacity(0.5))
                     .clipShape(.rect(cornerRadius: 12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(isSelected ? AppTheme.primaryBlue : .clear, lineWidth: 2.5)
                     )
+                    .scaleEffect(isSelected ? 1.03 : 1.0)
+                    .animation(.spring(duration: 0.25, bounce: 0.4), value: isSelected)
                 }
                 .buttonStyle(.plain)
+                .sensoryFeedback(.selection, trigger: isSelected)
             }
         }
         .padding()
@@ -433,13 +420,15 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            AnimalAvatarView(
-                                animalType: selectedAnimal,
-                                bodyColor: Color(hex: selectedBodyColor),
-                                backgroundColor: Color(hex: selectedBgColor),
-                                eyeStyle: selectedEyes,
-                                mouthStyle: mouth,
-                                accessory: .none,
+                            CachedAvatarView(
+                                configuration: AvatarConfiguration(
+                                    animal: selectedAnimal.rawValue,
+                                    eyes: selectedEyes.rawValue,
+                                    mouth: mouth.rawValue,
+                                    accessory: "none",
+                                    bodyHex: selectedBodyColor,
+                                    bgHex: selectedBgColor
+                                ),
                                 size: 60
                             )
                             if !isOwned {
@@ -453,14 +442,17 @@ struct AvatarCustomizationView: View {
                         priceLabel(price: mouth.price, isOwned: isOwned, isSelected: isSelected)
                     }
                     .padding(6)
-                    .background(isSelected ? AppTheme.primaryBlue.opacity(0.08) : .clear)
+                    .background(isSelected ? AppTheme.primaryBlue.opacity(0.10) : Color(.tertiarySystemFill).opacity(0.5))
                     .clipShape(.rect(cornerRadius: 12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(isSelected ? AppTheme.primaryBlue : .clear, lineWidth: 2.5)
                     )
+                    .scaleEffect(isSelected ? 1.03 : 1.0)
+                    .animation(.spring(duration: 0.25, bounce: 0.4), value: isSelected)
                 }
                 .buttonStyle(.plain)
+                .sensoryFeedback(.selection, trigger: isSelected)
             }
         }
         .padding()
@@ -476,13 +468,15 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            AnimalAvatarView(
-                                animalType: selectedAnimal,
-                                bodyColor: Color(hex: selectedBodyColor),
-                                backgroundColor: Color(hex: selectedBgColor),
-                                eyeStyle: selectedEyes,
-                                mouthStyle: selectedMouth,
-                                accessory: acc,
+                            CachedAvatarView(
+                                configuration: AvatarConfiguration(
+                                    animal: selectedAnimal.rawValue,
+                                    eyes: selectedEyes.rawValue,
+                                    mouth: selectedMouth.rawValue,
+                                    accessory: acc.rawValue,
+                                    bodyHex: selectedBodyColor,
+                                    bgHex: selectedBgColor
+                                ),
                                 size: 60
                             )
                             if !isOwned && acc != .none {
@@ -497,14 +491,17 @@ struct AvatarCustomizationView: View {
                         priceLabel(price: acc.price, isOwned: isOwned || acc == .none, isSelected: isSelected)
                     }
                     .padding(6)
-                    .background(isSelected ? AppTheme.primaryBlue.opacity(0.08) : .clear)
+                    .background(isSelected ? AppTheme.primaryBlue.opacity(0.10) : Color(.tertiarySystemFill).opacity(0.5))
                     .clipShape(.rect(cornerRadius: 12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(isSelected ? AppTheme.primaryBlue : .clear, lineWidth: 2.5)
                     )
+                    .scaleEffect(isSelected ? 1.03 : 1.0)
+                    .animation(.spring(duration: 0.25, bounce: 0.4), value: isSelected)
                 }
                 .buttonStyle(.plain)
+                .sensoryFeedback(.selection, trigger: isSelected)
             }
         }
         .padding()
@@ -535,6 +532,7 @@ struct AvatarCustomizationView: View {
                     selectedBodyColor = animal.defaultColorHex
                 }
             }
+            triggerBounce()
             return
         }
         guard gameVM.spendCoins(animal.price) else {
@@ -547,12 +545,14 @@ struct AvatarCustomizationView: View {
             selectedAnimal = animal
             selectedBodyColor = animal.defaultColorHex
         }
+        triggerBounce()
         gameVM.save()
     }
 
     private func handleEyePurchase(eye: EyeStyle, isOwned: Bool) {
         if isOwned || eye.price == 0 {
             withAnimation(.spring(duration: 0.3)) { selectedEyes = eye }
+            triggerBounce()
             if !gameVM.ownedEyes.contains(eye.rawValue) {
                 gameVM.ownedEyes.insert(eye.rawValue)
                 gameVM.save()
@@ -568,12 +568,14 @@ struct AvatarCustomizationView: View {
             gameVM.ownedEyes.insert(eye.rawValue)
             selectedEyes = eye
         }
+        triggerBounce()
         gameVM.save()
     }
 
     private func handleMouthPurchase(mouth: MouthStyle, isOwned: Bool) {
         if isOwned || mouth.price == 0 {
             withAnimation(.spring(duration: 0.3)) { selectedMouth = mouth }
+            triggerBounce()
             if !gameVM.ownedMouths.contains(mouth.rawValue) {
                 gameVM.ownedMouths.insert(mouth.rawValue)
                 gameVM.save()
@@ -589,12 +591,14 @@ struct AvatarCustomizationView: View {
             gameVM.ownedMouths.insert(mouth.rawValue)
             selectedMouth = mouth
         }
+        triggerBounce()
         gameVM.save()
     }
 
     private func handleAccessoryPurchase(accessory: AccessoryType, isOwned: Bool) {
         if isOwned || accessory.price == 0 {
             withAnimation(.spring(duration: 0.3)) { selectedAccessory = accessory }
+            triggerBounce()
             if !gameVM.ownedAccessories.contains(accessory.rawValue) {
                 gameVM.ownedAccessories.insert(accessory.rawValue)
                 gameVM.save()
@@ -610,6 +614,7 @@ struct AvatarCustomizationView: View {
             gameVM.ownedAccessories.insert(accessory.rawValue)
             selectedAccessory = accessory
         }
+        triggerBounce()
         gameVM.save()
     }
 }
