@@ -7,6 +7,10 @@ struct AvatarDisplayView: View {
     let accessory: String
     let size: CGFloat
 
+    private var layout: AvatarFaceLayout {
+        AvatarShop.faceLayout(for: animal)
+    }
+
     var body: some View {
         ZStack {
             Circle()
@@ -43,8 +47,8 @@ struct AvatarDisplayView: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: size * 0.55, height: size * 0.3)
-                            .offset(y: -size * 0.06)
+                            .frame(width: size * layout.eyesWidth, height: size * layout.eyesHeight)
+                            .offset(y: size * layout.eyesOffsetY)
                     }
                 }
             }
@@ -55,8 +59,8 @@ struct AvatarDisplayView: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: size * 0.35, height: size * 0.2)
-                            .offset(y: size * 0.15)
+                            .frame(width: size * layout.mouthWidth, height: size * layout.mouthHeight)
+                            .offset(y: size * layout.mouthOffsetY)
                     }
                 }
             }

@@ -890,6 +890,16 @@ struct DrugDataService {
         var bank: [String: [Question]] = [:]
 
         bank["1a"] = [
+            .fillBlank(id: "q1a_t1", subsectionId: "1a", difficulty: .easy, question: "All ACE inhibitors end in _____.", options: ["-pril", "-sartan", "-olol", "-dipine"], answer: "-pril", explanation: "The -pril suffix identifies ACE inhibitors (lisinopril, enalapril, ramipril)."),
+            .fillBlank(id: "q1a_t2", subsectionId: "1a", difficulty: .easy, question: "All ARBs end in _____.", options: ["-sartan", "-pril", "-olol", "-statin"], answer: "-sartan", explanation: "The -sartan suffix identifies ARBs (losartan, valsartan, irbesartan)."),
+            .trueFalse(id: "q1a_t3", subsectionId: "1a", difficulty: .easy, question: "Lisinopril (Zestril) is an ACE inhibitor because it ends in -pril.", answer: true, explanation: "The -pril suffix always indicates an ACE inhibitor."),
+            .trueFalse(id: "q1a_t4", subsectionId: "1a", difficulty: .easy, question: "Losartan (Cozaar) is an ARB because it ends in -sartan.", answer: true, explanation: "The -sartan suffix always indicates an ARB."),
+            .multipleChoice(id: "q1a_t5", subsectionId: "1a", difficulty: .easy, question: "The primary indication for both ACE inhibitors and ARBs is:", options: ["Hypertension", "Diabetes", "Asthma", "Depression"], answer: "Hypertension", explanation: "Both ACE inhibitors and ARBs are first-line agents for hypertension (HTN)."),
+            .fillBlank(id: "q1a_t6", subsectionId: "1a", difficulty: .easy, question: "A patient on lisinopril develops a dry cough. This is caused by _____ accumulation.", options: ["Bradykinin", "Angiotensin", "Aldosterone", "Potassium"], answer: "Bradykinin", explanation: "ACE inhibitors cause bradykinin accumulation, which triggers the dry cough."),
+            .multipleChoice(id: "q1a_13", subsectionId: "1a", question: "Which ACE inhibitor is available as an IV formulation (enalaprilat)?", options: ["Enalapril", "Lisinopril", "Ramipril", "Benazepril"], answer: "Enalapril", explanation: "Enalapril (Vasotec) is a prodrug; its IV form is enalaprilat."),
+            .multipleChoice(id: "q1a_14", subsectionId: "1a", question: "Olmesartan (Benicar) has a unique side effect called:", options: ["Sprue-like enteropathy", "Dry cough", "Angioedema", "Gingival hyperplasia"], answer: "Sprue-like enteropathy", explanation: "Olmesartan can cause sprue-like enteropathy (severe diarrhea, weight loss)."),
+            .fillBlank(id: "q1a_15", subsectionId: "1a", question: "The brand name of valsartan is _____.", options: ["Diovan", "Cozaar", "Avapro", "Benicar"], answer: "Diovan", explanation: "Valsartan is sold as Diovan."),
+            .multipleChoice(id: "q1a_16", subsectionId: "1a", question: "Ramipril (Altace) showed cardiovascular risk reduction in which patients?", options: ["High CV risk patients", "Pregnant women", "Children under 5", "Patients with asthma"], answer: "High CV risk patients", explanation: "Ramipril showed CV risk reduction in high-risk patients."),
             .trueFalse(id: "q1a_1", subsectionId: "1a", question: "ACE inhibitors end in the suffix -pril.", answer: true, explanation: "All ACE inhibitors end in -pril (e.g., lisinopril, enalapril, ramipril)."),
             .fillBlank(id: "q1a_2", subsectionId: "1a", question: "All ACE inhibitors end in _____.", options: ["-pril", "-sartan", "-olol", "-dipine"], answer: "-pril", explanation: "The -pril suffix identifies ACE inhibitors."),
             .multipleChoice(id: "q1a_3", subsectionId: "1a", question: "Which side effect is unique to ACE inhibitors compared to ARBs?", options: ["Dry cough", "Hyperkalemia", "Dizziness", "Hypotension"], answer: "Dry cough", explanation: "Dry cough from bradykinin accumulation is unique to ACE inhibitors."),
@@ -905,6 +915,13 @@ struct DrugDataService {
         ]
 
         bank["1b"] = [
+            .fillBlank(id: "q1b_t1", subsectionId: "1b", difficulty: .easy, question: "Furosemide (Lasix) belongs to which class of diuretics?", options: ["Loop diuretics", "Thiazide diuretics", "Potassium-sparing diuretics", "Osmotic diuretics"], answer: "Loop diuretics", explanation: "Furosemide (Lasix) is the most commonly used loop diuretic."),
+            .trueFalse(id: "q1b_t2", subsectionId: "1b", difficulty: .easy, question: "Hydrochlorothiazide (Microzide) is a thiazide diuretic used for hypertension.", answer: true, explanation: "HCTZ is the most commonly used thiazide diuretic for HTN."),
+            .multipleChoice(id: "q1b_t3", subsectionId: "1b", difficulty: .easy, question: "Thiazide diuretics cause hyper_____ (elevated levels of glucose, lipids, uric acid, calcium).", options: ["GLUC", "KALE", "SALT", "ACID"], answer: "GLUC", explanation: "Remember HyperGLUC: Glucose↑, Lipids↑, Uric acid↑, Calcium↑."),
+            .trueFalse(id: "q1b_t4", subsectionId: "1b", difficulty: .easy, question: "Loop diuretics like furosemide (Lasix) are more potent than thiazide diuretics.", answer: true, explanation: "Loop diuretics are the most potent diuretic class available."),
+            .multipleChoice(id: "q1b_13", subsectionId: "1b", question: "Which electrolyte abnormality is common to BOTH thiazide and loop diuretics?", options: ["Hypokalemia", "Hypercalcemia", "Hypermagnesemia", "Hypernatremia"], answer: "Hypokalemia", explanation: "Both classes waste potassium, causing hypokalemia."),
+            .fillBlank(id: "q1b_14", subsectionId: "1b", question: "The brand name of bumetanide is _____.", options: ["Bumex", "Lasix", "Demadex", "Microzide"], answer: "Bumex", explanation: "Bumetanide is sold as Bumex."),
+            .trueFalse(id: "q1b_15", subsectionId: "1b", question: "Thiazides cause hypercalcemia while loop diuretics cause hypocalcemia.", answer: true, explanation: "This is a key distinction: thiazides retain calcium while loops waste calcium."),
             .trueFalse(id: "q1b_1", subsectionId: "1b", question: "Thiazide diuretics cause hypokalemia.", answer: true, explanation: "Thiazides increase potassium excretion."),
             .fillBlank(id: "q1b_2", subsectionId: "1b", question: "The brand name of furosemide is _____.", options: ["Lasix", "Bumex", "Microzide", "Aldactone"], answer: "Lasix", explanation: "Furosemide is Lasix."),
             .multipleChoice(id: "q1b_3", subsectionId: "1b", question: "Which diuretic class is the MOST potent?", options: ["Loop diuretics", "Thiazide diuretics", "Potassium-sparing diuretics", "Osmotic diuretics"], answer: "Loop diuretics", explanation: "Loop diuretics are the most potent."),
@@ -920,6 +937,13 @@ struct DrugDataService {
         ]
 
         bank["1c"] = [
+            .fillBlank(id: "q1c_t1", subsectionId: "1c", difficulty: .easy, question: "All beta blockers end in the suffix _____.", options: ["-olol", "-pril", "-sartan", "-dipine"], answer: "-olol", explanation: "The -olol suffix identifies beta blockers (metoprolol, atenolol, propranolol)."),
+            .trueFalse(id: "q1c_t2", subsectionId: "1c", difficulty: .easy, question: "Metoprolol succinate (Toprol XL) is a beta blocker used for heart failure.", answer: true, explanation: "Metoprolol succinate is one of three beta blockers proven to reduce mortality in HFrEF."),
+            .multipleChoice(id: "q1c_t3", subsectionId: "1c", difficulty: .easy, question: "Beta-1 receptors are primarily located in the:", options: ["Heart", "Lungs", "Liver", "Kidneys"], answer: "Heart", explanation: "B1 = Heart, B2 = Lungs. Selective beta-1 blockers mainly affect heart rate."),
+            .trueFalse(id: "q1c_t4", subsectionId: "1c", difficulty: .easy, question: "Carvedilol (Coreg) blocks both alpha and beta receptors.", answer: true, explanation: "Carvedilol is unique because it blocks alpha-1, beta-1, and beta-2 receptors."),
+            .multipleChoice(id: "q1c_12", subsectionId: "1c", question: "Which beta blocker is the most beta-1 selective?", options: ["Bisoprolol", "Propranolol", "Carvedilol", "Labetalol"], answer: "Bisoprolol", explanation: "Bisoprolol (Zebeta) is the most beta-1 selective beta blocker."),
+            .fillBlank(id: "q1c_13", subsectionId: "1c", question: "The brand name of atenolol is _____.", options: ["Tenormin", "Coreg", "Inderal", "Zebeta"], answer: "Tenormin", explanation: "Atenolol is sold as Tenormin."),
+            .fillBlank(id: "q1c_14", subsectionId: "1c", question: "The brand name of propranolol is _____.", options: ["Inderal", "Toprol XL", "Coreg", "Tenormin"], answer: "Inderal", explanation: "Propranolol is sold as Inderal."),
             .fillBlank(id: "q1c_1", subsectionId: "1c", question: "All beta blockers end in _____.", options: ["-olol", "-pril", "-sartan", "-statin"], answer: "-olol", explanation: "The -olol suffix identifies beta blockers."),
             .trueFalse(id: "q1c_2", subsectionId: "1c", question: "Propranolol is a selective beta-1 blocker.", answer: false, explanation: "Propranolol is NON-selective (B1 and B2)."),
             .multipleChoice(id: "q1c_3", subsectionId: "1c", question: "Which 3 beta blockers reduce mortality in HFrEF?", options: ["Metoprolol succinate, carvedilol, bisoprolol", "Metoprolol tartrate, atenolol, propranolol", "Atenolol, carvedilol, propranolol", "Propranolol, bisoprolol, nadolol"], answer: "Metoprolol succinate, carvedilol, bisoprolol", explanation: "Only these three have HFrEF mortality benefit data."),
@@ -938,15 +962,23 @@ struct DrugDataService {
             .multipleChoice(id: "q1d_2", subsectionId: "1d", question: "Which side effect is associated with spironolactone but NOT eplerenone?", options: ["Gynecomastia", "Hyperkalemia", "Hypotension", "Headache"], answer: "Gynecomastia", explanation: "Spironolactone has anti-androgen effects causing gynecomastia."),
             .fillBlank(id: "q1d_3", subsectionId: "1d", question: "Before starting Entresto, a patient must have a ___-hour washout from ACE inhibitors.", options: ["36", "24", "12", "48"], answer: "36", explanation: "36-hour washout from ACE inhibitors before Entresto."),
             .trueFalse(id: "q1d_4", subsectionId: "1d", question: "Entresto can be safely combined with an ACE inhibitor.", answer: false, explanation: "NEVER combine Entresto with ACE inhibitors."),
-            .multipleChoice(id: "q1d_5", subsectionId: "1d", question: "What trial proved Entresto's superiority over enalapril in HFrEF?", options: ["PARADIGM-HF", "ALLHAT", "HOPE", "RALES"], answer: "PARADIGM-HF", explanation: "PARADIGM-HF showed Entresto was superior to enalapril."),
+            .multipleChoice(id: "q1d_5", subsectionId: "1d", question: "Entresto contains sacubitril combined with which ARB?", options: ["Valsartan", "Losartan", "Irbesartan", "Candesartan"], answer: "Valsartan", explanation: "Entresto = sacubitril/valsartan (ARNI)."),
             .fillBlank(id: "q1d_6", subsectionId: "1d", question: "The brand name of spironolactone is _____.", options: ["Aldactone", "Inspra", "Entresto", "Coreg"], answer: "Aldactone", explanation: "Spironolactone is Aldactone."),
             .multipleChoice(id: "q1d_7", subsectionId: "1d", question: "Entresto contains sacubitril combined with:", options: ["Valsartan", "Losartan", "Lisinopril", "Enalapril"], answer: "Valsartan", explanation: "Entresto = sacubitril + valsartan."),
             .selectAll(id: "q1d_8", subsectionId: "1d", question: "Select ALL that require potassium monitoring:", options: ["Spironolactone", "Eplerenone", "Entresto", "Amlodipine"], correctAnswers: ["Spironolactone", "Eplerenone", "Entresto"], explanation: "All three can cause hyperkalemia."),
-            .trueFalse(id: "q1d_9", subsectionId: "1d", difficulty: .medium, question: "The RALES trial showed mortality benefit with spironolactone in HFrEF.", answer: true, explanation: "RALES demonstrated 30% mortality reduction."),
-            .matching(id: "q1d_10", subsectionId: "1d", question: "Match each drug to its landmark trial:", pairs: [MatchingPair(left: "Spironolactone", right: "RALES"), MatchingPair(left: "Eplerenone", right: "EPHESUS"), MatchingPair(left: "Entresto", right: "PARADIGM-HF")], explanation: "Key clinical trials for MRAs and ARNI."),
+            .fillBlank(id: "q1d_9", subsectionId: "1d", question: "The brand name of eplerenone is _____.", options: ["Inspra", "Aldactone", "Entresto", "Coreg"], answer: "Inspra", explanation: "Eplerenone is sold as Inspra."),
+            .matching(id: "q1d_10", subsectionId: "1d", question: "Match each drug to its brand name:", pairs: [MatchingPair(left: "Spironolactone", right: "Aldactone"), MatchingPair(left: "Eplerenone", right: "Inspra"), MatchingPair(left: "Sacubitril/Valsartan", right: "Entresto")], explanation: "Key MRA and ARNI brand-generic pairs."),
+            .multipleChoice(id: "q1d_11", subsectionId: "1d", difficulty: .easy, question: "MRAs like spironolactone are called potassium-_____ diuretics.", options: ["Sparing", "Wasting", "Neutral", "Blocking"], answer: "Sparing", explanation: "MRAs spare potassium (retain it) unlike thiazides and loop diuretics."),
+            .trueFalse(id: "q1d_12", subsectionId: "1d", difficulty: .easy, question: "Eplerenone causes less gynecomastia than spironolactone.", answer: true, explanation: "Eplerenone is more selective for the mineralocorticoid receptor, causing fewer anti-androgen effects."),
         ]
 
         bank["1e"] = [
+            .trueFalse(id: "q1e_t1", subsectionId: "1e", difficulty: .easy, question: "Amlodipine (Norvasc) is the most commonly prescribed calcium channel blocker.", answer: true, explanation: "Amlodipine is the most prescribed CCB for hypertension."),
+            .multipleChoice(id: "q1e_t2", subsectionId: "1e", difficulty: .easy, question: "There are two types of CCBs: dihydropyridines (DHPs) end in -dipine, and non-DHPs which are:", options: ["Diltiazem and Verapamil", "Amlodipine and Nifedipine", "Metoprolol and Atenolol", "Lisinopril and Enalapril"], answer: "Diltiazem and Verapamil", explanation: "The two non-DHP CCBs are diltiazem (Cardizem) and verapamil (Calan)."),
+            .fillBlank(id: "q1e_t3", subsectionId: "1e", difficulty: .easy, question: "DHP calcium channel blockers all end in _____.", options: ["-dipine", "-olol", "-pril", "-sartan"], answer: "-dipine", explanation: "DHP CCBs end in -dipine: amlodipine, nifedipine, felodipine."),
+            .multipleChoice(id: "q1e_11", subsectionId: "1e", question: "Which CCB is used for Raynaud's phenomenon?", options: ["Nifedipine", "Verapamil", "Diltiazem", "Atenolol"], answer: "Nifedipine", explanation: "Nifedipine (Procardia) is used for Raynaud's due to its vasodilatory effects."),
+            .fillBlank(id: "q1e_12", subsectionId: "1e", question: "The brand name of diltiazem is _____.", options: ["Cardizem", "Norvasc", "Calan", "Procardia"], answer: "Cardizem", explanation: "Diltiazem is sold as Cardizem."),
+            .fillBlank(id: "q1e_13", subsectionId: "1e", question: "The brand name of verapamil is _____.", options: ["Calan", "Cardizem", "Norvasc", "Procardia"], answer: "Calan", explanation: "Verapamil is sold as Calan."),
             .fillBlank(id: "q1e_1", subsectionId: "1e", question: "Dihydropyridine CCBs end in _____.", options: ["-dipine", "-olol", "-sartan", "-pril"], answer: "-dipine", explanation: "DHP CCBs all end in -dipine."),
             .trueFalse(id: "q1e_2", subsectionId: "1e", question: "Verapamil and diltiazem are dihydropyridine CCBs.", answer: false, explanation: "They are NON-dihydropyridine CCBs."),
             .multipleChoice(id: "q1e_3", subsectionId: "1e", question: "Which CCB is most commonly prescribed for HTN?", options: ["Amlodipine", "Verapamil", "Diltiazem", "Nifedipine"], answer: "Amlodipine", explanation: "Amlodipine (Norvasc) is the most prescribed CCB."),
@@ -968,6 +1000,10 @@ struct DrugDataService {
         }()
 
         bank["2a"] = [
+            .trueFalse(id: "q2a_t1", subsectionId: "2a", difficulty: .easy, question: "Atorvastatin (Lipitor) is the most prescribed statin in the world.", answer: true, explanation: "Atorvastatin (Lipitor) is the most widely prescribed statin."),
+            .fillBlank(id: "q2a_t2", subsectionId: "2a", difficulty: .easy, question: "All statins end in _____.", options: ["-statin", "-pril", "-olol", "-sartan"], answer: "-statin", explanation: "The -statin suffix identifies HMG-CoA reductase inhibitors."),
+            .multipleChoice(id: "q2a_t3", subsectionId: "2a", difficulty: .easy, question: "Statins work by inhibiting which enzyme?", options: ["HMG-CoA reductase", "ACE", "COX-2", "PDE-5"], answer: "HMG-CoA reductase", explanation: "Statins inhibit HMG-CoA reductase, the rate-limiting enzyme in cholesterol synthesis."),
+            .multipleChoice(id: "q2a_t4", subsectionId: "2a", difficulty: .easy, question: "The brand name of rosuvastatin is:", options: ["Crestor", "Lipitor", "Zocor", "Pravachol"], answer: "Crestor", explanation: "Rosuvastatin is sold as Crestor."),
             .fillBlank(id: "q2a_1", subsectionId: "2a", question: "All statins end in _____.", options: ["-statin", "-pril", "-olol", "-sartan"], answer: "-statin", explanation: "The -statin suffix identifies HMG-CoA reductase inhibitors."),
             .trueFalse(id: "q2a_2", subsectionId: "2a", question: "Atorvastatin is the most prescribed statin.", answer: true, explanation: "Atorvastatin (Lipitor) is the most widely prescribed statin."),
             .multipleChoice(id: "q2a_3", subsectionId: "2a", question: "Which is the most potent statin?", options: ["Rosuvastatin", "Atorvastatin", "Simvastatin", "Pravastatin"], answer: "Rosuvastatin", explanation: "Rosuvastatin (Crestor) is the most potent statin."),
@@ -988,12 +1024,16 @@ struct DrugDataService {
             .multipleChoice(id: "q2b_4", subsectionId: "2b", question: "Fibrates primarily lower:", options: ["Triglycerides", "LDL", "Total cholesterol", "Lp(a)"], answer: "Triglycerides", explanation: "Fibrates primarily target triglycerides."),
             .multipleChoice(id: "q2b_5", subsectionId: "2b", question: "Which fibrate should be AVOIDED with statins?", options: ["Gemfibrozil", "Fenofibrate", "Both equally", "Neither"], answer: "Gemfibrozil", explanation: "Gemfibrozil significantly increases myopathy risk with statins."),
             .trueFalse(id: "q2b_6", subsectionId: "2b", question: "Icosapent ethyl (Vascepa) is just regular fish oil.", answer: false, explanation: "Vascepa is purified EPA, not standard fish oil."),
-            .multipleChoice(id: "q2b_7", subsectionId: "2b", question: "The landmark trial for icosapent ethyl was:", options: ["REDUCE-IT", "PARADIGM-HF", "ALLHAT", "HOPE"], answer: "REDUCE-IT", explanation: "REDUCE-IT showed CV benefit with icosapent ethyl."),
+            .multipleChoice(id: "q2b_7", subsectionId: "2b", question: "Icosapent ethyl (Vascepa) primarily provides which benefit beyond lowering triglycerides?", options: ["Cardiovascular risk reduction", "Weight loss", "Blood pressure lowering", "Blood glucose control"], answer: "Cardiovascular risk reduction", explanation: "Vascepa (pure EPA) has proven ASCVD risk reduction benefits."),
             .selectAll(id: "q2b_8", subsectionId: "2b", question: "Select ALL PCSK9 inhibitors:", options: ["Evolocumab", "Alirocumab", "Ezetimibe", "Fenofibrate"], correctAnswers: ["Evolocumab", "Alirocumab"], explanation: "Evolocumab (Repatha) and alirocumab (Praluent) are PCSK9 inhibitors."),
             .matching(id: "q2b_9", subsectionId: "2b", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Ezetimibe", right: "Zetia"), MatchingPair(left: "Evolocumab", right: "Repatha"), MatchingPair(left: "Fenofibrate", right: "Tricor"), MatchingPair(left: "Icosapent ethyl", right: "Vascepa")], explanation: "Key non-statin lipid drug brand names."),
         ]
 
         bank["2c"] = [
+            .trueFalse(id: "q2c_t1", subsectionId: "2c", difficulty: .easy, question: "Aspirin is an antiplatelet drug that irreversibly inhibits COX.", answer: true, explanation: "Aspirin irreversibly inhibits COX, preventing platelet aggregation."),
+            .multipleChoice(id: "q2c_t2", subsectionId: "2c", difficulty: .easy, question: "Warfarin (Coumadin) is a blood thinner that requires monitoring of:", options: ["INR", "Blood glucose", "Potassium", "Hemoglobin"], answer: "INR", explanation: "Warfarin requires regular INR monitoring (goal usually 2-3)."),
+            .fillBlank(id: "q2c_t3", subsectionId: "2c", difficulty: .easy, question: "DOACs (direct oral anticoagulants) like rivaroxaban and apixaban end in _____.", options: ["-xaban", "-pril", "-olol", "-statin"], answer: "-xaban", explanation: "The -xaban suffix identifies direct factor Xa inhibitors."),
+            .trueFalse(id: "q2c_t4", subsectionId: "2c", difficulty: .easy, question: "Apixaban (Eliquis) is often the preferred DOAC per many guidelines.", answer: true, explanation: "Apixaban has a favorable safety profile and is often preferred."),
             .trueFalse(id: "q2c_1", subsectionId: "2c", question: "Aspirin irreversibly inhibits COX.", answer: true, explanation: "Aspirin is an irreversible COX inhibitor."),
             .multipleChoice(id: "q2c_2", subsectionId: "2c", question: "Clopidogrel should be avoided with which PPI?", options: ["Omeprazole", "Pantoprazole", "Esomeprazole", "Rabeprazole"], answer: "Omeprazole", explanation: "Omeprazole inhibits CYP2C19, reducing clopidogrel activation."),
             .fillBlank(id: "q2c_3", subsectionId: "2c", question: "The brand name of clopidogrel is _____.", options: ["Plavix", "Brilinta", "Coumadin", "Eliquis"], answer: "Plavix", explanation: "Clopidogrel is sold as Plavix."),
@@ -1016,7 +1056,7 @@ struct DrugDataService {
             .fillBlank(id: "q2d_7", subsectionId: "2d", question: "The brand name of ranolazine is _____.", options: ["Ranexa", "Nitrostat", "Imdur", "Cordarone"], answer: "Ranexa", explanation: "Ranolazine is sold as Ranexa."),
             .selectAll(id: "q2d_8", subsectionId: "2d", question: "Select ALL nitrate medications:", options: ["Nitroglycerin", "Isosorbide mononitrate", "Ranolazine", "Isosorbide dinitrate"], correctAnswers: ["Nitroglycerin", "Isosorbide mononitrate", "Isosorbide dinitrate"], explanation: "Ranolazine is NOT a nitrate."),
             .matching(id: "q2d_9", subsectionId: "2d", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Nitroglycerin SL", right: "Nitrostat"), MatchingPair(left: "Isosorbide mononitrate", right: "Imdur"), MatchingPair(left: "Ranolazine", right: "Ranexa"), MatchingPair(left: "Isosorbide dinitrate", right: "Isordil")], explanation: "Key antianginal brand-generic pairs."),
-            .multipleChoice(id: "q2d_10", subsectionId: "2d", difficulty: .hard, question: "BiDil (isosorbide dinitrate + hydralazine) showed HF benefit in which trial?", options: ["A-HeFT", "PARADIGM-HF", "RALES", "ALLHAT"], answer: "A-HeFT", explanation: "A-HeFT demonstrated benefit of BiDil in Black patients with HFrEF."),
+            .multipleChoice(id: "q2d_10", subsectionId: "2d", difficulty: .medium, question: "BiDil (isosorbide dinitrate + hydralazine) is indicated for HFrEF in which population?", options: ["Black patients", "All patients equally", "Asian patients", "Pediatric patients"], answer: "Black patients", explanation: "BiDil showed particular benefit in Black patients with HFrEF."),
             .trueFalse(id: "q2d_11", subsectionId: "2d", difficulty: .medium, question: "Nitroglycerin tablets should be stored in a plastic container.", answer: false, explanation: "Store in original glass container; NTG is adsorbed by plastic."),
         ]
 
@@ -1044,6 +1084,10 @@ struct DrugDataService {
         }()
 
         bank["3a"] = [
+            .trueFalse(id: "q3a_t1", subsectionId: "3a", difficulty: .easy, question: "Metformin (Glucophage) is the first-line drug for type 2 diabetes.", answer: true, explanation: "Metformin is recommended as first-line for all T2DM patients."),
+            .multipleChoice(id: "q3a_t2", subsectionId: "3a", difficulty: .easy, question: "Which type of insulin has the fastest onset (15 minutes)?", options: ["Rapid-acting (lispro, aspart)", "Long-acting (glargine)", "Short-acting (regular)", "Intermediate (NPH)"], answer: "Rapid-acting (lispro, aspart)", explanation: "Rapid-acting insulins like lispro (Humalog) and aspart (NovoLog) have 15-minute onset."),
+            .fillBlank(id: "q3a_t3", subsectionId: "3a", difficulty: .easy, question: "Insulin glargine (Lantus) is a _____-acting insulin with 24-hour duration.", options: ["Long", "Rapid", "Short", "Intermediate"], answer: "Long", explanation: "Glargine is a long-acting, peakless insulin lasting 24 hours."),
+            .trueFalse(id: "q3a_t4", subsectionId: "3a", difficulty: .easy, question: "Metformin does NOT cause hypoglycemia when used alone.", answer: true, explanation: "Unlike sulfonylureas, metformin does not stimulate insulin release directly."),
             .trueFalse(id: "q3a_1", subsectionId: "3a", question: "Metformin is first-line therapy for T2DM.", answer: true, explanation: "Metformin is recommended first-line for all T2DM patients."),
             .multipleChoice(id: "q3a_2", subsectionId: "3a", question: "Metformin should be held if eGFR is below:", options: ["30", "45", "60", "15"], answer: "30", explanation: "Contraindicated if eGFR < 30 due to lactic acidosis risk."),
             .fillBlank(id: "q3a_3", subsectionId: "3a", question: "The brand name of metformin is _____.", options: ["Glucophage", "Januvia", "Amaryl", "Actos"], answer: "Glucophage", explanation: "Metformin is sold as Glucophage."),
@@ -1058,6 +1102,10 @@ struct DrugDataService {
         ]
 
         bank["3b"] = [
+            .fillBlank(id: "q3b_t1", subsectionId: "3b", difficulty: .easy, question: "SGLT2 inhibitors like empagliflozin (Jardiance) end in _____.", options: ["-gliflozin", "-gliptin", "-glutide", "-pril"], answer: "-gliflozin", explanation: "The -gliflozin suffix identifies SGLT2 inhibitors."),
+            .trueFalse(id: "q3b_t2", subsectionId: "3b", difficulty: .easy, question: "GLP-1 receptor agonists like semaglutide (Ozempic) end in -glutide.", answer: true, explanation: "The -glutide suffix identifies GLP-1 receptor agonists."),
+            .multipleChoice(id: "q3b_t3", subsectionId: "3b", difficulty: .easy, question: "DPP-4 inhibitors like sitagliptin (Januvia) end in:", options: ["-gliptin", "-gliflozin", "-glutide", "-glimepiride"], answer: "-gliptin", explanation: "The -gliptin suffix identifies DPP-4 inhibitors."),
+            .trueFalse(id: "q3b_t4", subsectionId: "3b", difficulty: .easy, question: "Sulfonylureas like glipizide (Glucotrol) can cause hypoglycemia and weight gain.", answer: true, explanation: "Sulfonylureas stimulate insulin release, which can cause low blood sugar and weight gain."),
             .fillBlank(id: "q3b_1", subsectionId: "3b", question: "SGLT2 inhibitors end in _____.", options: ["-gliflozin", "-gliptin", "-glutide", "-statin"], answer: "-gliflozin", explanation: "The -gliflozin suffix identifies SGLT2 inhibitors."),
             .multipleChoice(id: "q3b_2", subsectionId: "3b", question: "The brand name of empagliflozin is:", options: ["Jardiance", "Farxiga", "Invokana", "Januvia"], answer: "Jardiance", explanation: "Empagliflozin is sold as Jardiance."),
             .trueFalse(id: "q3b_3", subsectionId: "3b", question: "SGLT2 inhibitors have shown cardiovascular and renal benefits.", answer: true, explanation: "SGLT2i have proven CV and renal benefits in major trials."),
@@ -1090,6 +1138,10 @@ struct DrugDataService {
         }()
 
         bank["4a"] = [
+            .trueFalse(id: "q4a_t1", subsectionId: "4a", difficulty: .easy, question: "SSRIs like sertraline (Zoloft) are first-line for depression.", answer: true, explanation: "SSRIs are the first-line treatment for major depressive disorder."),
+            .multipleChoice(id: "q4a_t2", subsectionId: "4a", difficulty: .easy, question: "How long do SSRIs take to reach full therapeutic effect?", options: ["4-6 weeks", "1-2 days", "24 hours", "6 months"], answer: "4-6 weeks", explanation: "All antidepressants require 4-6 weeks for full efficacy."),
+            .fillBlank(id: "q4a_t3", subsectionId: "4a", difficulty: .easy, question: "SNRIs block reuptake of both serotonin AND _____.", options: ["Norepinephrine", "Dopamine", "GABA", "Acetylcholine"], answer: "Norepinephrine", explanation: "SNRIs (venlafaxine, duloxetine) inhibit reuptake of serotonin and norepinephrine."),
+            .trueFalse(id: "q4a_t4", subsectionId: "4a", difficulty: .easy, question: "Fluoxetine (Prozac) has the longest half-life of all SSRIs.", answer: true, explanation: "Fluoxetine has a half-life of 2-6 days plus an active metabolite."),
             .trueFalse(id: "q4a_1", subsectionId: "4a", question: "SSRIs take 4-6 weeks for full therapeutic effect.", answer: true, explanation: "Antidepressants require 4-6 weeks for full efficacy."),
             .fillBlank(id: "q4a_2", subsectionId: "4a", question: "The brand name of sertraline is _____.", options: ["Zoloft", "Prozac", "Lexapro", "Paxil"], answer: "Zoloft", explanation: "Sertraline is sold as Zoloft."),
             .multipleChoice(id: "q4a_3", subsectionId: "4a", question: "Which SSRI has the longest half-life?", options: ["Fluoxetine", "Sertraline", "Paroxetine", "Escitalopram"], answer: "Fluoxetine", explanation: "Fluoxetine has a half-life of 2-6 days (plus active metabolite)."),
@@ -1155,6 +1207,10 @@ struct DrugDataService {
         }()
 
         bank["5a"] = [
+            .trueFalse(id: "q5a_t1", subsectionId: "5a", difficulty: .easy, question: "Amoxicillin (Amoxil) is the most commonly prescribed antibiotic in children.", answer: true, explanation: "Amoxicillin is the most prescribed antibiotic for pediatric infections."),
+            .multipleChoice(id: "q5a_t2", subsectionId: "5a", difficulty: .easy, question: "All beta-lactam antibiotics (penicillins, cephalosporins) work by:", options: ["Inhibiting cell wall synthesis", "Inhibiting protein synthesis", "Inhibiting DNA replication", "Inhibiting folate synthesis"], answer: "Inhibiting cell wall synthesis", explanation: "Beta-lactams bind PBPs and prevent bacterial cell wall formation."),
+            .fillBlank(id: "q5a_t3", subsectionId: "5a", difficulty: .easy, question: "Augmentin is the brand name for amoxicillin combined with _____.", options: ["Clavulanate", "Tazobactam", "Sulbactam", "Metronidazole"], answer: "Clavulanate", explanation: "Augmentin = amoxicillin + clavulanate (a beta-lactamase inhibitor)."),
+            .trueFalse(id: "q5a_t4", subsectionId: "5a", difficulty: .easy, question: "Ceftriaxone (Rocephin) is a 3rd-generation cephalosporin used for meningitis.", answer: true, explanation: "Ceftriaxone crosses the blood-brain barrier and is empiric for meningitis."),
             .trueFalse(id: "q5a_1", subsectionId: "5a", question: "All beta-lactam antibiotics inhibit cell wall synthesis.", answer: true, explanation: "Beta-lactams bind PBPs and inhibit peptidoglycan cross-linking."),
             .fillBlank(id: "q5a_2", subsectionId: "5a", question: "The brand name of amoxicillin/clavulanate is _____.", options: ["Augmentin", "Amoxil", "Zosyn", "Keflex"], answer: "Augmentin", explanation: "Amoxicillin/clavulanate is sold as Augmentin."),
             .multipleChoice(id: "q5a_3", subsectionId: "5a", question: "Clavulanate in Augmentin serves to:", options: ["Inhibit beta-lactamase", "Increase absorption", "Reduce side effects", "Broaden spectrum to viruses"], answer: "Inhibit beta-lactamase", explanation: "Clavulanate inhibits beta-lactamase enzymes that destroy penicillins."),
@@ -1169,6 +1225,10 @@ struct DrugDataService {
         ]
 
         bank["5b"] = [
+            .fillBlank(id: "q5b_t1", subsectionId: "5b", difficulty: .easy, question: "All fluoroquinolones end in _____.", options: ["-floxacin", "-mycin", "-cillin", "-cycline"], answer: "-floxacin", explanation: "The -floxacin suffix identifies fluoroquinolones (ciprofloxacin, levofloxacin)."),
+            .trueFalse(id: "q5b_t2", subsectionId: "5b", difficulty: .easy, question: "Azithromycin (Zithromax/Z-Pack) is a macrolide antibiotic.", answer: true, explanation: "Azithromycin is one of the most commonly prescribed macrolides."),
+            .multipleChoice(id: "q5b_t3", subsectionId: "5b", difficulty: .easy, question: "Doxycycline (Vibramycin) belongs to which antibiotic class?", options: ["Tetracycline", "Macrolide", "Fluoroquinolone", "Penicillin"], answer: "Tetracycline", explanation: "Doxycycline is a tetracycline antibiotic ending in -cycline."),
+            .trueFalse(id: "q5b_t4", subsectionId: "5b", difficulty: .easy, question: "TMP/SMX (Bactrim) is first-line for uncomplicated UTIs.", answer: true, explanation: "Trimethoprim/sulfamethoxazole (Bactrim) is a go-to for simple UTIs."),
             .fillBlank(id: "q5b_1", subsectionId: "5b", question: "All fluoroquinolones end in _____.", options: ["-floxacin", "-mycin", "-cillin", "-cycline"], answer: "-floxacin", explanation: "The -floxacin suffix identifies fluoroquinolones."),
             .trueFalse(id: "q5b_2", subsectionId: "5b", question: "Fluoroquinolones have a black box warning for tendon rupture.", answer: true, explanation: "FDA black box warning for tendinitis and tendon rupture."),
             .multipleChoice(id: "q5b_3", subsectionId: "5b", question: "The brand name of azithromycin is:", options: ["Zithromax", "Biaxin", "Cipro", "Levaquin"], answer: "Zithromax", explanation: "Azithromycin is sold as Zithromax (Z-Pack)."),
@@ -1204,6 +1264,9 @@ struct DrugDataService {
         }()
 
         bank["6a"] = [
+            .trueFalse(id: "q6a_t1", subsectionId: "6a", difficulty: .easy, question: "Inhaled corticosteroids (ICS) like fluticasone (Flovent) are used for asthma maintenance, NOT rescue.", answer: true, explanation: "ICS reduce airway inflammation for long-term control. They are not rescue inhalers."),
+            .multipleChoice(id: "q6a_t2", subsectionId: "6a", difficulty: .easy, question: "Why should you rinse your mouth after using an inhaled corticosteroid?", options: ["To prevent oral thrush (candidiasis)", "To improve drug absorption", "To reduce cough", "To prevent tooth decay"], answer: "To prevent oral thrush (candidiasis)", explanation: "ICS deposits can cause fungal infections in the mouth."),
+            .fillBlank(id: "q6a_t3", subsectionId: "6a", difficulty: .easy, question: "Advair contains fluticasone (ICS) combined with salmeterol, which is a _____.", options: ["LABA", "SABA", "LAMA", "ICS"], answer: "LABA", explanation: "Advair = ICS (fluticasone) + LABA (salmeterol). LABAs should never be used alone in asthma."),
             .trueFalse(id: "q6a_1", subsectionId: "6a", question: "Inhaled corticosteroids are used as rescue inhalers for acute asthma.", answer: false, explanation: "ICS are maintenance only. SABAs (albuterol) are for rescue."),
             .fillBlank(id: "q6a_2", subsectionId: "6a", question: "The brand name of fluticasone/salmeterol is _____.", options: ["Advair", "Symbicort", "Flovent", "Serevent"], answer: "Advair", explanation: "Fluticasone/salmeterol is sold as Advair."),
             .multipleChoice(id: "q6a_3", subsectionId: "6a", question: "Why must you rinse your mouth after using an ICS?", options: ["To prevent oral thrush", "To improve absorption", "To prevent tooth decay", "To reduce cough"], answer: "To prevent oral thrush", explanation: "ICS deposits in the mouth can cause candidiasis (thrush)."),
@@ -1217,6 +1280,8 @@ struct DrugDataService {
         ]
 
         bank["6b"] = [
+            .trueFalse(id: "q6b_t1", subsectionId: "6b", difficulty: .easy, question: "Albuterol (ProAir/Ventolin) is the #1 rescue inhaler for acute asthma.", answer: true, explanation: "Albuterol is a SABA (short-acting beta-2 agonist) used for quick relief."),
+            .multipleChoice(id: "q6b_t2", subsectionId: "6b", difficulty: .easy, question: "Tiotropium (Spiriva) is a long-acting anticholinergic used mainly for:", options: ["COPD maintenance", "Acute asthma rescue", "Pneumonia treatment", "Cough suppression"], answer: "COPD maintenance", explanation: "Tiotropium (Spiriva) is a LAMA, a cornerstone of COPD maintenance therapy."),
             .multipleChoice(id: "q6b_1", subsectionId: "6b", question: "The first-line rescue inhaler for acute bronchospasm is:", options: ["Albuterol", "Tiotropium", "Fluticasone", "Montelukast"], answer: "Albuterol", explanation: "Albuterol (ProAir/Ventolin) is the #1 rescue inhaler."),
             .fillBlank(id: "q6b_2", subsectionId: "6b", question: "The brand name of tiotropium is _____.", options: ["Spiriva", "Atrovent", "ProAir", "Advair"], answer: "Spiriva", explanation: "Tiotropium is sold as Spiriva."),
             .trueFalse(id: "q6b_3", subsectionId: "6b", question: "Albuterol is a beta-2 agonist.", answer: true, explanation: "Albuterol selectively stimulates beta-2 receptors in the lungs."),
@@ -1250,6 +1315,9 @@ struct DrugDataService {
         }()
 
         bank["7a"] = [
+            .fillBlank(id: "q7a_t1", subsectionId: "7a", difficulty: .easy, question: "All PPIs (proton pump inhibitors) end in _____.", options: ["-prazole", "-tidine", "-setron", "-pril"], answer: "-prazole", explanation: "The -prazole suffix identifies PPIs (omeprazole, pantoprazole, esomeprazole)."),
+            .trueFalse(id: "q7a_t2", subsectionId: "7a", difficulty: .easy, question: "PPIs like omeprazole (Prilosec) should be taken 30-60 minutes BEFORE meals.", answer: true, explanation: "PPIs need acid to activate; take before eating for best effect."),
+            .multipleChoice(id: "q7a_t3", subsectionId: "7a", difficulty: .easy, question: "H2 blockers like famotidine (Pepcid) end in:", options: ["-tidine", "-prazole", "-setron", "-olol"], answer: "-tidine", explanation: "The -tidine suffix identifies H2 receptor antagonists."),
             .fillBlank(id: "q7a_1", subsectionId: "7a", question: "All PPIs end in _____.", options: ["-prazole", "-tidine", "-setron", "-pril"], answer: "-prazole", explanation: "The -prazole suffix identifies proton pump inhibitors."),
             .trueFalse(id: "q7a_2", subsectionId: "7a", question: "PPIs should be taken 30-60 minutes before the first meal.", answer: true, explanation: "PPIs need an acidic environment to activate; take before eating."),
             .multipleChoice(id: "q7a_3", subsectionId: "7a", question: "Which PPI should be avoided with clopidogrel?", options: ["Omeprazole", "Pantoprazole", "Lansoprazole", "Rabeprazole"], answer: "Omeprazole", explanation: "Omeprazole inhibits CYP2C19, reducing clopidogrel activation."),
@@ -1297,6 +1365,9 @@ struct DrugDataService {
         }()
 
         bank["8a"] = [
+            .trueFalse(id: "q8a_t1", subsectionId: "8a", difficulty: .easy, question: "All opioids cause constipation and respiratory depression.", answer: true, explanation: "These are universal opioid side effects. Tolerance does NOT develop to constipation."),
+            .multipleChoice(id: "q8a_t2", subsectionId: "8a", difficulty: .easy, question: "The antidote for opioid overdose is:", options: ["Naloxone (Narcan)", "Flumazenil", "Atropine", "Epinephrine"], answer: "Naloxone (Narcan)", explanation: "Naloxone (Narcan) is a competitive opioid antagonist that reverses overdose."),
+            .fillBlank(id: "q8a_t3", subsectionId: "8a", difficulty: .easy, question: "Fentanyl is approximately _____ times more potent than morphine.", options: ["80-100", "10", "5", "1000"], answer: "80-100", explanation: "Fentanyl is 80-100x more potent than morphine."),
             .trueFalse(id: "q8a_1", subsectionId: "8a", question: "All opioids cause constipation.", answer: true, explanation: "Constipation is a universal side effect of opioids (no tolerance develops)."),
             .multipleChoice(id: "q8a_2", subsectionId: "8a", question: "Fentanyl is approximately how much more potent than morphine?", options: ["80-100x", "10x", "5x", "500x"], answer: "80-100x", explanation: "Fentanyl is 80-100 times more potent than morphine."),
             .fillBlank(id: "q8a_3", subsectionId: "8a", question: "The opioid reversal agent is _____.", options: ["Naloxone", "Flumazenil", "Naltrexone", "Buprenorphine"], answer: "Naloxone", explanation: "Naloxone (Narcan) reverses opioid overdose."),
@@ -1347,6 +1418,9 @@ struct DrugDataService {
         }()
 
         bank["9a"] = [
+            .trueFalse(id: "q9a_t1", subsectionId: "9a", difficulty: .easy, question: "Prednisone is a corticosteroid that must be tapered slowly if used for more than 2 weeks.", answer: true, explanation: "Abrupt discontinuation after prolonged use can cause adrenal crisis."),
+            .multipleChoice(id: "q9a_t2", subsectionId: "9a", difficulty: .easy, question: "Methotrexate (Trexall) for rheumatoid arthritis is given:", options: ["Once weekly", "Once daily", "Twice daily", "Once monthly"], answer: "Once weekly", explanation: "MTX for RA is WEEKLY dosing. Daily dosing is a dangerous medication error."),
+            .fillBlank(id: "q9a_t3", subsectionId: "9a", difficulty: .easy, question: "Folic acid is given with methotrexate to reduce _____.", options: ["Side effects", "Absorption", "Potency", "Cost"], answer: "Side effects", explanation: "Folic acid supplementation reduces MTX-related mucositis and cytopenias."),
             .trueFalse(id: "q9a_1", subsectionId: "9a", question: "Corticosteroids should be tapered if used for more than 2 weeks.", answer: true, explanation: "Abrupt discontinuation after prolonged use can cause adrenal crisis."),
             .multipleChoice(id: "q9a_2", subsectionId: "9a", question: "Which corticosteroid is the most potent?", options: ["Dexamethasone", "Prednisone", "Hydrocortisone", "Methylprednisolone"], answer: "Dexamethasone", explanation: "Dexamethasone is the most potent corticosteroid with the longest half-life."),
             .fillBlank(id: "q9a_3", subsectionId: "9a", question: "The brand name of prednisone is _____.", options: ["Deltasone", "Medrol", "Decadron", "Cortef"], answer: "Deltasone", explanation: "Prednisone is sold as Deltasone."),
@@ -1395,6 +1469,8 @@ struct DrugDataService {
         }()
 
         bank["10a"] = [
+            .trueFalse(id: "q10a_t1", subsectionId: "10a", difficulty: .easy, question: "Combined oral contraceptives contain estrogen and progestin.", answer: true, explanation: "COCs combine estrogen (ethinyl estradiol) with a progestin for contraception."),
+            .multipleChoice(id: "q10a_t2", subsectionId: "10a", difficulty: .easy, question: "The Mirena IUD releases which hormone?", options: ["Levonorgestrel (progestin)", "Estrogen", "Testosterone", "Progesterone only"], answer: "Levonorgestrel (progestin)", explanation: "Mirena is a levonorgestrel-releasing IUD, the most effective reversible contraception."),
             .trueFalse(id: "q10a_1", subsectionId: "10a", question: "Combined oral contraceptives are contraindicated in women >35 who smoke.", answer: true, explanation: "Estrogen increases VTE risk, compounded by smoking and age >35."),
             .multipleChoice(id: "q10a_2", subsectionId: "10a", question: "Which contraceptive is the most effective reversible method?", options: ["IUD (Mirena)", "Oral pill", "Depo-Provera", "Condom"], answer: "IUD (Mirena)", explanation: "IUDs have the highest efficacy among reversible contraceptives."),
             .fillBlank(id: "q10a_3", subsectionId: "10a", question: "The brand name of levonorgestrel IUD is _____.", options: ["Mirena", "Depo-Provera", "Ortho Tri-Cyclen", "Evista"], answer: "Mirena", explanation: "The levonorgestrel IUD is sold as Mirena."),
@@ -1408,6 +1484,9 @@ struct DrugDataService {
         ]
 
         bank["10b"] = [
+            .fillBlank(id: "q10b_t1", subsectionId: "10b", difficulty: .easy, question: "Alpha-1 blockers for BPH like tamsulosin (Flomax) end in _____.", options: ["-osin", "-olol", "-pril", "-statin"], answer: "-osin", explanation: "The -osin suffix identifies alpha-1 blockers used for BPH."),
+            .trueFalse(id: "q10b_t2", subsectionId: "10b", difficulty: .easy, question: "PDE-5 inhibitors like sildenafil (Viagra) should NEVER be combined with nitrates.", answer: true, explanation: "Combining PDE-5 inhibitors with nitrates causes severe, life-threatening hypotension."),
+            .multipleChoice(id: "q10b_t3", subsectionId: "10b", difficulty: .easy, question: "5-alpha reductase inhibitors like finasteride (Proscar) end in:", options: ["-steride", "-osin", "-afil", "-olol"], answer: "-steride", explanation: "The -steride suffix identifies 5-alpha reductase inhibitors."),
             .fillBlank(id: "q10b_1", subsectionId: "10b", question: "Alpha-1 blockers for BPH end in _____.", options: ["-osin", "-olol", "-pril", "-statin"], answer: "-osin", explanation: "Alpha-1 blockers like tamsulosin end in -osin."),
             .multipleChoice(id: "q10b_2", subsectionId: "10b", question: "The brand name of tamsulosin is:", options: ["Flomax", "Proscar", "Avodart", "Ditropan"], answer: "Flomax", explanation: "Tamsulosin is sold as Flomax."),
             .trueFalse(id: "q10b_3", subsectionId: "10b", question: "PDE-5 inhibitors can be safely combined with nitrates.", answer: false, explanation: "NEVER combine PDE-5 inhibitors with nitrates - causes severe hypotension."),
@@ -1450,7 +1529,15 @@ struct DrugDataService {
     }
 
     func questionsForQuiz(subsectionId: String, completedSubsections: Set<String>, count: Int = 12) -> [Question] {
-        var quizQuestions = questions(for: subsectionId).shuffled()
+        let allQuestions = questions(for: subsectionId)
+        let teachingQuestions = allQuestions.filter { $0.difficulty == .easy }.shuffled()
+        let mediumQuestions = allQuestions.filter { $0.difficulty == .medium }.shuffled()
+        let hardQuestions = allQuestions.filter { $0.difficulty == .hard || $0.difficulty == .expert }.shuffled()
+
+        let teachingCount = min(teachingQuestions.count, max(3, count / 3))
+        var quizQuestions = Array(teachingQuestions.prefix(teachingCount))
+        let remaining = allQuestions.filter { q in !quizQuestions.contains(where: { $0.id == q.id }) }.shuffled()
+        quizQuestions.append(contentsOf: remaining)
 
         let reviewSubsections = completedSubsections.filter { $0 != subsectionId }
         if !reviewSubsections.isEmpty {
@@ -1463,7 +1550,11 @@ struct DrugDataService {
             quizQuestions.append(contentsOf: reviewQuestions.shuffled().prefix(reviewCount))
         }
 
-        return Array(quizQuestions.prefix(count)).shuffled()
+        var result = Array(quizQuestions.prefix(count))
+        let firstBatch = Array(result.prefix(teachingCount))
+        let restBatch = Array(result.dropFirst(teachingCount)).shuffled()
+        result = firstBatch + restBatch
+        return result
     }
 
     func module(for id: String) -> DrugModule? {

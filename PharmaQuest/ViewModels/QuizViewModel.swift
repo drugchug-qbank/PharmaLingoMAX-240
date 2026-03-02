@@ -12,6 +12,7 @@ class QuizViewModel {
     var matchedPairs: [String: String] = [:]
     var selectedMatchLeft: String?
     var shuffledRightOptions: [String] = []
+    var shuffledOptions: [String] = []
     var hasAnswered: Bool = false
     var isCorrect: Bool = false
     var correctCount: Int = 0
@@ -48,11 +49,21 @@ class QuizViewModel {
     }
 
     private func prepareShuffledOptions() {
-        guard let q = currentQuestion, q.type == .matching else {
+        guard let q = currentQuestion else {
             shuffledRightOptions = []
+            shuffledOptions = []
             return
         }
-        shuffledRightOptions = q.matchingPairs.map(\.right).shuffled()
+        if q.type == .matching {
+            shuffledRightOptions = q.matchingPairs.map(\.right).shuffled()
+            shuffledOptions = []
+        } else if !q.options.isEmpty {
+            shuffledOptions = q.options.shuffled()
+            shuffledRightOptions = []
+        } else {
+            shuffledOptions = []
+            shuffledRightOptions = []
+        }
     }
 
     func submitAnswer() {

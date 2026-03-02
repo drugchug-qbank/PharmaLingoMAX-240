@@ -50,7 +50,7 @@ struct FillBlankQuestionView: View {
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 if let question = quizVM.currentQuestion {
-                    ForEach(question.options, id: \.self) { option in
+                    ForEach(quizVM.shuffledOptions, id: \.self) { option in
                         OptionChip(
                             text: option,
                             isSelected: quizVM.selectedAnswer == option,
@@ -74,7 +74,7 @@ struct MultipleChoiceQuestionView: View {
     var body: some View {
         VStack(spacing: 10) {
             if let question = quizVM.currentQuestion {
-                ForEach(question.options, id: \.self) { option in
+                ForEach(quizVM.shuffledOptions, id: \.self) { option in
                     OptionButton(
                         text: option,
                         isSelected: quizVM.selectedAnswer == option,
@@ -97,7 +97,7 @@ struct SelectAllQuestionView: View {
     var body: some View {
         VStack(spacing: 10) {
             if let question = quizVM.currentQuestion {
-                ForEach(question.options, id: \.self) { option in
+                ForEach(quizVM.shuffledOptions, id: \.self) { option in
                     let isSelected = quizVM.selectedAnswers.contains(option)
                     let isActuallyCorrect = question.correctAnswers.contains(option)
 
