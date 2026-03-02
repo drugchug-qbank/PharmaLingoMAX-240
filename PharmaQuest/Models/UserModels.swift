@@ -80,3 +80,49 @@ nonisolated struct FriendEntry: Identifiable, Sendable {
     let streak: Int
     let level: Int
 }
+
+nonisolated struct FriendDetailProfile: Identifiable, Sendable {
+    let id: String
+    let username: String
+    let avatarAnimal: String
+    let avatarEyes: String
+    let avatarMouth: String
+    let avatarAccessory: String
+    let totalXP: Int
+    let weeklyXP: Int
+    let currentStreak: Int
+    let level: Int
+    let profession: String
+    let school: String
+    let questionsAnswered: Int
+    let questionsCorrect: Int
+
+    var accuracy: Double {
+        guard questionsAnswered > 0 else { return 0 }
+        return Double(questionsCorrect) / Double(questionsAnswered)
+    }
+}
+
+nonisolated struct DailyXPRecord: Codable, Sendable {
+    let date: String
+    let xpEarned: Int
+
+    enum CodingKeys: String, CodingKey {
+        case date
+        case xpEarned = "xp_earned"
+    }
+}
+
+nonisolated struct PendingFriendInfo: Identifiable, Sendable {
+    let requestId: String
+    let userId: String
+    let username: String
+    let avatarAnimal: String
+    let avatarEyes: String
+    let avatarMouth: String
+    let avatarAccessory: String
+    let level: Int
+    let profession: String
+
+    var id: String { requestId }
+}

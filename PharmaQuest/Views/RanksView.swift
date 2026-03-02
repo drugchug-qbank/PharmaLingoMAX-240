@@ -7,6 +7,9 @@ struct RanksView: View {
     @State private var selectedTab: RanksTab = .league
     @State private var leaderboard: [LeaderboardRecord] = []
     @State private var friends: [LeaderboardRecord] = []
+    @State private var pendingRequests: [PendingFriendInfo] = []
+    @State private var schoolRankings: [SchoolRanking] = []
+    @State private var professionRankings: [ProfessionRanking] = []
     @State private var showAddFriend: Bool = false
     @State private var isLoadingLeaderboard: Bool = false
 
@@ -167,16 +170,25 @@ struct RanksView: View {
             }
             .background(Color(.systemGroupedBackground))
             .task {
-                await loadLeaderboard()
+                await loadAllData()
+            }
+            .refreshable {
+                await loadAllData()
             }
             .sheet(isPresented: $showAddFriend) {
-                AddFriendSheet()
+                AddFriendSheet(onRequestSent: {
+                    Task { pendingRequests = await supabase.fetchPendingRequests() }
+                })
+            }
+            .navigationDestination(for: String.self) { friendId in
+                let name = friends.first(where: { $0.id == friendId })?.username ?? "Friend"
+                FriendProfileView(friendId: friendId, friendName: name, gameVM: gameVM)
             }
         }
     }
 
     private var userRank: Int {
-        if let idx = leaderboard.firstIndex(where: { $0.id == supabase.currentUser?.id.uuidString }) {
+        if let idx = leaderboard.firstIndex(where: { $0.id == supabase.currentUser?.id.uuidString.lowercased() }) {
             return idx + 1
         }
         return leaderboard.count + 1
@@ -192,10 +204,30 @@ struct RanksView: View {
         return "\(components.day ?? 0)d \(components.hour ?? 0)h \(components.minute ?? 0)m"
     }
 
-    private func loadLeaderboard() async {
+    private var monthTimeRemaining: String {
+        let calendar = Calendar.current
+        let now = Date()
+        guard let range = calendar.range(of: .day, in: .month, for: now) else { return "—" }
+        let lastDay = range.count
+        let currentDay = calendar.component(.day, from: now)
+        let daysLeft = lastDay - currentDay
+        if daysLeft <= 0 { return "Ends today" }
+        if daysLeft == 1 { return "1 day left" }
+        return "\(daysLeft) days left"
+    }
+
+    private func loadAllData() async {
         isLoadingLeaderboard = true
-        leaderboard = await supabase.fetchLeaderboard()
-        friends = await supabase.fetchFriends()
+        async let lb = supabase.fetchLeaderboard()
+        async let fr = supabase.fetchFriends()
+        async let pr = supabase.fetchPendingRequests()
+        async let sr = supabase.fetchSchoolRankings()
+        async let prr = supabase.fetchProfessionRankings()
+        leaderboard = await lb
+        friends = await fr
+        pendingRequests = await pr
+        schoolRankings = await sr
+        professionRankings = await prr
         isLoadingLeaderboard = false
     }
 
@@ -232,7 +264,7 @@ struct RanksView: View {
                 .padding(32)
             } else {
                 ForEach(Array(leaderboard.enumerated()), id: \.element.id) { index, entry in
-                    let isCurrentUser = entry.id == supabase.currentUser?.id.uuidString
+                    let isCurrentUser = entry.id == supabase.currentUser?.id.uuidString.lowercased()
                     LeaderboardRow(
                         entry: LeaderboardEntry(id: entry.id, username: entry.username, avatarAnimal: entry.avatarAnimal, avatarEyes: entry.avatarEyes, avatarMouth: entry.avatarMouth, avatarAccessory: entry.avatarAccessory, xpThisWeek: entry.weeklyXP, streak: entry.currentStreak, rank: index + 1),
                         isCurrentUser: isCurrentUser
@@ -245,50 +277,74 @@ struct RanksView: View {
     @ViewBuilder
     private var friendsContent: some View {
         VStack(spacing: 16) {
+            if !pendingRequests.isEmpty {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "bell.badge.fill")
+                            .foregroundStyle(AppTheme.accentOrange)
+                        Text("Friend Requests (\(pendingRequests.count))")
+                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    }
+
+                    ForEach(pendingRequests) { request in
+                        PendingRequestRow(request: request, onAccept: {
+                            Task {
+                                try? await supabase.acceptFriendRequest(requestId: request.requestId)
+                                await loadAllData()
+                            }
+                        }, onDecline: {
+                            Task {
+                                try? await supabase.declineFriendRequest(requestId: request.requestId)
+                                pendingRequests.removeAll { $0.requestId == request.requestId }
+                            }
+                        })
+                    }
+                }
+                .padding(16)
+                .cardStyle(borderColor: AppTheme.accentOrange.opacity(0.4))
+            }
+
+            HStack {
+                Text("Friends (\(friends.count))")
+                    .font(AppTheme.funFont(.headline, weight: .bold))
+                Spacer()
+                Button {
+                    showAddFriend = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "person.badge.plus")
+                        Text("Add")
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(AppTheme.primaryBlue)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+
             if friends.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "person.2.fill")
                         .font(.system(size: 44))
                         .foregroundStyle(AppTheme.primaryBlue.opacity(0.5))
-                    Text("Add Friends")
+                    Text("No friends yet")
                         .font(AppTheme.funFont(.headline, weight: .bold))
                     Text("Connect with classmates to compare progress and compete!")
                         .font(AppTheme.funFont(.subheadline, weight: .medium))
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
-
-                    Button {
-                        showAddFriend = true
-                    } label: {
-                        Text("Find Friends")
-                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 10)
-                            .background(AppTheme.primaryBlue)
-                            .clipShape(Capsule())
-                    }
                 }
                 .padding(24)
                 .cardStyle()
             } else {
-                HStack {
-                    Text("Friends (\(friends.count))")
-                        .font(AppTheme.funFont(.headline, weight: .bold))
-                    Spacer()
-                    Button {
-                        showAddFriend = true
-                    } label: {
-                        Image(systemName: "person.badge.plus")
-                            .foregroundStyle(AppTheme.primaryBlue)
-                    }
-                }
-
                 ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
-                    LeaderboardRow(
-                        entry: LeaderboardEntry(id: friend.id, username: friend.username, avatarAnimal: friend.avatarAnimal, avatarEyes: friend.avatarEyes, avatarMouth: friend.avatarMouth, avatarAccessory: friend.avatarAccessory, xpThisWeek: friend.weeklyXP, streak: friend.currentStreak, rank: index + 1),
-                        isCurrentUser: false
-                    )
+                    NavigationLink(value: friend.id) {
+                        FriendRow(friend: friend, rank: index + 1)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -300,14 +356,51 @@ struct RanksView: View {
             VStack(alignment: .leading, spacing: 12) {
                 FunSectionHeader(icon: "building.columns.fill", title: "School Rankings", color: AppTheme.primaryBlue)
 
+                HStack(spacing: 8) {
+                    Image(systemName: "clock.fill")
+                        .foregroundStyle(AppTheme.primaryBlue)
+                    Text("Monthly reset: \(monthTimeRemaining)")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(AppTheme.primaryBlue.opacity(0.06))
+                .clipShape(.rect(cornerRadius: 10))
+
                 Text("Represent your school! All XP earned this month counts toward your school's ranking.")
                     .font(AppTheme.funFont(.subheadline, weight: .medium))
                     .foregroundStyle(.secondary)
 
-                VStack(spacing: 8) {
-                    SchoolRankRow(rank: 1, name: "UNC Eshelman School of Pharmacy", xp: 45200, color: AppTheme.warningYellow)
-                    SchoolRankRow(rank: 2, name: "University of Florida College of Pharmacy", xp: 38900, color: Color(.systemGray3))
-                    SchoolRankRow(rank: 3, name: "Ohio State University College of Pharmacy", xp: 32100, color: Color(hex: "CD7F32"))
+                if isLoadingLeaderboard {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding(20)
+                } else if schoolRankings.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "building.columns.fill")
+                            .font(.title)
+                            .foregroundStyle(.secondary)
+                        Text("No school data yet")
+                            .font(AppTheme.funFont(.subheadline, weight: .bold))
+                            .foregroundStyle(.secondary)
+                        Text("Select your school in Profile and earn XP to get on the board!")
+                            .font(AppTheme.funFont(.caption, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(20)
+                } else {
+                    ForEach(Array(schoolRankings.prefix(20).enumerated()), id: \.element.school) { index, ranking in
+                        let isMySchool = ranking.school == gameVM.schoolName
+                        SchoolRankRow(
+                            rank: index + 1,
+                            name: ranking.school,
+                            xp: ranking.totalXP,
+                            color: rankColor(for: index + 1),
+                            isHighlighted: isMySchool
+                        )
+                    }
                 }
 
                 if gameVM.schoolName.isEmpty {
@@ -328,6 +421,7 @@ struct RanksView: View {
                         Text("Representing: \(gameVM.schoolName)")
                             .font(AppTheme.funFont(.caption, weight: .heavy))
                             .foregroundStyle(AppTheme.successGreen)
+                            .lineLimit(1)
                     }
                     .padding(10)
                     .background(AppTheme.successGreen.opacity(0.08))
@@ -341,15 +435,149 @@ struct RanksView: View {
 
     @ViewBuilder
     private var professionContent: some View {
-        ProfessionBattleView(gameVM: gameVM, supabase: supabase)
+        ProfessionBattleView(gameVM: gameVM, supabase: supabase, professionRankings: professionRankings, monthTimeRemaining: monthTimeRemaining, onDonated: {
+            Task {
+                professionRankings = await supabase.fetchProfessionRankings()
+            }
+        })
+    }
+
+    private func rankColor(for rank: Int) -> Color {
+        switch rank {
+        case 1: AppTheme.warningYellow
+        case 2: Color(.systemGray3)
+        case 3: Color(hex: "CD7F32")
+        default: .secondary
+        }
+    }
+}
+
+struct PendingRequestRow: View {
+    let request: PendingFriendInfo
+    let onAccept: () -> Void
+    let onDecline: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            AvatarDisplayView(
+                animal: request.avatarAnimal,
+                eyes: request.avatarEyes,
+                mouth: request.avatarMouth,
+                accessory: request.avatarAccessory,
+                size: 40
+            )
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(request.username)
+                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                Text("Lv.\(request.level) • \(request.profession)")
+                    .font(AppTheme.funFont(.caption, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Button {
+                onAccept()
+            } label: {
+                Image(systemName: "checkmark")
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .frame(width: 32, height: 32)
+                    .background(AppTheme.successGreen)
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                onDecline()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .frame(width: 32, height: 32)
+                    .background(Color(.systemGray3))
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.vertical, 6)
+    }
+}
+
+struct FriendRow: View {
+    let friend: LeaderboardRecord
+    let rank: Int
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text("#\(rank)")
+                .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                .foregroundStyle(.secondary)
+                .frame(width: 30)
+
+            AvatarDisplayView(
+                animal: friend.avatarAnimal,
+                eyes: friend.avatarEyes,
+                mouth: friend.avatarMouth,
+                accessory: friend.avatarAccessory,
+                size: 42
+            )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(friend.username)
+                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                HStack(spacing: 12) {
+                    HStack(spacing: 3) {
+                        Image(systemName: "flame.fill")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.accentOrange)
+                        Text("\(friend.currentStreak)")
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                    HStack(spacing: 3) {
+                        Image(systemName: "star.fill")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.warningYellow)
+                        Text("Lv.\(friend.level)")
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 2) {
+                Text("\(friend.weeklyXP) XP")
+                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                Text("this week")
+                    .font(AppTheme.funFont(.caption2, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(.rect(cornerRadius: 12))
     }
 }
 
 struct ProfessionBattleView: View {
     let gameVM: GameViewModel
     let supabase: SupabaseService
+    let professionRankings: [ProfessionRanking]
+    let monthTimeRemaining: String
+    let onDonated: () -> Void
     @State private var donateAmount: Double = 10
     @State private var isDonating: Bool = false
+    @State private var donateSuccess: Bool = false
+    @State private var donateError: String?
 
     private var maxDonation: Double {
         Double(max(gameVM.coins, 1))
@@ -369,6 +597,18 @@ struct ProfessionBattleView: View {
                     Spacer()
                 }
 
+                HStack(spacing: 8) {
+                    Image(systemName: "clock.fill")
+                        .foregroundStyle(AppTheme.xpPurple)
+                    Text("Monthly reset: \(monthTimeRemaining)")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(AppTheme.xpPurple.opacity(0.06))
+                .clipShape(.rect(cornerRadius: 10))
+
                 HStack(spacing: 0) {
                     PrizePodium(place: "1st", coins: 500, color: AppTheme.warningYellow, icon: "trophy.fill")
                     PrizePodium(place: "2nd", coins: 250, color: Color(.systemGray3), icon: "medal.fill")
@@ -385,7 +625,10 @@ struct ProfessionBattleView: View {
                     Text("Current Standings")
                         .font(AppTheme.funFont(.subheadline, weight: .heavy))
 
+                    let rankingMap = Dictionary(uniqueKeysWithValues: professionRankings.map { ($0.profession, $0.totalDonations) })
+
                     ForEach(Profession.allCases, id: \.self) { prof in
+                        let donations = rankingMap[prof.rawValue] ?? 0
                         HStack(spacing: 10) {
                             Image(systemName: prof.iconName)
                                 .font(.caption)
@@ -396,9 +639,9 @@ struct ProfessionBattleView: View {
                                 .foregroundStyle(prof == gameVM.selectedProfession ? AppTheme.primaryBlue : .primary)
                                 .lineLimit(1)
                             Spacer()
-                            Text("0 coins")
+                            Text("\(donations) coins")
                                 .font(AppTheme.funFont(.caption, weight: .bold))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(donations > 0 ? AppTheme.accentOrange : .secondary)
                         }
                         .padding(.vertical, 6)
                         .padding(.horizontal, 10)
@@ -457,11 +700,17 @@ struct ProfessionBattleView: View {
 
                     Button {
                         isDonating = true
+                        donateError = nil
                         Task {
-                            let success = await supabase.donateToProfession(amount: Int(donateAmount))
+                            let amount = Int(donateAmount)
+                            let success = await supabase.donateToProfession(amount: amount)
                             if success {
-                                gameVM.coins = supabase.currentProfile?.coins ?? gameVM.coins
+                                gameVM.coins = supabase.currentProfile?.coins ?? (gameVM.coins - amount)
                                 gameVM.save()
+                                donateSuccess = true
+                                onDonated()
+                            } else {
+                                donateError = "Not enough coins or donation failed."
                             }
                             isDonating = false
                         }
@@ -484,10 +733,21 @@ struct ProfessionBattleView: View {
                         .clipShape(.rect(cornerRadius: 14))
                     }
                     .disabled(gameVM.coins < Int(donateAmount) || isDonating)
+
+                    if let error = donateError {
+                        Text(error)
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(AppTheme.heartRed)
+                    }
                 }
             }
             .padding(16)
             .cardStyle()
+        }
+        .alert("Donation Successful!", isPresented: $donateSuccess) {
+            Button("OK") {}
+        } message: {
+            Text("You donated \(Int(donateAmount)) coins to \(gameVM.selectedProfession.rawValue)!")
         }
     }
 }
@@ -552,6 +812,7 @@ struct SchoolRankRow: View {
     let name: String
     let xp: Int
     let color: Color
+    var isHighlighted: Bool = false
 
     var body: some View {
         HStack(spacing: 10) {
@@ -560,15 +821,16 @@ struct SchoolRankRow: View {
                 .foregroundStyle(color)
                 .frame(width: 28)
             Text(name)
-                .font(AppTheme.funFont(.subheadline, weight: .medium))
+                .font(AppTheme.funFont(.subheadline, weight: isHighlighted ? .heavy : .medium))
+                .foregroundStyle(isHighlighted ? AppTheme.primaryBlue : .primary)
                 .lineLimit(1)
             Spacer()
             Text("\(xp.formatted()) XP")
                 .font(AppTheme.funFont(.caption, weight: .heavy))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(isHighlighted ? AppTheme.primaryBlue : .secondary)
         }
         .padding(10)
-        .background(Color(.tertiarySystemFill))
+        .background(isHighlighted ? AppTheme.primaryBlue.opacity(0.06) : Color(.tertiarySystemFill))
         .clipShape(.rect(cornerRadius: 10))
     }
 }
@@ -604,8 +866,10 @@ struct AddFriendSheet: View {
     @State private var searchText: String = ""
     @State private var searchResults: [LeaderboardRecord] = []
     @State private var isSearching: Bool = false
-    @State private var sentRequest: Bool = false
+    @State private var sentRequests: Set<String> = []
     @State private var errorMessage: String?
+
+    var onRequestSent: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -625,6 +889,17 @@ struct AddFriendSheet: View {
                 .background(Color(.secondarySystemGroupedBackground))
                 .clipShape(.rect(cornerRadius: 14))
                 .padding(.horizontal)
+
+                if let error = errorMessage {
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(AppTheme.heartRed)
+                        Text(error)
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(AppTheme.heartRed)
+                    }
+                    .padding(.horizontal)
+                }
 
                 if isSearching {
                     ProgressView()
@@ -660,25 +935,37 @@ struct AddFriendSheet: View {
 
                             Spacer()
 
-                            Button {
-                                Task {
-                                    do {
-                                        try await supabase.sendFriendRequest(toUsername: user.username)
-                                        sentRequest = true
-                                    } catch {
-                                        errorMessage = error.localizedDescription
-                                    }
-                                }
-                            } label: {
-                                Text("Add")
+                            if sentRequests.contains(user.id) {
+                                Text("Sent")
                                     .font(AppTheme.funFont(.caption, weight: .heavy))
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(AppTheme.successGreen)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 6)
-                                    .background(AppTheme.primaryBlue)
+                                    .background(AppTheme.successGreen.opacity(0.1))
                                     .clipShape(Capsule())
+                            } else {
+                                Button {
+                                    Task {
+                                        errorMessage = nil
+                                        do {
+                                            try await supabase.sendFriendRequest(toUsername: user.username)
+                                            sentRequests.insert(user.id)
+                                            onRequestSent()
+                                        } catch {
+                                            errorMessage = error.localizedDescription
+                                        }
+                                    }
+                                } label: {
+                                    Text("Add")
+                                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 6)
+                                        .background(AppTheme.primaryBlue)
+                                        .clipShape(Capsule())
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
                     }
                     .listStyle(.plain)
@@ -694,17 +981,13 @@ struct AddFriendSheet: View {
                     Button("Done") { dismiss() }
                 }
             }
-            .alert("Request Sent!", isPresented: $sentRequest) {
-                Button("OK") {}
-            } message: {
-                Text("Your friend request has been sent.")
-            }
         }
     }
 
     private func search() async {
         guard !searchText.isEmpty else { return }
         isSearching = true
+        errorMessage = nil
         searchResults = await supabase.searchUsers(query: searchText)
         isSearching = false
     }

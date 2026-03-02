@@ -310,6 +310,7 @@ class SupabaseService {
         profile.hearts = gameVM.hearts
         profile.level = gameVM.level
         profile.weeklyXP = gameVM.totalXP
+        profile.monthlyXP = gameVM.totalXP
         profile.questionsAnswered = gameVM.questionsAnswered
         profile.questionsCorrect = gameVM.questionsCorrect
         profile.completedSubsections = String(data: completedData, encoding: .utf8) ?? "[]"
@@ -339,7 +340,7 @@ class SupabaseService {
     }
 
     func fetchFriends() async -> [LeaderboardRecord] {
-        guard let userId = currentUser?.id.uuidString else { return [] }
+        guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         do {
             let friends: [FriendRecord] = try await client.from("friends")
                 .select()
@@ -365,7 +366,7 @@ class SupabaseService {
     }
 
     func sendFriendRequest(toUsername: String) async throws {
-        guard let userId = currentUser?.id.uuidString else { return }
+        guard let userId = currentUser?.id.uuidString.lowercased() else { return }
 
         let targetProfiles: [UserProfile] = try await client.from("profiles")
             .select()
@@ -376,6 +377,24 @@ class SupabaseService {
 
         guard let target = targetProfiles.first else {
             throw NSError(domain: "PharmaQuest", code: 404, userInfo: [NSLocalizedDescriptionKey: "User not found"])
+        }
+
+        guard target.id != userId else {
+            throw NSError(domain: "PharmaQuest", code: 400, userInfo: [NSLocalizedDescriptionKey: "You can't add yourself"])
+        }
+
+        let existing: [FriendRecord] = try await client.from("friends")
+            .select()
+            .or("and(user_id.eq.\(userId),friend_id.eq.\(target.id)),and(user_id.eq.\(target.id),friend_id.eq.\(userId))")
+            .execute()
+            .value
+
+        guard existing.isEmpty else {
+            let status = existing.first?.status ?? "pending"
+            if status == "accepted" {
+                throw NSError(domain: "PharmaQuest", code: 409, userInfo: [NSLocalizedDescriptionKey: "Already friends with this user"])
+            }
+            throw NSError(domain: "PharmaQuest", code: 409, userInfo: [NSLocalizedDescriptionKey: "Friend request already pending"])
         }
 
         let request = FriendRequest(
@@ -393,8 +412,8 @@ class SupabaseService {
             .execute()
     }
 
-    func fetchPendingRequests() async -> [FriendRecord] {
-        guard let userId = currentUser?.id.uuidString else { return [] }
+    func fetchPendingRequests() async -> [PendingFriendInfo] {
+        guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         do {
             let requests: [FriendRecord] = try await client.from("friends")
                 .select()
@@ -402,25 +421,151 @@ class SupabaseService {
                 .eq("status", value: "pending")
                 .execute()
                 .value
-            return requests
+
+            guard !requests.isEmpty else { return [] }
+
+            let senderIds = requests.map { $0.userId }
+            let profiles: [LeaderboardRecord] = try await client.from("profiles")
+                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
+                .in("id", values: senderIds)
+                .execute()
+                .value
+
+            let profileMap = Dictionary(uniqueKeysWithValues: profiles.map { ($0.id, $0) })
+
+            return requests.compactMap { req in
+                guard let profile = profileMap[req.userId] else { return nil }
+                return PendingFriendInfo(
+                    requestId: req.id,
+                    userId: req.userId,
+                    username: profile.username,
+                    avatarAnimal: profile.avatarAnimal,
+                    avatarEyes: profile.avatarEyes,
+                    avatarMouth: profile.avatarMouth,
+                    avatarAccessory: profile.avatarAccessory,
+                    level: profile.level,
+                    profession: profile.profession
+                )
+            }
         } catch {
+            print("Failed to fetch pending requests: \(error)")
+            return []
+        }
+    }
+
+    func declineFriendRequest(requestId: String) async throws {
+        try await client.from("friends")
+            .delete()
+            .eq("id", value: requestId)
+            .execute()
+    }
+
+    func removeFriend(friendId: String) async throws {
+        guard let userId = currentUser?.id.uuidString.lowercased() else { return }
+        try await client.from("friends")
+            .delete()
+            .or("and(user_id.eq.\(userId),friend_id.eq.\(friendId)),and(user_id.eq.\(friendId),friend_id.eq.\(userId))")
+            .execute()
+    }
+
+    func fetchFriendProfile(friendId: String) async -> FriendDetailProfile? {
+        do {
+            let profile: UserProfile = try await client.from("profiles")
+                .select()
+                .eq("id", value: friendId)
+                .single()
+                .execute()
+                .value
+            return FriendDetailProfile(
+                id: profile.id,
+                username: profile.username,
+                avatarAnimal: profile.avatarAnimal,
+                avatarEyes: profile.avatarEyes,
+                avatarMouth: profile.avatarMouth,
+                avatarAccessory: profile.avatarAccessory,
+                totalXP: profile.totalXP,
+                weeklyXP: profile.weeklyXP,
+                currentStreak: profile.currentStreak,
+                level: profile.level,
+                profession: profile.profession,
+                school: profile.school,
+                questionsAnswered: profile.questionsAnswered,
+                questionsCorrect: profile.questionsCorrect
+            )
+        } catch {
+            print("Failed to fetch friend profile: \(error)")
+            return nil
+        }
+    }
+
+    func fetchSchoolRankings() async -> [SchoolRanking] {
+        do {
+            let profiles: [UserProfile] = try await client.from("profiles")
+                .select()
+                .neq("school", value: "")
+                .execute()
+                .value
+
+            var schoolXP: [String: Int] = [:]
+            for profile in profiles {
+                guard !profile.school.isEmpty else { continue }
+                schoolXP[profile.school, default: 0] += profile.monthlyXP
+            }
+
+            return schoolXP.map { SchoolRanking(school: $0.key, totalXP: $0.value) }
+                .sorted { $0.totalXP > $1.totalXP }
+        } catch {
+            print("Failed to fetch school rankings: \(error)")
+            return []
+        }
+    }
+
+    func fetchProfessionRankings() async -> [ProfessionRanking] {
+        do {
+            let profiles: [UserProfile] = try await client.from("profiles")
+                .select()
+                .execute()
+                .value
+
+            var profDonations: [String: Int] = [:]
+            for profile in profiles {
+                guard !profile.profession.isEmpty, profile.professionDonations > 0 else { continue }
+                profDonations[profile.profession, default: 0] += profile.professionDonations
+            }
+
+            return profDonations.map { ProfessionRanking(profession: $0.key, totalDonations: $0.value) }
+                .sorted { $0.totalDonations > $1.totalDonations }
+        } catch {
+            print("Failed to fetch profession rankings: \(error)")
             return []
         }
     }
 
     func donateToProfession(amount: Int) async -> Bool {
-        guard var profile = currentProfile, profile.coins >= amount else { return false }
+        guard var profile = currentProfile else { return false }
+        guard profile.coins >= amount else { return false }
         profile.coins -= amount
         profile.professionDonations += amount
-        await updateProfile(profile)
-        return true
+        do {
+            try await client.from("profiles")
+                .update(["coins": profile.coins, "profession_donations": profile.professionDonations])
+                .eq("id", value: profile.id)
+                .execute()
+            currentProfile = profile
+            return true
+        } catch {
+            print("Failed to donate: \(error)")
+            return false
+        }
     }
 
     func searchUsers(query: String) async -> [LeaderboardRecord] {
+        guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         do {
             let results: [LeaderboardRecord] = try await client.from("profiles")
                 .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
                 .ilike("username", pattern: "%\(query)%")
+                .neq("id", value: userId)
                 .limit(20)
                 .execute()
                 .value
