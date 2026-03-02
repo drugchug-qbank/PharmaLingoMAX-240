@@ -223,12 +223,59 @@ struct RanksView: View {
         async let pr = supabase.fetchPendingRequests()
         async let sr = supabase.fetchSchoolRankings()
         async let prr = supabase.fetchProfessionRankings()
-        leaderboard = await lb
+        let realLeaderboard = await lb
         friends = await fr
         pendingRequests = await pr
         schoolRankings = await sr
         professionRankings = await prr
+        leaderboard = padLeaderboard(realLeaderboard)
         isLoadingLeaderboard = false
+    }
+
+    private func padLeaderboard(_ real: [LeaderboardRecord]) -> [LeaderboardRecord] {
+        let targetCount = 30
+        guard real.count < targetCount else { return real }
+
+        let placeholderNames = [
+            "PharmaStar", "MedStudent42", "DrugNerd", "PillPusher", "RxQueen",
+            "BioWizard", "ChemGeek", "HealthHero", "MedMaster", "ScriptKing",
+            "PharmaPro", "CureSeeker", "DoseDoctor", "MedWhiz", "RxRanger",
+            "PillPal", "DrugBuff", "MedNinja", "PharmAce", "CureCrafter",
+            "DoseHero", "ScriptSage", "MedMaven", "RxRookie", "PillPioneer",
+            "BioBlitz", "ChemChamp", "HealthHack", "MedMotion", "CureQuest"
+        ]
+        let animals = AnimalType.allCases.map { $0.rawValue }
+        let eyes = ["normal", "happy", "big", "sleepy", "wink"]
+        let mouths = ["smile", "bigSmile", "tiny", "tongue", "oh"]
+
+        let realIds = Set(real.map { $0.id })
+        var result = real
+
+        for i in 0..<(targetCount - real.count) {
+            let seed = i + 7
+            let placeholderId = "placeholder_\(i)"
+            guard !realIds.contains(placeholderId) else { continue }
+            let animal = animals[seed % animals.count]
+            let defaultColor = AnimalType(rawValue: animal)?.defaultColorHex ?? "90A4AE"
+            let bgColors = ["FFF9C4", "FCE4EC", "E3F2FD", "E8F5E9", "F3E5F5", "FFF3E0", "E0F2F1"]
+            let entry = LeaderboardRecord(
+                id: placeholderId,
+                username: placeholderNames[i % placeholderNames.count],
+                avatarAnimal: animal,
+                avatarEyes: eyes[seed % eyes.count],
+                avatarMouth: mouths[seed % mouths.count],
+                avatarAccessory: "none",
+                avatarBodyColor: defaultColor,
+                avatarBgColor: bgColors[seed % bgColors.count],
+                weeklyXP: 0,
+                currentStreak: 0,
+                level: 1,
+                profession: Profession.allCases[seed % Profession.allCases.count].rawValue,
+                school: ""
+            )
+            result.append(entry)
+        }
+        return result
     }
 
     @ViewBuilder

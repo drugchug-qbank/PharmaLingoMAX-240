@@ -182,6 +182,22 @@ nonisolated struct LeaderboardRecord: Codable, Sendable {
         profession = try container.decode(String.self, forKey: .profession)
         school = try container.decode(String.self, forKey: .school)
     }
+
+    init(id: String, username: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, weeklyXP: Int, currentStreak: Int, level: Int, profession: String, school: String) {
+        self.id = id
+        self.username = username
+        self.avatarAnimal = avatarAnimal
+        self.avatarEyes = avatarEyes
+        self.avatarMouth = avatarMouth
+        self.avatarAccessory = avatarAccessory
+        self.avatarBodyColor = avatarBodyColor
+        self.avatarBgColor = avatarBgColor
+        self.weeklyXP = weeklyXP
+        self.currentStreak = currentStreak
+        self.level = level
+        self.profession = profession
+        self.school = school
+    }
 }
 
 nonisolated struct FriendRecord: Codable, Sendable {

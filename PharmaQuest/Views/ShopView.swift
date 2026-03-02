@@ -224,36 +224,40 @@ struct ShopView: View {
                         .padding(16)
                         .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.5))
 
-                        VStack(alignment: .leading, spacing: 14) {
-                            HStack {
-                                FunSectionHeader(icon: "person.crop.circle.fill", title: "Avatar Shop", color: AppTheme.successGreen)
-                                Spacer()
-                                Button {
-                                    showAvatarShop = true
-                                } label: {
-                                    Text("Open")
-                                        .font(AppTheme.funFont(.caption, weight: .heavy))
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 14)
-                                        .padding(.vertical, 6)
-                                        .background(AppTheme.successGreen)
-                                        .clipShape(Capsule())
+                        Button {
+                            showAvatarShop = true
+                        } label: {
+                            HStack(spacing: 14) {
+                                AvatarDisplayView(
+                                    animal: gameVM.avatarAnimal,
+                                    eyes: gameVM.avatarEyes,
+                                    mouth: gameVM.avatarMouth,
+                                    accessory: gameVM.avatarAccessory,
+                                    bodyColor: gameVM.avatarBodyColor,
+                                    backgroundColor: gameVM.avatarBgColor,
+                                    size: 52
+                                )
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("Avatar Shop")
+                                        .font(AppTheme.funFont(.headline, weight: .heavy))
+                                        .foregroundStyle(.primary)
+                                    Text("Customize your look with animals, eyes & accessories")
+                                        .font(AppTheme.funFont(.caption, weight: .medium))
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
                                 }
-                            }
 
-                            Text("Customize your avatar with new animals, eyes, and accessories!")
-                                .font(AppTheme.funFont(.subheadline, weight: .medium))
-                                .foregroundStyle(.secondary)
+                                Spacer()
 
-                            HStack(spacing: 16) {
-                                AvatarShopPreview(icon: "hare.fill", label: "Animals", price: "300+")
-                                AvatarShopPreview(icon: "eyes", label: "Eyes", price: "150+")
-                                AvatarShopPreview(icon: "mouth.fill", label: "Mouths", price: "150+")
-                                AvatarShopPreview(icon: "crown.fill", label: "Hats", price: "200+")
+                                Image(systemName: "chevron.right.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(AppTheme.successGreen.opacity(0.7))
                             }
+                            .padding(16)
+                            .cardStyle(borderColor: AppTheme.successGreen.opacity(0.4))
                         }
-                        .padding(16)
-                        .cardStyle()
+                        .buttonStyle(.plain)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -356,35 +360,6 @@ struct ShopItemRow: View {
     }
 }
 
-struct AvatarShopPreview: View {
-    let icon: String
-    let label: String
-    let price: String
-
-    var body: some View {
-        VStack(spacing: 6) {
-            ZStack {
-                Circle()
-                    .fill(Color(.tertiarySystemFill))
-                    .frame(width: 50, height: 50)
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
-            }
-            Text(label)
-                .font(AppTheme.funFont(.caption2, weight: .bold))
-                .foregroundStyle(.secondary)
-            HStack(spacing: 2) {
-                Image(systemName: "bitcoinsign.circle.fill")
-                    .font(.caption2)
-                    .foregroundStyle(AppTheme.accentOrange)
-                Text(price)
-                    .font(AppTheme.funFont(.caption2, weight: .heavy))
-            }
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
 
 struct HeartRegenTimer: View {
     let gameVM: GameViewModel
@@ -425,12 +400,22 @@ struct HeartRegenTimer: View {
             timeRemaining = nextRegen.timeIntervalSinceNow
             if timeRemaining <= 0 {
                 gameVM.addHeart()
-                if gameVM.hearts >= gameVM.maxHearts {
+                if gameVM.hearts < gameVM.maxHearts {
+                    if let updated = gameVM.nextHeartRegenDate {
+                        timeRemaining = updated.timeIntervalSinceNow
+                    }
+                } else {
                     timer?.invalidate()
                 }
             }
         } else {
-            timeRemaining = 3600
+            if gameVM.hearts < gameVM.maxHearts {
+                gameVM.lastHeartLossDate = Date()
+                gameVM.save()
+                timeRemaining = 3600
+            } else {
+                timer?.invalidate()
+            }
         }
     }
 }

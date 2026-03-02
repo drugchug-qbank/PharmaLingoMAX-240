@@ -197,7 +197,9 @@ class GameViewModel {
     func loseHeart() {
         guard hearts > 0 else { return }
         hearts -= 1
-        lastHeartLossDate = Date()
+        if lastHeartLossDate == nil || hearts == maxHearts - 1 {
+            lastHeartLossDate = Date()
+        }
         save()
     }
 
@@ -458,11 +460,20 @@ class GameViewModel {
     }
 
     private func regenerateHearts() {
-        guard hearts < maxHearts, let lastLoss = lastHeartLossDate else { return }
+        guard hearts < maxHearts else { return }
+        if lastHeartLossDate == nil {
+            lastHeartLossDate = Date()
+            save()
+            return
+        }
+        guard let lastLoss = lastHeartLossDate else { return }
         let hoursSinceLoss = Date().timeIntervalSince(lastLoss) / 3600
         let heartsToRegen = min(Int(hoursSinceLoss), maxHearts - hearts)
         if heartsToRegen > 0 {
             hearts = min(hearts + heartsToRegen, maxHearts)
+            if hearts < maxHearts {
+                lastHeartLossDate = lastLoss.addingTimeInterval(Double(heartsToRegen) * 3600)
+            }
             save()
         }
     }
@@ -621,6 +632,10 @@ class GameViewModel {
 
     func loadFromProfile(_ profile: UserProfile) {
         currentUserId = profile.id
+
+        load()
+        loadMastery()
+
         username = profile.username
         if let prof = Profession(rawValue: profile.profession) {
             selectedProfession = prof
@@ -632,43 +647,69 @@ class GameViewModel {
         avatarAccessory = profile.avatarAccessory
         avatarBodyColor = profile.avatarBodyColor
         avatarBgColor = profile.avatarBgColor
-        totalXP = profile.totalXP
-        coins = profile.coins
-        currentStreak = profile.currentStreak
-        streakSaves = profile.streakSaves
-        hearts = profile.hearts
-        questionsAnswered = profile.questionsAnswered
-        questionsCorrect = profile.questionsCorrect
+        totalXP = max(totalXP, profile.totalXP)
+        coins = max(coins, profile.coins)
+        currentStreak = max(currentStreak, profile.currentStreak)
+        streakSaves = max(streakSaves, profile.streakSaves)
+        hearts = max(hearts, profile.hearts)
+        questionsAnswered = max(questionsAnswered, profile.questionsAnswered)
+        questionsCorrect = max(questionsCorrect, profile.questionsCorrect)
 
         let decoder = JSONDecoder()
         if let data = profile.completedSubsections.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            completedSubsections = Set(arr)
+            completedSubsections.formUnion(Set(arr))
         }
         if let data = profile.subsectionStars.data(using: .utf8),
            let dict = try? decoder.decode([String: Int].self, from: data) {
-            subsectionStars = dict
+            for (key, value) in dict {
+                subsectionStars[key] = max(subsectionStars[key] ?? 0, value)
+            }
         }
         if let data = profile.hasSeenLearning.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            hasSeenLearning = Set(arr)
+            hasSeenLearning.formUnion(Set(arr))
         }
         if let data = profile.ownedAvatars.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            ownedAvatars = Set(arr)
+            ownedAvatars.formUnion(Set(arr))
         }
         if let data = profile.ownedEyes.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            ownedEyes = Set(arr)
+            ownedEyes.formUnion(Set(arr))
         }
         if let data = profile.ownedMouths.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            ownedMouths = Set(arr)
+            ownedMouths.formUnion(Set(arr))
         }
         if let data = profile.ownedAccessories.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            ownedAccessories = Set(arr)
+            ownedAccessories.formUnion(Set(arr))
         }
+
+        if let dateStr = profile.lastActiveDate, !dateStr.isEmpty {
+            let isoFormatter = ISO8601DateFormatter()
+            isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let d = isoFormatter.date(from: dateStr) {
+                if lastActiveDate == nil || d > lastActiveDate! {
+                    lastActiveDate = d
+                }
+            }
+        }
+        if let dateStr = profile.lastHeartLossDate, !dateStr.isEmpty {
+            let isoFormatter = ISO8601DateFormatter()
+            isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let d = isoFormatter.date(from: dateStr) {
+                if lastHeartLossDate == nil || d > lastHeartLossDate! {
+                    lastHeartLossDate = d
+                }
+            }
+        }
+
+        checkStreak()
+        regenerateHearts()
+        refreshDailyQuests()
         save()
+        syncToCloud()
     }
 }
