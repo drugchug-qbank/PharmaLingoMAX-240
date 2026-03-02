@@ -541,10 +541,10 @@ class SupabaseService {
         }
     }
 
-    func donateToProfession(amount: Int) async -> Bool {
+    func donateToProfession(amount: Int, currentCoins: Int) async -> Bool {
         guard var profile = currentProfile else { return false }
-        guard profile.coins >= amount else { return false }
-        profile.coins -= amount
+        guard currentCoins >= amount else { return false }
+        profile.coins = currentCoins - amount
         profile.professionDonations += amount
         do {
             try await client.from("profiles")

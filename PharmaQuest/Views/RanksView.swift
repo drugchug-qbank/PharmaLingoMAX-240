@@ -703,7 +703,7 @@ struct ProfessionBattleView: View {
                         donateError = nil
                         Task {
                             let amount = Int(donateAmount)
-                            let success = await supabase.donateToProfession(amount: amount)
+                            let success = await supabase.donateToProfession(amount: amount, currentCoins: gameVM.coins)
                             if success {
                                 gameVM.coins = supabase.currentProfile?.coins ?? (gameVM.coins - amount)
                                 gameVM.save()
