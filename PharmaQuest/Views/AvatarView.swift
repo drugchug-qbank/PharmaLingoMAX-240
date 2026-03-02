@@ -232,7 +232,7 @@ struct AvatarCustomizationView: View {
                             )
 
                             if !isOwned {
-                                Circle()
+                                RoundedRectangle(cornerRadius: AnimalAvatarView.tileCornerRadius(for: 60))
                                     .fill(.black.opacity(0.35))
                                     .frame(width: 60, height: 60)
                                 Image(systemName: "lock.fill")
@@ -384,7 +384,7 @@ struct AvatarCustomizationView: View {
                                 size: 60
                             )
                             if !isOwned {
-                                Circle().fill(.black.opacity(0.3)).frame(width: 60, height: 60)
+                                RoundedRectangle(cornerRadius: AnimalAvatarView.tileCornerRadius(for: 60)).fill(.black.opacity(0.3)).frame(width: 60, height: 60)
                                 Image(systemName: "lock.fill").font(.caption).foregroundStyle(.white)
                             }
                         }
@@ -432,7 +432,7 @@ struct AvatarCustomizationView: View {
                                 size: 60
                             )
                             if !isOwned {
-                                Circle().fill(.black.opacity(0.3)).frame(width: 60, height: 60)
+                                RoundedRectangle(cornerRadius: AnimalAvatarView.tileCornerRadius(for: 60)).fill(.black.opacity(0.3)).frame(width: 60, height: 60)
                                 Image(systemName: "lock.fill").font(.caption).foregroundStyle(.white)
                             }
                         }
@@ -480,7 +480,7 @@ struct AvatarCustomizationView: View {
                                 size: 60
                             )
                             if !isOwned && acc != .none {
-                                Circle().fill(.black.opacity(0.3)).frame(width: 60, height: 60)
+                                RoundedRectangle(cornerRadius: AnimalAvatarView.tileCornerRadius(for: 60)).fill(.black.opacity(0.3)).frame(width: 60, height: 60)
                                 Image(systemName: "lock.fill").font(.caption).foregroundStyle(.white)
                             }
                         }

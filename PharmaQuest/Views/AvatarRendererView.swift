@@ -6,6 +6,11 @@ struct AvatarRendererView: View {
     var showIdleAnimation: Bool = false
 
     @State private var isBlinking: Bool = false
+    @State private var breathScale: CGFloat = 1.0
+
+    private var cornerRadius: CGFloat {
+        AnimalAvatarView.tileCornerRadius(for: size)
+    }
 
     var body: some View {
         ZStack {
@@ -18,39 +23,58 @@ struct AvatarRendererView: View {
             highlightOverlay
         }
         .frame(width: size, height: size)
-        .clipShape(Circle())
+        .clipShape(.rect(cornerRadius: cornerRadius))
         .overlay(
-            Circle()
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .stroke(Color.black.opacity(0.22), lineWidth: size * 0.018)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(
                     LinearGradient(
-                        colors: [Color.white.opacity(0.35), Color.white.opacity(0.05)],
+                        colors: [Color.white.opacity(0.30), Color.white.opacity(0.0)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
-                    lineWidth: size > 100 ? 2.5 : 1.5
+                    lineWidth: size > 100 ? 2.0 : 1.0
                 )
         )
+        .shadow(color: .black.opacity(0.15), radius: size * 0.06, x: 0, y: size * 0.025)
+        .scaleEffect(breathScale)
         .task {
             guard showIdleAnimation else { return }
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(Double.random(in: 3.0...6.0)))
-                guard !Task.isCancelled else { break }
-                withAnimation(.easeInOut(duration: 0.12)) { isBlinking = true }
-                try? await Task.sleep(for: .seconds(0.15))
-                guard !Task.isCancelled else { break }
-                withAnimation(.easeInOut(duration: 0.12)) { isBlinking = false }
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask { @MainActor in
+                    while !Task.isCancelled {
+                        withAnimation(.easeInOut(duration: 1.8)) { breathScale = 1.02 }
+                        try? await Task.sleep(for: .seconds(1.8))
+                        guard !Task.isCancelled else { break }
+                        withAnimation(.easeInOut(duration: 1.8)) { breathScale = 1.0 }
+                        try? await Task.sleep(for: .seconds(1.8))
+                    }
+                }
+                group.addTask { @MainActor in
+                    while !Task.isCancelled {
+                        try? await Task.sleep(for: .seconds(Double.random(in: 3.0...6.0)))
+                        guard !Task.isCancelled else { break }
+                        withAnimation(.easeInOut(duration: 0.12)) { isBlinking = true }
+                        try? await Task.sleep(for: .seconds(0.15))
+                        guard !Task.isCancelled else { break }
+                        withAnimation(.easeInOut(duration: 0.12)) { isBlinking = false }
+                    }
+                }
             }
         }
     }
 
     private var backgroundLayer: some View {
         ZStack {
-            Circle()
+            RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(configuration.bgColor)
 
             RadialGradient(
                 colors: [
-                    Color.white.opacity(0.2),
+                    Color.white.opacity(0.18),
                     Color.clear
                 ],
                 center: .topLeading,

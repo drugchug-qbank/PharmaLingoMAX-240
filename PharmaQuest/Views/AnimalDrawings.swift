@@ -9,6 +9,10 @@ struct AnimalAvatarView: View {
     let accessory: AccessoryType
     let size: CGFloat
 
+    static func tileCornerRadius(for size: CGFloat) -> CGFloat {
+        min(max(size * 0.22, 10), 44)
+    }
+
     var body: some View {
         Canvas { context, canvasSize in
             let s = canvasSize.width
@@ -19,12 +23,20 @@ struct AnimalAvatarView: View {
             drawAccessory(context: &context, type: accessory, size: s)
         }
         .frame(width: size, height: size)
-        .clipShape(Circle())
+        .clipShape(.rect(cornerRadius: Self.tileCornerRadius(for: size)))
     }
 
     private func drawBackground(context: inout GraphicsContext, size: CGFloat, color: Color) {
         let rect = CGRect(x: 0, y: 0, width: size, height: size)
-        context.fill(Path(ellipseIn: rect), with: .color(color))
+        let cr = Self.tileCornerRadius(for: size)
+        let bgPath = Path(roundedRect: rect, cornerRadius: cr)
+        let lt = color.mix(with: .white, by: 0.10)
+        let dk = color.mix(with: .black, by: 0.08)
+        context.fill(bgPath, with: .linearGradient(
+            Gradient(colors: [lt, dk]),
+            startPoint: CGPoint(x: 0, y: 0),
+            endPoint: CGPoint(x: size, y: size)
+        ))
     }
 
     private func darker(_ color: Color, by amount: CGFloat = 0.15) -> Color {
@@ -35,6 +47,11 @@ struct AnimalAvatarView: View {
         color.opacity(1.0).mix(with: .white, by: amount)
     }
 
+    private func fns(context: inout GraphicsContext, path: Path, fill: Color, outline: Color, lineWidth: CGFloat) {
+        context.fill(path, with: .color(fill))
+        context.stroke(path, with: .color(outline), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+    }
+
     private func drawAnimal(context: inout GraphicsContext, type: AnimalType, color: Color, size: CGFloat) {
         let s = size
         let fc = color
@@ -43,20 +60,24 @@ struct AnimalAvatarView: View {
         let cheek = Color(hex: "FF8A80").opacity(0.30)
         let darkAccent = Color.black.opacity(0.12)
         let noseColor = Color.black.opacity(0.65)
+        let oc = Color.black.opacity(0.92)
+        let ow: CGFloat = s * 0.040
+        let iw: CGFloat = s * 0.018
 
         switch type {
         case .beaver:
             let earL = CGRect(x: s * 0.16, y: s * 0.22, width: s * 0.18, height: s * 0.16)
             let earR = CGRect(x: s * 0.66, y: s * 0.22, width: s * 0.18, height: s * 0.16)
-            context.fill(Path(ellipseIn: earL), with: .color(fc))
-            context.fill(Path(ellipseIn: earR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.03, dy: s * 0.03)), with: .color(Color(hex: "D7CCC8")))
             context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.03, dy: s * 0.03)), with: .color(Color(hex: "D7CCC8")))
             let head = CGRect(x: s * 0.13, y: s * 0.26, width: s * 0.74, height: s * 0.62)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.18, y: s * 0.28, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.40, y: s * 0.58, width: s * 0.40, height: s * 0.26)), with: .color(darker(fc, by: 0.06)))
             let muzzle = CGRect(x: s * 0.26, y: s * 0.52, width: s * 0.48, height: s * 0.30)
-            context.fill(Path(ellipseIn: muzzle), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: muzzle), fill: belly, outline: oc, lineWidth: iw)
             let nose = CGRect(x: s * 0.42, y: s * 0.52, width: s * 0.16, height: s * 0.11)
             context.fill(Path(ellipseIn: nose), with: .color(noseColor))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.53, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.45)))
@@ -64,7 +85,17 @@ struct AnimalAvatarView: View {
             teeth.addRoundedRect(in: CGRect(x: s * 0.42, y: s * 0.72, width: s * 0.07, height: s * 0.10), cornerSize: CGSize(width: 2, height: 2))
             teeth.addRoundedRect(in: CGRect(x: s * 0.51, y: s * 0.72, width: s * 0.07, height: s * 0.10), cornerSize: CGSize(width: 2, height: 2))
             context.fill(teeth, with: .color(.white))
-            context.stroke(teeth, with: .color(darkAccent), lineWidth: 0.8)
+            context.stroke(teeth, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
+            var divider = Path()
+            divider.move(to: CGPoint(x: s * 0.50, y: s * 0.72))
+            divider.addLine(to: CGPoint(x: s * 0.50, y: s * 0.82))
+            context.stroke(divider, with: .color(oc.opacity(0.5)), lineWidth: max(1, s * 0.006))
+            for furY in [s * 0.32, s * 0.36, s * 0.40] {
+                var fur = Path()
+                fur.move(to: CGPoint(x: s * 0.30, y: furY))
+                fur.addQuadCurve(to: CGPoint(x: s * 0.42, y: furY), control: CGPoint(x: s * 0.36, y: furY - s * 0.012))
+                context.stroke(fur, with: .color(darker(fc, by: 0.10)), lineWidth: max(1.0, s * 0.008))
+            }
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.56, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.56, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
 
@@ -76,10 +107,23 @@ struct AnimalAvatarView: View {
             crest.addQuadCurve(to: CGPoint(x: s * 0.55, y: s * 0.27), control: CGPoint(x: s * 0.60, y: s * 0.18))
             crest.closeSubpath()
             context.fill(crest, with: .color(fc))
+            context.stroke(crest, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             let head = CGRect(x: s * 0.15, y: s * 0.24, width: s * 0.70, height: s * 0.62)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.26, width: s * 0.32, height: s * 0.16)), with: .color(highlight))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.24, y: s * 0.50, width: s * 0.52, height: s * 0.32)), with: .color(belly))
+            var wingL = Path()
+            wingL.move(to: CGPoint(x: s * 0.14, y: s * 0.50))
+            wingL.addQuadCurve(to: CGPoint(x: s * 0.14, y: s * 0.72), control: CGPoint(x: s * 0.04, y: s * 0.60))
+            wingL.addQuadCurve(to: CGPoint(x: s * 0.24, y: s * 0.58), control: CGPoint(x: s * 0.18, y: s * 0.68))
+            wingL.closeSubpath()
+            context.fill(wingL, with: .color(darker(fc, by: 0.10)))
+            var wingR = Path()
+            wingR.move(to: CGPoint(x: s * 0.86, y: s * 0.50))
+            wingR.addQuadCurve(to: CGPoint(x: s * 0.86, y: s * 0.72), control: CGPoint(x: s * 0.96, y: s * 0.60))
+            wingR.addQuadCurve(to: CGPoint(x: s * 0.76, y: s * 0.58), control: CGPoint(x: s * 0.82, y: s * 0.68))
+            wingR.closeSubpath()
+            context.fill(wingR, with: .color(darker(fc, by: 0.10)))
             var beak = Path()
             beak.move(to: CGPoint(x: s * 0.40, y: s * 0.56))
             beak.addQuadCurve(to: CGPoint(x: s * 0.60, y: s * 0.56), control: CGPoint(x: s * 0.50, y: s * 0.50))
@@ -87,23 +131,31 @@ struct AnimalAvatarView: View {
             beak.addQuadCurve(to: CGPoint(x: s * 0.40, y: s * 0.56), control: CGPoint(x: s * 0.43, y: s * 0.63))
             beak.closeSubpath()
             context.fill(beak, with: .color(Color(hex: "FFA726")))
-            context.stroke(beak, with: .color(Color(hex: "E65100").opacity(0.3)), lineWidth: 1)
+            context.stroke(beak, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.17, y: s * 0.56, width: s * 0.13, height: s * 0.08)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.70, y: s * 0.56, width: s * 0.13, height: s * 0.08)), with: .color(cheek))
 
         case .bunny:
             let earL = CGRect(x: s * 0.20, y: s * 0.00, width: s * 0.20, height: s * 0.42)
             let earR = CGRect(x: s * 0.60, y: s * 0.00, width: s * 0.20, height: s * 0.42)
-            context.fill(Path(ellipseIn: earL), with: .color(fc))
-            context.fill(Path(ellipseIn: earR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.24, y: s * 0.06, width: s * 0.12, height: s * 0.30)), with: .color(Color(hex: "F48FB1").opacity(0.5)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.64, y: s * 0.06, width: s * 0.12, height: s * 0.30)), with: .color(Color(hex: "F48FB1").opacity(0.5)))
             let head = CGRect(x: s * 0.13, y: s * 0.28, width: s * 0.74, height: s * 0.62)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.18, y: s * 0.30, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.34, y: s * 0.56, width: s * 0.32, height: s * 0.20)), with: .color(belly))
             let nose = CGRect(x: s * 0.44, y: s * 0.56, width: s * 0.12, height: s * 0.08)
             context.fill(Path(ellipseIn: nose), with: .color(Color(hex: "F48FB1")))
+            context.stroke(Path(ellipseIn: nose), with: .color(oc), style: StrokeStyle(lineWidth: iw * 0.6, lineCap: .round, lineJoin: .round))
+            for whisker in [(s * 0.34, s * 0.61, s * 0.12, s * 0.58), (s * 0.34, s * 0.65, s * 0.12, s * 0.68),
+                            (s * 0.66, s * 0.61, s * 0.88, s * 0.58), (s * 0.66, s * 0.65, s * 0.88, s * 0.68)] {
+                var w = Path()
+                w.move(to: CGPoint(x: whisker.0, y: whisker.1))
+                w.addLine(to: CGPoint(x: whisker.2, y: whisker.3))
+                context.stroke(w, with: .color(Color.black.opacity(0.18)), lineWidth: max(1.2, s * 0.010))
+            }
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.54, width: s * 0.16, height: s * 0.10)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.69, y: s * 0.54, width: s * 0.16, height: s * 0.10)), with: .color(cheek))
 
@@ -119,7 +171,9 @@ struct AnimalAvatarView: View {
             earR.addCurve(to: CGPoint(x: s * 0.60, y: s * 0.34), control1: CGPoint(x: s * 0.68, y: s * 0.06), control2: CGPoint(x: s * 0.60, y: s * 0.22))
             earR.closeSubpath()
             context.fill(earL, with: .color(fc))
+            context.stroke(earL, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(earR, with: .color(fc))
+            context.stroke(earR, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             var innerEarL = Path()
             innerEarL.move(to: CGPoint(x: s * 0.20, y: s * 0.38))
             innerEarL.addCurve(to: CGPoint(x: s * 0.24, y: s * 0.14), control1: CGPoint(x: s * 0.16, y: s * 0.30), control2: CGPoint(x: s * 0.16, y: s * 0.16))
@@ -133,8 +187,13 @@ struct AnimalAvatarView: View {
             context.fill(innerEarL, with: .color(Color(hex: "F48FB1").opacity(0.45)))
             context.fill(innerEarR, with: .color(Color(hex: "F48FB1").opacity(0.45)))
             let head = CGRect(x: s * 0.12, y: s * 0.28, width: s * 0.76, height: s * 0.60)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.17, y: s * 0.30, width: s * 0.36, height: s * 0.16)), with: .color(highlight))
+            var mStripe = Path()
+            mStripe.move(to: CGPoint(x: s * 0.40, y: s * 0.32))
+            mStripe.addQuadCurve(to: CGPoint(x: s * 0.50, y: s * 0.38), control: CGPoint(x: s * 0.46, y: s * 0.34))
+            mStripe.addQuadCurve(to: CGPoint(x: s * 0.60, y: s * 0.32), control: CGPoint(x: s * 0.54, y: s * 0.34))
+            context.stroke(mStripe, with: .color(darker(fc, by: 0.15)), lineWidth: max(1.0, s * 0.008))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.32, y: s * 0.56, width: s * 0.36, height: s * 0.22)), with: .color(belly))
             var nosePath = Path()
             nosePath.move(to: CGPoint(x: s * 0.50, y: s * 0.57))
@@ -143,12 +202,13 @@ struct AnimalAvatarView: View {
             nosePath.addCurve(to: CGPoint(x: s * 0.50, y: s * 0.57), control1: CGPoint(x: s * 0.56, y: s * 0.60), control2: CGPoint(x: s * 0.54, y: s * 0.57))
             nosePath.closeSubpath()
             context.fill(nosePath, with: .color(Color(hex: "F48FB1")))
+            context.stroke(nosePath, with: .color(oc), style: StrokeStyle(lineWidth: iw * 0.7, lineCap: .round, lineJoin: .round))
             for whisker in [(s * 0.34, s * 0.61, s * 0.08, s * 0.57), (s * 0.34, s * 0.65, s * 0.08, s * 0.67),
                             (s * 0.66, s * 0.61, s * 0.92, s * 0.57), (s * 0.66, s * 0.65, s * 0.92, s * 0.67)] {
                 var w = Path()
                 w.move(to: CGPoint(x: whisker.0, y: whisker.1))
                 w.addLine(to: CGPoint(x: whisker.2, y: whisker.3))
-                context.stroke(w, with: .color(Color.black.opacity(0.12)), lineWidth: 1.2)
+                context.stroke(w, with: .color(Color.black.opacity(0.22)), lineWidth: max(1.2, s * 0.010))
             }
             context.fill(Path(ellipseIn: CGRect(x: s * 0.13, y: s * 0.56, width: s * 0.15, height: s * 0.09)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.72, y: s * 0.56, width: s * 0.15, height: s * 0.09)), with: .color(cheek))
@@ -156,19 +216,22 @@ struct AnimalAvatarView: View {
         case .dog:
             let earL = CGRect(x: s * 0.05, y: s * 0.28, width: s * 0.24, height: s * 0.40)
             let earR = CGRect(x: s * 0.71, y: s * 0.28, width: s * 0.24, height: s * 0.40)
-            context.fill(Path(ellipseIn: earL), with: .color(fc))
-            context.fill(Path(ellipseIn: earR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.04, dy: s * 0.05)), with: .color(Color(hex: "D7CCC8").opacity(0.5)))
             context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.04, dy: s * 0.05)), with: .color(Color(hex: "D7CCC8").opacity(0.5)))
             let head = CGRect(x: s * 0.14, y: s * 0.22, width: s * 0.72, height: s * 0.64)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.19, y: s * 0.24, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.28, y: s * 0.36, width: s * 0.12, height: s * 0.08)), with: .color(lighter(fc, by: 0.18)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.58, y: s * 0.36, width: s * 0.12, height: s * 0.08)), with: .color(lighter(fc, by: 0.18)))
             let muzzle = CGRect(x: s * 0.26, y: s * 0.52, width: s * 0.48, height: s * 0.30)
-            context.fill(Path(ellipseIn: muzzle), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: muzzle), fill: belly, outline: oc, lineWidth: iw)
             let nose = CGRect(x: s * 0.40, y: s * 0.52, width: s * 0.20, height: s * 0.13)
             context.fill(Path(ellipseIn: nose), with: .color(noseColor))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.44, y: s * 0.53, width: s * 0.06, height: s * 0.04)), with: .color(Color.white.opacity(0.4)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.45, y: s * 0.70, width: s * 0.10, height: s * 0.11)), with: .color(Color(hex: "E91E63").opacity(0.6)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.42, y: s * 0.60, width: s * 0.16, height: s * 0.22)), with: .color(darker(fc, by: 0.05)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.54, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.54, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
 
@@ -184,7 +247,11 @@ struct AnimalAvatarView: View {
             hornR.addQuadCurve(to: CGPoint(x: s * 0.64, y: s * 0.28), control: CGPoint(x: s * 0.70, y: s * 0.12))
             hornR.closeSubpath()
             context.fill(hornL, with: .color(Color(hex: "FFA726")))
+            context.stroke(hornL, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(hornR, with: .color(Color(hex: "FFA726")))
+            context.stroke(hornR, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.08, width: s * 0.06, height: s * 0.04)), with: .color(Color(hex: "FFD54F").opacity(0.5)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.78, y: s * 0.08, width: s * 0.06, height: s * 0.04)), with: .color(Color(hex: "FFD54F").opacity(0.5)))
             var spikes = Path()
             for i in 0..<5 {
                 let cx = s * (0.35 + CGFloat(i) * 0.075)
@@ -193,9 +260,14 @@ struct AnimalAvatarView: View {
                 spikes.closeSubpath()
             }
             context.fill(spikes, with: .color(Color(hex: "FFA726").opacity(0.65)))
+            context.stroke(spikes, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             let head = CGRect(x: s * 0.14, y: s * 0.24, width: s * 0.72, height: s * 0.62)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.19, y: s * 0.26, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
+            let scalePositions: [(CGFloat, CGFloat, CGFloat)] = [(0.38, 0.34, 0.08), (0.54, 0.34, 0.08), (0.46, 0.30, 0.07)]
+            for sp in scalePositions {
+                context.fill(Path(ellipseIn: CGRect(x: s * sp.0, y: s * sp.1, width: s * sp.2, height: s * sp.2)), with: .color(darker(fc, by: 0.10)))
+            }
             context.fill(Path(ellipseIn: CGRect(x: s * 0.26, y: s * 0.48, width: s * 0.48, height: s * 0.30)), with: .color(Color(hex: "FFF9C4").opacity(0.45)))
             let nostrilL = CGRect(x: s * 0.36, y: s * 0.58, width: s * 0.07, height: s * 0.05)
             let nostrilR = CGRect(x: s * 0.57, y: s * 0.58, width: s * 0.07, height: s * 0.05)
@@ -207,13 +279,27 @@ struct AnimalAvatarView: View {
         case .elephant:
             let earL = CGRect(x: s * 0.00, y: s * 0.18, width: s * 0.36, height: s * 0.52)
             let earR = CGRect(x: s * 0.64, y: s * 0.18, width: s * 0.36, height: s * 0.52)
-            context.fill(Path(ellipseIn: earL), with: .color(fc))
-            context.fill(Path(ellipseIn: earR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.05, dy: s * 0.06)), with: .color(Color(hex: "F48FB1").opacity(0.2)))
             context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.05, dy: s * 0.06)), with: .color(Color(hex: "F48FB1").opacity(0.2)))
             let head = CGRect(x: s * 0.15, y: s * 0.20, width: s * 0.70, height: s * 0.64)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.22, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
+            var tuskL = Path()
+            tuskL.move(to: CGPoint(x: s * 0.30, y: s * 0.62))
+            tuskL.addQuadCurve(to: CGPoint(x: s * 0.26, y: s * 0.78), control: CGPoint(x: s * 0.24, y: s * 0.70))
+            tuskL.addQuadCurve(to: CGPoint(x: s * 0.34, y: s * 0.64), control: CGPoint(x: s * 0.32, y: s * 0.74))
+            tuskL.closeSubpath()
+            var tuskR = Path()
+            tuskR.move(to: CGPoint(x: s * 0.70, y: s * 0.62))
+            tuskR.addQuadCurve(to: CGPoint(x: s * 0.74, y: s * 0.78), control: CGPoint(x: s * 0.76, y: s * 0.70))
+            tuskR.addQuadCurve(to: CGPoint(x: s * 0.66, y: s * 0.64), control: CGPoint(x: s * 0.68, y: s * 0.74))
+            tuskR.closeSubpath()
+            context.fill(tuskL, with: .color(Color(hex: "FFFDE7")))
+            context.stroke(tuskL, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
+            context.fill(tuskR, with: .color(Color(hex: "FFFDE7")))
+            context.stroke(tuskR, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             var trunk = Path()
             trunk.move(to: CGPoint(x: s * 0.42, y: s * 0.58))
             trunk.addCurve(to: CGPoint(x: s * 0.44, y: s * 0.88), control1: CGPoint(x: s * 0.38, y: s * 0.70), control2: CGPoint(x: s * 0.34, y: s * 0.84))
@@ -221,7 +307,13 @@ struct AnimalAvatarView: View {
             trunk.addCurve(to: CGPoint(x: s * 0.58, y: s * 0.58), control1: CGPoint(x: s * 0.66, y: s * 0.84), control2: CGPoint(x: s * 0.62, y: s * 0.70))
             trunk.closeSubpath()
             context.fill(trunk, with: .color(fc))
-            context.stroke(trunk, with: .color(darkAccent), lineWidth: 1.2)
+            context.stroke(trunk, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
+            for ringY in [s * 0.70, s * 0.76, s * 0.82] {
+                var ring = Path()
+                ring.move(to: CGPoint(x: s * 0.43, y: ringY))
+                ring.addQuadCurve(to: CGPoint(x: s * 0.57, y: ringY), control: CGPoint(x: s * 0.50, y: ringY + s * 0.02))
+                context.stroke(ring, with: .color(darker(fc, by: 0.12)), lineWidth: max(0.8, s * 0.006))
+            }
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.52, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.52, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
 
@@ -237,7 +329,9 @@ struct AnimalAvatarView: View {
             earR.addCurve(to: CGPoint(x: s * 0.58, y: s * 0.32), control1: CGPoint(x: s * 0.66, y: s * 0.00), control2: CGPoint(x: s * 0.58, y: s * 0.18))
             earR.closeSubpath()
             context.fill(earL, with: .color(fc))
+            context.stroke(earL, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(earR, with: .color(fc))
+            context.stroke(earR, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             var tipL = Path()
             tipL.move(to: CGPoint(x: s * 0.22, y: s * 0.04))
             tipL.addCurve(to: CGPoint(x: s * 0.18, y: s * 0.20), control1: CGPoint(x: s * 0.16, y: s * 0.08), control2: CGPoint(x: s * 0.14, y: s * 0.16))
@@ -248,16 +342,18 @@ struct AnimalAvatarView: View {
             tipR.addCurve(to: CGPoint(x: s * 0.82, y: s * 0.20), control1: CGPoint(x: s * 0.84, y: s * 0.08), control2: CGPoint(x: s * 0.86, y: s * 0.16))
             tipR.addCurve(to: CGPoint(x: s * 0.68, y: s * 0.16), control1: CGPoint(x: s * 0.78, y: s * 0.16), control2: CGPoint(x: s * 0.72, y: s * 0.14))
             tipR.closeSubpath()
-            context.fill(tipL, with: .color(darkAccent))
-            context.fill(tipR, with: .color(darkAccent))
+            context.fill(tipL, with: .color(darker(fc, by: 0.22)))
+            context.fill(tipR, with: .color(darker(fc, by: 0.22)))
             let head = CGRect(x: s * 0.12, y: s * 0.26, width: s * 0.76, height: s * 0.60)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.17, y: s * 0.28, width: s * 0.36, height: s * 0.16)), with: .color(highlight))
             var chin = Path()
             chin.move(to: CGPoint(x: s * 0.22, y: s * 0.52))
             chin.addQuadCurve(to: CGPoint(x: s * 0.78, y: s * 0.52), control: CGPoint(x: s * 0.50, y: s * 0.92))
             chin.closeSubpath()
             context.fill(chin, with: .color(.white.opacity(0.80)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.50, width: s * 0.14, height: s * 0.12)), with: .color(.white.opacity(0.30)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.66, y: s * 0.50, width: s * 0.14, height: s * 0.12)), with: .color(.white.opacity(0.30)))
             let nose = CGRect(x: s * 0.42, y: s * 0.54, width: s * 0.16, height: s * 0.11)
             context.fill(Path(ellipseIn: nose), with: .color(noseColor))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.55, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.4)))
@@ -266,13 +362,17 @@ struct AnimalAvatarView: View {
 
         case .frog:
             let head = CGRect(x: s * 0.10, y: s * 0.28, width: s * 0.80, height: s * 0.58)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
             let eyeBumpL = CGRect(x: s * 0.14, y: s * 0.16, width: s * 0.30, height: s * 0.30)
             let eyeBumpR = CGRect(x: s * 0.56, y: s * 0.16, width: s * 0.30, height: s * 0.30)
-            context.fill(Path(ellipseIn: eyeBumpL), with: .color(fc))
-            context.fill(Path(ellipseIn: eyeBumpR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: eyeBumpL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: eyeBumpR), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.16, y: s * 0.18, width: s * 0.16, height: s * 0.10)), with: .color(highlight))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.58, y: s * 0.18, width: s * 0.16, height: s * 0.10)), with: .color(highlight))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
+            let spots: [(CGFloat, CGFloat, CGFloat)] = [(0.20, 0.40, 0.06), (0.74, 0.42, 0.05), (0.32, 0.72, 0.05), (0.62, 0.74, 0.04)]
+            for sp in spots {
+                context.fill(Path(ellipseIn: CGRect(x: s * sp.0, y: s * sp.1, width: s * sp.2, height: s * sp.2)), with: .color(darker(fc, by: 0.12)))
+            }
             context.fill(Path(ellipseIn: CGRect(x: s * 0.22, y: s * 0.48, width: s * 0.56, height: s * 0.32)), with: .color(Color(hex: "C8E6C9").opacity(0.5)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.13, y: s * 0.58, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.73, y: s * 0.58, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
@@ -289,15 +389,17 @@ struct AnimalAvatarView: View {
             ossiconeR.addQuadCurve(to: CGPoint(x: s * 0.70, y: s * 0.28), control: CGPoint(x: s * 0.74, y: s * 0.16))
             ossiconeR.closeSubpath()
             context.fill(ossiconeL, with: .color(fc))
+            context.stroke(ossiconeL, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(ossiconeR, with: .color(fc))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.27, y: s * 0.02, width: s * 0.12, height: s * 0.12)), with: .color(Color(hex: "8D6E63")))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.63, y: s * 0.02, width: s * 0.12, height: s * 0.12)), with: .color(Color(hex: "8D6E63")))
+            context.stroke(ossiconeR, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
+            fns(context: &context, path: Path(ellipseIn: CGRect(x: s * 0.27, y: s * 0.02, width: s * 0.12, height: s * 0.12)), fill: Color(hex: "8D6E63"), outline: oc, lineWidth: iw)
+            fns(context: &context, path: Path(ellipseIn: CGRect(x: s * 0.63, y: s * 0.02, width: s * 0.12, height: s * 0.12)), fill: Color(hex: "8D6E63"), outline: oc, lineWidth: iw)
             let earL = CGRect(x: s * 0.10, y: s * 0.28, width: s * 0.20, height: s * 0.12)
             let earR = CGRect(x: s * 0.70, y: s * 0.28, width: s * 0.20, height: s * 0.12)
-            context.fill(Path(ellipseIn: earL), with: .color(fc))
-            context.fill(Path(ellipseIn: earR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
             let head = CGRect(x: s * 0.15, y: s * 0.22, width: s * 0.70, height: s * 0.64)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.24, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
             let spots: [(CGFloat, CGFloat, CGFloat)] = [
                 (0.24, 0.36, 0.10), (0.68, 0.38, 0.09), (0.32, 0.70, 0.08),
@@ -307,13 +409,12 @@ struct AnimalAvatarView: View {
                 context.fill(Path(ellipseIn: CGRect(x: s * spot.0, y: s * spot.1, width: s * spot.2, height: s * spot.2)), with: .color(Color(hex: "8D6E63").opacity(0.30)))
             }
             let muzzle = CGRect(x: s * 0.26, y: s * 0.56, width: s * 0.48, height: s * 0.28)
-            context.fill(Path(ellipseIn: muzzle), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: muzzle), fill: belly, outline: oc, lineWidth: iw)
             let noseRect = CGRect(x: s * 0.40, y: s * 0.58, width: s * 0.20, height: s * 0.12)
             context.fill(Path(ellipseIn: noseRect), with: .color(Color(hex: "8D6E63").opacity(0.45)))
-            let nostrilLG = CGRect(x: s * 0.43, y: s * 0.62, width: s * 0.04, height: s * 0.03)
-            let nostrilRG = CGRect(x: s * 0.53, y: s * 0.62, width: s * 0.04, height: s * 0.03)
-            context.fill(Path(ellipseIn: nostrilLG), with: .color(darkAccent))
-            context.fill(Path(ellipseIn: nostrilRG), with: .color(darkAccent))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.43, y: s * 0.62, width: s * 0.04, height: s * 0.03)), with: .color(darkAccent))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.53, y: s * 0.62, width: s * 0.04, height: s * 0.03)), with: .color(darkAccent))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.44, y: s * 0.59, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.25)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.17, y: s * 0.54, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.54, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
 
@@ -321,6 +422,7 @@ struct AnimalAvatarView: View {
             var spikeBg = Path()
             spikeBg.addEllipse(in: CGRect(x: s * 0.08, y: s * 0.06, width: s * 0.84, height: s * 0.72))
             context.fill(spikeBg, with: .color(Color(hex: "5D4037")))
+            context.stroke(spikeBg, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             let spikeCenter = CGPoint(x: s * 0.50, y: s * 0.40)
             for i in 0..<20 {
                 let angle = Double(i) * (Double.pi * 2.0 / 20.0)
@@ -335,12 +437,13 @@ struct AnimalAvatarView: View {
                 spike.closeSubpath()
                 let spikeColor = i % 2 == 0 ? Color(hex: "5D4037") : Color(hex: "795548")
                 context.fill(spike, with: .color(spikeColor))
+                context.stroke(spike, with: .color(oc.opacity(0.5)), style: StrokeStyle(lineWidth: iw * 0.5, lineCap: .round, lineJoin: .round))
             }
             let head = CGRect(x: s * 0.16, y: s * 0.28, width: s * 0.68, height: s * 0.58)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.30, width: s * 0.32, height: s * 0.14)), with: .color(highlight))
             let muzzle = CGRect(x: s * 0.28, y: s * 0.52, width: s * 0.44, height: s * 0.28)
-            context.fill(Path(ellipseIn: muzzle), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: muzzle), fill: belly, outline: oc, lineWidth: iw)
             let nose = CGRect(x: s * 0.43, y: s * 0.53, width: s * 0.14, height: s * 0.10)
             context.fill(Path(ellipseIn: nose), with: .color(noseColor))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.47, y: s * 0.54, width: s * 0.04, height: s * 0.03)), with: .color(Color.white.opacity(0.4)))
@@ -357,6 +460,7 @@ struct AnimalAvatarView: View {
             mane.addCurve(to: CGPoint(x: s * 0.48, y: s * 0.14), control1: CGPoint(x: s * 0.60, y: s * 0.18), control2: CGPoint(x: s * 0.56, y: s * 0.14))
             mane.closeSubpath()
             context.fill(mane, with: .color(Color(hex: "3E2723")))
+            context.stroke(mane, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             var forelock = Path()
             forelock.move(to: CGPoint(x: s * 0.38, y: s * 0.18))
             forelock.addCurve(to: CGPoint(x: s * 0.48, y: s * 0.06), control1: CGPoint(x: s * 0.38, y: s * 0.10), control2: CGPoint(x: s * 0.42, y: s * 0.06))
@@ -375,12 +479,14 @@ struct AnimalAvatarView: View {
             earR.addQuadCurve(to: CGPoint(x: s * 0.72, y: s * 0.28), control: CGPoint(x: s * 0.76, y: s * 0.14))
             earR.closeSubpath()
             context.fill(earL, with: .color(fc))
+            context.stroke(earL, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(earR, with: .color(fc))
+            context.stroke(earR, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             let head = CGRect(x: s * 0.14, y: s * 0.22, width: s * 0.66, height: s * 0.56)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.18, y: s * 0.24, width: s * 0.32, height: s * 0.14)), with: .color(highlight))
             let longMuzzle = CGRect(x: s * 0.22, y: s * 0.52, width: s * 0.50, height: s * 0.34)
-            context.fill(Path(ellipseIn: longMuzzle), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: longMuzzle), fill: belly, outline: oc, lineWidth: iw)
             var blaze = Path()
             blaze.move(to: CGPoint(x: s * 0.44, y: s * 0.30))
             blaze.addQuadCurve(to: CGPoint(x: s * 0.56, y: s * 0.30), control: CGPoint(x: s * 0.50, y: s * 0.28))
@@ -389,10 +495,8 @@ struct AnimalAvatarView: View {
             blaze.addQuadCurve(to: CGPoint(x: s * 0.44, y: s * 0.30), control: CGPoint(x: s * 0.42, y: s * 0.42))
             blaze.closeSubpath()
             context.fill(blaze, with: .color(.white.opacity(0.40)))
-            let nostrilL2 = CGRect(x: s * 0.34, y: s * 0.68, width: s * 0.07, height: s * 0.05)
-            let nostrilR2 = CGRect(x: s * 0.55, y: s * 0.68, width: s * 0.07, height: s * 0.05)
-            context.fill(Path(ellipseIn: nostrilL2), with: .color(darkAccent))
-            context.fill(Path(ellipseIn: nostrilR2), with: .color(darkAccent))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.34, y: s * 0.68, width: s * 0.07, height: s * 0.05)), with: .color(darkAccent))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.55, y: s * 0.68, width: s * 0.07, height: s * 0.05)), with: .color(darkAccent))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.14, y: s * 0.52, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.68, y: s * 0.52, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
 
@@ -414,17 +518,18 @@ struct AnimalAvatarView: View {
                 let tuftColor = i % 2 == 0 ? Color(hex: "E65100").opacity(0.40) : Color(hex: "BF360C").opacity(0.30)
                 context.fill(tuft, with: .color(tuftColor))
             }
+            context.stroke(Path(ellipseIn: maneRect), with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             let earL = CGRect(x: s * 0.12, y: s * 0.20, width: s * 0.18, height: s * 0.16)
             let earR = CGRect(x: s * 0.70, y: s * 0.20, width: s * 0.18, height: s * 0.16)
-            context.fill(Path(ellipseIn: earL), with: .color(fc))
-            context.fill(Path(ellipseIn: earR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.03, dy: s * 0.03)), with: .color(Color(hex: "FFAB91").opacity(0.5)))
             context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.03, dy: s * 0.03)), with: .color(Color(hex: "FFAB91").opacity(0.5)))
             let head = CGRect(x: s * 0.15, y: s * 0.24, width: s * 0.70, height: s * 0.60)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.26, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
             let muzzle = CGRect(x: s * 0.28, y: s * 0.52, width: s * 0.44, height: s * 0.28)
-            context.fill(Path(ellipseIn: muzzle), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: muzzle), fill: belly, outline: oc, lineWidth: iw)
             var nosePath = Path()
             nosePath.move(to: CGPoint(x: s * 0.50, y: s * 0.53))
             nosePath.addCurve(to: CGPoint(x: s * 0.42, y: s * 0.60), control1: CGPoint(x: s * 0.44, y: s * 0.53), control2: CGPoint(x: s * 0.42, y: s * 0.56))
@@ -434,21 +539,27 @@ struct AnimalAvatarView: View {
             nosePath.closeSubpath()
             context.fill(nosePath, with: .color(Color(hex: "5D4037")))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.47, y: s * 0.54, width: s * 0.04, height: s * 0.03)), with: .color(Color.white.opacity(0.3)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.36, y: s * 0.68, width: s * 0.28, height: s * 0.08)), with: .color(darker(fc, by: 0.06)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.17, y: s * 0.54, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.54, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
 
         case .monkey:
             let earL = CGRect(x: s * 0.03, y: s * 0.32, width: s * 0.24, height: s * 0.24)
             let earR = CGRect(x: s * 0.73, y: s * 0.32, width: s * 0.24, height: s * 0.24)
-            context.fill(Path(ellipseIn: earL), with: .color(fc))
-            context.fill(Path(ellipseIn: earR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.04, dy: s * 0.04)), with: .color(Color(hex: "FFAB91")))
             context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.04, dy: s * 0.04)), with: .color(Color(hex: "FFAB91")))
             let head = CGRect(x: s * 0.13, y: s * 0.20, width: s * 0.74, height: s * 0.64)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.18, y: s * 0.22, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
+            var tuft = Path()
+            tuft.move(to: CGPoint(x: s * 0.42, y: s * 0.20))
+            tuft.addQuadCurve(to: CGPoint(x: s * 0.50, y: s * 0.12), control: CGPoint(x: s * 0.44, y: s * 0.14))
+            tuft.addQuadCurve(to: CGPoint(x: s * 0.58, y: s * 0.20), control: CGPoint(x: s * 0.56, y: s * 0.14))
+            context.stroke(tuft, with: .color(darker(fc, by: 0.20)), lineWidth: max(1.5, s * 0.014))
             let face = CGRect(x: s * 0.22, y: s * 0.40, width: s * 0.56, height: s * 0.40)
-            context.fill(Path(ellipseIn: face), with: .color(Color(hex: "FFAB91")))
+            fns(context: &context, path: Path(ellipseIn: face), fill: Color(hex: "FFAB91"), outline: oc, lineWidth: iw)
             let noseM = CGRect(x: s * 0.42, y: s * 0.56, width: s * 0.16, height: s * 0.10)
             context.fill(Path(ellipseIn: noseM), with: .color(Color(hex: "8D6E63").opacity(0.45)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.19, y: s * 0.54, width: s * 0.10, height: s * 0.06)), with: .color(cheek))
@@ -459,10 +570,6 @@ struct AnimalAvatarView: View {
             let domeH: CGFloat = s * 0.52
             let domeX = s * 0.14
             let domeY = s * 0.08
-            var dome = Path()
-            dome.addEllipse(in: CGRect(x: domeX, y: domeY, width: domeW, height: domeH))
-            context.fill(dome, with: .color(fc))
-            context.fill(Path(ellipseIn: CGRect(x: domeX + s * 0.04, y: domeY + s * 0.02, width: s * 0.30, height: s * 0.14)), with: .color(highlight))
             let tentaclePositions: [(CGFloat, CGFloat, CGFloat)] = [
                 (0.08, 0.50, -0.08), (0.22, 0.54, -0.04), (0.38, 0.56, 0.00),
                 (0.54, 0.56, 0.02), (0.68, 0.54, 0.06), (0.82, 0.50, 0.10),
@@ -490,6 +597,7 @@ struct AnimalAvatarView: View {
                 )
                 tentacle.closeSubpath()
                 context.fill(tentacle, with: .color(fc))
+                context.stroke(tentacle, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             }
             for tent in tentaclePositions {
                 let startX = s * tent.0
@@ -497,7 +605,12 @@ struct AnimalAvatarView: View {
                 sucker.addEllipse(in: CGRect(x: startX + s * 0.02, y: s * 0.72, width: s * 0.04, height: s * 0.04))
                 sucker.addEllipse(in: CGRect(x: startX + s * 0.03, y: s * 0.80, width: s * 0.03, height: s * 0.03))
                 context.fill(sucker, with: .color(Color.white.opacity(0.25)))
+                context.stroke(sucker, with: .color(oc.opacity(0.3)), style: StrokeStyle(lineWidth: iw * 0.5, lineCap: .round, lineJoin: .round))
             }
+            var dome = Path()
+            dome.addEllipse(in: CGRect(x: domeX, y: domeY, width: domeW, height: domeH))
+            fns(context: &context, path: dome, fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: CGRect(x: domeX + s * 0.04, y: domeY + s * 0.02, width: s * 0.30, height: s * 0.14)), with: .color(highlight))
             let octoFace = CGRect(x: s * 0.24, y: s * 0.22, width: s * 0.52, height: s * 0.32)
             context.fill(Path(ellipseIn: octoFace), with: .color(belly))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.14, y: s * 0.42, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
@@ -515,14 +628,24 @@ struct AnimalAvatarView: View {
             tuftR.addCurve(to: CGPoint(x: s * 0.62, y: s * 0.28), control1: CGPoint(x: s * 0.72, y: s * 0.02), control2: CGPoint(x: s * 0.62, y: s * 0.16))
             tuftR.closeSubpath()
             context.fill(tuftL, with: .color(fc))
+            context.stroke(tuftL, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(tuftR, with: .color(fc))
+            context.stroke(tuftR, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             let head = CGRect(x: s * 0.11, y: s * 0.22, width: s * 0.78, height: s * 0.64)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.16, y: s * 0.24, width: s * 0.36, height: s * 0.16)), with: .color(highlight))
             let eyeRingL = CGRect(x: s * 0.17, y: s * 0.32, width: s * 0.30, height: s * 0.30)
             let eyeRingR = CGRect(x: s * 0.53, y: s * 0.32, width: s * 0.30, height: s * 0.30)
-            context.fill(Path(ellipseIn: eyeRingL), with: .color(belly))
-            context.fill(Path(ellipseIn: eyeRingR), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: eyeRingL), fill: belly, outline: oc, lineWidth: iw)
+            fns(context: &context, path: Path(ellipseIn: eyeRingR), fill: belly, outline: oc, lineWidth: iw)
+            var browL = Path()
+            browL.move(to: CGPoint(x: s * 0.18, y: s * 0.34))
+            browL.addQuadCurve(to: CGPoint(x: s * 0.46, y: s * 0.34), control: CGPoint(x: s * 0.32, y: s * 0.28))
+            context.stroke(browL, with: .color(darker(fc, by: 0.18)), lineWidth: max(1.5, s * 0.012))
+            var browR = Path()
+            browR.move(to: CGPoint(x: s * 0.54, y: s * 0.34))
+            browR.addQuadCurve(to: CGPoint(x: s * 0.82, y: s * 0.34), control: CGPoint(x: s * 0.68, y: s * 0.28))
+            context.stroke(browR, with: .color(darker(fc, by: 0.18)), lineWidth: max(1.5, s * 0.012))
             var beak = Path()
             beak.move(to: CGPoint(x: s * 0.44, y: s * 0.58))
             beak.addQuadCurve(to: CGPoint(x: s * 0.56, y: s * 0.58), control: CGPoint(x: s * 0.50, y: s * 0.55))
@@ -530,29 +653,32 @@ struct AnimalAvatarView: View {
             beak.addQuadCurve(to: CGPoint(x: s * 0.44, y: s * 0.58), control: CGPoint(x: s * 0.46, y: s * 0.66))
             beak.closeSubpath()
             context.fill(beak, with: .color(Color(hex: "FFA726")))
-            context.stroke(beak, with: .color(Color(hex: "E65100").opacity(0.25)), lineWidth: 0.8)
+            context.stroke(beak, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             let bellyOwl = CGRect(x: s * 0.28, y: s * 0.64, width: s * 0.44, height: s * 0.20)
             context.fill(Path(ellipseIn: bellyOwl), with: .color(belly))
-            for i in 0..<3 {
-                let vx = s * (0.42 + CGFloat(i) * 0.08)
+            for i in 0..<4 {
+                let vx = s * (0.38 + CGFloat(i) * 0.07)
                 var feather = Path()
-                feather.move(to: CGPoint(x: vx, y: s * 0.66))
+                feather.move(to: CGPoint(x: vx - s * 0.02, y: s * 0.66))
                 feather.addLine(to: CGPoint(x: vx, y: s * 0.78))
-                context.stroke(feather, with: .color(darkAccent), lineWidth: 0.8)
+                feather.addLine(to: CGPoint(x: vx + s * 0.02, y: s * 0.66))
+                context.stroke(feather, with: .color(darker(fc, by: 0.10)), lineWidth: max(1.0, s * 0.008))
             }
 
         case .panda:
             let earL = CGRect(x: s * 0.10, y: s * 0.14, width: s * 0.24, height: s * 0.24)
             let earR = CGRect(x: s * 0.66, y: s * 0.14, width: s * 0.24, height: s * 0.24)
-            context.fill(Path(ellipseIn: earL), with: .color(.black.opacity(0.80)))
-            context.fill(Path(ellipseIn: earR), with: .color(.black.opacity(0.80)))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: .black.opacity(0.80), outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: .black.opacity(0.80), outline: oc, lineWidth: ow)
             let head = CGRect(x: s * 0.12, y: s * 0.22, width: s * 0.76, height: s * 0.62)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.16, y: s * 0.24, width: s * 0.38, height: s * 0.16)), with: .color(highlight))
             let patchL = CGRect(x: s * 0.19, y: s * 0.34, width: s * 0.24, height: s * 0.22)
             let patchR = CGRect(x: s * 0.57, y: s * 0.34, width: s * 0.24, height: s * 0.22)
-            context.fill(Path(ellipseIn: patchL), with: .color(.black.opacity(0.70)))
-            context.fill(Path(ellipseIn: patchR), with: .color(.black.opacity(0.70)))
+            fns(context: &context, path: Path(ellipseIn: patchL), fill: .black.opacity(0.70), outline: oc, lineWidth: iw)
+            fns(context: &context, path: Path(ellipseIn: patchR), fill: .black.opacity(0.70), outline: oc, lineWidth: iw)
+            let muzzle = CGRect(x: s * 0.32, y: s * 0.56, width: s * 0.36, height: s * 0.22)
+            context.fill(Path(ellipseIn: muzzle), with: .color(belly))
             let nose = CGRect(x: s * 0.43, y: s * 0.58, width: s * 0.14, height: s * 0.10)
             context.fill(Path(ellipseIn: nose), with: .color(noseColor))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.59, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.35)))
@@ -562,41 +688,51 @@ struct AnimalAvatarView: View {
         case .raccoon:
             let earL = CGRect(x: s * 0.12, y: s * 0.14, width: s * 0.20, height: s * 0.20)
             let earR = CGRect(x: s * 0.68, y: s * 0.14, width: s * 0.20, height: s * 0.20)
-            context.fill(Path(ellipseIn: earL), with: .color(fc))
-            context.fill(Path(ellipseIn: earR), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.03, dy: s * 0.03)), with: .color(Color(hex: "F48FB1").opacity(0.25)))
             context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.03, dy: s * 0.03)), with: .color(Color(hex: "F48FB1").opacity(0.25)))
+            let tipL = CGRect(x: s * 0.12, y: s * 0.14, width: s * 0.20, height: s * 0.08)
+            let tipR = CGRect(x: s * 0.68, y: s * 0.14, width: s * 0.20, height: s * 0.08)
+            context.fill(Path(ellipseIn: tipL), with: .color(darker(fc, by: 0.18)))
+            context.fill(Path(ellipseIn: tipR), with: .color(darker(fc, by: 0.18)))
             let head = CGRect(x: s * 0.12, y: s * 0.22, width: s * 0.76, height: s * 0.62)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.16, y: s * 0.24, width: s * 0.36, height: s * 0.16)), with: .color(highlight))
             let mask = CGRect(x: s * 0.16, y: s * 0.34, width: s * 0.68, height: s * 0.20)
             context.fill(Path(roundedRect: mask, cornerRadius: s * 0.08), with: .color(.black.opacity(0.52)))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.36, width: s * 0.16, height: s * 0.06)), with: .color(Color.white.opacity(0.06)))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.64, y: s * 0.36, width: s * 0.16, height: s * 0.06)), with: .color(Color.white.opacity(0.06)))
+            context.stroke(Path(roundedRect: mask, cornerRadius: s * 0.08), with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             var stripe = Path()
             stripe.move(to: CGPoint(x: s * 0.50, y: s * 0.24))
             stripe.addLine(to: CGPoint(x: s * 0.50, y: s * 0.34))
             context.stroke(stripe, with: .color(Color.white.opacity(0.45)), lineWidth: s * 0.04)
             let muzzle = CGRect(x: s * 0.32, y: s * 0.52, width: s * 0.36, height: s * 0.24)
-            context.fill(Path(ellipseIn: muzzle), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: muzzle), fill: belly, outline: oc, lineWidth: iw)
             let noseR = CGRect(x: s * 0.43, y: s * 0.54, width: s * 0.14, height: s * 0.10)
             context.fill(Path(ellipseIn: noseR), with: .color(noseColor))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.55, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.35)))
 
         case .seal:
             let head = CGRect(x: s * 0.12, y: s * 0.20, width: s * 0.76, height: s * 0.64)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.16, y: s * 0.22, width: s * 0.36, height: s * 0.16)), with: .color(highlight))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.22, y: s * 0.44, width: s * 0.56, height: s * 0.36)), with: .color(belly))
             var flipperL = Path()
             flipperL.addEllipse(in: CGRect(x: s * 0.04, y: s * 0.52, width: s * 0.20, height: s * 0.24))
             var flipperR = Path()
             flipperR.addEllipse(in: CGRect(x: s * 0.76, y: s * 0.52, width: s * 0.20, height: s * 0.24))
-            context.fill(flipperL, with: .color(fc))
-            context.fill(flipperR, with: .color(fc))
+            fns(context: &context, path: flipperL, fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: flipperR, fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.16, y: s * 0.22, width: s * 0.36, height: s * 0.16)), with: .color(highlight))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.22, y: s * 0.44, width: s * 0.56, height: s * 0.36)), with: .color(belly))
             let noseS = CGRect(x: s * 0.42, y: s * 0.52, width: s * 0.16, height: s * 0.10)
             context.fill(Path(ellipseIn: noseS), with: .color(noseColor.opacity(0.8)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.45, y: s * 0.53, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.35)))
+            for whisker in [(s * 0.34, s * 0.58, s * 0.14, s * 0.55), (s * 0.34, s * 0.62, s * 0.14, s * 0.64),
+                            (s * 0.66, s * 0.58, s * 0.86, s * 0.55), (s * 0.66, s * 0.62, s * 0.86, s * 0.64)] {
+                var w = Path()
+                w.move(to: CGPoint(x: whisker.0, y: whisker.1))
+                w.addLine(to: CGPoint(x: whisker.2, y: whisker.3))
+                context.stroke(w, with: .color(Color.black.opacity(0.15)), lineWidth: max(1.0, s * 0.008))
+            }
             for dot in [(s * 0.32, s * 0.60), (s * 0.28, s * 0.64), (s * 0.66, s * 0.60), (s * 0.70, s * 0.64)] {
                 context.fill(Path(ellipseIn: CGRect(x: dot.0, y: dot.1, width: s * 0.025, height: s * 0.025)), with: .color(darkAccent))
             }
@@ -605,24 +741,29 @@ struct AnimalAvatarView: View {
 
         case .sloth:
             let head = CGRect(x: s * 0.12, y: s * 0.22, width: s * 0.76, height: s * 0.62)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.16, y: s * 0.24, width: s * 0.36, height: s * 0.16)), with: .color(highlight))
             let patchL = CGRect(x: s * 0.19, y: s * 0.34, width: s * 0.24, height: s * 0.24)
             let patchR = CGRect(x: s * 0.57, y: s * 0.34, width: s * 0.24, height: s * 0.24)
             context.fill(Path(ellipseIn: patchL), with: .color(Color(hex: "5D4037").opacity(0.30)))
             context.fill(Path(ellipseIn: patchR), with: .color(Color(hex: "5D4037").opacity(0.30)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.36, y: s * 0.26, width: s * 0.28, height: s * 0.10)), with: .color(darker(fc, by: 0.08)))
             let muzzle = CGRect(x: s * 0.30, y: s * 0.54, width: s * 0.40, height: s * 0.24)
-            context.fill(Path(ellipseIn: muzzle), with: .color(belly))
+            fns(context: &context, path: Path(ellipseIn: muzzle), fill: belly, outline: oc, lineWidth: iw)
             let noseSloth = CGRect(x: s * 0.43, y: s * 0.56, width: s * 0.14, height: s * 0.10)
             context.fill(Path(ellipseIn: noseSloth), with: .color(noseColor.opacity(0.8)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.57, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.35)))
+            var smileLine = Path()
+            smileLine.move(to: CGPoint(x: s * 0.38, y: s * 0.68))
+            smileLine.addQuadCurve(to: CGPoint(x: s * 0.62, y: s * 0.68), control: CGPoint(x: s * 0.50, y: s * 0.74))
+            context.stroke(smileLine, with: .color(darker(fc, by: 0.15)), lineWidth: max(0.8, s * 0.006))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.56, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.73, y: s * 0.56, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
 
         case .turtle:
             var shell = Path()
             shell.addEllipse(in: CGRect(x: s * 0.12, y: s * 0.34, width: s * 0.76, height: s * 0.56))
-            context.fill(shell, with: .color(Color(hex: "689F38")))
+            fns(context: &context, path: shell, fill: Color(hex: "689F38"), outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.17, y: s * 0.38, width: s * 0.36, height: s * 0.12)), with: .color(Color(hex: "7CB342").opacity(0.35)))
             let shellCenter = CGPoint(x: s * 0.50, y: s * 0.62)
             for i in 0..<6 {
@@ -642,10 +783,10 @@ struct AnimalAvatarView: View {
                 }
                 hex.closeSubpath()
                 context.fill(hex, with: .color(Color(hex: "558B2F").opacity(0.25)))
-                context.stroke(hex, with: .color(Color(hex: "558B2F").opacity(0.35)), lineWidth: 1.2)
+                context.stroke(hex, with: .color(oc.opacity(0.35)), lineWidth: max(1.2, s * 0.008))
             }
             let head = CGRect(x: s * 0.18, y: s * 0.14, width: s * 0.64, height: s * 0.54)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.22, y: s * 0.16, width: s * 0.30, height: s * 0.14)), with: .color(highlight))
             let turtleMuzzle = CGRect(x: s * 0.30, y: s * 0.40, width: s * 0.40, height: s * 0.22)
             context.fill(Path(ellipseIn: turtleMuzzle), with: .color(belly))
@@ -661,6 +802,7 @@ struct AnimalAvatarView: View {
             horn.closeSubpath()
             let hornGrad = Gradient(colors: [Color(hex: "FFD54F"), Color(hex: "FFA726"), Color(hex: "FFD54F")])
             context.fill(horn, with: .linearGradient(hornGrad, startPoint: CGPoint(x: s * 0.44, y: 0), endPoint: CGPoint(x: s * 0.56, y: s * 0.28)))
+            context.stroke(horn, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             for stripe in [0.08, 0.14, 0.20] as [CGFloat] {
                 var line = Path()
                 let y = s * stripe
@@ -668,7 +810,7 @@ struct AnimalAvatarView: View {
                 let right = s * 0.56 - (y / (s * 0.28)) * s * 0.06
                 line.move(to: CGPoint(x: left - s * 0.02, y: y))
                 line.addLine(to: CGPoint(x: right + s * 0.02, y: y + s * 0.02))
-                context.stroke(line, with: .color(Color(hex: "E65100").opacity(0.2)), lineWidth: 1.5)
+                context.stroke(line, with: .color(Color(hex: "E65100").opacity(0.25)), lineWidth: max(1.5, s * 0.010))
             }
             var maneU = Path()
             maneU.move(to: CGPoint(x: s * 0.60, y: s * 0.14))
@@ -678,6 +820,7 @@ struct AnimalAvatarView: View {
             maneU.closeSubpath()
             let maneGrad = Gradient(colors: [Color(hex: "CE93D8"), Color(hex: "F48FB1"), Color(hex: "81D4FA")])
             context.fill(maneU, with: .linearGradient(maneGrad, startPoint: CGPoint(x: s * 0.60, y: s * 0.14), endPoint: CGPoint(x: s * 0.82, y: s * 0.56)))
+            context.stroke(maneU, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             var earUL = Path()
             earUL.move(to: CGPoint(x: s * 0.22, y: s * 0.30))
             earUL.addQuadCurve(to: CGPoint(x: s * 0.20, y: s * 0.14), control: CGPoint(x: s * 0.14, y: s * 0.20))
@@ -689,16 +832,28 @@ struct AnimalAvatarView: View {
             earUR.addQuadCurve(to: CGPoint(x: s * 0.72, y: s * 0.28), control: CGPoint(x: s * 0.74, y: s * 0.14))
             earUR.closeSubpath()
             context.fill(earUL, with: .color(fc))
+            context.stroke(earUL, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(earUR, with: .color(fc))
+            context.stroke(earUR, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             let head = CGRect(x: s * 0.14, y: s * 0.24, width: s * 0.66, height: s * 0.60)
-            context.fill(Path(ellipseIn: head), with: .color(fc))
+            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: s * 0.18, y: s * 0.26, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
+            let sparklePositions: [(CGFloat, CGFloat)] = [(0.22, 0.34), (0.70, 0.30), (0.18, 0.60)]
+            for sp in sparklePositions {
+                var sparkle = Path()
+                let cx = s * sp.0
+                let cy = s * sp.1
+                let sr: CGFloat = s * 0.018
+                sparkle.move(to: CGPoint(x: cx, y: cy - sr))
+                sparkle.addLine(to: CGPoint(x: cx, y: cy + sr))
+                sparkle.move(to: CGPoint(x: cx - sr, y: cy))
+                sparkle.addLine(to: CGPoint(x: cx + sr, y: cy))
+                context.stroke(sparkle, with: .color(Color.white.opacity(0.50)), lineWidth: max(1.0, s * 0.008))
+            }
             let muzzleU = CGRect(x: s * 0.24, y: s * 0.54, width: s * 0.46, height: s * 0.26)
-            context.fill(Path(ellipseIn: muzzleU), with: .color(belly))
-            let nostrilUL = CGRect(x: s * 0.36, y: s * 0.66, width: s * 0.05, height: s * 0.04)
-            let nostrilUR = CGRect(x: s * 0.55, y: s * 0.66, width: s * 0.05, height: s * 0.04)
-            context.fill(Path(ellipseIn: nostrilUL), with: .color(darkAccent))
-            context.fill(Path(ellipseIn: nostrilUR), with: .color(darkAccent))
+            fns(context: &context, path: Path(ellipseIn: muzzleU), fill: belly, outline: oc, lineWidth: iw)
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.36, y: s * 0.66, width: s * 0.05, height: s * 0.04)), with: .color(darkAccent))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.55, y: s * 0.66, width: s * 0.05, height: s * 0.04)), with: .color(darkAccent))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.56, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.67, y: s * 0.56, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
         }
@@ -710,8 +865,8 @@ struct AnimalAvatarView: View {
         let leftX: CGFloat = s * 0.32
         let rightX: CGFloat = s * 0.58
         let eyeSize: CGFloat = s * 0.09
-        let outlineColor = Color.black.opacity(0.10)
-        let outlineW: CGFloat = max(1.0, s * 0.006)
+        let oc = Color.black.opacity(0.55)
+        let ow: CGFloat = max(1.2, s * 0.014)
 
         switch style {
         case .normal:
@@ -719,8 +874,8 @@ struct AnimalAvatarView: View {
             let whiteR = CGRect(x: rightX - eyeSize * 0.3, y: eyeY - eyeSize * 0.3, width: eyeSize * 1.6, height: eyeSize * 1.7)
             context.fill(Path(ellipseIn: whiteL), with: .color(.white))
             context.fill(Path(ellipseIn: whiteR), with: .color(.white))
-            context.stroke(Path(ellipseIn: whiteL), with: .color(outlineColor), lineWidth: outlineW)
-            context.stroke(Path(ellipseIn: whiteR), with: .color(outlineColor), lineWidth: outlineW)
+            context.stroke(Path(ellipseIn: whiteL), with: .color(oc), lineWidth: ow)
+            context.stroke(Path(ellipseIn: whiteR), with: .color(oc), lineWidth: ow)
             let irisL = CGRect(x: leftX - eyeSize * 0.05, y: eyeY - eyeSize * 0.05, width: eyeSize * 1.1, height: eyeSize * 1.2)
             let irisR = CGRect(x: rightX - eyeSize * 0.05, y: eyeY - eyeSize * 0.05, width: eyeSize * 1.1, height: eyeSize * 1.2)
             context.fill(Path(ellipseIn: irisL), with: .color(Color(hex: "2C2C2C")))
@@ -741,11 +896,11 @@ struct AnimalAvatarView: View {
             var arcL = Path()
             arcL.move(to: CGPoint(x: leftX - eyeSize * 0.2, y: eyeY + eyeSize * 0.5))
             arcL.addQuadCurve(to: CGPoint(x: leftX + eyeSize * 1.2, y: eyeY + eyeSize * 0.5), control: CGPoint(x: leftX + eyeSize * 0.5, y: eyeY - eyeSize * 0.5))
-            context.stroke(arcL, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.032)
+            context.stroke(arcL, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.036)
             var arcR = Path()
             arcR.move(to: CGPoint(x: rightX - eyeSize * 0.2, y: eyeY + eyeSize * 0.5))
             arcR.addQuadCurve(to: CGPoint(x: rightX + eyeSize * 1.2, y: eyeY + eyeSize * 0.5), control: CGPoint(x: rightX + eyeSize * 0.5, y: eyeY - eyeSize * 0.5))
-            context.stroke(arcR, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.032)
+            context.stroke(arcR, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.036)
 
         case .big:
             let bigSize = eyeSize * 2.0
@@ -756,8 +911,8 @@ struct AnimalAvatarView: View {
             let bigR = CGRect(x: bigRX, y: bigY, width: bigSize, height: bigSize)
             context.fill(Path(ellipseIn: bigL), with: .color(.white))
             context.fill(Path(ellipseIn: bigR), with: .color(.white))
-            context.stroke(Path(ellipseIn: bigL), with: .color(outlineColor), lineWidth: outlineW)
-            context.stroke(Path(ellipseIn: bigR), with: .color(outlineColor), lineWidth: outlineW)
+            context.stroke(Path(ellipseIn: bigL), with: .color(oc), lineWidth: ow)
+            context.stroke(Path(ellipseIn: bigR), with: .color(oc), lineWidth: ow)
             let irisSize = bigSize * 0.6
             let irisOff = (bigSize - irisSize) / 2
             context.fill(Path(ellipseIn: CGRect(x: bigLX + irisOff, y: bigY + irisOff * 0.7, width: irisSize, height: irisSize)), with: .color(Color(hex: "2C2C2C")))
@@ -777,24 +932,24 @@ struct AnimalAvatarView: View {
             var lidL = Path()
             lidL.move(to: CGPoint(x: leftX - eyeSize * 0.15, y: eyeY + eyeSize * 0.5))
             lidL.addQuadCurve(to: CGPoint(x: leftX + eyeSize * 1.15, y: eyeY + eyeSize * 0.5), control: CGPoint(x: leftX + eyeSize * 0.5, y: eyeY + eyeSize * 0.85))
-            context.stroke(lidL, with: .color(.black.opacity(0.85)), lineWidth: s * 0.024)
+            context.stroke(lidL, with: .color(.black.opacity(0.85)), lineWidth: s * 0.028)
             var lidR = Path()
             lidR.move(to: CGPoint(x: rightX - eyeSize * 0.15, y: eyeY + eyeSize * 0.5))
             lidR.addQuadCurve(to: CGPoint(x: rightX + eyeSize * 1.15, y: eyeY + eyeSize * 0.5), control: CGPoint(x: rightX + eyeSize * 0.5, y: eyeY + eyeSize * 0.85))
-            context.stroke(lidR, with: .color(.black.opacity(0.85)), lineWidth: s * 0.024)
+            context.stroke(lidR, with: .color(.black.opacity(0.85)), lineWidth: s * 0.028)
             var browL = Path()
             browL.move(to: CGPoint(x: leftX - s * 0.01, y: eyeY + eyeSize * 0.15))
             browL.addLine(to: CGPoint(x: leftX + eyeSize + s * 0.01, y: eyeY + eyeSize * 0.32))
-            context.stroke(browL, with: .color(.black.opacity(0.40)), lineWidth: s * 0.016)
+            context.stroke(browL, with: .color(.black.opacity(0.40)), lineWidth: s * 0.018)
             var browR = Path()
             browR.move(to: CGPoint(x: rightX + eyeSize + s * 0.01, y: eyeY + eyeSize * 0.15))
             browR.addLine(to: CGPoint(x: rightX - s * 0.01, y: eyeY + eyeSize * 0.32))
-            context.stroke(browR, with: .color(.black.opacity(0.40)), lineWidth: s * 0.016)
+            context.stroke(browR, with: .color(.black.opacity(0.40)), lineWidth: s * 0.018)
 
         case .wink:
             let whiteL = CGRect(x: leftX - eyeSize * 0.3, y: eyeY - eyeSize * 0.3, width: eyeSize * 1.6, height: eyeSize * 1.7)
             context.fill(Path(ellipseIn: whiteL), with: .color(.white))
-            context.stroke(Path(ellipseIn: whiteL), with: .color(outlineColor), lineWidth: outlineW)
+            context.stroke(Path(ellipseIn: whiteL), with: .color(oc), lineWidth: ow)
             let irisWL = CGRect(x: leftX - eyeSize * 0.05, y: eyeY - eyeSize * 0.05, width: eyeSize * 1.1, height: eyeSize * 1.2)
             context.fill(Path(ellipseIn: irisWL), with: .color(Color(hex: "2C2C2C")))
             let pupilW = eyeSize * 0.65
@@ -806,7 +961,7 @@ struct AnimalAvatarView: View {
             var winkArc = Path()
             winkArc.move(to: CGPoint(x: rightX - eyeSize * 0.2, y: eyeY + eyeSize * 0.5))
             winkArc.addQuadCurve(to: CGPoint(x: rightX + eyeSize * 1.2, y: eyeY + eyeSize * 0.5), control: CGPoint(x: rightX + eyeSize * 0.5, y: eyeY - eyeSize * 0.4))
-            context.stroke(winkArc, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.032)
+            context.stroke(winkArc, with: .color(Color(hex: "2C2C2C")), lineWidth: s * 0.036)
 
         case .stars:
             drawStar(context: &context, center: CGPoint(x: leftX + eyeSize * 0.5, y: eyeY + eyeSize * 0.5), radius: eyeSize * 0.95, color: Color(hex: "FFD54F"))
@@ -827,6 +982,8 @@ struct AnimalAvatarView: View {
             let whiteR = CGRect(x: rightX - eyeSize * 0.3, y: eyeY - eyeSize * 0.2, width: eyeSize * 1.6, height: eyeSize * 1.5)
             context.fill(Path(ellipseIn: whiteL), with: .color(.white))
             context.fill(Path(ellipseIn: whiteR), with: .color(.white))
+            context.stroke(Path(ellipseIn: whiteL), with: .color(oc), lineWidth: ow)
+            context.stroke(Path(ellipseIn: whiteR), with: .color(oc), lineWidth: ow)
             context.fill(Path(ellipseIn: CGRect(x: leftX, y: eyeY, width: eyeSize, height: eyeSize * 1.1)), with: .color(.black.opacity(0.85)))
             context.fill(Path(ellipseIn: CGRect(x: rightX, y: eyeY, width: eyeSize, height: eyeSize * 1.1)), with: .color(.black.opacity(0.85)))
             let shineD = eyeSize * 0.32
@@ -835,11 +992,11 @@ struct AnimalAvatarView: View {
             var browL = Path()
             browL.move(to: CGPoint(x: leftX - s * 0.02, y: eyeY - eyeSize * 0.35))
             browL.addLine(to: CGPoint(x: leftX + eyeSize + s * 0.02, y: eyeY - eyeSize * 0.65))
-            context.stroke(browL, with: .color(.black.opacity(0.65)), lineWidth: s * 0.030)
+            context.stroke(browL, with: .color(.black.opacity(0.65)), lineWidth: s * 0.034)
             var browR = Path()
             browR.move(to: CGPoint(x: rightX + eyeSize + s * 0.02, y: eyeY - eyeSize * 0.35))
             browR.addLine(to: CGPoint(x: rightX - s * 0.02, y: eyeY - eyeSize * 0.65))
-            context.stroke(browR, with: .color(.black.opacity(0.65)), lineWidth: s * 0.030)
+            context.stroke(browR, with: .color(.black.opacity(0.65)), lineWidth: s * 0.034)
 
         case .surprised:
             let bigSize = eyeSize * 1.9
@@ -848,8 +1005,8 @@ struct AnimalAvatarView: View {
             let sR = CGRect(x: rightX - eyeSize * 0.40, y: bigY, width: bigSize, height: bigSize)
             context.fill(Path(ellipseIn: sL), with: .color(.white))
             context.fill(Path(ellipseIn: sR), with: .color(.white))
-            context.stroke(Path(ellipseIn: sL), with: .color(outlineColor), lineWidth: outlineW)
-            context.stroke(Path(ellipseIn: sR), with: .color(outlineColor), lineWidth: outlineW)
+            context.stroke(Path(ellipseIn: sL), with: .color(oc), lineWidth: ow)
+            context.stroke(Path(ellipseIn: sR), with: .color(oc), lineWidth: ow)
             let irisS = bigSize * 0.55
             let irisOff = (bigSize - irisS) / 2
             context.fill(Path(ellipseIn: CGRect(x: leftX - eyeSize * 0.40 + irisOff, y: bigY + irisOff * 0.85, width: irisS, height: irisS)), with: .color(Color(hex: "2C2C2C")))
@@ -872,10 +1029,12 @@ struct AnimalAvatarView: View {
             let glassRRect = CGRect(x: glassRX, y: glassY, width: glassW, height: glassH)
             context.fill(Path(roundedRect: glassLRect, cornerRadius: 5), with: .color(.black.opacity(0.82)))
             context.fill(Path(roundedRect: glassRRect, cornerRadius: 5), with: .color(.black.opacity(0.82)))
+            context.stroke(Path(roundedRect: glassLRect, cornerRadius: 5), with: .color(Color.black.opacity(0.92)), lineWidth: max(1.5, s * 0.012))
+            context.stroke(Path(roundedRect: glassRRect, cornerRadius: 5), with: .color(Color.black.opacity(0.92)), lineWidth: max(1.5, s * 0.012))
             var bridge = Path()
             bridge.move(to: CGPoint(x: glassLX + glassW, y: glassY + glassH * 0.4))
             bridge.addLine(to: CGPoint(x: glassRX, y: glassY + glassH * 0.4))
-            context.stroke(bridge, with: .color(.black.opacity(0.82)), lineWidth: s * 0.024)
+            context.stroke(bridge, with: .color(.black.opacity(0.82)), lineWidth: s * 0.028)
             let shineW = glassW * 0.22
             let shineH = glassH * 0.20
             context.fill(Path(roundedRect: CGRect(x: glassLX + glassW * 0.10, y: glassY + glassH * 0.16, width: shineW, height: shineH), cornerRadius: 2), with: .color(.white.opacity(0.30)))
@@ -888,20 +1047,23 @@ struct AnimalAvatarView: View {
         let mouthY: CGFloat = s * 0.63
         let centerX: CGFloat = s * 0.50
         let mouthW: CGFloat = s * 0.13
+        let mc = Color(hex: "2C2C2C").opacity(0.90)
+        let mw: CGFloat = s * 0.030
 
         switch style {
         case .smile:
             var path = Path()
             path.move(to: CGPoint(x: centerX - mouthW * 1.1, y: mouthY))
             path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.1, y: mouthY), control: CGPoint(x: centerX, y: mouthY + s * 0.10))
-            context.stroke(path, with: .color(Color(hex: "2C2C2C").opacity(0.80)), lineWidth: s * 0.026)
+            context.stroke(path, with: .color(mc), lineWidth: mw)
 
         case .bigSmile:
             var path = Path()
             path.move(to: CGPoint(x: centerX - mouthW * 1.4, y: mouthY - s * 0.01))
             path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.4, y: mouthY - s * 0.01), control: CGPoint(x: centerX, y: mouthY + s * 0.15))
             path.closeSubpath()
-            context.fill(path, with: .color(Color(hex: "2C2C2C").opacity(0.80)))
+            context.fill(path, with: .color(mc))
+            context.stroke(path, with: .color(Color.black.opacity(0.92)), style: StrokeStyle(lineWidth: s * 0.012, lineCap: .round, lineJoin: .round))
             var teethTop = Path()
             teethTop.move(to: CGPoint(x: centerX - mouthW * 1.4, y: mouthY - s * 0.01))
             teethTop.addLine(to: CGPoint(x: centerX + mouthW * 1.4, y: mouthY - s * 0.01))
@@ -917,16 +1079,18 @@ struct AnimalAvatarView: View {
             var path = Path()
             path.move(to: CGPoint(x: centerX - mouthW, y: mouthY))
             path.addQuadCurve(to: CGPoint(x: centerX + mouthW, y: mouthY), control: CGPoint(x: centerX, y: mouthY + s * 0.07))
-            context.stroke(path, with: .color(.black.opacity(0.70)), lineWidth: s * 0.024)
+            context.stroke(path, with: .color(mc), lineWidth: mw)
             var tongue = Path()
             tongue.addEllipse(in: CGRect(x: centerX - s * 0.035, y: mouthY + s * 0.02, width: s * 0.07, height: s * 0.09))
             context.fill(tongue, with: .color(Color(hex: "E91E63")))
+            context.stroke(tongue, with: .color(Color.black.opacity(0.30)), lineWidth: max(0.8, s * 0.006))
 
         case .oh:
             let ohW = s * 0.07
             let ohH = s * 0.09
             let ohRect = CGRect(x: centerX - ohW * 0.5, y: mouthY - ohH * 0.3, width: ohW, height: ohH)
-            context.fill(Path(ellipseIn: ohRect), with: .color(.black.opacity(0.70)))
+            context.fill(Path(ellipseIn: ohRect), with: .color(mc))
+            context.stroke(Path(ellipseIn: ohRect), with: .color(Color.black.opacity(0.92)), lineWidth: max(1.0, s * 0.008))
             context.fill(Path(ellipseIn: CGRect(x: centerX - ohW * 0.2, y: mouthY - ohH * 0.15, width: ohW * 0.25, height: ohH * 0.2)), with: .color(.white.opacity(0.2)))
 
         case .catMouth:
@@ -934,20 +1098,21 @@ struct AnimalAvatarView: View {
             path.move(to: CGPoint(x: centerX - mouthW, y: mouthY + s * 0.02))
             path.addQuadCurve(to: CGPoint(x: centerX, y: mouthY - s * 0.01), control: CGPoint(x: centerX - mouthW * 0.5, y: mouthY + s * 0.07))
             path.addQuadCurve(to: CGPoint(x: centerX + mouthW, y: mouthY + s * 0.02), control: CGPoint(x: centerX + mouthW * 0.5, y: mouthY + s * 0.07))
-            context.stroke(path, with: .color(.black.opacity(0.70)), lineWidth: s * 0.022)
+            context.stroke(path, with: .color(mc), lineWidth: mw)
 
         case .smirk:
             var path = Path()
             path.move(to: CGPoint(x: centerX - mouthW * 0.5, y: mouthY + s * 0.01))
             path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.3, y: mouthY - s * 0.03), control: CGPoint(x: centerX + mouthW * 0.5, y: mouthY + s * 0.08))
-            context.stroke(path, with: .color(.black.opacity(0.70)), lineWidth: s * 0.024)
+            context.stroke(path, with: .color(mc), lineWidth: mw)
 
         case .teeth:
             var path = Path()
             path.move(to: CGPoint(x: centerX - mouthW * 1.3, y: mouthY))
             path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.3, y: mouthY), control: CGPoint(x: centerX, y: mouthY + s * 0.12))
             path.closeSubpath()
-            context.fill(path, with: .color(.black.opacity(0.70)))
+            context.fill(path, with: .color(mc))
+            context.stroke(path, with: .color(Color.black.opacity(0.92)), style: StrokeStyle(lineWidth: s * 0.012, lineCap: .round, lineJoin: .round))
             var teethPath = Path()
             teethPath.move(to: CGPoint(x: centerX - mouthW * 1.3, y: mouthY))
             teethPath.addLine(to: CGPoint(x: centerX + mouthW * 1.3, y: mouthY))
@@ -955,16 +1120,17 @@ struct AnimalAvatarView: View {
             teethPath.addLine(to: CGPoint(x: centerX - mouthW * 1.3, y: mouthY + s * 0.028))
             teethPath.closeSubpath()
             context.fill(teethPath, with: .color(.white))
+            context.stroke(teethPath, with: .color(Color.black.opacity(0.30)), lineWidth: max(0.6, s * 0.004))
 
         case .tiny:
             let dotSize = s * 0.038
-            context.fill(Path(ellipseIn: CGRect(x: centerX - dotSize * 0.5, y: mouthY, width: dotSize, height: dotSize)), with: .color(.black.opacity(0.55)))
+            context.fill(Path(ellipseIn: CGRect(x: centerX - dotSize * 0.5, y: mouthY, width: dotSize, height: dotSize)), with: .color(mc))
 
         case .flat:
             var path = Path()
             path.move(to: CGPoint(x: centerX - mouthW * 0.8, y: mouthY + s * 0.01))
             path.addLine(to: CGPoint(x: centerX + mouthW * 0.8, y: mouthY + s * 0.01))
-            context.stroke(path, with: .color(.black.opacity(0.70)), lineWidth: s * 0.024)
+            context.stroke(path, with: .color(mc), lineWidth: mw)
 
         case .wavy:
             var path = Path()
@@ -974,12 +1140,15 @@ struct AnimalAvatarView: View {
                 control1: CGPoint(x: centerX - mouthW * 0.4, y: mouthY + s * 0.07),
                 control2: CGPoint(x: centerX + mouthW * 0.4, y: mouthY - s * 0.05)
             )
-            context.stroke(path, with: .color(.black.opacity(0.70)), lineWidth: s * 0.024)
+            context.stroke(path, with: .color(mc), lineWidth: mw)
         }
     }
 
     private func drawAccessory(context: inout GraphicsContext, type: AccessoryType, size: CGFloat) {
         let s = size
+        let oc = Color.black.opacity(0.92)
+        let ow: CGFloat = s * 0.030
+        let iw: CGFloat = s * 0.016
         guard type != .none else { return }
 
         switch type {
@@ -998,11 +1167,12 @@ struct AnimalAvatarView: View {
             crown.addLine(to: CGPoint(x: s * 0.77, y: s * 0.28))
             crown.closeSubpath()
             context.fill(crown, with: .color(Color(hex: "FFD54F")))
-            context.stroke(crown, with: .color(Color(hex: "FFA726")), lineWidth: 1.5)
+            context.stroke(crown, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             let gemSize = s * 0.04
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.39, y: s * 0.20, width: gemSize, height: gemSize)), with: .color(Color(hex: "E91E63")))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.48, y: s * 0.18, width: gemSize, height: gemSize)), with: .color(Color(hex: "42A5F5")))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.57, y: s * 0.20, width: gemSize, height: gemSize)), with: .color(Color(hex: "66BB6A")))
+            for gem in [(s * 0.39, s * 0.20, "E91E63"), (s * 0.48, s * 0.18, "42A5F5"), (s * 0.57, s * 0.20, "66BB6A")] {
+                context.fill(Path(ellipseIn: CGRect(x: gem.0, y: gem.1, width: gemSize, height: gemSize)), with: .color(Color(hex: gem.2)))
+                context.fill(Path(ellipseIn: CGRect(x: gem.0 + gemSize * 0.15, y: gem.1 + gemSize * 0.12, width: gemSize * 0.3, height: gemSize * 0.25)), with: .color(.white.opacity(0.40)))
+            }
 
         case .gradCap:
             var cap = Path()
@@ -1012,12 +1182,13 @@ struct AnimalAvatarView: View {
             cap.addLine(to: CGPoint(x: s * 0.80, y: s * 0.24))
             cap.closeSubpath()
             context.fill(cap, with: .color(.black.opacity(0.85)))
+            context.stroke(cap, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             let boardRect = CGRect(x: s * 0.28, y: s * 0.22, width: s * 0.44, height: s * 0.06)
             context.fill(Path(roundedRect: boardRect, cornerRadius: 2), with: .color(.black.opacity(0.85)))
             var tassel = Path()
             tassel.move(to: CGPoint(x: s * 0.50, y: s * 0.24))
             tassel.addCurve(to: CGPoint(x: s * 0.74, y: s * 0.40), control1: CGPoint(x: s * 0.55, y: s * 0.28), control2: CGPoint(x: s * 0.70, y: s * 0.36))
-            context.stroke(tassel, with: .color(Color(hex: "FFD54F")), lineWidth: 2)
+            context.stroke(tassel, with: .color(Color(hex: "FFD54F")), lineWidth: max(2, s * 0.014))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.72, y: s * 0.38, width: s * 0.06, height: s * 0.06)), with: .color(Color(hex: "FFD54F")))
 
         case .stethoscope:
@@ -1025,18 +1196,25 @@ struct AnimalAvatarView: View {
             stetho.move(to: CGPoint(x: s * 0.35, y: s * 0.30))
             stetho.addCurve(to: CGPoint(x: s * 0.50, y: s * 0.85), control1: CGPoint(x: s * 0.20, y: s * 0.50), control2: CGPoint(x: s * 0.25, y: s * 0.80))
             stetho.addCurve(to: CGPoint(x: s * 0.65, y: s * 0.30), control1: CGPoint(x: s * 0.75, y: s * 0.80), control2: CGPoint(x: s * 0.80, y: s * 0.50))
-            context.stroke(stetho, with: .color(Color(hex: "78909C")), lineWidth: 2.5)
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.43, y: s * 0.79, width: s * 0.14, height: s * 0.14)), with: .color(Color(hex: "546E7A")))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.82, width: s * 0.04, height: s * 0.04)), with: .color(Color.white.opacity(0.25)))
+            context.stroke(stetho, with: .color(Color(hex: "78909C")), lineWidth: max(2.5, s * 0.018))
+            context.stroke(stetho, with: .color(oc), style: StrokeStyle(lineWidth: iw * 0.5, lineCap: .round, lineJoin: .round))
+            let chestPiece = CGRect(x: s * 0.43, y: s * 0.79, width: s * 0.14, height: s * 0.14)
+            context.fill(Path(ellipseIn: chestPiece), with: .color(Color(hex: "546E7A")))
+            context.stroke(Path(ellipseIn: chestPiece), with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.82, width: s * 0.05, height: s * 0.04)), with: .color(Color.white.opacity(0.30)))
 
         case .topHat:
             let brimRect = CGRect(x: s * 0.18, y: s * 0.22, width: s * 0.64, height: s * 0.06)
-            context.fill(Path(roundedRect: brimRect, cornerRadius: 3), with: .color(.black.opacity(0.85)))
             let hatBody = CGRect(x: s * 0.28, y: s * 0.00, width: s * 0.44, height: s * 0.24)
             context.fill(Path(roundedRect: hatBody, cornerRadius: 4), with: .color(.black.opacity(0.85)))
-            var bandPath = Path()
-            bandPath.addRect(CGRect(x: s * 0.28, y: s * 0.16, width: s * 0.44, height: s * 0.04))
-            context.fill(bandPath, with: .color(Color(hex: "E91E63")))
+            context.fill(Path(roundedRect: brimRect, cornerRadius: 3), with: .color(.black.opacity(0.85)))
+            var hatOutline = Path()
+            hatOutline.addRoundedRect(in: hatBody, cornerSize: CGSize(width: 4, height: 4))
+            hatOutline.addRoundedRect(in: brimRect, cornerSize: CGSize(width: 3, height: 3))
+            context.stroke(hatOutline, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
+            var bandRect = Path()
+            bandRect.addRect(CGRect(x: s * 0.28, y: s * 0.16, width: s * 0.44, height: s * 0.04))
+            context.fill(bandRect, with: .color(Color(hex: "E91E63")))
             context.fill(Path(roundedRect: CGRect(x: s * 0.30, y: s * 0.02, width: s * 0.10, height: s * 0.06), cornerRadius: 2), with: .color(Color.white.opacity(0.12)))
 
         case .bow:
@@ -1045,11 +1223,13 @@ struct AnimalAvatarView: View {
             var bowR = Path()
             bowR.addEllipse(in: CGRect(x: s * 0.54, y: s * 0.14, width: s * 0.18, height: s * 0.14))
             context.fill(bowL, with: .color(Color(hex: "E91E63")))
+            context.stroke(bowL, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(bowR, with: .color(Color(hex: "E91E63")))
+            context.stroke(bowR, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.32, y: s * 0.16, width: s * 0.08, height: s * 0.06)), with: .color(Color(hex: "F48FB1").opacity(0.45)))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.58, y: s * 0.16, width: s * 0.08, height: s * 0.06)), with: .color(Color(hex: "F48FB1").opacity(0.45)))
             let knot = CGRect(x: s * 0.46, y: s * 0.17, width: s * 0.08, height: s * 0.08)
-            context.fill(Path(ellipseIn: knot), with: .color(Color(hex: "C2185B")))
+            fns(context: &context, path: Path(ellipseIn: knot), fill: Color(hex: "C2185B"), outline: oc, lineWidth: iw)
 
         case .glasses:
             let glassSize = s * 0.16
@@ -1057,12 +1237,14 @@ struct AnimalAvatarView: View {
             let lensR = CGRect(x: s * 0.56, y: s * 0.37, width: glassSize, height: glassSize)
             context.fill(Path(ellipseIn: lensL), with: .color(Color.white.opacity(0.12)))
             context.fill(Path(ellipseIn: lensR), with: .color(Color.white.opacity(0.12)))
-            context.stroke(Path(ellipseIn: lensL), with: .color(.black.opacity(0.75)), lineWidth: 2.5)
-            context.stroke(Path(ellipseIn: lensR), with: .color(.black.opacity(0.75)), lineWidth: 2.5)
+            context.stroke(Path(ellipseIn: lensL), with: .color(oc), lineWidth: max(2.5, s * 0.018))
+            context.stroke(Path(ellipseIn: lensR), with: .color(oc), lineWidth: max(2.5, s * 0.018))
             var bridge = Path()
             bridge.move(to: CGPoint(x: s * 0.35, y: s * 0.44))
             bridge.addQuadCurve(to: CGPoint(x: s * 0.56, y: s * 0.44), control: CGPoint(x: s * 0.455, y: s * 0.40))
-            context.stroke(bridge, with: .color(.black.opacity(0.75)), lineWidth: 2.5)
+            context.stroke(bridge, with: .color(oc), lineWidth: max(2.5, s * 0.018))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.21, y: s * 0.39, width: s * 0.04, height: s * 0.03)), with: .color(.white.opacity(0.20)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.58, y: s * 0.39, width: s * 0.04, height: s * 0.03)), with: .color(.white.opacity(0.20)))
 
         case .bandana:
             var bandana = Path()
@@ -1072,6 +1254,7 @@ struct AnimalAvatarView: View {
             bandana.addQuadCurve(to: CGPoint(x: s * 0.12, y: s * 0.35), control: CGPoint(x: s * 0.50, y: s * 0.29))
             bandana.closeSubpath()
             context.fill(bandana, with: .color(Color(hex: "E53935")))
+            context.stroke(bandana, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             var knot = Path()
             knot.move(to: CGPoint(x: s * 0.84, y: s * 0.32))
             knot.addLine(to: CGPoint(x: s * 0.94, y: s * 0.40))
@@ -1079,6 +1262,7 @@ struct AnimalAvatarView: View {
             knot.addLine(to: CGPoint(x: s * 0.82, y: s * 0.36))
             knot.closeSubpath()
             context.fill(knot, with: .color(Color(hex: "E53935")))
+            context.stroke(knot, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             var dots = Path()
             dots.addEllipse(in: CGRect(x: s * 0.36, y: s * 0.28, width: s * 0.03, height: s * 0.03))
             dots.addEllipse(in: CGRect(x: s * 0.50, y: s * 0.27, width: s * 0.03, height: s * 0.03))
@@ -1087,19 +1271,20 @@ struct AnimalAvatarView: View {
 
         case .halo:
             let haloRect = CGRect(x: s * 0.20, y: s * 0.06, width: s * 0.60, height: s * 0.16)
-            context.stroke(Path(ellipseIn: haloRect), with: .color(Color(hex: "FFF9C4").opacity(0.40)), lineWidth: 7)
-            context.stroke(Path(ellipseIn: haloRect), with: .color(Color(hex: "FFD54F")), lineWidth: 3)
+            context.stroke(Path(ellipseIn: haloRect), with: .color(Color(hex: "FFF9C4").opacity(0.40)), lineWidth: max(7, s * 0.050))
+            context.stroke(Path(ellipseIn: haloRect), with: .color(Color(hex: "FFD54F")), lineWidth: max(3, s * 0.022))
 
         case .headphones:
             var band = Path()
             band.addArc(center: CGPoint(x: s * 0.50, y: s * 0.34), radius: s * 0.32, startAngle: .degrees(198), endAngle: .degrees(342), clockwise: false)
-            context.stroke(band, with: .color(Color(hex: "424242")), lineWidth: s * 0.035)
+            context.stroke(band, with: .color(Color(hex: "424242")), lineWidth: s * 0.040)
+            context.stroke(band, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             let padL = CGRect(x: s * 0.10, y: s * 0.36, width: s * 0.14, height: s * 0.18)
             let padR = CGRect(x: s * 0.76, y: s * 0.36, width: s * 0.14, height: s * 0.18)
-            context.fill(Path(roundedRect: padL, cornerRadius: 5), with: .color(Color(hex: "424242")))
-            context.fill(Path(roundedRect: padR, cornerRadius: 5), with: .color(Color(hex: "424242")))
-            context.fill(Path(roundedRect: CGRect(x: s * 0.12, y: s * 0.38, width: s * 0.04, height: s * 0.06), cornerRadius: 2), with: .color(Color.white.opacity(0.12)))
-            context.fill(Path(roundedRect: CGRect(x: s * 0.78, y: s * 0.38, width: s * 0.04, height: s * 0.06), cornerRadius: 2), with: .color(Color.white.opacity(0.12)))
+            fns(context: &context, path: Path(roundedRect: padL, cornerRadius: 5), fill: Color(hex: "424242"), outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(roundedRect: padR, cornerRadius: 5), fill: Color(hex: "424242"), outline: oc, lineWidth: ow)
+            context.fill(Path(roundedRect: CGRect(x: s * 0.12, y: s * 0.38, width: s * 0.04, height: s * 0.06), cornerRadius: 2), with: .color(Color.white.opacity(0.15)))
+            context.fill(Path(roundedRect: CGRect(x: s * 0.78, y: s * 0.38, width: s * 0.04, height: s * 0.06), cornerRadius: 2), with: .color(Color.white.opacity(0.15)))
         }
     }
 
@@ -1116,6 +1301,7 @@ struct AnimalAvatarView: View {
         }
         path.closeSubpath()
         context.fill(path, with: .color(color))
+        context.stroke(path, with: .color(Color.black.opacity(0.30)), style: StrokeStyle(lineWidth: max(1.0, radius * 0.08), lineCap: .round, lineJoin: .round))
     }
 
     private func drawHeart(context: inout GraphicsContext, center: CGPoint, size: CGFloat, color: Color) {
@@ -1146,6 +1332,7 @@ struct AnimalAvatarView: View {
         )
         path.closeSubpath()
         context.fill(path, with: .color(color))
+        context.stroke(path, with: .color(Color.black.opacity(0.30)), style: StrokeStyle(lineWidth: max(1.0, size * 0.06), lineCap: .round, lineJoin: .round))
     }
 }
 
