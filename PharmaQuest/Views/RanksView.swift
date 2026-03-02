@@ -266,7 +266,19 @@ struct RanksView: View {
                 ForEach(Array(leaderboard.enumerated()), id: \.element.id) { index, entry in
                     let isCurrentUser = entry.id == supabase.currentUser?.id.uuidString.lowercased()
                     LeaderboardRow(
-                        entry: LeaderboardEntry(id: entry.id, username: entry.username, avatarAnimal: entry.avatarAnimal, avatarEyes: entry.avatarEyes, avatarMouth: entry.avatarMouth, avatarAccessory: entry.avatarAccessory, xpThisWeek: entry.weeklyXP, streak: entry.currentStreak, rank: index + 1),
+                        entry: LeaderboardEntry(
+                            id: entry.id,
+                            username: isCurrentUser ? gameVM.username : entry.username,
+                            avatarAnimal: isCurrentUser ? gameVM.avatarAnimal : entry.avatarAnimal,
+                            avatarEyes: isCurrentUser ? gameVM.avatarEyes : entry.avatarEyes,
+                            avatarMouth: isCurrentUser ? gameVM.avatarMouth : entry.avatarMouth,
+                            avatarAccessory: isCurrentUser ? gameVM.avatarAccessory : entry.avatarAccessory,
+                            avatarBodyColor: isCurrentUser ? gameVM.avatarBodyColor : entry.avatarBodyColor,
+                            avatarBgColor: isCurrentUser ? gameVM.avatarBgColor : entry.avatarBgColor,
+                            xpThisWeek: entry.weeklyXP,
+                            streak: entry.currentStreak,
+                            rank: index + 1
+                        ),
                         isCurrentUser: isCurrentUser
                     )
                 }
@@ -464,6 +476,8 @@ struct PendingRequestRow: View {
                 eyes: request.avatarEyes,
                 mouth: request.avatarMouth,
                 accessory: request.avatarAccessory,
+                bodyColor: request.avatarBodyColor,
+                backgroundColor: request.avatarBgColor,
                 size: 40
             )
 
@@ -521,6 +535,8 @@ struct FriendRow: View {
                 eyes: friend.avatarEyes,
                 mouth: friend.avatarMouth,
                 accessory: friend.avatarAccessory,
+                bodyColor: friend.avatarBodyColor,
+                backgroundColor: friend.avatarBgColor,
                 size: 42
             )
 
@@ -768,6 +784,8 @@ struct LeaderboardRow: View {
                 eyes: entry.avatarEyes,
                 mouth: entry.avatarMouth,
                 accessory: entry.avatarAccessory,
+                bodyColor: entry.avatarBodyColor,
+                backgroundColor: entry.avatarBgColor,
                 size: 38
             )
 
@@ -922,6 +940,8 @@ struct AddFriendSheet: View {
                                 eyes: user.avatarEyes,
                                 mouth: user.avatarMouth,
                                 accessory: user.avatarAccessory,
+                                bodyColor: user.avatarBodyColor,
+                                backgroundColor: user.avatarBgColor,
                                 size: 40
                             )
 

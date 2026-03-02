@@ -10,6 +10,8 @@ nonisolated struct UserProfile: Codable, Sendable {
     var avatarEyes: String
     var avatarMouth: String
     var avatarAccessory: String
+    var avatarBodyColor: String
+    var avatarBgColor: String
     var totalXP: Int
     var coins: Int
     var currentStreak: Int
@@ -39,6 +41,8 @@ nonisolated struct UserProfile: Codable, Sendable {
         case avatarEyes = "avatar_eyes"
         case avatarMouth = "avatar_mouth"
         case avatarAccessory = "avatar_accessory"
+        case avatarBodyColor = "avatar_body_color"
+        case avatarBgColor = "avatar_bg_color"
         case totalXP = "total_xp"
         case coins
         case currentStreak = "current_streak"
@@ -61,6 +65,77 @@ nonisolated struct UserProfile: Codable, Sendable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        username = try container.decode(String.self, forKey: .username)
+        profession = try container.decode(String.self, forKey: .profession)
+        school = try container.decode(String.self, forKey: .school)
+        avatarAnimal = try container.decode(String.self, forKey: .avatarAnimal)
+        avatarEyes = try container.decode(String.self, forKey: .avatarEyes)
+        avatarMouth = try container.decode(String.self, forKey: .avatarMouth)
+        avatarAccessory = try container.decode(String.self, forKey: .avatarAccessory)
+        avatarBodyColor = (try? container.decode(String.self, forKey: .avatarBodyColor)) ?? ""
+        avatarBgColor = (try? container.decode(String.self, forKey: .avatarBgColor)) ?? ""
+        totalXP = try container.decode(Int.self, forKey: .totalXP)
+        coins = try container.decode(Int.self, forKey: .coins)
+        currentStreak = try container.decode(Int.self, forKey: .currentStreak)
+        streakSaves = try container.decode(Int.self, forKey: .streakSaves)
+        hearts = try container.decode(Int.self, forKey: .hearts)
+        level = try container.decode(Int.self, forKey: .level)
+        weeklyXP = try container.decode(Int.self, forKey: .weeklyXP)
+        monthlyXP = try container.decode(Int.self, forKey: .monthlyXP)
+        completedSubsections = try container.decode(String.self, forKey: .completedSubsections)
+        subsectionStars = try container.decode(String.self, forKey: .subsectionStars)
+        hasSeenLearning = try container.decode(String.self, forKey: .hasSeenLearning)
+        questionsAnswered = try container.decode(Int.self, forKey: .questionsAnswered)
+        questionsCorrect = try container.decode(Int.self, forKey: .questionsCorrect)
+        lastActiveDate = try container.decodeIfPresent(String.self, forKey: .lastActiveDate)
+        lastHeartLossDate = try container.decodeIfPresent(String.self, forKey: .lastHeartLossDate)
+        ownedAvatars = try container.decode(String.self, forKey: .ownedAvatars)
+        ownedEyes = try container.decode(String.self, forKey: .ownedEyes)
+        ownedMouths = try container.decode(String.self, forKey: .ownedMouths)
+        ownedAccessories = try container.decode(String.self, forKey: .ownedAccessories)
+        professionDonations = try container.decode(Int.self, forKey: .professionDonations)
+        createdAt = try container.decodeIfPresent(String.self, forKey: .createdAt)
+        updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
+    }
+
+    init(id: String, username: String, profession: String, school: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, totalXP: Int, coins: Int, currentStreak: Int, streakSaves: Int, hearts: Int, level: Int, weeklyXP: Int, monthlyXP: Int, completedSubsections: String, subsectionStars: String, hasSeenLearning: String, questionsAnswered: Int, questionsCorrect: Int, lastActiveDate: String?, lastHeartLossDate: String?, ownedAvatars: String, ownedEyes: String, ownedMouths: String, ownedAccessories: String, professionDonations: Int, createdAt: String?, updatedAt: String?) {
+        self.id = id
+        self.username = username
+        self.profession = profession
+        self.school = school
+        self.avatarAnimal = avatarAnimal
+        self.avatarEyes = avatarEyes
+        self.avatarMouth = avatarMouth
+        self.avatarAccessory = avatarAccessory
+        self.avatarBodyColor = avatarBodyColor
+        self.avatarBgColor = avatarBgColor
+        self.totalXP = totalXP
+        self.coins = coins
+        self.currentStreak = currentStreak
+        self.streakSaves = streakSaves
+        self.hearts = hearts
+        self.level = level
+        self.weeklyXP = weeklyXP
+        self.monthlyXP = monthlyXP
+        self.completedSubsections = completedSubsections
+        self.subsectionStars = subsectionStars
+        self.hasSeenLearning = hasSeenLearning
+        self.questionsAnswered = questionsAnswered
+        self.questionsCorrect = questionsCorrect
+        self.lastActiveDate = lastActiveDate
+        self.lastHeartLossDate = lastHeartLossDate
+        self.ownedAvatars = ownedAvatars
+        self.ownedEyes = ownedEyes
+        self.ownedMouths = ownedMouths
+        self.ownedAccessories = ownedAccessories
+        self.professionDonations = professionDonations
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
 }
 
 nonisolated struct LeaderboardRecord: Codable, Sendable {
@@ -70,6 +145,8 @@ nonisolated struct LeaderboardRecord: Codable, Sendable {
     let avatarEyes: String
     let avatarMouth: String
     let avatarAccessory: String
+    let avatarBodyColor: String
+    let avatarBgColor: String
     let weeklyXP: Int
     let currentStreak: Int
     let level: Int
@@ -82,9 +159,28 @@ nonisolated struct LeaderboardRecord: Codable, Sendable {
         case avatarEyes = "avatar_eyes"
         case avatarMouth = "avatar_mouth"
         case avatarAccessory = "avatar_accessory"
+        case avatarBodyColor = "avatar_body_color"
+        case avatarBgColor = "avatar_bg_color"
         case weeklyXP = "weekly_xp"
         case currentStreak = "current_streak"
         case level, profession, school
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        username = try container.decode(String.self, forKey: .username)
+        avatarAnimal = try container.decode(String.self, forKey: .avatarAnimal)
+        avatarEyes = try container.decode(String.self, forKey: .avatarEyes)
+        avatarMouth = try container.decode(String.self, forKey: .avatarMouth)
+        avatarAccessory = try container.decode(String.self, forKey: .avatarAccessory)
+        avatarBodyColor = (try? container.decode(String.self, forKey: .avatarBodyColor)) ?? ""
+        avatarBgColor = (try? container.decode(String.self, forKey: .avatarBgColor)) ?? ""
+        weeklyXP = try container.decode(Int.self, forKey: .weeklyXP)
+        currentStreak = try container.decode(Int.self, forKey: .currentStreak)
+        level = try container.decode(Int.self, forKey: .level)
+        profession = try container.decode(String.self, forKey: .profession)
+        school = try container.decode(String.self, forKey: .school)
     }
 }
 
@@ -212,6 +308,8 @@ class SupabaseService {
             avatarEyes: "normal",
             avatarMouth: "smile",
             avatarAccessory: "none",
+            avatarBodyColor: "",
+            avatarBgColor: "",
             totalXP: 0,
             coins: 50,
             currentStreak: 0,
@@ -303,6 +401,8 @@ class SupabaseService {
         profile.avatarEyes = gameVM.avatarEyes
         profile.avatarMouth = gameVM.avatarMouth
         profile.avatarAccessory = gameVM.avatarAccessory
+        profile.avatarBodyColor = gameVM.avatarBodyColor
+        profile.avatarBgColor = gameVM.avatarBgColor
         profile.totalXP = gameVM.totalXP
         profile.coins = gameVM.coins
         profile.currentStreak = gameVM.currentStreak
@@ -327,7 +427,7 @@ class SupabaseService {
     func fetchLeaderboard() async -> [LeaderboardRecord] {
         do {
             let records: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
+                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
                 .order("weekly_xp", ascending: false)
                 .limit(30)
                 .execute()
@@ -353,7 +453,7 @@ class SupabaseService {
             guard !friendIds.isEmpty else { return [] }
 
             let records: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
+                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
                 .in("id", values: friendIds)
                 .order("weekly_xp", ascending: false)
                 .execute()
@@ -426,7 +526,7 @@ class SupabaseService {
 
             let senderIds = requests.map { $0.userId }
             let profiles: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
+                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
                 .in("id", values: senderIds)
                 .execute()
                 .value
@@ -443,6 +543,8 @@ class SupabaseService {
                     avatarEyes: profile.avatarEyes,
                     avatarMouth: profile.avatarMouth,
                     avatarAccessory: profile.avatarAccessory,
+                    avatarBodyColor: profile.avatarBodyColor,
+                    avatarBgColor: profile.avatarBgColor,
                     level: profile.level,
                     profession: profile.profession
                 )
@@ -483,6 +585,8 @@ class SupabaseService {
                 avatarEyes: profile.avatarEyes,
                 avatarMouth: profile.avatarMouth,
                 avatarAccessory: profile.avatarAccessory,
+                avatarBodyColor: profile.avatarBodyColor,
+                avatarBgColor: profile.avatarBgColor,
                 totalXP: profile.totalXP,
                 weeklyXP: profile.weeklyXP,
                 currentStreak: profile.currentStreak,
@@ -563,7 +667,7 @@ class SupabaseService {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         do {
             let results: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, weekly_xp, current_streak, level, profession, school")
+                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
                 .ilike("username", pattern: "%\(query)%")
                 .neq("id", value: userId)
                 .limit(20)

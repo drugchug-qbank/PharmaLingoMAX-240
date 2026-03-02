@@ -583,6 +583,8 @@ class GameViewModel {
         avatarEyes = profile.avatarEyes
         avatarMouth = profile.avatarMouth
         avatarAccessory = profile.avatarAccessory
+        avatarBodyColor = profile.avatarBodyColor
+        avatarBgColor = profile.avatarBgColor
         totalXP = profile.totalXP
         coins = profile.coins
         currentStreak = profile.currentStreak

@@ -23,6 +23,8 @@ struct FriendProfileView: View {
                             eyes: friend.avatarEyes,
                             mouth: friend.avatarMouth,
                             accessory: friend.avatarAccessory,
+                            bodyColor: friend.avatarBodyColor,
+                            backgroundColor: friend.avatarBgColor,
                             size: 100
                         )
 

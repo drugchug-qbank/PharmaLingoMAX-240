@@ -67,6 +67,8 @@ nonisolated struct LeaderboardEntry: Identifiable, Sendable {
     let avatarEyes: String
     let avatarMouth: String
     let avatarAccessory: String
+    let avatarBodyColor: String
+    let avatarBgColor: String
     let xpThisWeek: Int
     let streak: Int
     let rank: Int
@@ -88,6 +90,8 @@ nonisolated struct FriendDetailProfile: Identifiable, Sendable {
     let avatarEyes: String
     let avatarMouth: String
     let avatarAccessory: String
+    let avatarBodyColor: String
+    let avatarBgColor: String
     let totalXP: Int
     let weeklyXP: Int
     let currentStreak: Int
@@ -121,6 +125,8 @@ nonisolated struct PendingFriendInfo: Identifiable, Sendable {
     let avatarEyes: String
     let avatarMouth: String
     let avatarAccessory: String
+    let avatarBodyColor: String
+    let avatarBgColor: String
     let level: Int
     let profession: String
 
