@@ -31,16 +31,7 @@ nonisolated enum AnimalType: String, CaseIterable, Sendable {
         }
     }
 
-    var price: Int {
-        switch self {
-        case .beaver, .bunny, .cat, .dog: 0
-        case .bird, .frog, .turtle, .seal: 100
-        case .monkey, .raccoon, .owl, .sloth: 200
-        case .dragon, .elephant, .hedgehog, .fox: 300
-        case .giraffe, .horse, .panda, .octopus: 400
-        case .lion, .unicorn: 500
-        }
-    }
+    var price: Int { 0 }
 
     var defaultColorHex: String {
         switch self {
@@ -88,15 +79,7 @@ nonisolated enum EyeStyle: String, CaseIterable, Sendable {
         }
     }
 
-    var price: Int {
-        switch self {
-        case .normal, .happy, .big: 0
-        case .sleepy, .wink: 50
-        case .stars, .heart: 150
-        case .determined, .surprised: 100
-        case .cool: 200
-        }
-    }
+    var price: Int { 0 }
 }
 
 nonisolated enum MouthStyle: String, CaseIterable, Sendable {
@@ -117,15 +100,7 @@ nonisolated enum MouthStyle: String, CaseIterable, Sendable {
         }
     }
 
-    var price: Int {
-        switch self {
-        case .smile, .bigSmile, .tiny: 0
-        case .tongue, .flat: 50
-        case .oh, .catMouth: 100
-        case .smirk, .teeth: 150
-        case .wavy: 200
-        }
-    }
+    var price: Int { 0 }
 }
 
 nonisolated enum AccessoryType: String, CaseIterable, Sendable {
@@ -146,16 +121,7 @@ nonisolated enum AccessoryType: String, CaseIterable, Sendable {
         }
     }
 
-    var price: Int {
-        switch self {
-        case .none: 0
-        case .bow, .bandana: 100
-        case .glasses, .halo: 200
-        case .crown, .gradCap: 300
-        case .stethoscope, .topHat: 350
-        case .headphones: 250
-        }
-    }
+    var price: Int { 0 }
 }
 
 enum AvatarColorPalette {
