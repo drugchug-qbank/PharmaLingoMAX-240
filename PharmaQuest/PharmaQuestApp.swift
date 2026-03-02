@@ -15,6 +15,8 @@ struct PharmaQuestApp: App {
         if !apiKey.isEmpty {
             Purchases.configure(withAPIKey: apiKey)
         }
+
+        AdService.shared.initializeSDK()
     }
 
     var body: some Scene {

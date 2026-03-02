@@ -12,4 +12,6 @@ enum Config {
     static let EXPO_PUBLIC_SUPABASE_ANON_KEY = ""
     static let EXPO_PUBLIC_REVENUECAT_TEST_API_KEY = ""
     static let EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = ""
+    static let EXPO_PUBLIC_ADMOB_APP_ID = ""
+    static let EXPO_PUBLIC_ADMOB_REWARDED_AD_UNIT_ID = ""
 }

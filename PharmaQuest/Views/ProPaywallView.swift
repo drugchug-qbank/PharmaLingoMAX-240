@@ -240,10 +240,18 @@ struct PackageCard: View {
 
 struct OutOfHeartsView: View {
     let gameVM: GameViewModel
+    let adWatchesUsed: Int
+    let maxAdWatches: Int
     let onWatchAd: () -> Void
     let onBuyHearts: () -> Void
     let onGetPro: () -> Void
     let onQuit: () -> Void
+
+    @State private var isLoadingAd: Bool = false
+
+    private var canWatchAd: Bool {
+        adWatchesUsed < maxAdWatches && !gameVM.isProUser
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -265,23 +273,39 @@ struct OutOfHeartsView: View {
             .padding(.bottom, 8)
 
             VStack(spacing: 12) {
-                Button(action: onWatchAd) {
-                    HStack(spacing: 12) {
-                        Image(systemName: "play.circle.fill")
-                            .font(.title2)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Watch Ad for +1 Heart")
-                                .font(AppTheme.funFont(.subheadline, weight: .bold))
-                            Text("Continue your current quiz")
-                                .font(AppTheme.funFont(.caption, weight: .medium))
-                                .opacity(0.8)
+                if canWatchAd {
+                    Button {
+                        isLoadingAd = true
+                        AdService.shared.showRewardedAd { rewarded in
+                            isLoadingAd = false
+                            if rewarded {
+                                onWatchAd()
+                            }
                         }
-                        Spacer()
+                    } label: {
+                        HStack(spacing: 12) {
+                            if isLoadingAd {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: "play.circle.fill")
+                                    .font(.title2)
+                            }
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Watch Ad for +1 Heart")
+                                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                                Text("\(maxAdWatches - adWatchesUsed) watch(es) remaining")
+                                    .font(AppTheme.funFont(.caption, weight: .medium))
+                                    .opacity(0.8)
+                            }
+                            Spacer()
+                        }
+                        .foregroundStyle(.white)
+                        .padding(16)
+                        .background(AppTheme.successGreen)
+                        .clipShape(.rect(cornerRadius: 14))
                     }
-                    .foregroundStyle(.white)
-                    .padding(16)
-                    .background(AppTheme.successGreen)
-                    .clipShape(.rect(cornerRadius: 14))
+                    .disabled(isLoadingAd)
                 }
 
                 Button(action: onBuyHearts) {
@@ -358,14 +382,9 @@ struct BonusRewardsView: View {
     let onSkip: () -> Void
 
     @State private var showRewards: Bool = false
-    @State private var bonusType: BonusType = .coins
-    @State private var bonusAmount: Int = 0
-
-    private enum BonusType {
-        case coins
-        case doubleXP
-        case streakSave
-    }
+    @State private var isLoadingAd: Bool = false
+    @State private var bonusAwarded: Bool = false
+    @State private var bonusMessage: String = ""
 
     var body: some View {
         VStack(spacing: 24) {
@@ -383,37 +402,99 @@ struct BonusRewardsView: View {
                 masteryProgressSection
             }
 
-            if showRewards {
+            if bonusAwarded {
                 VStack(spacing: 16) {
-                    Text("Want bonus rewards?")
+                    Image(systemName: "gift.fill")
+                        .font(.system(size: 40))
+                        .foregroundStyle(AppTheme.accentOrange)
+
+                    Text(bonusMessage)
                         .font(AppTheme.funFont(.headline, weight: .bold))
-
-                    Button(action: {
-                        generateBonus()
-                        onClaim()
-                    }) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "play.circle.fill")
-                                .font(.title3)
-                            Text("Get Bonus Rewards")
-                                .font(AppTheme.funFont(.headline, weight: .bold))
-                        }
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            LinearGradient(
-                                colors: [AppTheme.warningYellow, AppTheme.accentOrange],
-                                startPoint: .leading, endPoint: .trailing
-                            )
-                        )
-                        .clipShape(.rect(cornerRadius: 14))
-                    }
-
-                    Text("Watch a short ad for bonus gold, streak saves, or 2x XP")
-                        .font(AppTheme.funFont(.caption, weight: .medium))
-                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
+
+                    Button(action: onClaim) {
+                        Text("Continue")
+                            .font(AppTheme.funFont(.headline, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(AppTheme.successGreen)
+                            .clipShape(.rect(cornerRadius: 14))
+                    }
+                }
+                .transition(.scale.combined(with: .opacity))
+            } else if showRewards {
+                VStack(spacing: 16) {
+                    if gameVM.isProUser {
+                        Text("Claim your bonus rewards!")
+                            .font(AppTheme.funFont(.headline, weight: .bold))
+
+                        Button {
+                            generateBonus()
+                        } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: "gift.fill")
+                                    .font(.title3)
+                                Text("Claim Bonus Rewards")
+                                    .font(AppTheme.funFont(.headline, weight: .bold))
+                            }
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                LinearGradient(
+                                    colors: [AppTheme.warningYellow, AppTheme.accentOrange],
+                                    startPoint: .leading, endPoint: .trailing
+                                )
+                            )
+                            .clipShape(.rect(cornerRadius: 14))
+                        }
+
+                        Text("Pro members get free bonus rewards!")
+                            .font(AppTheme.funFont(.caption, weight: .medium))
+                            .foregroundStyle(AppTheme.warningYellow)
+                    } else {
+                        Text("Want bonus rewards?")
+                            .font(AppTheme.funFont(.headline, weight: .bold))
+
+                        Button {
+                            isLoadingAd = true
+                            AdService.shared.showRewardedAd { rewarded in
+                                isLoadingAd = false
+                                if rewarded {
+                                    generateBonus()
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 10) {
+                                if isLoadingAd {
+                                    ProgressView()
+                                        .tint(.white)
+                                } else {
+                                    Image(systemName: "play.circle.fill")
+                                        .font(.title3)
+                                }
+                                Text("Get Bonus Rewards")
+                                    .font(AppTheme.funFont(.headline, weight: .bold))
+                            }
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                LinearGradient(
+                                    colors: [AppTheme.warningYellow, AppTheme.accentOrange],
+                                    startPoint: .leading, endPoint: .trailing
+                                )
+                            )
+                            .clipShape(.rect(cornerRadius: 14))
+                        }
+                        .disabled(isLoadingAd)
+
+                        Text("Watch a short ad for bonus gold, streak saves, or 2x XP")
+                            .font(AppTheme.funFont(.caption, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
 
                     Button(action: onSkip) {
                         Text("Skip")
@@ -467,10 +548,16 @@ struct BonusRewardsView: View {
         if roll <= 10 && gameVM.streakSaves < 3 {
             gameVM.streakSaves += 1
             gameVM.save()
+            bonusMessage = "You earned a Streak Save! 🛡️"
         } else if roll <= 35 {
             gameVM.earnCoins(25)
+            bonusMessage = "You earned 25 bonus coins!"
         } else {
             gameVM.earnCoins(15)
+            bonusMessage = "You earned 15 bonus coins!"
+        }
+        withAnimation(.spring(duration: 0.5)) {
+            bonusAwarded = true
         }
     }
 }

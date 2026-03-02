@@ -7,6 +7,7 @@ struct ShopView: View {
     @State private var bounceHearts: Bool = false
     @State private var showAvatarShop: Bool = false
     @State private var showPaywall: Bool = false
+    @State private var isLoadingAd: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -167,17 +168,26 @@ struct ShopView: View {
                                 ShopItemRow(
                                     icon: "play.circle.fill",
                                     iconColor: AppTheme.successGreen,
-                                    title: "Watch Ad",
+                                    title: isLoadingAd ? "Loading Ad..." : "Watch Ad",
                                     subtitle: "Watch a short ad for +1 heart",
                                     price: "FREE",
                                     priceIcon: nil,
                                     priceColor: AppTheme.successGreen,
-                                    isEnabled: gameVM.hearts < gameVM.maxHearts
+                                    isEnabled: gameVM.hearts < gameVM.maxHearts && !isLoadingAd
                                 ) {
-                                    gameVM.addHeart()
-                                    bounceHearts.toggle()
-                                    purchaseMessage = "You earned +1 heart!"
-                                    showPurchaseAlert = true
+                                    isLoadingAd = true
+                                    AdService.shared.showRewardedAd { rewarded in
+                                        isLoadingAd = false
+                                        if rewarded {
+                                            gameVM.addHeart()
+                                            bounceHearts.toggle()
+                                            purchaseMessage = "You earned +1 heart!"
+                                            showPurchaseAlert = true
+                                        } else {
+                                            purchaseMessage = "Ad not available right now. Please try again later."
+                                            showPurchaseAlert = true
+                                        }
+                                    }
                                 }
                             }
                         }

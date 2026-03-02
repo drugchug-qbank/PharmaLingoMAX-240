@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		XX24AE8F620C1DB43CB899XX /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = XX8F494C59FCF7797D1C3CXX /* GoogleMobileAds */; };
 		XX298127CFBB2CF3FA631BXX /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = XXDCC169DE7B2F3C1C8B10XX /* RevenueCat */; };
 		XX50D61ED0BAE05FA2F8E9XX /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = XX1C9FF110ABBCE8BF456CXX /* Supabase */; };
 		XXDB1E089E7A6A563E00DBXX /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = XXEAC818FB99284308FEDEXX /* RevenueCatUI */; };
@@ -61,6 +62,7 @@
 				XX50D61ED0BAE05FA2F8E9XX /* Supabase in Frameworks */,
 				XX298127CFBB2CF3FA631BXX /* RevenueCat in Frameworks */,
 				XXDB1E089E7A6A563E00DBXX /* RevenueCatUI in Frameworks */,
+				XX24AE8F620C1DB43CB899XX /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +126,7 @@
 				XX1C9FF110ABBCE8BF456CXX /* Supabase */,
 				XXDCC169DE7B2F3C1C8B10XX /* RevenueCat */,
 				XXEAC818FB99284308FEDEXX /* RevenueCatUI */,
+				XX8F494C59FCF7797D1C3CXX /* GoogleMobileAds */,
 			);
 			productName = PharmaQuest;
 			productReference = 105FC57A2E9EAD3100EA8BCF /* PharmaQuest.app */;
@@ -219,6 +222,7 @@
 			packageReferences = (
 				XX20EB7F6EA71E9F2E096CXX /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				XX4AC81916604C4344ADC0XX /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+				XX1FE789C155F1E4C28057XX /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 		};
 /* End PBXProject section */
@@ -416,6 +420,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_GADApplicationIdentifier = "ca-app-pub-3940256099942544~1458002511";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -449,6 +454,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_GADApplicationIdentifier = "ca-app-pub-3940256099942544~1458002511";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -598,6 +604,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		XX1FE789C155F1E4C28057XX /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
 		XX20EB7F6EA71E9F2E096CXX /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift.git";
@@ -621,6 +635,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = XX20EB7F6EA71E9F2E096CXX /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		XX8F494C59FCF7797D1C3CXX /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = XX1FE789C155F1E4C28057XX /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		XXDCC169DE7B2F3C1C8B10XX /* RevenueCat */ = {
 			isa = XCSwiftPackageProductDependency;

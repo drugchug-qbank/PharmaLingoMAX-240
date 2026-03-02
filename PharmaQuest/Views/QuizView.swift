@@ -12,6 +12,8 @@ struct QuizView: View {
     @State private var hasNoQuestions: Bool = false
     @State private var showOutOfHearts: Bool = false
     @State private var showPaywall: Bool = false
+    @State private var adWatchesUsed: Int = 0
+    private let maxAdWatches: Int = 3
 
     var body: some View {
         VStack(spacing: 0) {
@@ -20,7 +22,10 @@ struct QuizView: View {
             } else if showOutOfHearts {
                 OutOfHeartsView(
                     gameVM: gameVM,
+                    adWatchesUsed: adWatchesUsed,
+                    maxAdWatches: maxAdWatches,
                     onWatchAd: {
+                        adWatchesUsed += 1
                         gameVM.addHeart()
                         showOutOfHearts = false
                     },
