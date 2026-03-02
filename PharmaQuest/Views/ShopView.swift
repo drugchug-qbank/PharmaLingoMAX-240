@@ -22,12 +22,22 @@ struct ShopView: View {
                         .padding(14)
                         .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
 
-                        HStack(spacing: 6) {
-                            ForEach(0..<gameVM.maxHearts, id: \.self) { i in
-                                Image(systemName: i < gameVM.hearts ? "heart.fill" : "heart")
-                                    .font(.title2)
-                                    .foregroundStyle(i < gameVM.hearts ? AppTheme.heartRed : Color(.tertiaryLabel))
-                                    .symbolEffect(.bounce, value: bounceHearts)
+                        VStack(spacing: 6) {
+                            HStack(spacing: 6) {
+                                ForEach(0..<gameVM.maxHearts, id: \.self) { i in
+                                    Image(systemName: i < gameVM.hearts ? "heart.fill" : "heart")
+                                        .font(.title2)
+                                        .foregroundStyle(i < gameVM.hearts ? AppTheme.heartRed : Color(.tertiaryLabel))
+                                        .symbolEffect(.bounce, value: bounceHearts)
+                                }
+                            }
+
+                            if gameVM.hearts < gameVM.maxHearts {
+                                HeartRegenTimer(gameVM: gameVM)
+                            } else {
+                                Text("Hearts Full!")
+                                    .font(AppTheme.funFont(.caption, weight: .bold))
+                                    .foregroundStyle(AppTheme.successGreen)
                             }
                         }
                         .padding(.vertical, 8)
@@ -285,5 +295,54 @@ struct AvatarShopPreview: View {
             }
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+struct HeartRegenTimer: View {
+    let gameVM: GameViewModel
+    @State private var timeRemaining: TimeInterval = 0
+    @State private var timer: Timer?
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "clock.fill")
+                .font(.caption2)
+                .foregroundStyle(AppTheme.heartRed)
+            Text("Next heart in \(formattedTime)")
+                .font(AppTheme.funFont(.caption, weight: .semibold))
+                .foregroundStyle(.secondary)
+        }
+        .onAppear { startTimer() }
+        .onDisappear { timer?.invalidate() }
+    }
+
+    private var formattedTime: String {
+        let totalSeconds = max(Int(timeRemaining), 0)
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    private func startTimer() {
+        updateRemaining()
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            Task { @MainActor in
+                updateRemaining()
+            }
+        }
+    }
+
+    private func updateRemaining() {
+        if let nextRegen = gameVM.nextHeartRegenDate {
+            timeRemaining = nextRegen.timeIntervalSinceNow
+            if timeRemaining <= 0 {
+                gameVM.addHeart()
+                if gameVM.hearts >= gameVM.maxHearts {
+                    timer?.invalidate()
+                }
+            }
+        } else {
+            timeRemaining = 3600
+        }
     }
 }

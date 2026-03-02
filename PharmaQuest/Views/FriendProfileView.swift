@@ -173,9 +173,14 @@ struct FriendProfileView: View {
                             }
                             .frame(height: 80, alignment: .bottom)
 
-                            Text(days[i])
-                                .font(AppTheme.funFont(.caption2, weight: .medium))
-                                .foregroundStyle(.secondary)
+                            VStack(spacing: 1) {
+                                Text(days[i].day)
+                                    .font(AppTheme.funFont(.caption2, weight: .medium))
+                                    .foregroundStyle(.secondary)
+                                Text(days[i].date)
+                                    .font(.system(size: 9, weight: .medium, design: .rounded))
+                                    .foregroundStyle(.tertiary)
+                            }
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -262,12 +267,14 @@ struct FriendProfileView: View {
         }
     }
 
-    private func last7DayLabels() -> [String] {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEE"
+    private func last7DayLabels() -> [(day: String, date: String)] {
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "EEE"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd"
         return (0..<7).reversed().map { daysAgo in
             let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: Date()) ?? Date()
-            return formatter.string(from: date)
+            return (dayFormatter.string(from: date), dateFormatter.string(from: date))
         }
     }
 

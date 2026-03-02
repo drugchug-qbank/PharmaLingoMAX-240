@@ -3,9 +3,27 @@ import SwiftUI
 struct HeaderBar: View {
     let gameVM: GameViewModel
 
+    private let motivationalTexts: [String] = [
+        "Start a new lesson now!",
+        "Let's keep up that streak!",
+        "You're doing amazing!",
+        "Time to level up!",
+        "Keep the momentum going!",
+        "Challenge yourself today!",
+        "Every question counts!",
+        "Stay sharp, stay focused!",
+        "One more lesson closer!",
+        "Knowledge is power!",
+    ]
+
+    private var randomMotivation: String {
+        let dayIndex = Calendar.current.ordinality(of: .hour, in: .year, for: Date()) ?? 0
+        return motivationalTexts[dayIndex % motivationalTexts.count]
+    }
+
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 14) {
+            HStack(spacing: 12) {
                 AvatarDisplayView(
                     animal: gameVM.avatarAnimal,
                     eyes: gameVM.avatarEyes,
@@ -18,19 +36,19 @@ struct HeaderBar: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("PharmaLingo")
-                        .font(AppTheme.funFont(.title3, weight: .heavy))
+                        .font(AppTheme.funFont(.title, weight: .heavy))
                         .foregroundStyle(.white)
-                    Text("Top 300 Drugs")
-                        .font(AppTheme.funFont(.caption2, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.75))
+                    Text(randomMotivation)
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.8))
                 }
 
                 Spacer()
 
-                HStack(spacing: 10) {
-                    StatBadge(iconName: "flame.fill", value: "\(gameVM.currentStreak)", color: AppTheme.accentOrange)
-                    StatBadge(iconName: "heart.fill", value: "\(gameVM.hearts)", color: AppTheme.heartRed)
-                    StatBadge(iconName: "bitcoinsign.circle.fill", value: "\(gameVM.coins)", color: AppTheme.warningYellow)
+                HStack(spacing: 8) {
+                    HeaderStatPill(iconName: "flame.fill", value: "\(gameVM.currentStreak)", color: AppTheme.accentOrange)
+                    HeaderStatPill(iconName: "heart.fill", value: "\(gameVM.hearts)", color: AppTheme.heartRed)
+                    HeaderStatPill(iconName: "bitcoinsign.circle.fill", value: "\(gameVM.coins)", color: AppTheme.warningYellow)
                 }
             }
             .padding(.horizontal, 16)
@@ -60,6 +78,28 @@ struct StatBadge: View {
         .padding(.vertical, 6)
         .background(.white.opacity(0.18))
         .clipShape(Capsule())
+    }
+}
+
+struct HeaderStatPill: View {
+    let iconName: String
+    let value: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: iconName)
+                .font(.subheadline)
+                .foregroundStyle(color)
+            Text(value)
+                .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                .foregroundStyle(AppTheme.darkBlue)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .background(.white)
+        .clipShape(Capsule())
+        .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
     }
 }
 

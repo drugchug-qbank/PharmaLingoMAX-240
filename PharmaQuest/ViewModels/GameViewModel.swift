@@ -34,10 +34,45 @@ class GameViewModel {
     var selectedProfession: Profession = .pharmacy
     var schoolName: String = ""
 
-    var dailyQuests: [DailyQuest] = [
-        DailyQuest(id: "dq1", title: "Complete 1 Lesson", description: "Finish any lesson or practice", iconName: "book.fill", target: 1, current: 0, coinReward: 20),
-        DailyQuest(id: "dq2", title: "5 Combo Streak", description: "Get 5 correct in a row", iconName: "flame.fill", target: 5, current: 0, coinReward: 10),
-        DailyQuest(id: "dq3", title: "Practice Session", description: "Complete a practice or review", iconName: "brain.fill", target: 1, current: 0, coinReward: 15),
+    var dailyQuests: [DailyQuest] = []
+    private var lastQuestDate: String = ""
+
+    private static let allQuestPool: [[DailyQuest]] = [
+        [
+            DailyQuest(id: "dq_lesson1", title: "Complete 1 Lesson", description: "Finish any lesson", iconName: "book.fill", target: 1, current: 0, coinReward: 20),
+            DailyQuest(id: "dq_combo5", title: "5 Combo Streak", description: "Get 5 correct in a row", iconName: "flame.fill", target: 5, current: 0, coinReward: 10),
+            DailyQuest(id: "dq_practice1", title: "Practice Session", description: "Complete a practice quiz", iconName: "brain.fill", target: 1, current: 0, coinReward: 15),
+        ],
+        [
+            DailyQuest(id: "dq_lesson2", title: "Complete 2 Lessons", description: "Finish two lessons", iconName: "book.fill", target: 2, current: 0, coinReward: 30),
+            DailyQuest(id: "dq_perfect", title: "Get a Perfect Quiz", description: "Score 100% on any quiz", iconName: "star.fill", target: 1, current: 0, coinReward: 25),
+            DailyQuest(id: "dq_answer10", title: "Answer 10 Questions", description: "Answer 10 questions total", iconName: "questionmark.circle.fill", target: 10, current: 0, coinReward: 15),
+        ],
+        [
+            DailyQuest(id: "dq_brandblitz2", title: "2 Brand Blitz Quizzes", description: "Complete 2 Brand Blitz rounds", iconName: "bolt.circle.fill", target: 2, current: 0, coinReward: 20),
+            DailyQuest(id: "dq_combo3", title: "3 Combo Streak", description: "Get 3 correct in a row", iconName: "flame.fill", target: 3, current: 0, coinReward: 10),
+            DailyQuest(id: "dq_lesson1b", title: "Complete 1 Lesson", description: "Finish any lesson", iconName: "book.fill", target: 1, current: 0, coinReward: 20),
+        ],
+        [
+            DailyQuest(id: "dq_donate50", title: "Donate 50 Coins", description: "Donate at least 50 coins to your profession", iconName: "gift.fill", target: 50, current: 0, coinReward: 15),
+            DailyQuest(id: "dq_answer20", title: "Answer 20 Questions", description: "Answer 20 questions total", iconName: "questionmark.circle.fill", target: 20, current: 0, coinReward: 25),
+            DailyQuest(id: "dq_combo7", title: "7 Combo Streak", description: "Get 7 correct in a row", iconName: "flame.fill", target: 7, current: 0, coinReward: 20),
+        ],
+        [
+            DailyQuest(id: "dq_practice2", title: "2 Practice Sessions", description: "Complete 2 practice quizzes", iconName: "brain.fill", target: 2, current: 0, coinReward: 25),
+            DailyQuest(id: "dq_perfect2", title: "Get a Perfect Quiz", description: "Score 100% on any quiz", iconName: "star.fill", target: 1, current: 0, coinReward: 25),
+            DailyQuest(id: "dq_brandblitz1", title: "Brand Blitz Quiz", description: "Complete a Brand Blitz round", iconName: "bolt.circle.fill", target: 1, current: 0, coinReward: 15),
+        ],
+        [
+            DailyQuest(id: "dq_lesson3", title: "Complete 3 Lessons", description: "Finish three lessons", iconName: "book.fill", target: 3, current: 0, coinReward: 40),
+            DailyQuest(id: "dq_correct15", title: "15 Correct Answers", description: "Get 15 questions right", iconName: "checkmark.circle.fill", target: 15, current: 0, coinReward: 20),
+            DailyQuest(id: "dq_combo10", title: "10 Combo Streak", description: "Get 10 correct in a row", iconName: "flame.fill", target: 10, current: 0, coinReward: 30),
+        ],
+        [
+            DailyQuest(id: "dq_brandblitz3", title: "3 Brand Blitz Quizzes", description: "Complete 3 Brand Blitz rounds", iconName: "bolt.circle.fill", target: 3, current: 0, coinReward: 30),
+            DailyQuest(id: "dq_donate100", title: "Donate 100 Coins", description: "Donate at least 100 coins to your profession", iconName: "gift.fill", target: 100, current: 0, coinReward: 25),
+            DailyQuest(id: "dq_practice1b", title: "Practice Session", description: "Complete a practice quiz", iconName: "brain.fill", target: 1, current: 0, coinReward: 15),
+        ],
     ]
 
     private let dataService = DrugDataService.shared
@@ -71,6 +106,20 @@ class GameViewModel {
         load()
         checkStreak()
         regenerateHearts()
+        refreshDailyQuests()
+    }
+
+    private func refreshDailyQuests() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let today = formatter.string(from: Date())
+        if lastQuestDate != today {
+            let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
+            let setIndex = dayOfYear % Self.allQuestPool.count
+            dailyQuests = Self.allQuestPool[setIndex]
+            lastQuestDate = today
+            save()
+        }
     }
 
     func starsFor(_ subsectionId: String) -> Int {
@@ -172,12 +221,10 @@ class GameViewModel {
             earnCoins(coinReward)
         }
 
-        if let idx = dailyQuests.firstIndex(where: { $0.id == "dq1" }) {
-            dailyQuests[idx].current = min(dailyQuests[idx].current + 1, dailyQuests[idx].target)
-            if dailyQuests[idx].isComplete {
-                earnCoins(dailyQuests[idx].coinReward)
-            }
-        }
+        updateLessonQuests()
+        updateAnswerQuests(totalCount)
+        updateCorrectQuests(correctCount)
+        if score >= 1.0 { updatePerfectQuests() }
 
         save()
         syncToCloud()
@@ -185,13 +232,120 @@ class GameViewModel {
 
     func recordConsecutiveCorrect(_ count: Int) {
         consecutiveCorrect = max(consecutiveCorrect, count)
-        if let idx = dailyQuests.firstIndex(where: { $0.id == "dq2" }) {
-            dailyQuests[idx].current = max(dailyQuests[idx].current, count)
-            if dailyQuests[idx].isComplete && count >= dailyQuests[idx].target {
-                earnCoins(dailyQuests[idx].coinReward)
+        for idx in dailyQuests.indices {
+            let qid = dailyQuests[idx].id
+            if qid.contains("combo") {
+                let prev = dailyQuests[idx].current
+                dailyQuests[idx].current = max(dailyQuests[idx].current, count)
+                if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
+                    earnCoins(dailyQuests[idx].coinReward)
+                }
             }
         }
         save()
+    }
+
+    func recordBrandBlitzComplete() {
+        for idx in dailyQuests.indices {
+            let qid = dailyQuests[idx].id
+            if qid.contains("brandblitz") {
+                let prev = dailyQuests[idx].current
+                dailyQuests[idx].current = min(dailyQuests[idx].current + 1, dailyQuests[idx].target)
+                if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
+                    earnCoins(dailyQuests[idx].coinReward)
+                }
+            }
+        }
+        save()
+    }
+
+    func recordPracticeComplete() {
+        for idx in dailyQuests.indices {
+            let qid = dailyQuests[idx].id
+            if qid.contains("practice") {
+                let prev = dailyQuests[idx].current
+                dailyQuests[idx].current = min(dailyQuests[idx].current + 1, dailyQuests[idx].target)
+                if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
+                    earnCoins(dailyQuests[idx].coinReward)
+                }
+            }
+        }
+        save()
+    }
+
+    func recordDonation(_ amount: Int) {
+        for idx in dailyQuests.indices {
+            let qid = dailyQuests[idx].id
+            if qid.contains("donate") {
+                let prev = dailyQuests[idx].current
+                dailyQuests[idx].current = min(dailyQuests[idx].current + amount, dailyQuests[idx].target)
+                if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
+                    earnCoins(dailyQuests[idx].coinReward)
+                }
+            }
+        }
+        save()
+    }
+
+    private func updateLessonQuests() {
+        for idx in dailyQuests.indices {
+            let qid = dailyQuests[idx].id
+            if qid.contains("lesson") {
+                let prev = dailyQuests[idx].current
+                dailyQuests[idx].current = min(dailyQuests[idx].current + 1, dailyQuests[idx].target)
+                if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
+                    earnCoins(dailyQuests[idx].coinReward)
+                }
+            }
+        }
+    }
+
+    private func updateAnswerQuests(_ count: Int) {
+        for idx in dailyQuests.indices {
+            let qid = dailyQuests[idx].id
+            if qid.contains("answer") {
+                let prev = dailyQuests[idx].current
+                dailyQuests[idx].current = min(dailyQuests[idx].current + count, dailyQuests[idx].target)
+                if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
+                    earnCoins(dailyQuests[idx].coinReward)
+                }
+            }
+        }
+    }
+
+    private func updateCorrectQuests(_ count: Int) {
+        for idx in dailyQuests.indices {
+            let qid = dailyQuests[idx].id
+            if qid.contains("correct") {
+                let prev = dailyQuests[idx].current
+                dailyQuests[idx].current = min(dailyQuests[idx].current + count, dailyQuests[idx].target)
+                if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
+                    earnCoins(dailyQuests[idx].coinReward)
+                }
+            }
+        }
+    }
+
+    private func updatePerfectQuests() {
+        for idx in dailyQuests.indices {
+            let qid = dailyQuests[idx].id
+            if qid.contains("perfect") {
+                let prev = dailyQuests[idx].current
+                dailyQuests[idx].current = min(dailyQuests[idx].current + 1, dailyQuests[idx].target)
+                if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
+                    earnCoins(dailyQuests[idx].coinReward)
+                }
+            }
+        }
+    }
+
+    var nextHeartRegenDate: Date? {
+        guard hearts < maxHearts, let lastLoss = lastHeartLossDate else { return nil }
+        let hoursSinceLoss = Date().timeIntervalSince(lastLoss) / 3600
+        let heartsRegenned = Int(hoursSinceLoss)
+        if heartsRegenned >= (maxHearts - hearts) { return nil }
+        let nextRegenHours = Double(heartsRegenned + 1)
+        return lastLoss.addingTimeInterval(nextRegenHours * 3600)
     }
 
     func markLearningComplete(_ subsectionId: String) {
@@ -301,6 +455,8 @@ class GameViewModel {
             "username": username,
             "selectedProfession": selectedProfession.rawValue,
             "schoolName": schoolName,
+            "lastQuestDate": lastQuestDate,
+            "dailyQuestProgress": dailyQuests.map { ["id": $0.id, "current": $0.current] as [String : Any] },
         ]
         UserDefaults.standard.set(state, forKey: userDefaultsKey)
     }
@@ -336,6 +492,16 @@ class GameViewModel {
             selectedProfession = prof
         }
         schoolName = state["schoolName"] as? String ?? ""
+        lastQuestDate = state["lastQuestDate"] as? String ?? ""
+        if let questProgress = state["dailyQuestProgress"] as? [[String: Any]] {
+            for progress in questProgress {
+                if let id = progress["id"] as? String, let current = progress["current"] as? Int {
+                    if let idx = dailyQuests.firstIndex(where: { $0.id == id }) {
+                        dailyQuests[idx].current = current
+                    }
+                }
+            }
+        }
     }
 
     func loadFromProfile(_ profile: UserProfile) {
