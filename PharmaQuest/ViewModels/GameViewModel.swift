@@ -124,7 +124,9 @@ class GameViewModel {
         return true
     }
 
-    func completeSubsection(_ subsectionId: String, score: Double, correctCount: Int, totalCount: Int) {
+    var streakExtended: Bool = false
+
+    func completeSubsection(_ subsectionId: String, score: Double, correctCount: Int, totalCount: Int, xpEarned: Int = 0, coinsEarned: Int = 0) {
         questionsAnswered += totalCount
         questionsCorrect += correctCount
 
@@ -136,15 +138,23 @@ class GameViewModel {
             completedSubsections.insert(subsectionId)
         }
 
-        var xp = correctCount * 10
-        if score == 1.0 { xp += 50 }
-        else if score >= 0.9 { xp += 25 }
-        earnXP(xp)
+        if xpEarned > 0 {
+            earnXP(xpEarned)
+        } else {
+            var xp = correctCount * 10
+            if score == 1.0 { xp += 50 }
+            else if score >= 0.9 { xp += 25 }
+            earnXP(xp)
+        }
 
-        var coinReward = 5
-        if score == 1.0 { coinReward += 20 }
-        else if score >= 0.9 { coinReward += 10 }
-        earnCoins(coinReward)
+        if coinsEarned > 0 {
+            earnCoins(coinsEarned)
+        } else {
+            var coinReward = 5
+            if score == 1.0 { coinReward += 20 }
+            else if score >= 0.9 { coinReward += 10 }
+            earnCoins(coinReward)
+        }
 
         if let idx = dailyQuests.firstIndex(where: { $0.id == "dq1" }) {
             dailyQuests[idx].current = min(dailyQuests[idx].current + 1, dailyQuests[idx].target)
@@ -175,6 +185,26 @@ class GameViewModel {
 
     func needsLearning(_ subsectionId: String) -> Bool {
         !hasSeenLearning.contains(subsectionId)
+    }
+
+    func updateStreak() {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        if let lastActive = lastActiveDate {
+            let lastDay = calendar.startOfDay(for: lastActive)
+            let daysDiff = calendar.dateComponents([.day], from: lastDay, to: today).day ?? 0
+            if daysDiff >= 1 {
+                currentStreak += 1
+                streakExtended = true
+            } else if daysDiff == 0 {
+                streakExtended = true
+            }
+        } else {
+            currentStreak = 1
+            streakExtended = true
+        }
+        lastActiveDate = Date()
+        save()
     }
 
     func syncToCloud() {

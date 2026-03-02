@@ -1,10 +1,10 @@
 import SwiftUI
 
 enum AppTheme {
-    static let primaryBlue = Color(red: 0.22, green: 0.56, blue: 0.96)
-    static let darkBlue = Color(red: 0.10, green: 0.35, blue: 0.78)
-    static let lightBlue = Color(red: 0.85, green: 0.93, blue: 1.0)
-    static let headerBlue = Color(red: 0.15, green: 0.45, blue: 0.88)
+    static let primaryBlue = Color(hex: "0d97db")
+    static let darkBlue = Color(hex: "0a6fa3")
+    static let lightBlue = Color(hex: "d6f0ff")
+    static let headerBlue = Color(hex: "0b84c2")
     static let accentOrange = Color(red: 1.0, green: 0.58, blue: 0.0)
     static let heartRed = Color(red: 0.95, green: 0.25, blue: 0.25)
     static let successGreen = Color(red: 0.30, green: 0.78, blue: 0.35)
@@ -25,7 +25,7 @@ enum AppTheme {
 
     static var headerGradient: LinearGradient {
         LinearGradient(
-            colors: [Color(red: 0.12, green: 0.40, blue: 0.85), Color(red: 0.22, green: 0.56, blue: 0.96)],
+            colors: [Color(hex: "0a7bbf"), Color(hex: "0d97db")],
             startPoint: .topLeading, endPoint: .bottomTrailing
         )
     }
@@ -62,6 +62,7 @@ extension Color {
 
 struct CardModifier: ViewModifier {
     var borderColor: Color? = nil
+    var borderWidth: CGFloat = 3
 
     func body(content: Content) -> some View {
         content
@@ -69,15 +70,15 @@ struct CardModifier: ViewModifier {
             .clipShape(.rect(cornerRadius: 18))
             .overlay(
                 RoundedRectangle(cornerRadius: 18)
-                    .stroke(borderColor ?? .clear, lineWidth: borderColor != nil ? 2.5 : 0)
+                    .stroke(borderColor ?? .clear, lineWidth: borderColor != nil ? borderWidth : 0)
             )
             .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 4)
     }
 }
 
 extension View {
-    func cardStyle(borderColor: Color? = nil) -> some View {
-        modifier(CardModifier(borderColor: borderColor))
+    func cardStyle(borderColor: Color? = nil, borderWidth: CGFloat = 3) -> some View {
+        modifier(CardModifier(borderColor: borderColor, borderWidth: borderWidth))
     }
 
     func funHeading() -> some View {

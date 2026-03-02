@@ -23,23 +23,34 @@ struct LearnView: View {
                 VStack(spacing: 0) {
                     HeaderBar(gameVM: gameVM)
 
-                    VStack(spacing: 16) {
+                    VStack(spacing: 0) {
                         DailyQuestsCard(quests: gameVM.dailyQuests)
+                            .padding(.horizontal, 16)
                             .padding(.top, 16)
 
                         ForEach(Array(gameVM.modules.enumerated()), id: \.element.id) { index, module in
-                            ModuleCard(
-                                module: module,
-                                moduleIndex: index,
-                                gameVM: gameVM
-                            ) {
-                                withAnimation {
-                                    selectedModule = module
+                            VStack(spacing: 0) {
+                                if index > 0 {
+                                    ModulePathConnector(
+                                        topColor: AppTheme.moduleColor(for: index - 1),
+                                        bottomColor: AppTheme.moduleColor(for: index),
+                                        isUnlocked: gameVM.isModuleUnlocked(module)
+                                    )
                                 }
+
+                                ModuleCard(
+                                    module: module,
+                                    moduleIndex: index,
+                                    gameVM: gameVM
+                                ) {
+                                    withAnimation {
+                                        selectedModule = module
+                                    }
+                                }
+                                .padding(.horizontal, 16)
                             }
                         }
                     }
-                    .padding(.horizontal, 16)
                     .padding(.bottom, 32)
                 }
             }
@@ -79,6 +90,41 @@ struct LearnView: View {
     }
 }
 
+struct ModulePathConnector: View {
+    let topColor: Color
+    let bottomColor: Color
+    let isUnlocked: Bool
+
+    var body: some View {
+        ZStack {
+            Path { path in
+                path.move(to: CGPoint(x: 50, y: 0))
+                path.addCurve(
+                    to: CGPoint(x: 50, y: 50),
+                    control1: CGPoint(x: 70, y: 15),
+                    control2: CGPoint(x: 30, y: 35)
+                )
+            }
+            .stroke(
+                LinearGradient(
+                    colors: isUnlocked ? [topColor, bottomColor] : [Color(.systemGray4), Color(.systemGray4)],
+                    startPoint: .top, endPoint: .bottom
+                ),
+                style: StrokeStyle(lineWidth: 5, lineCap: .round, dash: isUnlocked ? [] : [8, 6])
+            )
+            .frame(width: 100, height: 50)
+
+            if isUnlocked {
+                Circle()
+                    .fill(bottomColor)
+                    .frame(width: 10, height: 10)
+                    .offset(y: 20)
+            }
+        }
+        .frame(height: 50)
+    }
+}
+
 struct DailyQuestsCard: View {
     let quests: [DailyQuest]
 
@@ -91,8 +137,6 @@ struct DailyQuestsCard: View {
                 Text("Daily Quests")
                     .font(AppTheme.funFont(.headline, weight: .bold))
                 Spacer()
-                Image(systemName: "ellipsis.circle.fill")
-                    .foregroundStyle(.secondary)
             }
 
             ForEach(quests) { quest in
@@ -128,7 +172,7 @@ struct DailyQuestsCard: View {
             }
         }
         .padding(16)
-        .cardStyle()
+        .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5), borderWidth: 2.5)
     }
 }
 
@@ -156,8 +200,8 @@ struct ModuleCard: View {
                 HStack(spacing: 14) {
                     ZStack {
                         Circle()
-                            .fill(isUnlocked ? moduleColor.opacity(0.15) : Color(.tertiarySystemFill))
-                            .frame(width: 54, height: 54)
+                            .fill(isUnlocked ? moduleColor.opacity(0.18) : Color(.tertiarySystemFill))
+                            .frame(width: 56, height: 56)
                         Image(systemName: module.iconName)
                             .font(AppTheme.funFont(.title3, weight: .bold))
                             .foregroundStyle(isUnlocked ? moduleColor : .secondary)
@@ -228,7 +272,7 @@ struct ModuleCard: View {
             }
         }
         .buttonStyle(.plain)
-        .cardStyle(borderColor: isUnlocked ? moduleColor.opacity(0.4) : nil)
+        .cardStyle(borderColor: isUnlocked ? moduleColor : nil, borderWidth: 3.5)
         .opacity(isUnlocked ? 1 : 0.55)
     }
 }

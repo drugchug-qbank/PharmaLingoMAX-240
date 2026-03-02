@@ -250,12 +250,16 @@ struct QuizView: View {
                     }
 
                     if quizVM.currentIndex >= quizVM.questions.count - 1 {
+                        quizVM.finalizeQuiz()
                         gameVM.completeSubsection(
                             quizVM.subsectionId,
                             score: quizVM.score,
                             correctCount: quizVM.correctCount,
-                            totalCount: quizVM.totalQuestions
+                            totalCount: quizVM.totalQuestions,
+                            xpEarned: quizVM.xpEarned,
+                            coinsEarned: quizVM.coinsEarned
                         )
+                        gameVM.updateStreak()
                         withAnimation { showResult = true }
                     } else {
                         withAnimation(.spring(duration: 0.3)) {

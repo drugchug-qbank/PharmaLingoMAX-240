@@ -224,7 +224,7 @@ struct MatchingQuestionView: View {
                     }
 
                     VStack(spacing: 8) {
-                        ForEach(question.matchingPairs.map(\.right).shuffled(), id: \.self) { right in
+                        ForEach(quizVM.shuffledRightOptions, id: \.self) { right in
                             let isMatched = quizVM.matchedPairs.values.contains(right)
 
                             Button {

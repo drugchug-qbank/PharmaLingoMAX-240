@@ -295,7 +295,7 @@ struct RanksView: View {
                 VStack(spacing: 8) {
                     SchoolRankRow(rank: 1, name: "UNC Eshelman School of Pharmacy", xp: 45200, color: AppTheme.warningYellow)
                     SchoolRankRow(rank: 2, name: "University of Florida College of Pharmacy", xp: 38900, color: Color(.systemGray3))
-                    SchoolRankRow(rank: 3, name: "Ohio State University", xp: 32100, color: Color(hex: "CD7F32"))
+                    SchoolRankRow(rank: 3, name: "Ohio State University College of Pharmacy", xp: 32100, color: Color(hex: "CD7F32"))
                 }
 
                 if gameVM.schoolName.isEmpty {
@@ -309,15 +309,41 @@ struct RanksView: View {
                     .padding(10)
                     .background(AppTheme.primaryBlue.opacity(0.06))
                     .clipShape(.rect(cornerRadius: 10))
+                } else {
+                    HStack(spacing: 8) {
+                        Image(systemName: "building.columns.fill")
+                            .foregroundStyle(AppTheme.successGreen)
+                        Text("Representing: \(gameVM.schoolName)")
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                            .foregroundStyle(AppTheme.successGreen)
+                    }
+                    .padding(10)
+                    .background(AppTheme.successGreen.opacity(0.08))
+                    .clipShape(.rect(cornerRadius: 10))
                 }
             }
             .padding(16)
-            .cardStyle()
+            .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.3))
         }
     }
 
     @ViewBuilder
     private var professionContent: some View {
+        ProfessionBattleView(gameVM: gameVM, supabase: supabase)
+    }
+}
+
+struct ProfessionBattleView: View {
+    let gameVM: GameViewModel
+    let supabase: SupabaseService
+    @State private var donateAmount: Double = 10
+    @State private var isDonating: Bool = false
+
+    private var maxDonation: Double {
+        Double(max(gameVM.coins, 1))
+    }
+
+    var body: some View {
         VStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
@@ -343,41 +369,109 @@ struct RanksView: View {
 
                 Divider()
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Your Contribution")
-                        .font(AppTheme.funFont(.subheadline, weight: .bold))
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Current Standings")
+                        .font(AppTheme.funFont(.subheadline, weight: .heavy))
+
+                    ForEach(Profession.allCases, id: \.self) { prof in
+                        HStack(spacing: 10) {
+                            Image(systemName: prof.iconName)
+                                .font(.caption)
+                                .foregroundStyle(prof == gameVM.selectedProfession ? AppTheme.primaryBlue : .secondary)
+                                .frame(width: 20)
+                            Text(prof.rawValue)
+                                .font(AppTheme.funFont(.caption, weight: prof == gameVM.selectedProfession ? .heavy : .medium))
+                                .foregroundStyle(prof == gameVM.selectedProfession ? AppTheme.primaryBlue : .primary)
+                                .lineLimit(1)
+                            Spacer()
+                            Text("0 coins")
+                                .font(AppTheme.funFont(.caption, weight: .bold))
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 10)
+                        .background(prof == gameVM.selectedProfession ? AppTheme.primaryBlue.opacity(0.06) : .clear)
+                        .clipShape(.rect(cornerRadius: 8))
+                    }
+                }
+
+                Divider()
+
+                VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Text("You represent")
-                            .font(AppTheme.funFont(.subheadline, weight: .medium))
-                            .foregroundStyle(.secondary)
+                        Text("Your Contribution")
+                            .font(AppTheme.funFont(.subheadline, weight: .bold))
                         Spacer()
+                        Text("You represent")
+                            .font(AppTheme.funFont(.caption, weight: .medium))
+                            .foregroundStyle(.secondary)
                         Text(gameVM.selectedProfession.rawValue)
-                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
                             .foregroundStyle(AppTheme.primaryBlue)
                     }
 
+                    VStack(spacing: 6) {
+                        HStack {
+                            Text("Donate")
+                                .font(AppTheme.funFont(.subheadline, weight: .medium))
+                            Spacer()
+                            HStack(spacing: 3) {
+                                Image(systemName: "bitcoinsign.circle.fill")
+                                    .foregroundStyle(AppTheme.accentOrange)
+                                    .font(.caption)
+                                Text("\(Int(donateAmount))")
+                                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                                    .foregroundStyle(AppTheme.accentOrange)
+                            }
+                        }
+
+                        Slider(value: $donateAmount, in: 1...maxDonation, step: 1)
+                            .tint(AppTheme.primaryBlue)
+
+                        HStack {
+                            Text("1")
+                                .font(AppTheme.funFont(.caption2, weight: .medium))
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text("Balance: \(gameVM.coins)")
+                                .font(AppTheme.funFont(.caption2, weight: .medium))
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text("\(Int(maxDonation))")
+                                .font(AppTheme.funFont(.caption2, weight: .medium))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
                     Button {
+                        isDonating = true
                         Task {
-                            let success = await supabase.donateToProfession(amount: 10)
+                            let success = await supabase.donateToProfession(amount: Int(donateAmount))
                             if success {
                                 gameVM.coins = supabase.currentProfile?.coins ?? gameVM.coins
                                 gameVM.save()
                             }
+                            isDonating = false
                         }
                     } label: {
                         HStack {
-                            Image(systemName: "bitcoinsign.circle.fill")
-                                .foregroundStyle(AppTheme.accentOrange)
-                            Text("Donate 10 Coins")
-                                .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                            if isDonating {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: "bitcoinsign.circle.fill")
+                                    .foregroundStyle(AppTheme.accentOrange)
+                                Text("Donate \(Int(donateAmount)) Coins")
+                                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                            }
                         }
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(gameVM.coins >= 10 ? AppTheme.primaryBlue : Color(.systemFill))
+                        .background(gameVM.coins >= Int(donateAmount) ? AppTheme.primaryBlue : Color(.systemFill))
                         .clipShape(.rect(cornerRadius: 14))
                     }
-                    .disabled(gameVM.coins < 10)
+                    .disabled(gameVM.coins < Int(donateAmount) || isDonating)
                 }
             }
             .padding(16)
@@ -458,7 +552,7 @@ struct SchoolRankRow: View {
                 .font(AppTheme.funFont(.subheadline, weight: .medium))
                 .lineLimit(1)
             Spacer()
-            Text("\(xp) XP")
+            Text("\(xp.formatted()) XP")
                 .font(AppTheme.funFont(.caption, weight: .heavy))
                 .foregroundStyle(.secondary)
         }

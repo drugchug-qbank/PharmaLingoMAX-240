@@ -82,9 +82,16 @@ struct ProfileView: View {
                                 .clipShape(Capsule())
                             }
 
-                            HStack(spacing: 8) {
-                                Image(systemName: gameVM.currentStreak > 0 ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(gameVM.currentStreak > 0 ? AppTheme.successGreen : .secondary)
+                            HStack(spacing: 12) {
+                                ZStack {
+                                    Circle()
+                                        .fill(gameVM.currentStreak > 0 ? AppTheme.accentOrange.opacity(0.15) : Color(.tertiarySystemFill))
+                                        .frame(width: 44, height: 44)
+                                    Image(systemName: gameVM.currentStreak > 0 ? "flame.fill" : "flame")
+                                        .font(.title3)
+                                        .foregroundStyle(gameVM.currentStreak > 0 ? AppTheme.accentOrange : .secondary)
+                                }
+
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(gameVM.currentStreak > 0 ? "Streak active!" : "Start your streak today!")
                                         .font(AppTheme.funFont(.subheadline, weight: .bold))
@@ -93,10 +100,16 @@ struct ProfileView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 Spacer()
+
+                                if gameVM.currentStreak > 0 {
+                                    Text("\(gameVM.currentStreak)")
+                                        .font(AppTheme.funFont(.title, weight: .heavy))
+                                        .foregroundStyle(AppTheme.accentOrange)
+                                }
                             }
                         }
                         .padding(16)
-                        .cardStyle()
+                        .cardStyle(borderColor: gameVM.currentStreak > 0 ? AppTheme.accentOrange.opacity(0.3) : nil)
 
                         VStack(alignment: .leading, spacing: 12) {
                             Text("PROFESSION")
@@ -273,12 +286,19 @@ struct EditProfileSheet: View {
     @State private var profession: Profession
     @State private var schoolName: String
     @State private var username: String
+    @State private var showSchoolPicker: Bool = false
+    @State private var schoolSearchText: String = ""
 
     init(gameVM: GameViewModel) {
         self.gameVM = gameVM
         _profession = State(initialValue: gameVM.selectedProfession)
         _schoolName = State(initialValue: gameVM.schoolName)
         _username = State(initialValue: gameVM.username)
+    }
+
+    private var filteredSchools: [String] {
+        if schoolSearchText.isEmpty { return UniversityData.schools }
+        return UniversityData.schools.filter { $0.localizedStandardContains(schoolSearchText) }
     }
 
     var body: some View {
@@ -311,8 +331,21 @@ struct EditProfileSheet: View {
                 }
 
                 Section("School") {
-                    TextField("Enter your school name", text: $schoolName)
-                        .font(AppTheme.funFont(.body, weight: .medium))
+                    Button {
+                        showSchoolPicker = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "building.columns.fill")
+                                .foregroundStyle(AppTheme.primaryBlue)
+                            Text(schoolName.isEmpty ? "Select your school" : schoolName)
+                                .font(AppTheme.funFont(.body, weight: .medium))
+                                .foregroundStyle(schoolName.isEmpty ? .secondary : .primary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
             }
             .navigationTitle("Edit Profile")
@@ -330,6 +363,50 @@ struct EditProfileSheet: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                }
+            }
+            .sheet(isPresented: $showSchoolPicker) {
+                SchoolPickerView(selectedSchool: $schoolName, searchText: $schoolSearchText)
+            }
+        }
+    }
+}
+
+struct SchoolPickerView: View {
+    @Binding var selectedSchool: String
+    @Binding var searchText: String
+    @Environment(\.dismiss) private var dismiss
+
+    private var filteredSchools: [String] {
+        if searchText.isEmpty { return UniversityData.schools }
+        return UniversityData.schools.filter { $0.localizedStandardContains(searchText) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List(filteredSchools, id: \.self) { school in
+                Button {
+                    selectedSchool = school
+                    dismiss()
+                } label: {
+                    HStack {
+                        Text(school)
+                            .font(AppTheme.funFont(.subheadline, weight: .medium))
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        if selectedSchool == school {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(AppTheme.primaryBlue)
+                        }
+                    }
+                }
+            }
+            .searchable(text: $searchText, prompt: "Search schools...")
+            .navigationTitle("Select School")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
                 }
             }
         }

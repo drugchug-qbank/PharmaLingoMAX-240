@@ -11,6 +11,7 @@ class QuizViewModel {
     var selectedAnswers: Set<String> = []
     var matchedPairs: [String: String] = [:]
     var selectedMatchLeft: String?
+    var shuffledRightOptions: [String] = []
     var hasAnswered: Bool = false
     var isCorrect: Bool = false
     var correctCount: Int = 0
@@ -43,6 +44,15 @@ class QuizViewModel {
         self.subsectionTitle = title
         self.isMasteryQuiz = isMastery
         self.questions = questions
+        prepareShuffledOptions()
+    }
+
+    private func prepareShuffledOptions() {
+        guard let q = currentQuestion, q.type == .matching else {
+            shuffledRightOptions = []
+            return
+        }
+        shuffledRightOptions = q.matchingPairs.map(\.right).shuffled()
     }
 
     func submitAnswer() {
@@ -88,16 +98,26 @@ class QuizViewModel {
         selectedMatchLeft = nil
         hasAnswered = false
         isCorrect = false
+        prepareShuffledOptions()
     }
 
     private func calculateRewards() {
         xpEarned = correctCount * 10
-        if score == 1.0 { xpEarned += 50 }
-        else if score >= 0.9 { xpEarned += 25 }
+        if maxConsecutive >= 5 { xpEarned += maxConsecutive * 3 }
+        else if maxConsecutive >= 3 { xpEarned += maxConsecutive * 2 }
+        if score == 1.0 { xpEarned += 75 }
+        else if score >= 0.9 { xpEarned += 35 }
+        else if score >= 0.8 { xpEarned += 15 }
 
-        coinsEarned = 5
-        if score == 1.0 { coinsEarned += 20 }
-        else if score >= 0.9 { coinsEarned += 10 }
+        coinsEarned = correctCount * 2
+        if score == 1.0 { coinsEarned += 30 }
+        else if score >= 0.9 { coinsEarned += 15 }
+        else if score >= 0.8 { coinsEarned += 5 }
+    }
+
+    func finalizeQuiz() {
+        isComplete = true
+        calculateRewards()
     }
 
     func canSubmit() -> Bool {
