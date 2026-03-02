@@ -26,6 +26,26 @@ nonisolated enum QuestionDifficulty: Int, Sendable, Comparable {
     }
 }
 
+nonisolated enum QuestionObjective: String, Sendable {
+    case brandGeneric
+    case genericBrand
+    case classId
+    case suffixId
+    case indication
+    case adverseEffect
+    case contraindication
+    case monitoring
+    case interaction
+    case pearl
+    case moa
+    case mixedReview
+}
+
+nonisolated enum QuestionSource: String, Sendable {
+    case curated
+    case generated
+}
+
 nonisolated struct MatchingPair: Hashable, Sendable {
     let left: String
     let right: String
@@ -42,64 +62,117 @@ nonisolated struct Question: Identifiable, Sendable {
     let correctAnswers: Set<String>
     let matchingPairs: [MatchingPair]
     let explanation: String
+    let objective: QuestionObjective
+    let relatedDrugIds: [String]
+    let tags: [String]
+    let source: QuestionSource
+
+    init(
+        id: String,
+        subsectionId: String,
+        type: QuestionType,
+        difficulty: QuestionDifficulty,
+        questionText: String,
+        options: [String],
+        correctAnswer: String,
+        correctAnswers: Set<String>,
+        matchingPairs: [MatchingPair],
+        explanation: String,
+        objective: QuestionObjective = .mixedReview,
+        relatedDrugIds: [String] = [],
+        tags: [String] = [],
+        source: QuestionSource = .curated
+    ) {
+        self.id = id
+        self.subsectionId = subsectionId
+        self.type = type
+        self.difficulty = difficulty
+        self.questionText = questionText
+        self.options = options
+        self.correctAnswer = correctAnswer
+        self.correctAnswers = correctAnswers
+        self.matchingPairs = matchingPairs
+        self.explanation = explanation
+        self.objective = objective
+        self.relatedDrugIds = relatedDrugIds
+        self.tags = tags
+        self.source = source
+    }
 
     static func trueFalse(
         id: String, subsectionId: String, difficulty: QuestionDifficulty = .easy,
-        question: String, answer: Bool, explanation: String
+        question: String, answer: Bool, explanation: String,
+        objective: QuestionObjective = .mixedReview, relatedDrugIds: [String] = [], tags: [String] = [], source: QuestionSource = .curated
     ) -> Question {
         Question(
             id: id, subsectionId: subsectionId, type: .trueFalse, difficulty: difficulty,
             questionText: question, options: ["True", "False"],
             correctAnswer: answer ? "True" : "False", correctAnswers: [],
-            matchingPairs: [], explanation: explanation
+            matchingPairs: [], explanation: explanation,
+            objective: objective, relatedDrugIds: relatedDrugIds, tags: tags, source: source
         )
     }
 
     static func fillBlank(
         id: String, subsectionId: String, difficulty: QuestionDifficulty = .easy,
-        question: String, options: [String], answer: String, explanation: String
+        question: String, options: [String], answer: String, explanation: String,
+        objective: QuestionObjective = .mixedReview, relatedDrugIds: [String] = [], tags: [String] = [], source: QuestionSource = .curated
     ) -> Question {
         Question(
             id: id, subsectionId: subsectionId, type: .fillBlank, difficulty: difficulty,
             questionText: question, options: options,
             correctAnswer: answer, correctAnswers: [],
-            matchingPairs: [], explanation: explanation
+            matchingPairs: [], explanation: explanation,
+            objective: objective, relatedDrugIds: relatedDrugIds, tags: tags, source: source
         )
     }
 
     static func multipleChoice(
         id: String, subsectionId: String, difficulty: QuestionDifficulty = .medium,
-        question: String, options: [String], answer: String, explanation: String
+        question: String, options: [String], answer: String, explanation: String,
+        objective: QuestionObjective = .mixedReview, relatedDrugIds: [String] = [], tags: [String] = [], source: QuestionSource = .curated
     ) -> Question {
         Question(
             id: id, subsectionId: subsectionId, type: .multipleChoice, difficulty: difficulty,
             questionText: question, options: options,
             correctAnswer: answer, correctAnswers: [],
-            matchingPairs: [], explanation: explanation
+            matchingPairs: [], explanation: explanation,
+            objective: objective, relatedDrugIds: relatedDrugIds, tags: tags, source: source
         )
     }
 
     static func selectAll(
         id: String, subsectionId: String, difficulty: QuestionDifficulty = .hard,
-        question: String, options: [String], correctAnswers: Set<String>, explanation: String
+        question: String, options: [String], correctAnswers: Set<String>, explanation: String,
+        objective: QuestionObjective = .mixedReview, relatedDrugIds: [String] = [], tags: [String] = [], source: QuestionSource = .curated
     ) -> Question {
         Question(
             id: id, subsectionId: subsectionId, type: .selectAll, difficulty: difficulty,
             questionText: question, options: options,
             correctAnswer: "", correctAnswers: correctAnswers,
-            matchingPairs: [], explanation: explanation
+            matchingPairs: [], explanation: explanation,
+            objective: objective, relatedDrugIds: relatedDrugIds, tags: tags, source: source
         )
     }
 
     static func matching(
         id: String, subsectionId: String, difficulty: QuestionDifficulty = .hard,
-        question: String, pairs: [MatchingPair], explanation: String
+        question: String, pairs: [MatchingPair], explanation: String,
+        objective: QuestionObjective = .mixedReview, relatedDrugIds: [String] = [], tags: [String] = [], source: QuestionSource = .curated
     ) -> Question {
         Question(
             id: id, subsectionId: subsectionId, type: .matching, difficulty: difficulty,
             questionText: question, options: [],
             correctAnswer: "", correctAnswers: [],
-            matchingPairs: pairs, explanation: explanation
+            matchingPairs: pairs, explanation: explanation,
+            objective: objective, relatedDrugIds: relatedDrugIds, tags: tags, source: source
         )
+    }
+
+    var masteryKey: String {
+        if let primaryDrug = relatedDrugIds.first {
+            return "\(objective.rawValue)_\(primaryDrug)"
+        }
+        return "\(objective.rawValue)_\(subsectionId)"
     }
 }

@@ -1528,6 +1528,15 @@ struct DrugDataService {
         questionBank[subsectionId] ?? []
     }
 
+    func allQuestions(for subsectionId: String) -> [Question] {
+        let curated = questionBank[subsectionId] ?? []
+        guard let subsection = subsection(for: subsectionId) else { return curated }
+        let generated = QuestionFactory.shared.generateQuestions(for: subsection)
+        let curatedIds = Set(curated.map(\.id))
+        let deduped = generated.filter { !curatedIds.contains($0.id) }
+        return curated + deduped
+    }
+
     func questionsForQuiz(subsectionId: String, completedSubsections: Set<String>, count: Int = 12) -> [Question] {
         let allQuestions = questions(for: subsectionId)
         let teachingQuestions = allQuestions.filter { $0.difficulty == .easy }.shuffled()

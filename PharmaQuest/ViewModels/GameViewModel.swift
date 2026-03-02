@@ -36,6 +36,7 @@ class GameViewModel {
 
     var dailyQuests: [DailyQuest] = []
     private var lastQuestDate: String = ""
+    var masteryMap: [String: MasteryRecord] = [:]
 
     private static let allQuestPool: [[DailyQuest]] = [
         [
@@ -104,6 +105,7 @@ class GameViewModel {
 
     init() {
         load()
+        loadMastery()
         checkStreak()
         regenerateHearts()
         refreshDailyQuests()
@@ -427,6 +429,37 @@ class GameViewModel {
     }
 
     private let userDefaultsKey = "pharmaquest_game_state"
+    private let masteryDefaultsKey = "pharmaquest_mastery_map"
+
+    func recordQuestionAttempt(question: Question, isCorrect: Bool) {
+        let key = question.masteryKey
+        var record = masteryMap[key] ?? MasteryRecord()
+        if isCorrect {
+            record.recordCorrect()
+        } else {
+            record.recordWrong()
+        }
+        masteryMap[key] = record
+        saveMastery()
+    }
+
+    func masteryLevel(for question: Question) -> Int {
+        masteryMap[question.masteryKey]?.level ?? 0
+    }
+
+    func dueReviewKeys(now: Date = Date()) -> [String] {
+        masteryMap.filter { $0.value.nextDueDate <= now }.map(\.key)
+    }
+
+    private func saveMastery() {
+        let encoded = masteryMap.mapValues { $0.toDictionary() }
+        UserDefaults.standard.set(encoded, forKey: masteryDefaultsKey)
+    }
+
+    private func loadMastery() {
+        guard let raw = UserDefaults.standard.dictionary(forKey: masteryDefaultsKey) as? [String: [String: Any]] else { return }
+        masteryMap = raw.mapValues { MasteryRecord.from($0) }
+    }
 
     func save() {
         let state: [String: Any] = [

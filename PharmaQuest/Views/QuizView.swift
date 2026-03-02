@@ -104,11 +104,12 @@ struct QuizView: View {
             showNoHeartsAlert = true
             return
         }
-        let count = subsection.isMasteryQuiz ? 30 : 12
-        let questions = DrugDataService.shared.questionsForQuiz(
+
+        let questions = QuizEngine.shared.buildSessionQuestions(
             subsectionId: subsection.id,
+            isMastery: subsection.isMasteryQuiz,
             completedSubsections: gameVM.completedSubsections,
-            count: count
+            masteryMap: gameVM.masteryMap
         )
 
         if questions.isEmpty {
@@ -280,6 +281,9 @@ struct QuizView: View {
                 Button {
                     withAnimation(.spring(duration: 0.3)) {
                         quizVM.submitAnswer()
+                    }
+                    if let q = quizVM.currentQuestion {
+                        gameVM.recordQuestionAttempt(question: q, isCorrect: quizVM.isCorrect)
                     }
                     if quizVM.isCorrect {
                         bounceCorrect.toggle()
