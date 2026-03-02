@@ -27,27 +27,19 @@ struct LearnView: View {
                         DailyQuestsCard(quests: gameVM.dailyQuests)
                             .padding(.horizontal, 16)
                             .padding(.top, 16)
+                            .padding(.bottom, 20)
 
                         ForEach(Array(gameVM.modules.enumerated()), id: \.element.id) { index, module in
-                            VStack(spacing: 0) {
-                                if index > 0 {
-                                    ModulePathConnector(
-                                        topColor: AppTheme.moduleColor(for: index - 1),
-                                        bottomColor: AppTheme.moduleColor(for: index),
-                                        isUnlocked: gameVM.isModuleUnlocked(module)
-                                    )
+                            ModuleTrailItem(
+                                module: module,
+                                moduleIndex: index,
+                                gameVM: gameVM,
+                                showConnector: index > 0,
+                                previousModuleUnlocked: index > 0 ? gameVM.isModuleUnlocked(gameVM.modules[index - 1]) : false
+                            ) {
+                                withAnimation {
+                                    selectedModule = module
                                 }
-
-                                ModuleCard(
-                                    module: module,
-                                    moduleIndex: index,
-                                    gameVM: gameVM
-                                ) {
-                                    withAnimation {
-                                        selectedModule = module
-                                    }
-                                }
-                                .padding(.horizontal, 16)
                             }
                         }
                     }
@@ -90,38 +82,158 @@ struct LearnView: View {
     }
 }
 
-struct ModulePathConnector: View {
-    let topColor: Color
-    let bottomColor: Color
-    let isUnlocked: Bool
+struct ModuleTrailItem: View {
+    let module: DrugModule
+    let moduleIndex: Int
+    let gameVM: GameViewModel
+    let showConnector: Bool
+    let previousModuleUnlocked: Bool
+    let onTap: () -> Void
+
+    private var isUnlocked: Bool { gameVM.isModuleUnlocked(module) }
 
     var body: some View {
         ZStack {
-            Path { path in
-                path.move(to: CGPoint(x: 50, y: 0))
-                path.addCurve(
-                    to: CGPoint(x: 50, y: 50),
-                    control1: CGPoint(x: 70, y: 15),
-                    control2: CGPoint(x: 30, y: 35)
+            if showConnector {
+                ModulePathConnector(
+                    variant: moduleIndex,
+                    topColor: AppTheme.moduleColor(for: moduleIndex - 1),
+                    bottomColor: AppTheme.moduleColor(for: moduleIndex),
+                    isUnlocked: isUnlocked,
+                    justUnlocked: isUnlocked && previousModuleUnlocked
                 )
+                .offset(y: -44)
+                .zIndex(0)
             }
-            .stroke(
-                LinearGradient(
-                    colors: isUnlocked ? [topColor, bottomColor] : [Color(.systemGray4), Color(.systemGray4)],
-                    startPoint: .top, endPoint: .bottom
-                ),
-                style: StrokeStyle(lineWidth: 5, lineCap: .round, dash: isUnlocked ? [] : [8, 6])
+
+            ModuleCard(
+                module: module,
+                moduleIndex: moduleIndex,
+                gameVM: gameVM,
+                onTap: onTap
             )
-            .frame(width: 100, height: 50)
+            .padding(.horizontal, 16)
+            .zIndex(1)
+        }
+        .padding(.top, showConnector ? 24 : 0)
+    }
+}
+
+struct ModulePathConnector: View {
+    let variant: Int
+    let topColor: Color
+    let bottomColor: Color
+    let isUnlocked: Bool
+    let justUnlocked: Bool
+
+    @State private var glowPhase: CGFloat = 0
+
+    private var pathHeight: CGFloat { 60 }
+
+    var body: some View {
+        ZStack {
+            trailPath
+                .stroke(
+                    isUnlocked
+                        ? LinearGradient(colors: [topColor.opacity(0.3), bottomColor.opacity(0.3)], startPoint: .top, endPoint: .bottom)
+                        : LinearGradient(colors: [Color(.systemGray5), Color(.systemGray5)], startPoint: .top, endPoint: .bottom),
+                    style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                )
+
+            trailPath
+                .stroke(
+                    isUnlocked
+                        ? LinearGradient(colors: [topColor, bottomColor], startPoint: .top, endPoint: .bottom)
+                        : LinearGradient(colors: [Color(.systemGray4), Color(.systemGray4)], startPoint: .top, endPoint: .bottom),
+                    style: StrokeStyle(lineWidth: 5, lineCap: .round, dash: isUnlocked ? [] : [8, 6])
+                )
+
+            if isUnlocked && justUnlocked {
+                trailPath
+                    .trim(from: 0, to: glowPhase)
+                    .stroke(
+                        LinearGradient(colors: [topColor, bottomColor], startPoint: .top, endPoint: .bottom),
+                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                    )
+                    .blur(radius: 4)
+                    .opacity(0.6)
+            }
 
             if isUnlocked {
+                let dotPos = trailDotPosition
                 Circle()
                     .fill(bottomColor)
                     .frame(width: 10, height: 10)
-                    .offset(y: 20)
+                    .shadow(color: bottomColor.opacity(0.5), radius: 4)
+                    .position(dotPos)
             }
         }
-        .frame(height: 50)
+        .frame(height: pathHeight)
+        .onAppear {
+            if isUnlocked && justUnlocked {
+                withAnimation(.easeInOut(duration: 1.2)) {
+                    glowPhase = 1.0
+                }
+            }
+        }
+    }
+
+    private var trailPath: Path {
+        let w: CGFloat = 200
+        let h = pathHeight
+        let midX = w / 2
+
+        return Path { path in
+            switch variant % 5 {
+            case 0:
+                path.move(to: CGPoint(x: midX, y: 0))
+                path.addCurve(
+                    to: CGPoint(x: midX - 30, y: h),
+                    control1: CGPoint(x: midX + 40, y: h * 0.3),
+                    control2: CGPoint(x: midX - 50, y: h * 0.6)
+                )
+            case 1:
+                path.move(to: CGPoint(x: midX - 30, y: 0))
+                path.addCurve(
+                    to: CGPoint(x: midX + 20, y: h),
+                    control1: CGPoint(x: midX - 60, y: h * 0.4),
+                    control2: CGPoint(x: midX + 50, y: h * 0.5)
+                )
+            case 2:
+                path.move(to: CGPoint(x: midX + 10, y: 0))
+                path.addQuadCurve(
+                    to: CGPoint(x: midX - 15, y: h),
+                    control: CGPoint(x: midX + 50, y: h * 0.5)
+                )
+            case 3:
+                path.move(to: CGPoint(x: midX - 20, y: 0))
+                path.addCurve(
+                    to: CGPoint(x: midX + 10, y: h),
+                    control1: CGPoint(x: midX + 35, y: h * 0.25),
+                    control2: CGPoint(x: midX - 40, y: h * 0.75)
+                )
+            default:
+                path.move(to: CGPoint(x: midX + 15, y: 0))
+                path.addQuadCurve(
+                    to: CGPoint(x: midX - 25, y: h),
+                    control: CGPoint(x: midX - 45, y: h * 0.5)
+                )
+            }
+        }
+    }
+
+    private var trailDotPosition: CGPoint {
+        let w: CGFloat = 200
+        let h = pathHeight
+        let midX = w / 2
+
+        switch variant % 5 {
+        case 0: return CGPoint(x: midX - 30, y: h - 2)
+        case 1: return CGPoint(x: midX + 20, y: h - 2)
+        case 2: return CGPoint(x: midX - 15, y: h - 2)
+        case 3: return CGPoint(x: midX + 10, y: h - 2)
+        default: return CGPoint(x: midX - 25, y: h - 2)
+        }
     }
 }
 

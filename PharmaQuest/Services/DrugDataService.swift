@@ -181,8 +181,47 @@ struct DrugDataService {
             ]
         )
 
-        let m2Mastery = Subsection(
+        let m2Sub2d = Subsection(
             id: "2d", moduleId: "m2", code: "2d",
+            title: "Antianginals & Nitrates",
+            description: "Nitroglycerin, Isosorbide, Ranolazine",
+            iconName: "heart.text.square.fill",
+            drugs: [
+                Drug(id: "d63", genericName: "Nitroglycerin (sublingual)", brandName: "Nitrostat", drugClass: "Nitrate", suffix: "", indications: ["Acute angina", "Angina prophylaxis"], sideEffects: ["Headache", "Hypotension", "Reflex tachycardia", "Flushing"], clinicalPearls: ["Sublingual: onset 1-3 minutes", "Max 3 doses 5 min apart, then call 911", "Store in original glass container", "Contraindicated with PDE-5 inhibitors (sildenafil)"]),
+                Drug(id: "d64", genericName: "Nitroglycerin (IV)", brandName: "Tridil", drugClass: "Nitrate", suffix: "", indications: ["ACS", "Acute HF", "Hypertensive emergency"], sideEffects: ["Hypotension", "Headache"], clinicalPearls: ["Use non-PVC tubing", "Titrate to chest pain relief"]),
+                Drug(id: "d65", genericName: "Isosorbide mononitrate", brandName: "Imdur", drugClass: "Nitrate", suffix: "", indications: ["Angina prophylaxis"], sideEffects: ["Headache", "Hypotension", "Dizziness"], clinicalPearls: ["Extended-release for chronic angina", "Requires nitrate-free interval (10-12 hours)"]),
+                Drug(id: "d66", genericName: "Isosorbide dinitrate", brandName: "Isordil", drugClass: "Nitrate", suffix: "", indications: ["Angina prophylaxis", "HFrEF (with hydralazine)"], sideEffects: ["Headache", "Hypotension"], clinicalPearls: ["Combined with hydralazine (BiDil) for HFrEF in Black patients", "A-HeFT trial"]),
+                Drug(id: "d67", genericName: "Ranolazine", brandName: "Ranexa", drugClass: "Late Sodium Current Inhibitor", suffix: "", indications: ["Chronic stable angina"], sideEffects: ["Dizziness", "Nausea", "Constipation", "QT prolongation"], clinicalPearls: ["Add-on therapy when other agents insufficient", "Does NOT affect HR or BP", "Avoid with strong CYP3A4 inhibitors"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls2d_1", title: "Nitrates: Vasodilators for Angina", content: "Nitrates release nitric oxide (NO), causing venous and arterial dilation.", bulletPoints: ["Sublingual NTG: acute angina relief in 1-3 minutes", "Max 3 SL doses, 5 min apart - then call 911", "NEVER combine with PDE-5 inhibitors (sildenafil, tadalafil)", "Long-acting nitrates need a 10-12 hour nitrate-free interval"], highlightText: "Nitrates + PDE-5 inhibitors = SEVERE hypotension"),
+                LearningSlide(id: "ls2d_2", title: "Ranolazine & Special Combinations", content: "Ranolazine is unique - it treats angina without affecting heart rate or blood pressure.", bulletPoints: ["Inhibits late sodium current in cardiac cells", "Add-on for refractory chronic stable angina", "BiDil (isosorbide dinitrate + hydralazine) for HFrEF", "A-HeFT trial showed benefit in Black patients with HF"], highlightText: "Ranolazine: angina relief without HR/BP changes"),
+            ]
+        )
+
+        let m2Sub2e = Subsection(
+            id: "2e", moduleId: "m2", code: "2e",
+            title: "Antiarrhythmics",
+            description: "Amiodarone, Digoxin, Adenosine & More",
+            iconName: "waveform.path.ecg.rectangle.fill",
+            drugs: [
+                Drug(id: "d68", genericName: "Amiodarone", brandName: "Cordarone/Pacerone", drugClass: "Class III Antiarrhythmic", suffix: "", indications: ["AFib", "VTach", "VFib", "ACLS"], sideEffects: ["Pulmonary toxicity", "Thyroid dysfunction", "Hepatotoxicity", "Corneal deposits", "Blue-gray skin", "QT prolongation"], clinicalPearls: ["Most effective antiarrhythmic but most toxic", "Extremely long half-life (40-55 days)", "Monitor TFTs, LFTs, PFTs, eye exams", "Interacts with warfarin, digoxin, statins"]),
+                Drug(id: "d69", genericName: "Dronedarone", brandName: "Multaq", drugClass: "Class III Antiarrhythmic", suffix: "", indications: ["AFib (rate/rhythm control)"], sideEffects: ["GI upset", "Bradycardia", "QT prolongation"], clinicalPearls: ["Structurally similar to amiodarone, fewer side effects", "Contraindicated in permanent AFib and NYHA IV HF"]),
+                Drug(id: "d70", genericName: "Sotalol", brandName: "Betapace", drugClass: "Class III Antiarrhythmic + Beta Blocker", suffix: "-olol", indications: ["AFib", "VTach"], sideEffects: ["Bradycardia", "QT prolongation", "Torsades de Pointes"], clinicalPearls: ["Unique: both beta blocker AND class III", "Must initiate in hospital (QT monitoring)", "Renally eliminated"]),
+                Drug(id: "d71", genericName: "Flecainide", brandName: "Tambocor", drugClass: "Class IC Antiarrhythmic", suffix: "", indications: ["AFib", "SVT"], sideEffects: ["Proarrhythmic", "Dizziness", "Visual disturbances"], clinicalPearls: ["Avoid in structural heart disease or CAD", "Use with AV nodal blocker (beta blocker)"]),
+                Drug(id: "d72", genericName: "Digoxin", brandName: "Lanoxin", drugClass: "Cardiac Glycoside", suffix: "", indications: ["HFrEF", "AFib (rate control)"], sideEffects: ["Nausea", "Visual changes (yellow-green halos)", "Arrhythmias", "Hyperkalemia in toxicity"], clinicalPearls: ["Narrow therapeutic index (0.5-2 ng/mL)", "Toxicity increased by hypokalemia", "Renal elimination", "Antidote: Digibind (digoxin immune Fab)"]),
+                Drug(id: "d73", genericName: "Adenosine", brandName: "Adenocard", drugClass: "Endogenous Nucleoside", suffix: "", indications: ["SVT (acute conversion)"], sideEffects: ["Flushing", "Chest tightness", "Transient asystole", "Bronchospasm"], clinicalPearls: ["Half-life < 10 seconds", "Rapid IV push with flush", "Avoid in WPW with AFib", "Caffeine/theophylline reduce effect"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls2e_1", title: "Amiodarone: The Kitchen Sink", content: "Amiodarone is the most effective antiarrhythmic but comes with significant toxicity.", bulletPoints: ["Blocks Na+, K+, Ca2+ channels AND beta receptors", "Half-life 40-55 days (takes weeks to reach steady state)", "Pulmonary toxicity: get baseline PFTs", "Thyroid: can cause hypo- OR hyperthyroidism (contains iodine)"], highlightText: "Amiodarone: monitor Thyroid, Liver, Lungs, Eyes"),
+                LearningSlide(id: "ls2e_2", title: "Digoxin & Adenosine", content: "Special antiarrhythmics with unique mechanisms.", bulletPoints: ["Digoxin: narrow therapeutic index, 0.5-2 ng/mL", "Digoxin toxicity INCREASED by hypokalemia", "Adenosine: ultra-short acting (< 10 sec half-life)", "Adenosine: first-line for acute SVT conversion"], highlightText: "Digoxin: low K+ = toxicity risk | Adenosine: rapid IV push"),
+            ]
+        )
+
+        let m2Mastery = Subsection(
+            id: "2f", moduleId: "m2", code: "2f",
             title: "Mastery: Cardiovascular II",
             description: "30-question comprehensive review",
             iconName: "trophy.fill",
@@ -194,10 +233,10 @@ struct DrugDataService {
         let module2 = DrugModule(
             id: "m2", number: 2,
             title: "Cardiovascular II",
-            subtitle: "Lipids & Thrombosis",
+            subtitle: "Lipids, Thrombosis & Rhythm",
             iconName: "drop.triangle.fill",
             accentColorHex: "1565C0",
-            subsections: [m2Sub2a, m2Sub2b, m2Sub2c, m2Mastery]
+            subsections: [m2Sub2a, m2Sub2b, m2Sub2c, m2Sub2d, m2Sub2e, m2Mastery]
         )
 
         let m3Sub3a = Subsection(
@@ -424,10 +463,39 @@ struct DrugDataService {
             .trueFalse(id: "q2c_10", subsectionId: "2c", difficulty: .medium, question: "DOACs require routine INR monitoring like warfarin.", answer: false, explanation: "DOACs do NOT require routine lab monitoring."),
         ]
 
-        bank["2d"] = {
+        bank["2d"] = [
+            .trueFalse(id: "q2d_1", subsectionId: "2d", question: "Sublingual nitroglycerin has an onset of 1-3 minutes.", answer: true, explanation: "SL NTG provides rapid angina relief in 1-3 minutes."),
+            .multipleChoice(id: "q2d_2", subsectionId: "2d", question: "Maximum sublingual NTG doses before calling 911:", options: ["3 doses", "2 doses", "5 doses", "1 dose"], answer: "3 doses", explanation: "Max 3 SL doses, 5 minutes apart, then call 911."),
+            .fillBlank(id: "q2d_3", subsectionId: "2d", question: "Nitrates are contraindicated with _____ inhibitors.", options: ["PDE-5", "ACE", "DPP-4", "PCSK9"], answer: "PDE-5", explanation: "Combining nitrates with PDE-5 inhibitors (sildenafil) causes severe hypotension."),
+            .multipleChoice(id: "q2d_4", subsectionId: "2d", question: "Which antianginal does NOT affect heart rate or blood pressure?", options: ["Ranolazine", "Metoprolol", "Diltiazem", "Nitroglycerin"], answer: "Ranolazine", explanation: "Ranolazine inhibits late sodium current without HR/BP effects."),
+            .trueFalse(id: "q2d_5", subsectionId: "2d", question: "Long-acting nitrates require a nitrate-free interval.", answer: true, explanation: "A 10-12 hour nitrate-free interval prevents tolerance."),
+            .multipleChoice(id: "q2d_6", subsectionId: "2d", question: "The brand name of nitroglycerin sublingual is:", options: ["Nitrostat", "Imdur", "Ranexa", "Isordil"], answer: "Nitrostat", explanation: "Sublingual nitroglycerin is sold as Nitrostat."),
+            .fillBlank(id: "q2d_7", subsectionId: "2d", question: "The brand name of ranolazine is _____.", options: ["Ranexa", "Nitrostat", "Imdur", "Cordarone"], answer: "Ranexa", explanation: "Ranolazine is sold as Ranexa."),
+            .selectAll(id: "q2d_8", subsectionId: "2d", question: "Select ALL nitrate medications:", options: ["Nitroglycerin", "Isosorbide mononitrate", "Ranolazine", "Isosorbide dinitrate"], correctAnswers: ["Nitroglycerin", "Isosorbide mononitrate", "Isosorbide dinitrate"], explanation: "Ranolazine is NOT a nitrate."),
+            .matching(id: "q2d_9", subsectionId: "2d", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Nitroglycerin SL", right: "Nitrostat"), MatchingPair(left: "Isosorbide mononitrate", right: "Imdur"), MatchingPair(left: "Ranolazine", right: "Ranexa"), MatchingPair(left: "Isosorbide dinitrate", right: "Isordil")], explanation: "Key antianginal brand-generic pairs."),
+            .multipleChoice(id: "q2d_10", subsectionId: "2d", difficulty: .hard, question: "BiDil (isosorbide dinitrate + hydralazine) showed HF benefit in which trial?", options: ["A-HeFT", "PARADIGM-HF", "RALES", "ALLHAT"], answer: "A-HeFT", explanation: "A-HeFT demonstrated benefit of BiDil in Black patients with HFrEF."),
+            .trueFalse(id: "q2d_11", subsectionId: "2d", difficulty: .medium, question: "Nitroglycerin tablets should be stored in a plastic container.", answer: false, explanation: "Store in original glass container; NTG is adsorbed by plastic."),
+        ]
+
+        bank["2e"] = [
+            .trueFalse(id: "q2e_1", subsectionId: "2e", question: "Amiodarone is the most effective antiarrhythmic.", answer: true, explanation: "Amiodarone is the most effective but also the most toxic antiarrhythmic."),
+            .multipleChoice(id: "q2e_2", subsectionId: "2e", question: "Amiodarone's half-life is approximately:", options: ["40-55 days", "4-6 hours", "24 hours", "7 days"], answer: "40-55 days", explanation: "Amiodarone has an extremely long half-life of 40-55 days."),
+            .fillBlank(id: "q2e_3", subsectionId: "2e", question: "Digoxin therapeutic range is 0.5-___ ng/mL.", options: ["2", "5", "10", "1"], answer: "2", explanation: "Digoxin has a narrow therapeutic index: 0.5-2 ng/mL."),
+            .multipleChoice(id: "q2e_4", subsectionId: "2e", question: "Digoxin toxicity is INCREASED by:", options: ["Hypokalemia", "Hyperkalemia", "Hyponatremia", "Hypercalcemia"], answer: "Hypokalemia", explanation: "Low potassium increases digoxin binding to Na+/K+ ATPase."),
+            .trueFalse(id: "q2e_5", subsectionId: "2e", question: "Adenosine has a half-life of less than 10 seconds.", answer: true, explanation: "Adenosine is ultra-short acting with < 10 second half-life."),
+            .multipleChoice(id: "q2e_6", subsectionId: "2e", question: "First-line for acute SVT conversion is:", options: ["Adenosine", "Amiodarone", "Digoxin", "Flecainide"], answer: "Adenosine", explanation: "Adenosine is first-line for acute SVT (rapid IV push)."),
+            .fillBlank(id: "q2e_7", subsectionId: "2e", question: "The brand name of amiodarone is _____.", options: ["Cordarone", "Multaq", "Betapace", "Lanoxin"], answer: "Cordarone", explanation: "Amiodarone is sold as Cordarone or Pacerone."),
+            .selectAll(id: "q2e_8", subsectionId: "2e", question: "Select ALL organs that need monitoring with amiodarone:", options: ["Thyroid", "Liver", "Lungs", "Kidneys"], correctAnswers: ["Thyroid", "Liver", "Lungs"], explanation: "Monitor TFTs, LFTs, PFTs, and eye exams with amiodarone."),
+            .matching(id: "q2e_9", subsectionId: "2e", question: "Match antiarrhythmic to brand name:", pairs: [MatchingPair(left: "Amiodarone", right: "Cordarone"), MatchingPair(left: "Digoxin", right: "Lanoxin"), MatchingPair(left: "Sotalol", right: "Betapace"), MatchingPair(left: "Dronedarone", right: "Multaq")], explanation: "Key antiarrhythmic brand-generic pairs."),
+            .multipleChoice(id: "q2e_10", subsectionId: "2e", question: "Which drug is both a beta blocker AND Class III antiarrhythmic?", options: ["Sotalol", "Amiodarone", "Flecainide", "Propranolol"], answer: "Sotalol", explanation: "Sotalol uniquely has both beta-blocking and Class III properties."),
+            .trueFalse(id: "q2e_11", subsectionId: "2e", difficulty: .medium, question: "Flecainide is safe to use in patients with structural heart disease.", answer: false, explanation: "Flecainide is contraindicated in structural heart disease and CAD."),
+            .multipleChoice(id: "q2e_12", subsectionId: "2e", question: "The antidote for digoxin toxicity is:", options: ["Digibind (digoxin immune Fab)", "Flumazenil", "Naloxone", "Protamine"], answer: "Digibind (digoxin immune Fab)", explanation: "Digoxin immune Fab fragments bind and neutralize digoxin."),
+        ]
+
+        bank["2f"] = {
             var mastery: [Question] = []
-            for (key, questions) in bank where key.hasPrefix("2") && key != "2d" {
-                mastery.append(contentsOf: questions.prefix(6))
+            for (key, questions) in bank where key.hasPrefix("2") && key != "2f" {
+                mastery.append(contentsOf: questions.prefix(5))
             }
             return mastery
         }()
