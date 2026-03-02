@@ -2,7 +2,7 @@ import SwiftUI
 
 nonisolated enum AnimalType: String, CaseIterable, Sendable {
     case beaver, bird, bunny, cat, dog, dragon, elephant, fox, frog, giraffe
-    case hedgehog, horse, lion, monkey, octopus, owl, panda, raccoon, seal, sloth, turtle, unicorn
+    case lion, monkey, panda, raccoon, seal, sloth, turtle, unicorn
 
     var displayName: String {
         switch self {
@@ -16,12 +16,8 @@ nonisolated enum AnimalType: String, CaseIterable, Sendable {
         case .fox: "Fox"
         case .frog: "Frog"
         case .giraffe: "Giraffe"
-        case .hedgehog: "Hedgehog"
-        case .horse: "Horse"
         case .lion: "Lion"
         case .monkey: "Monkey"
-        case .octopus: "Octopus"
-        case .owl: "Owl"
         case .panda: "Panda"
         case .raccoon: "Raccoon"
         case .seal: "Seal"
@@ -45,12 +41,8 @@ nonisolated enum AnimalType: String, CaseIterable, Sendable {
         case .fox: "FF7043"
         case .frog: "81C784"
         case .giraffe: "FFD54F"
-        case .hedgehog: "8D6E63"
-        case .horse: "795548"
         case .lion: "FFA726"
         case .monkey: "A1887F"
-        case .octopus: "CE93D8"
-        case .owl: "8D6E63"
         case .panda: "E0E0E0"
         case .raccoon: "78909C"
         case .seal: "B0BEC5"
@@ -63,6 +55,7 @@ nonisolated enum AnimalType: String, CaseIterable, Sendable {
 
 nonisolated enum EyeStyle: String, CaseIterable, Sendable {
     case normal, happy, big, sleepy, wink, stars, heart, determined, surprised, cool
+    case angry, rainbow, eyeRoll, dizzy, crying
 
     var displayName: String {
         switch self {
@@ -73,9 +66,14 @@ nonisolated enum EyeStyle: String, CaseIterable, Sendable {
         case .wink: "Wink"
         case .stars: "Stars"
         case .heart: "Heart"
-        case .determined: "Fierce"
+        case .determined: "Worried"
         case .surprised: "Surprised"
         case .cool: "Cool"
+        case .angry: "Angry"
+        case .rainbow: "Rainbow"
+        case .eyeRoll: "Eye Roll"
+        case .dizzy: "Dizzy"
+        case .crying: "Crying"
         }
     }
 
@@ -104,20 +102,25 @@ nonisolated enum MouthStyle: String, CaseIterable, Sendable {
 }
 
 nonisolated enum AccessoryType: String, CaseIterable, Sendable {
-    case none, crown, gradCap, stethoscope, topHat, bow, glasses, bandana, halo, headphones
+    case none, crown, gradCap, topHat, bow, bandana, halo, headphones
+    case eyePatch, partyHat, flower, horns, tiara, beanie
 
     var displayName: String {
         switch self {
         case .none: "None"
         case .crown: "Crown"
         case .gradCap: "Grad Cap"
-        case .stethoscope: "Stethoscope"
         case .topHat: "Top Hat"
         case .bow: "Bow"
-        case .glasses: "Glasses"
         case .bandana: "Bandana"
         case .halo: "Halo"
         case .headphones: "Headphones"
+        case .eyePatch: "Eye Patch"
+        case .partyHat: "Party Hat"
+        case .flower: "Flower"
+        case .horns: "Horns"
+        case .tiara: "Tiara"
+        case .beanie: "Beanie"
         }
     }
 

@@ -24,14 +24,17 @@ struct HeaderBar: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 14) {
-                AvatarDisplayView(
-                    animal: gameVM.avatarAnimal,
-                    eyes: gameVM.avatarEyes,
-                    mouth: gameVM.avatarMouth,
-                    accessory: gameVM.avatarAccessory,
-                    bodyColor: gameVM.avatarBodyColor,
-                    backgroundColor: gameVM.avatarBgColor,
-                    size: 130
+                AvatarRendererView(
+                    configuration: AvatarConfiguration(
+                        animal: gameVM.avatarAnimal,
+                        eyes: gameVM.avatarEyes,
+                        mouth: gameVM.avatarMouth,
+                        accessory: gameVM.avatarAccessory,
+                        bodyHex: gameVM.avatarBodyColor,
+                        bgHex: gameVM.avatarBgColor
+                    ),
+                    size: 130,
+                    showIdleAnimation: true
                 )
 
                 VStack(alignment: .leading, spacing: 2) {

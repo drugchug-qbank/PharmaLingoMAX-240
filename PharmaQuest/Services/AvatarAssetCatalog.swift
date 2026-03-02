@@ -28,22 +28,6 @@ enum AvatarAssetCatalog {
                 eyeScale: 1.1,
                 mouthScale: 1.0
             )
-        case .owl:
-            return AnchorPoints(
-                eyeCenter: CGPoint(x: 0.50, y: 0.42),
-                mouthCenter: CGPoint(x: 0.50, y: 0.63),
-                accessoryCenter: CGPoint(x: 0.50, y: 0.14),
-                eyeScale: 1.15,
-                mouthScale: 0.9
-            )
-        case .octopus:
-            return AnchorPoints(
-                eyeCenter: CGPoint(x: 0.50, y: 0.32),
-                mouthCenter: CGPoint(x: 0.50, y: 0.48),
-                accessoryCenter: CGPoint(x: 0.50, y: 0.08),
-                eyeScale: 1.0,
-                mouthScale: 0.9
-            )
         case .elephant:
             return AnchorPoints(
                 eyeCenter: CGPoint(x: 0.50, y: 0.40),
