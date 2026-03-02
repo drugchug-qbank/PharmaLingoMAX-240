@@ -11,6 +11,8 @@ struct HeaderBar: View {
                     eyes: gameVM.avatarEyes,
                     mouth: gameVM.avatarMouth,
                     accessory: gameVM.avatarAccessory,
+                    bodyColor: gameVM.avatarBodyColor,
+                    backgroundColor: gameVM.avatarBgColor,
                     size: 44
                 )
 

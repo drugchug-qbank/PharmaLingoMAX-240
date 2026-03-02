@@ -168,13 +168,7 @@ struct ModulePathConnector: View {
                         .opacity(0.6)
                 }
 
-                if fillProgress > 0 || isUnlocked {
-                    Circle()
-                        .fill(isUnlocked ? bottomColor : topColor)
-                        .frame(width: 10, height: 10)
-                        .shadow(color: topColor.opacity(0.5), radius: 4)
-                        .position(dotPosition(centerX: centerX))
-                }
+
             }
         }
         .frame(height: pathHeight)
@@ -228,16 +222,6 @@ struct ModulePathConnector: View {
         }
     }
 
-    private func dotPosition(centerX: CGFloat) -> CGPoint {
-        let h = pathHeight
-        switch variant % 5 {
-        case 0: return CGPoint(x: centerX - 30, y: h - 2)
-        case 1: return CGPoint(x: centerX + 20, y: h - 2)
-        case 2: return CGPoint(x: centerX - 15, y: h - 2)
-        case 3: return CGPoint(x: centerX + 10, y: h - 2)
-        default: return CGPoint(x: centerX - 25, y: h - 2)
-        }
-    }
 }
 
 struct DailyQuestsCard: View {

@@ -20,12 +20,14 @@ class GameViewModel {
     var lastHeartLossDate: Date?
 
     var avatarAnimal: String = "beaver"
-    var avatarEyes: String = "none"
-    var avatarMouth: String = "none"
+    var avatarEyes: String = "normal"
+    var avatarMouth: String = "smile"
     var avatarAccessory: String = "none"
+    var avatarBodyColor: String = ""
+    var avatarBgColor: String = ""
     var ownedAvatars: Set<String> = ["beaver", "bird", "bunny", "cat"]
-    var ownedEyes: Set<String> = ["none"]
-    var ownedMouths: Set<String> = ["none"]
+    var ownedEyes: Set<String> = ["normal", "happy", "big"]
+    var ownedMouths: Set<String> = ["smile", "bigSmile", "tiny"]
     var ownedAccessories: Set<String> = ["none"]
 
     var username: String = "Student"
@@ -290,6 +292,8 @@ class GameViewModel {
             "avatarEyes": avatarEyes,
             "avatarMouth": avatarMouth,
             "avatarAccessory": avatarAccessory,
+            "avatarBodyColor": avatarBodyColor,
+            "avatarBgColor": avatarBgColor,
             "ownedAvatars": Array(ownedAvatars),
             "ownedEyes": Array(ownedEyes),
             "ownedMouths": Array(ownedMouths),
@@ -318,12 +322,14 @@ class GameViewModel {
         let lastHeartInterval = state["lastHeartLossDate"] as? Double ?? 0
         lastHeartLossDate = lastHeartInterval > 0 ? Date(timeIntervalSince1970: lastHeartInterval) : nil
         avatarAnimal = state["avatarAnimal"] as? String ?? "beaver"
-        avatarEyes = state["avatarEyes"] as? String ?? "none"
-        avatarMouth = state["avatarMouth"] as? String ?? "none"
+        avatarEyes = state["avatarEyes"] as? String ?? "normal"
+        avatarMouth = state["avatarMouth"] as? String ?? "smile"
         avatarAccessory = state["avatarAccessory"] as? String ?? "none"
+        avatarBodyColor = state["avatarBodyColor"] as? String ?? ""
+        avatarBgColor = state["avatarBgColor"] as? String ?? ""
         ownedAvatars = Set(state["ownedAvatars"] as? [String] ?? ["beaver", "bird", "bunny", "cat"])
-        ownedEyes = Set(state["ownedEyes"] as? [String] ?? ["none"])
-        ownedMouths = Set(state["ownedMouths"] as? [String] ?? ["none"])
+        ownedEyes = Set(state["ownedEyes"] as? [String] ?? ["normal", "happy", "big"])
+        ownedMouths = Set(state["ownedMouths"] as? [String] ?? ["smile", "bigSmile", "tiny"])
         ownedAccessories = Set(state["ownedAccessories"] as? [String] ?? ["none"])
         username = state["username"] as? String ?? "Student"
         if let profRaw = state["selectedProfession"] as? String, let prof = Profession(rawValue: profRaw) {
