@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct ProfileView: View {
     let gameVM: GameViewModel
@@ -6,6 +7,15 @@ struct ProfileView: View {
     @State private var showEditProfile: Bool = false
     @State private var showAvatarCustomization: Bool = false
     @State private var showSignOutAlert: Bool = false
+    @State private var streakCountdown: TimeInterval = 0
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    private var streakCountdownString: String {
+        let hours = Int(streakCountdown) / 3600
+        let minutes = (Int(streakCountdown) % 3600) / 60
+        let seconds = Int(streakCountdown) % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+    }
 
     var body: some View {
         NavigationStack {
@@ -68,18 +78,49 @@ struct ProfileView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             FunSectionHeader(icon: "flame.fill", title: "Streak Status", color: AppTheme.accentOrange)
 
-                            if gameVM.streakSaves > 0 {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "shield.checkered")
-                                        .font(.caption)
-                                    Text("\(gameVM.streakSaves) save\(gameVM.streakSaves == 1 ? "" : "s")")
-                                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                            HStack(spacing: 8) {
+                                if gameVM.streakSaves > 0 {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "shield.checkered")
+                                            .font(.caption)
+                                        Text("\(gameVM.streakSaves) save\(gameVM.streakSaves == 1 ? "" : "s")")
+                                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                                    }
+                                    .foregroundStyle(AppTheme.xpPurple)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(AppTheme.xpPurple.opacity(0.1))
+                                    .clipShape(Capsule())
                                 }
-                                .foregroundStyle(AppTheme.xpPurple)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(AppTheme.xpPurple.opacity(0.1))
-                                .clipShape(Capsule())
+
+                                Spacer()
+
+                                if gameVM.isStreakSafeToday {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "checkmark.shield.fill")
+                                            .font(.caption)
+                                        Text("Streak is Safe!")
+                                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                                    }
+                                    .foregroundStyle(AppTheme.successGreen)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(AppTheme.successGreen.opacity(0.12))
+                                    .clipShape(Capsule())
+                                } else if gameVM.currentStreak > 0 {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "exclamationmark.triangle.fill")
+                                            .font(.caption)
+                                        Text("Breaks in \(streakCountdownString)")
+                                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                                            .monospacedDigit()
+                                    }
+                                    .foregroundStyle(AppTheme.accentOrange)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(AppTheme.accentOrange.opacity(0.12))
+                                    .clipShape(Capsule())
+                                }
                             }
 
                             HStack(spacing: 12) {
@@ -110,6 +151,12 @@ struct ProfileView: View {
                         }
                         .padding(16)
                         .cardStyle(borderColor: gameVM.currentStreak > 0 ? AppTheme.accentOrange.opacity(0.3) : nil)
+                        .onReceive(timer) { _ in
+                            streakCountdown = gameVM.timeUntilStreakBreaks
+                        }
+                        .onAppear {
+                            streakCountdown = gameVM.timeUntilStreakBreaks
+                        }
 
                         VStack(alignment: .leading, spacing: 12) {
                             Text("PROFESSION")

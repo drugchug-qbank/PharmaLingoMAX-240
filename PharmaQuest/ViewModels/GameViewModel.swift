@@ -50,6 +50,19 @@ class GameViewModel {
     }
     var lessonsCompleted: Int { completedSubsections.count }
 
+    var isStreakSafeToday: Bool {
+        guard let lastActive = lastActiveDate else { return false }
+        let calendar = Calendar.current
+        return calendar.isDateInToday(lastActive)
+    }
+
+    var timeUntilStreakBreaks: TimeInterval {
+        let calendar = Calendar.current
+        let now = Date()
+        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)) else { return 0 }
+        return tomorrow.timeIntervalSince(now)
+    }
+
     var modules: [DrugModule] { dataService.modules }
 
     init() {

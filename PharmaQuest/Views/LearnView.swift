@@ -101,7 +101,8 @@ struct ModuleTrailItem: View {
                     topColor: AppTheme.moduleColor(for: moduleIndex - 1),
                     bottomColor: AppTheme.moduleColor(for: moduleIndex),
                     isUnlocked: isUnlocked,
-                    justUnlocked: isUnlocked && previousModuleUnlocked
+                    justUnlocked: isUnlocked && previousModuleUnlocked,
+                    fillProgress: gameVM.moduleProgress(gameVM.modules[moduleIndex - 1])
                 )
                 .padding(.vertical, 4)
                 .zIndex(0)
@@ -125,6 +126,7 @@ struct ModulePathConnector: View {
     let bottomColor: Color
     let isUnlocked: Bool
     let justUnlocked: Bool
+    var fillProgress: Double = 0
 
     @State private var glowPhase: CGFloat = 0
 
@@ -136,19 +138,24 @@ struct ModulePathConnector: View {
             ZStack {
                 connectorPath(centerX: centerX)
                     .stroke(
-                        isUnlocked
-                            ? LinearGradient(colors: [topColor.opacity(0.25), bottomColor.opacity(0.25)], startPoint: .top, endPoint: .bottom)
-                            : LinearGradient(colors: [Color(.systemGray5), Color(.systemGray5)], startPoint: .top, endPoint: .bottom),
+                        LinearGradient(colors: [Color(.systemGray5), Color(.systemGray5)], startPoint: .top, endPoint: .bottom),
                         style: StrokeStyle(lineWidth: 8, lineCap: .round)
                     )
 
-                connectorPath(centerX: centerX)
-                    .stroke(
-                        isUnlocked
-                            ? LinearGradient(colors: [topColor, bottomColor], startPoint: .top, endPoint: .bottom)
-                            : LinearGradient(colors: [Color(.systemGray4), Color(.systemGray4)], startPoint: .top, endPoint: .bottom),
-                        style: StrokeStyle(lineWidth: 5, lineCap: .round, dash: isUnlocked ? [] : [8, 6])
-                    )
+                if fillProgress > 0 || isUnlocked {
+                    connectorPath(centerX: centerX)
+                        .trim(from: 0, to: isUnlocked ? 1.0 : fillProgress)
+                        .stroke(
+                            LinearGradient(colors: [topColor, bottomColor], startPoint: .top, endPoint: .bottom),
+                            style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                        )
+                } else {
+                    connectorPath(centerX: centerX)
+                        .stroke(
+                            LinearGradient(colors: [Color(.systemGray4), Color(.systemGray4)], startPoint: .top, endPoint: .bottom),
+                            style: StrokeStyle(lineWidth: 5, lineCap: .round, dash: [8, 6])
+                        )
+                }
 
                 if isUnlocked && justUnlocked {
                     connectorPath(centerX: centerX)
@@ -161,11 +168,11 @@ struct ModulePathConnector: View {
                         .opacity(0.6)
                 }
 
-                if isUnlocked {
+                if fillProgress > 0 || isUnlocked {
                     Circle()
-                        .fill(bottomColor)
+                        .fill(isUnlocked ? bottomColor : topColor)
                         .frame(width: 10, height: 10)
-                        .shadow(color: bottomColor.opacity(0.5), radius: 4)
+                        .shadow(color: topColor.opacity(0.5), radius: 4)
                         .position(dotPosition(centerX: centerX))
                 }
             }
@@ -316,21 +323,9 @@ struct ModuleCard: View {
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
-                        HStack(spacing: 8) {
-                            Text("MODULE \(module.number)")
-                                .font(AppTheme.funFont(.caption, weight: .heavy))
-                                .foregroundStyle(isUnlocked ? moduleColor : .secondary)
-
-                            if !statusLabel.isEmpty {
-                                Text(statusLabel)
-                                    .font(AppTheme.funFont(.caption2, weight: .heavy))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 3)
-                                    .background(progress >= 1.0 ? AppTheme.successGreen : AppTheme.accentOrange)
-                                    .clipShape(Capsule())
-                            }
-                        }
+                        Text("MODULE \(module.number)")
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                            .foregroundStyle(isUnlocked ? moduleColor : .secondary)
 
                         Text(module.title)
                             .font(AppTheme.funFont(.headline, weight: .bold))
@@ -381,6 +376,18 @@ struct ModuleCard: View {
         }
         .buttonStyle(.plain)
         .cardStyle(borderColor: isUnlocked ? moduleColor : nil, borderWidth: 3.5)
+        .overlay(alignment: .topTrailing) {
+            if !statusLabel.isEmpty {
+                Text(statusLabel)
+                    .font(AppTheme.funFont(.caption2, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(progress >= 1.0 ? AppTheme.successGreen : AppTheme.accentOrange)
+                    .clipShape(Capsule())
+                    .offset(x: -12, y: -10)
+            }
+        }
         .opacity(isUnlocked ? 1 : 0.55)
     }
 }
