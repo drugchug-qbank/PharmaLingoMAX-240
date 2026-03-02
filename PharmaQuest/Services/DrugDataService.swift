@@ -493,7 +493,239 @@ struct DrugDataService {
             subsections: [m5Sub5a, m5Sub5b, m5Sub5c, m5Mastery]
         )
 
-        self.modules = [module1, module2, module3, module4, module5]
+        let m6Sub6a = Subsection(
+            id: "6a", moduleId: "m6", code: "6a",
+            title: "Inhaled Corticosteroids & LABAs",
+            description: "Foundation of asthma and COPD maintenance",
+            iconName: "lungs.fill",
+            drugs: [
+                Drug(id: "d114", genericName: "Fluticasone (inhaled)", brandName: "Flovent HFA", drugClass: "Inhaled Corticosteroid", suffix: "", indications: ["Asthma", "COPD"], sideEffects: ["Oral thrush", "Dysphonia", "Adrenal suppression (high dose)"], clinicalPearls: ["Rinse mouth after use to prevent thrush", "Maintenance only - NOT for acute rescue"]),
+                Drug(id: "d115", genericName: "Budesonide (inhaled)", brandName: "Pulmicort", drugClass: "Inhaled Corticosteroid", suffix: "", indications: ["Asthma", "Croup"], sideEffects: ["Oral thrush", "Hoarseness"], clinicalPearls: ["Nebulizer form for young children", "Also available as Pulmicort Flexhaler"]),
+                Drug(id: "d116", genericName: "Fluticasone/Salmeterol", brandName: "Advair", drugClass: "ICS/LABA Combination", suffix: "", indications: ["Asthma", "COPD"], sideEffects: ["Oral thrush", "Tachycardia", "Tremor"], clinicalPearls: ["Diskus or HFA formulations", "LABA should NEVER be used alone in asthma"]),
+                Drug(id: "d117", genericName: "Budesonide/Formoterol", brandName: "Symbicort", drugClass: "ICS/LABA Combination", suffix: "", indications: ["Asthma", "COPD"], sideEffects: ["Oral thrush", "Headache", "Tremor"], clinicalPearls: ["Can be used as both maintenance AND reliever (SMART therapy)", "Formoterol has rapid onset unlike salmeterol"]),
+                Drug(id: "d118", genericName: "Salmeterol", brandName: "Serevent", drugClass: "LABA", suffix: "", indications: ["Asthma (with ICS)", "COPD"], sideEffects: ["Tachycardia", "Tremor", "Headache"], clinicalPearls: ["Black box: increased asthma-related death if used without ICS", "Twice daily, slow onset"]),
+                Drug(id: "d119", genericName: "Mometasone/Formoterol", brandName: "Dulera", drugClass: "ICS/LABA Combination", suffix: "", indications: ["Asthma"], sideEffects: ["Oral thrush", "Headache"], clinicalPearls: ["MDI formulation", "Alternative ICS/LABA option"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls6a_1", title: "Inhaled Corticosteroids (ICS)", content: "ICS are the cornerstone of persistent asthma maintenance therapy.", bulletPoints: ["Reduce airway inflammation and hyperresponsiveness", "NOT for acute rescue - maintenance only", "Rinse mouth after each use to prevent oral thrush", "Fluticasone (Flovent) and budesonide (Pulmicort) are most common"], highlightText: "ICS = Maintenance, NOT rescue. Rinse mouth!"),
+                LearningSlide(id: "ls6a_2", title: "LABAs & Combination Inhalers", content: "LABAs provide long-acting bronchodilation but must ALWAYS be paired with ICS in asthma.", bulletPoints: ["Black Box Warning: LABAs alone increase asthma death risk", "Advair = fluticasone + salmeterol", "Symbicort = budesonide + formoterol (SMART therapy)", "Formoterol has rapid onset; salmeterol is slower"], highlightText: "LABA alone in asthma = Black Box Warning"),
+            ]
+        )
+
+        let m6Sub6b = Subsection(
+            id: "6b", moduleId: "m6", code: "6b",
+            title: "SABAs, Anticholinergics & Rescue",
+            description: "Quick-relief and COPD maintenance agents",
+            iconName: "wind",
+            drugs: [
+                Drug(id: "d120", genericName: "Albuterol", brandName: "ProAir/Ventolin", drugClass: "SABA", suffix: "", indications: ["Acute bronchospasm", "Asthma rescue", "Exercise-induced bronchospasm"], sideEffects: ["Tachycardia", "Tremor", "Hypokalemia"], clinicalPearls: ["First-line rescue inhaler", "Beta-2 agonist", "Onset 5-15 minutes"]),
+                Drug(id: "d121", genericName: "Levalbuterol", brandName: "Xopenex", drugClass: "SABA", suffix: "", indications: ["Acute bronchospasm"], sideEffects: ["Tachycardia", "Tremor"], clinicalPearls: ["R-enantiomer of albuterol", "May cause fewer cardiac side effects", "More expensive than albuterol"]),
+                Drug(id: "d122", genericName: "Ipratropium", brandName: "Atrovent", drugClass: "Short-acting Anticholinergic", suffix: "", indications: ["COPD", "Acute bronchospasm (with albuterol)"], sideEffects: ["Dry mouth", "Urinary retention", "Blurred vision"], clinicalPearls: ["Often combined with albuterol in nebulizer (DuoNeb)", "Blocks muscarinic receptors in airways"]),
+                Drug(id: "d123", genericName: "Tiotropium", brandName: "Spiriva", drugClass: "LAMA", suffix: "", indications: ["COPD", "Asthma (add-on)"], sideEffects: ["Dry mouth", "Urinary retention", "Constipation"], clinicalPearls: ["Once daily, long-acting anticholinergic", "Cornerstone of COPD maintenance", "HandiHaler or Respimat devices"]),
+                Drug(id: "d124", genericName: "Umeclidinium/Vilanterol", brandName: "Anoro Ellipta", drugClass: "LAMA/LABA Combination", suffix: "", indications: ["COPD"], sideEffects: ["Dry mouth", "Headache", "Tachycardia"], clinicalPearls: ["Dual bronchodilator for COPD", "Once daily Ellipta device"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls6b_1", title: "SABAs: The Rescue Inhalers", content: "Short-acting beta-2 agonists provide rapid bronchodilation for acute symptoms.", bulletPoints: ["Albuterol (ProAir/Ventolin): first-line rescue", "Onset 5-15 minutes, duration 4-6 hours", "Side effects: tachycardia, tremor, hypokalemia", "Using rescue inhaler >2 days/week = uncontrolled asthma"], highlightText: "Albuterol = #1 rescue inhaler"),
+                LearningSlide(id: "ls6b_2", title: "Anticholinergics in Airways", content: "Anticholinergics block muscarinic receptors to reduce bronchospasm and secretions.", bulletPoints: ["Ipratropium (Atrovent): short-acting, often with albuterol", "Tiotropium (Spiriva): long-acting, once daily for COPD", "Key side effect: dry mouth", "LAMA + LABA combos (Anoro) for COPD dual bronchodilation"], highlightText: "Tiotropium = COPD maintenance cornerstone"),
+            ]
+        )
+
+        let m6Sub6c = Subsection(
+            id: "6c", moduleId: "m6", code: "6c",
+            title: "Montelukast & Specialty Agents",
+            description: "Leukotriene modifiers, biologics, and more",
+            iconName: "allergens.fill",
+            drugs: [
+                Drug(id: "d125", genericName: "Montelukast", brandName: "Singulair", drugClass: "Leukotriene Receptor Antagonist", suffix: "", indications: ["Asthma", "Allergic rhinitis", "Exercise-induced bronchospasm"], sideEffects: ["Headache", "Neuropsychiatric events (Black Box)"], clinicalPearls: ["Black Box: suicidal ideation, depression, behavioral changes", "Oral, taken at bedtime", "Alternative to ICS for mild persistent asthma"]),
+                Drug(id: "d126", genericName: "Omalizumab", brandName: "Xolair", drugClass: "Anti-IgE Monoclonal Antibody", suffix: "", indications: ["Moderate-severe allergic asthma", "Chronic urticaria"], sideEffects: ["Anaphylaxis", "Injection site reactions"], clinicalPearls: ["Binds free IgE", "SubQ injection q2-4 weeks", "Black Box: anaphylaxis risk - observe 2 hours after first doses"]),
+                Drug(id: "d127", genericName: "Dupilumab", brandName: "Dupixent", drugClass: "Anti-IL-4/IL-13 Monoclonal Antibody", suffix: "", indications: ["Moderate-severe asthma", "Atopic dermatitis", "Nasal polyps"], sideEffects: ["Injection site reactions", "Conjunctivitis", "Eosinophilia"], clinicalPearls: ["Blocks IL-4 and IL-13 signaling", "SubQ injection q2 weeks", "Also used for eczema and nasal polyps"]),
+                Drug(id: "d128", genericName: "Roflumilast", brandName: "Daliresp", drugClass: "PDE-4 Inhibitor", suffix: "", indications: ["Severe COPD (reduce exacerbations)"], sideEffects: ["Diarrhea", "Weight loss", "Nausea", "Psychiatric symptoms"], clinicalPearls: ["Oral PDE-4 inhibitor", "Add-on for COPD with chronic bronchitis phenotype", "NOT a bronchodilator"]),
+                Drug(id: "d129", genericName: "Theophylline", brandName: "Theo-24", drugClass: "Methylxanthine", suffix: "", indications: ["Asthma", "COPD"], sideEffects: ["Tachycardia", "Seizures", "Nausea", "Arrhythmias"], clinicalPearls: ["Narrow therapeutic index: 5-15 mcg/mL", "Many drug/food interactions", "Rarely used now due to toxicity"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls6c_1", title: "Montelukast & Leukotrienes", content: "Leukotriene modifiers block inflammatory mediators in asthma.", bulletPoints: ["Montelukast (Singulair): oral, taken at bedtime", "Black Box: neuropsychiatric events (suicidality, behavior changes)", "Alternative to low-dose ICS for mild persistent asthma", "Also helps allergic rhinitis and exercise-induced bronchospasm"], highlightText: "Montelukast Black Box: neuropsychiatric events"),
+                LearningSlide(id: "ls6c_2", title: "Biologics for Severe Asthma", content: "Monoclonal antibodies target specific immune pathways for severe asthma.", bulletPoints: ["Omalizumab (Xolair): anti-IgE, anaphylaxis risk", "Dupilumab (Dupixent): anti-IL-4/IL-13, also for eczema", "Roflumilast: PDE-4 inhibitor for severe COPD", "Theophylline: rarely used, narrow therapeutic index"], highlightText: "Biologics for SEVERE, uncontrolled asthma"),
+            ]
+        )
+
+        let m6Mastery = Subsection(
+            id: "6d", moduleId: "m6", code: "6d",
+            title: "Mastery: Respiratory",
+            description: "30-question comprehensive review",
+            iconName: "trophy.fill",
+            drugs: [],
+            isMasteryQuiz: true,
+            learningSlides: []
+        )
+
+        let module6 = DrugModule(
+            id: "m6", number: 6,
+            title: "Respiratory",
+            subtitle: "Asthma, COPD & Airways",
+            iconName: "lungs.fill",
+            accentColorHex: "0288D1",
+            subsections: [m6Sub6a, m6Sub6b, m6Sub6c, m6Mastery]
+        )
+
+        let m7Sub7a = Subsection(
+            id: "7a", moduleId: "m7", code: "7a",
+            title: "PPIs & H2 Blockers",
+            description: "Acid suppression therapy",
+            iconName: "flame.fill",
+            drugs: [
+                Drug(id: "d130", genericName: "Omeprazole", brandName: "Prilosec", drugClass: "Proton Pump Inhibitor", suffix: "-prazole", indications: ["GERD", "Peptic ulcer", "H. pylori", "Zollinger-Ellison"], sideEffects: ["C. diff risk", "Hypomagnesemia", "Bone fractures", "B12 deficiency"], clinicalPearls: ["Take 30-60 min before first meal", "Most commonly used PPI", "Inhibits CYP2C19 (avoid with clopidogrel)"]),
+                Drug(id: "d131", genericName: "Esomeprazole", brandName: "Nexium", drugClass: "Proton Pump Inhibitor", suffix: "-prazole", indications: ["GERD", "Erosive esophagitis"], sideEffects: ["C. diff risk", "Hypomagnesemia"], clinicalPearls: ["S-enantiomer of omeprazole", "IV formulation available"]),
+                Drug(id: "d132", genericName: "Pantoprazole", brandName: "Protonix", drugClass: "Proton Pump Inhibitor", suffix: "-prazole", indications: ["GERD", "Erosive esophagitis", "ICU stress ulcer prophylaxis"], sideEffects: ["C. diff risk", "Hypomagnesemia"], clinicalPearls: ["Preferred PPI with clopidogrel (less CYP2C19 interaction)", "IV available for hospital use"]),
+                Drug(id: "d133", genericName: "Lansoprazole", brandName: "Prevacid", drugClass: "Proton Pump Inhibitor", suffix: "-prazole", indications: ["GERD", "Peptic ulcer"], sideEffects: ["C. diff risk", "Headache"], clinicalPearls: ["Orally disintegrating tablet available", "Part of some H. pylori regimens"]),
+                Drug(id: "d134", genericName: "Famotidine", brandName: "Pepcid", drugClass: "H2 Receptor Antagonist", suffix: "-tidine", indications: ["GERD", "Peptic ulcer", "Heartburn"], sideEffects: ["Headache", "Dizziness", "Constipation"], clinicalPearls: ["Most commonly used H2 blocker", "Less potent than PPIs", "Can be used PRN for heartburn"]),
+                Drug(id: "d135", genericName: "Sucralfate", brandName: "Carafate", drugClass: "Mucosal Protectant", suffix: "", indications: ["Duodenal ulcer", "Stress ulcer prophylaxis"], sideEffects: ["Constipation", "Drug interactions (chelation)"], clinicalPearls: ["Forms protective barrier over ulcer", "Take on empty stomach", "Separate from other drugs by 2 hours"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls7a_1", title: "PPIs: The -prazole Family", content: "PPIs irreversibly block the H+/K+ ATPase proton pump in parietal cells.", bulletPoints: ["All end in -prazole", "Most potent acid suppression available", "Take 30-60 min BEFORE first meal of the day", "Long-term risks: C. diff, fractures, hypomagnesemia, B12 deficiency"], highlightText: "-prazole = PPI. Take BEFORE meals!"),
+                LearningSlide(id: "ls7a_2", title: "H2 Blockers & Mucosal Agents", content: "H2 blockers and mucosal protectants offer alternative acid management.", bulletPoints: ["H2 blockers end in -tidine (famotidine, ranitidine)", "Less potent than PPIs but faster onset", "Sucralfate: coats ulcer, take on empty stomach", "Omeprazole + clopidogrel = avoid (CYP2C19 interaction)"], highlightText: "H2 = -tidine | PPI = -prazole"),
+            ]
+        )
+
+        let m7Sub7b = Subsection(
+            id: "7b", moduleId: "m7", code: "7b",
+            title: "Antiemetics",
+            description: "Ondansetron, Promethazine, and more",
+            iconName: "stomach.fill",
+            drugs: [
+                Drug(id: "d136", genericName: "Ondansetron", brandName: "Zofran", drugClass: "5-HT3 Antagonist", suffix: "-setron", indications: ["Chemotherapy-induced N/V", "Post-op N/V", "Gastroenteritis"], sideEffects: ["Headache", "Constipation", "QT prolongation"], clinicalPearls: ["First-line for most nausea/vomiting", "Available as ODT (orally disintegrating tablet)", "IV and oral formulations"]),
+                Drug(id: "d137", genericName: "Promethazine", brandName: "Phenergan", drugClass: "Phenothiazine Antiemetic", suffix: "", indications: ["Nausea", "Motion sickness", "Allergies"], sideEffects: ["Sedation", "EPS", "Tissue necrosis (IV)", "Respiratory depression"], clinicalPearls: ["Black Box: avoid in children < 2 (respiratory depression)", "IV can cause tissue necrosis - use deep IM or oral", "Highly sedating"]),
+                Drug(id: "d138", genericName: "Metoclopramide", brandName: "Reglan", drugClass: "Dopamine Antagonist / Prokinetic", suffix: "", indications: ["Gastroparesis", "GERD", "Nausea"], sideEffects: ["EPS", "Tardive dyskinesia", "Drowsiness"], clinicalPearls: ["Black Box: tardive dyskinesia with long-term use", "Prokinetic agent (increases GI motility)", "Limit use to 12 weeks"]),
+                Drug(id: "d139", genericName: "Scopolamine", brandName: "Transderm Scop", drugClass: "Anticholinergic", suffix: "", indications: ["Motion sickness", "Post-op N/V"], sideEffects: ["Dry mouth", "Drowsiness", "Blurred vision", "Urinary retention"], clinicalPearls: ["Transdermal patch behind the ear", "Apply 4 hours before travel", "Wash hands after handling patch"]),
+                Drug(id: "d140", genericName: "Aprepitant", brandName: "Emend", drugClass: "NK1 Receptor Antagonist", suffix: "", indications: ["Highly emetogenic chemotherapy"], sideEffects: ["Fatigue", "Hiccups", "Diarrhea"], clinicalPearls: ["Added to 5-HT3 + dexamethasone for high emetic risk", "CYP3A4 substrate and inhibitor"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls7b_1", title: "Ondansetron: First-Line Antiemetic", content: "5-HT3 antagonists are the most commonly used antiemetics.", bulletPoints: ["Ondansetron (Zofran): first-line for most N/V", "Available as ODT, IV, and oral", "Risk of QT prolongation at high doses", "-setron suffix identifies 5-HT3 blockers"], highlightText: "Ondansetron = #1 antiemetic"),
+                LearningSlide(id: "ls7b_2", title: "Other Antiemetic Classes", content: "Different mechanisms target different causes of nausea.", bulletPoints: ["Metoclopramide: prokinetic, Black Box for tardive dyskinesia", "Scopolamine: anticholinergic patch for motion sickness", "Aprepitant: NK1 antagonist for chemo-induced N/V", "Promethazine: sedating, avoid in children < 2"], highlightText: "Match antiemetic to the CAUSE of nausea"),
+            ]
+        )
+
+        let m7Sub7c = Subsection(
+            id: "7c", moduleId: "m7", code: "7c",
+            title: "Laxatives & IBD Agents",
+            description: "Constipation, IBS, and inflammatory bowel disease",
+            iconName: "cross.vial.fill",
+            drugs: [
+                Drug(id: "d141", genericName: "Polyethylene glycol", brandName: "MiraLAX", drugClass: "Osmotic Laxative", suffix: "", indications: ["Constipation", "Bowel prep"], sideEffects: ["Bloating", "Diarrhea", "Nausea"], clinicalPearls: ["First-line for chronic constipation", "OTC, well-tolerated", "Mix with any clear liquid"]),
+                Drug(id: "d142", genericName: "Docusate sodium", brandName: "Colace", drugClass: "Stool Softener", suffix: "", indications: ["Constipation prevention"], sideEffects: ["Mild cramping"], clinicalPearls: ["Surfactant - softens stool", "Often used post-surgery or with opioids", "Efficacy debated"]),
+                Drug(id: "d143", genericName: "Bisacodyl", brandName: "Dulcolax", drugClass: "Stimulant Laxative", suffix: "", indications: ["Acute constipation", "Bowel prep"], sideEffects: ["Cramping", "Diarrhea", "Electrolyte imbalance"], clinicalPearls: ["Stimulates colonic motility", "Available as oral and suppository", "Avoid long-term use"]),
+                Drug(id: "d144", genericName: "Mesalamine", brandName: "Asacol/Lialda", drugClass: "5-ASA", suffix: "", indications: ["Ulcerative colitis", "Crohn's disease (mild)"], sideEffects: ["Headache", "Nausea", "Nephrotoxicity (rare)"], clinicalPearls: ["First-line for mild-moderate UC", "Topical anti-inflammatory in GI tract", "Multiple oral and rectal formulations"]),
+                Drug(id: "d145", genericName: "Infliximab", brandName: "Remicade", drugClass: "Anti-TNF Monoclonal Antibody", suffix: "", indications: ["Crohn's disease", "Ulcerative colitis", "Rheumatoid arthritis", "Psoriasis"], sideEffects: ["Infection risk", "Infusion reactions", "Reactivation of TB", "Lymphoma risk"], clinicalPearls: ["Screen for TB before starting", "IV infusion q6-8 weeks after loading", "Anti-TNF-alpha biologic"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls7c_1", title: "Laxatives by Mechanism", content: "Different laxative classes work through distinct mechanisms.", bulletPoints: ["Osmotic (MiraLAX): draws water into colon, first-line", "Stool softener (Colace): surfactant, prevention", "Stimulant (Dulcolax): increases colonic motility", "Bulk-forming (psyllium/Metamucil): fiber supplement"], highlightText: "MiraLAX = first-line for chronic constipation"),
+                LearningSlide(id: "ls7c_2", title: "IBD Treatments", content: "Inflammatory bowel disease requires targeted anti-inflammatory therapy.", bulletPoints: ["Mesalamine (5-ASA): first-line for mild-moderate UC", "Infliximab (Remicade): anti-TNF for moderate-severe IBD", "Screen for TB before anti-TNF therapy", "Step-up approach: 5-ASA → steroids → biologics"], highlightText: "Anti-TNF: always screen for TB first"),
+            ]
+        )
+
+        let m7Mastery = Subsection(
+            id: "7d", moduleId: "m7", code: "7d",
+            title: "Mastery: Gastrointestinal",
+            description: "30-question comprehensive review",
+            iconName: "trophy.fill",
+            drugs: [],
+            isMasteryQuiz: true,
+            learningSlides: []
+        )
+
+        let module7 = DrugModule(
+            id: "m7", number: 7,
+            title: "Gastrointestinal",
+            subtitle: "Acid, Nausea & IBD",
+            iconName: "stomach.fill",
+            accentColorHex: "7B1FA2",
+            subsections: [m7Sub7a, m7Sub7b, m7Sub7c, m7Mastery]
+        )
+
+        let m8Sub8a = Subsection(
+            id: "8a", moduleId: "m8", code: "8a",
+            title: "Opioid Analgesics",
+            description: "Morphine, oxycodone, fentanyl, and more",
+            iconName: "cross.case.fill",
+            drugs: [
+                Drug(id: "d146", genericName: "Morphine", brandName: "MS Contin", drugClass: "Opioid Agonist", suffix: "", indications: ["Severe pain", "Acute MI pain", "Palliative care"], sideEffects: ["Respiratory depression", "Constipation", "Nausea", "Sedation", "Pruritus"], clinicalPearls: ["Gold standard opioid", "Accumulates in renal impairment (active metabolite M6G)", "Histamine release can cause itching/hypotension"]),
+                Drug(id: "d147", genericName: "Oxycodone", brandName: "OxyContin/Roxicodone", drugClass: "Opioid Agonist", suffix: "", indications: ["Moderate-severe pain"], sideEffects: ["Respiratory depression", "Constipation", "Nausea"], clinicalPearls: ["OxyContin = extended-release (q12h)", "Percocet = oxycodone + acetaminophen", "High abuse potential"]),
+                Drug(id: "d148", genericName: "Hydrocodone/Acetaminophen", brandName: "Norco/Vicodin", drugClass: "Opioid Combination", suffix: "", indications: ["Moderate pain"], sideEffects: ["Respiratory depression", "Constipation", "Hepatotoxicity (APAP)"], clinicalPearls: ["Most prescribed opioid in US", "Watch APAP cumulative dose (max 4g/day)", "Schedule II"]),
+                Drug(id: "d149", genericName: "Fentanyl", brandName: "Duragesic (patch)", drugClass: "Opioid Agonist", suffix: "", indications: ["Severe chronic pain", "Anesthesia", "Breakthrough cancer pain"], sideEffects: ["Respiratory depression", "Bradycardia", "Chest wall rigidity (IV)"], clinicalPearls: ["80-100x more potent than morphine", "Transdermal patch: 72-hour duration", "CYP3A4 substrate"]),
+                Drug(id: "d150", genericName: "Tramadol", brandName: "Ultram", drugClass: "Weak Opioid + SNRI", suffix: "", indications: ["Moderate pain"], sideEffects: ["Seizures", "Serotonin syndrome", "Nausea", "Constipation"], clinicalPearls: ["Dual mechanism: weak mu-agonist + SNRI", "Lowers seizure threshold", "Risk of serotonin syndrome with SSRIs/SNRIs"]),
+                Drug(id: "d151", genericName: "Naloxone", brandName: "Narcan", drugClass: "Opioid Antagonist", suffix: "", indications: ["Opioid overdose reversal"], sideEffects: ["Acute withdrawal symptoms", "Tachycardia", "Hypertension"], clinicalPearls: ["Intranasal or IV/IM", "Short duration - may need repeat doses", "Available OTC as nasal spray"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls8a_1", title: "Opioid Pharmacology", content: "Opioids bind mu receptors to produce analgesia, euphoria, and respiratory depression.", bulletPoints: ["All opioids cause: respiratory depression, constipation, sedation", "Morphine: gold standard, avoid in renal failure", "Fentanyl: 80-100x more potent than morphine", "Tramadol: weak opioid + SNRI, seizure risk"], highlightText: "ALL opioids: respiratory depression + constipation"),
+                LearningSlide(id: "ls8a_2", title: "Naloxone: The Reversal Agent", content: "Naloxone (Narcan) is a competitive opioid antagonist that reverses overdose.", bulletPoints: ["Narcan: intranasal spray now OTC", "Short half-life: may need repeated doses", "Can precipitate acute withdrawal in dependent patients", "Opioid overdose triad: pinpoint pupils, respiratory depression, CNS depression"], highlightText: "Naloxone reverses opioid overdose - may need repeat doses"),
+            ]
+        )
+
+        let m8Sub8b = Subsection(
+            id: "8b", moduleId: "m8", code: "8b",
+            title: "NSAIDs & Acetaminophen",
+            description: "Non-opioid analgesics and anti-inflammatories",
+            iconName: "pill.fill",
+            drugs: [
+                Drug(id: "d152", genericName: "Ibuprofen", brandName: "Advil/Motrin", drugClass: "NSAID", suffix: "", indications: ["Pain", "Fever", "Inflammation", "Dysmenorrhea"], sideEffects: ["GI bleeding", "Renal impairment", "CV risk", "Platelet inhibition"], clinicalPearls: ["Non-selective COX inhibitor", "Take with food", "Avoid in CKD, HF, and 3rd trimester pregnancy"]),
+                Drug(id: "d153", genericName: "Naproxen", brandName: "Aleve/Naprosyn", drugClass: "NSAID", suffix: "", indications: ["Pain", "Inflammation", "Gout"], sideEffects: ["GI bleeding", "Renal impairment", "CV risk"], clinicalPearls: ["Longer duration than ibuprofen (q12h)", "Lowest CV risk among NSAIDs", "OTC and prescription strengths"]),
+                Drug(id: "d154", genericName: "Celecoxib", brandName: "Celebrex", drugClass: "COX-2 Selective NSAID", suffix: "-coxib", indications: ["Osteoarthritis", "Rheumatoid arthritis", "Pain"], sideEffects: ["CV risk", "GI effects (less than non-selective)", "Sulfonamide allergy"], clinicalPearls: ["Selective COX-2 inhibitor: less GI bleeding", "Still carries CV risk", "Avoid if sulfa allergy"]),
+                Drug(id: "d155", genericName: "Acetaminophen", brandName: "Tylenol", drugClass: "Non-opioid Analgesic", suffix: "", indications: ["Pain", "Fever"], sideEffects: ["Hepatotoxicity (overdose)", "Rare: SJS/TEN"], clinicalPearls: ["Max 4g/day (2g/day if liver disease)", "Antidote for overdose: N-acetylcysteine (NAC)", "No anti-inflammatory effect", "Safe in pregnancy"]),
+                Drug(id: "d156", genericName: "Ketorolac", brandName: "Toradol", drugClass: "NSAID", suffix: "", indications: ["Moderate-severe acute pain", "Post-operative pain"], sideEffects: ["GI bleeding", "Renal impairment", "Platelet dysfunction"], clinicalPearls: ["IV/IM NSAID for acute pain", "Limit to 5 days maximum", "Very potent analgesic"]),
+                Drug(id: "d157", genericName: "Colchicine", brandName: "Colcrys", drugClass: "Anti-inflammatory (gout)", suffix: "", indications: ["Acute gout", "Gout prophylaxis", "Pericarditis"], sideEffects: ["Diarrhea", "Nausea", "Bone marrow suppression"], clinicalPearls: ["First-line for acute gout flares", "GI side effects dose-limiting", "Also used for pericarditis"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls8b_1", title: "NSAIDs: COX Inhibitors", content: "NSAIDs inhibit cyclooxygenase enzymes, reducing prostaglandin synthesis.", bulletPoints: ["Non-selective (ibuprofen, naproxen): block COX-1 and COX-2", "COX-2 selective (celecoxib): less GI bleeding", "All NSAIDs: GI risk, renal risk, CV risk", "Ketorolac (Toradol): IV NSAID, max 5 days"], highlightText: "NSAIDs: GI + Renal + CV risk. Take with food."),
+                LearningSlide(id: "ls8b_2", title: "Acetaminophen & Gout Agents", content: "Acetaminophen is a first-line analgesic/antipyretic without anti-inflammatory properties.", bulletPoints: ["Max 4g/day (2g if liver disease)", "Overdose antidote: N-acetylcysteine (NAC)", "Colchicine: first-line for acute gout flares", "Allopurinol/febuxostat: urate-lowering for chronic gout"], highlightText: "APAP overdose = NAC antidote | Max 4g/day"),
+            ]
+        )
+
+        let m8Sub8c = Subsection(
+            id: "8c", moduleId: "m8", code: "8c",
+            title: "Muscle Relaxants & Neuropathic Pain",
+            description: "Cyclobenzaprine, gabapentin, pregabalin",
+            iconName: "figure.walk",
+            drugs: [
+                Drug(id: "d158", genericName: "Cyclobenzaprine", brandName: "Flexeril", drugClass: "Muscle Relaxant", suffix: "", indications: ["Acute musculoskeletal pain"], sideEffects: ["Sedation", "Dry mouth", "Dizziness", "Anticholinergic effects"], clinicalPearls: ["Structurally similar to TCAs", "Short-term use only (2-3 weeks)", "Avoid in elderly (anticholinergic)"]),
+                Drug(id: "d159", genericName: "Methocarbamol", brandName: "Robaxin", drugClass: "Muscle Relaxant", suffix: "", indications: ["Acute musculoskeletal pain"], sideEffects: ["Sedation", "Dizziness", "Brown/green urine"], clinicalPearls: ["Less sedating than cyclobenzaprine", "Can cause discolored urine (harmless)", "IV formulation available"]),
+                Drug(id: "d160", genericName: "Baclofen", brandName: "Lioresal", drugClass: "GABA-B Agonist", suffix: "", indications: ["Spasticity (MS, spinal cord injury)"], sideEffects: ["Sedation", "Weakness", "Withdrawal seizures"], clinicalPearls: ["GABA-B receptor agonist", "Do NOT stop abruptly (withdrawal seizures)", "Intrathecal pump for severe spasticity"]),
+                Drug(id: "d161", genericName: "Gabapentin", brandName: "Neurontin", drugClass: "Gabapentinoid", suffix: "", indications: ["Neuropathic pain", "Postherpetic neuralgia", "Seizures"], sideEffects: ["Sedation", "Dizziness", "Peripheral edema", "Weight gain"], clinicalPearls: ["Dose adjust for renal impairment", "Abuse potential recognized", "Does NOT interact with most drugs"]),
+                Drug(id: "d162", genericName: "Pregabalin", brandName: "Lyrica", drugClass: "Gabapentinoid", suffix: "", indications: ["Neuropathic pain", "Fibromyalgia", "Seizures"], sideEffects: ["Sedation", "Dizziness", "Weight gain", "Peripheral edema"], clinicalPearls: ["Schedule V controlled substance", "More predictable absorption than gabapentin", "FDA-approved for fibromyalgia"]),
+            ],
+            isMasteryQuiz: false,
+            learningSlides: [
+                LearningSlide(id: "ls8c_1", title: "Muscle Relaxants", content: "Skeletal muscle relaxants are used short-term for acute musculoskeletal conditions.", bulletPoints: ["Cyclobenzaprine (Flexeril): most prescribed, anticholinergic", "Methocarbamol (Robaxin): less sedating alternative", "Baclofen: GABA-B agonist for spasticity (MS, spinal cord)", "Never stop baclofen abruptly: seizure risk"], highlightText: "Muscle relaxants: short-term use. Baclofen: no abrupt stop"),
+                LearningSlide(id: "ls8c_2", title: "Gabapentinoids for Nerve Pain", content: "Gabapentin and pregabalin are first-line agents for neuropathic pain.", bulletPoints: ["Gabapentin (Neurontin): dose adjust for renal function", "Pregabalin (Lyrica): Schedule V, fibromyalgia approved", "Both: sedation, dizziness, weight gain, edema", "Also used as anticonvulsants"], highlightText: "Gabapentinoids: first-line for neuropathic pain"),
+            ]
+        )
+
+        let m8Mastery = Subsection(
+            id: "8d", moduleId: "m8", code: "8d",
+            title: "Mastery: Pain & Analgesia",
+            description: "30-question comprehensive review",
+            iconName: "trophy.fill",
+            drugs: [],
+            isMasteryQuiz: true,
+            learningSlides: []
+        )
+
+        let module8 = DrugModule(
+            id: "m8", number: 8,
+            title: "Pain & Analgesia",
+            subtitle: "Opioids, NSAIDs & Nerve Pain",
+            iconName: "cross.case.fill",
+            accentColorHex: "C62828",
+            subsections: [m8Sub8a, m8Sub8b, m8Sub8c, m8Mastery]
+        )
+
+        self.modules = [module1, module2, module3, module4, module5, module6, module7, module8]
 
         var bank: [String: [Question]] = [:]
 
@@ -806,6 +1038,149 @@ struct DrugDataService {
         bank["5d"] = {
             var mastery: [Question] = []
             for (key, questions) in bank where key.hasPrefix("5") && key != "5d" {
+                mastery.append(contentsOf: questions.prefix(6))
+            }
+            return mastery
+        }()
+
+        bank["6a"] = [
+            .trueFalse(id: "q6a_1", subsectionId: "6a", question: "Inhaled corticosteroids are used as rescue inhalers for acute asthma.", answer: false, explanation: "ICS are maintenance only. SABAs (albuterol) are for rescue."),
+            .fillBlank(id: "q6a_2", subsectionId: "6a", question: "The brand name of fluticasone/salmeterol is _____.", options: ["Advair", "Symbicort", "Flovent", "Serevent"], answer: "Advair", explanation: "Fluticasone/salmeterol is sold as Advair."),
+            .multipleChoice(id: "q6a_3", subsectionId: "6a", question: "Why must you rinse your mouth after using an ICS?", options: ["To prevent oral thrush", "To improve absorption", "To prevent tooth decay", "To reduce cough"], answer: "To prevent oral thrush", explanation: "ICS deposits in the mouth can cause candidiasis (thrush)."),
+            .trueFalse(id: "q6a_4", subsectionId: "6a", question: "LABAs can safely be used alone in asthma.", answer: false, explanation: "Black Box Warning: LABAs alone increase asthma-related death. Always use with ICS."),
+            .multipleChoice(id: "q6a_5", subsectionId: "6a", question: "Which ICS/LABA can be used as SMART therapy (maintenance + reliever)?", options: ["Symbicort", "Advair", "Dulera", "Flovent"], answer: "Symbicort", explanation: "Budesonide/formoterol (Symbicort) can be used as both maintenance and rescue."),
+            .fillBlank(id: "q6a_6", subsectionId: "6a", question: "The brand name of budesonide inhaler is _____.", options: ["Pulmicort", "Flovent", "Serevent", "Advair"], answer: "Pulmicort", explanation: "Inhaled budesonide is sold as Pulmicort."),
+            .selectAll(id: "q6a_7", subsectionId: "6a", question: "Select ALL ICS/LABA combinations:", options: ["Advair", "Symbicort", "Flovent", "Spiriva", "Dulera"], correctAnswers: ["Advair", "Symbicort", "Dulera"], explanation: "Flovent is ICS only; Spiriva is a LAMA."),
+            .matching(id: "q6a_8", subsectionId: "6a", question: "Match inhaler to brand name:", pairs: [MatchingPair(left: "Fluticasone/Salmeterol", right: "Advair"), MatchingPair(left: "Budesonide/Formoterol", right: "Symbicort"), MatchingPair(left: "Fluticasone alone", right: "Flovent"), MatchingPair(left: "Budesonide alone", right: "Pulmicort")], explanation: "Key respiratory inhaler brand names."),
+            .multipleChoice(id: "q6a_9", subsectionId: "6a", question: "What is the key difference between salmeterol and formoterol?", options: ["Formoterol has rapid onset", "Salmeterol is short-acting", "Formoterol is an ICS", "Salmeterol works faster"], answer: "Formoterol has rapid onset", explanation: "Formoterol has a rapid onset allowing rescue use; salmeterol has slow onset."),
+            .trueFalse(id: "q6a_10", subsectionId: "6a", difficulty: .medium, question: "Salmeterol has a Black Box Warning when used without an ICS in asthma.", answer: true, explanation: "LABAs without ICS increase the risk of asthma-related death."),
+        ]
+
+        bank["6b"] = [
+            .multipleChoice(id: "q6b_1", subsectionId: "6b", question: "The first-line rescue inhaler for acute bronchospasm is:", options: ["Albuterol", "Tiotropium", "Fluticasone", "Montelukast"], answer: "Albuterol", explanation: "Albuterol (ProAir/Ventolin) is the #1 rescue inhaler."),
+            .fillBlank(id: "q6b_2", subsectionId: "6b", question: "The brand name of tiotropium is _____.", options: ["Spiriva", "Atrovent", "ProAir", "Advair"], answer: "Spiriva", explanation: "Tiotropium is sold as Spiriva."),
+            .trueFalse(id: "q6b_3", subsectionId: "6b", question: "Albuterol is a beta-2 agonist.", answer: true, explanation: "Albuterol selectively stimulates beta-2 receptors in the lungs."),
+            .multipleChoice(id: "q6b_4", subsectionId: "6b", question: "Using a rescue inhaler more than 2 days/week suggests:", options: ["Uncontrolled asthma", "Normal asthma management", "The patient is cured", "Need for less medication"], answer: "Uncontrolled asthma", explanation: "Frequent SABA use indicates need to step up maintenance therapy."),
+            .trueFalse(id: "q6b_5", subsectionId: "6b", question: "Ipratropium (Atrovent) is a long-acting anticholinergic.", answer: false, explanation: "Ipratropium is SHORT-acting. Tiotropium (Spiriva) is long-acting."),
+            .multipleChoice(id: "q6b_6", subsectionId: "6b", question: "The main side effect of anticholinergic inhalers is:", options: ["Dry mouth", "Tachycardia", "Tremor", "Oral thrush"], answer: "Dry mouth", explanation: "Anticholinergics reduce secretions causing dry mouth."),
+            .selectAll(id: "q6b_7", subsectionId: "6b", question: "Select ALL short-acting bronchodilators:", options: ["Albuterol", "Ipratropium", "Tiotropium", "Salmeterol"], correctAnswers: ["Albuterol", "Ipratropium"], explanation: "Tiotropium is a LAMA; salmeterol is a LABA."),
+            .matching(id: "q6b_8", subsectionId: "6b", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Albuterol", right: "ProAir/Ventolin"), MatchingPair(left: "Ipratropium", right: "Atrovent"), MatchingPair(left: "Tiotropium", right: "Spiriva")], explanation: "Key bronchodilator brand names."),
+            .fillBlank(id: "q6b_9", subsectionId: "6b", question: "DuoNeb combines albuterol with _____.", options: ["Ipratropium", "Tiotropium", "Fluticasone", "Montelukast"], answer: "Ipratropium", explanation: "DuoNeb is albuterol + ipratropium for acute bronchospasm."),
+            .multipleChoice(id: "q6b_10", subsectionId: "6b", question: "Albuterol can cause which electrolyte abnormality?", options: ["Hypokalemia", "Hyperkalemia", "Hyponatremia", "Hypercalcemia"], answer: "Hypokalemia", explanation: "Beta-2 agonists drive potassium into cells, lowering serum K+."),
+        ]
+
+        bank["6c"] = [
+            .trueFalse(id: "q6c_1", subsectionId: "6c", question: "Montelukast (Singulair) has a Black Box Warning for neuropsychiatric events.", answer: true, explanation: "FDA added a Black Box for suicidal ideation, depression, and behavioral changes."),
+            .fillBlank(id: "q6c_2", subsectionId: "6c", question: "The brand name of montelukast is _____.", options: ["Singulair", "Xolair", "Dupixent", "Daliresp"], answer: "Singulair", explanation: "Montelukast is sold as Singulair."),
+            .multipleChoice(id: "q6c_3", subsectionId: "6c", question: "Omalizumab (Xolair) works by:", options: ["Binding free IgE", "Blocking leukotrienes", "Inhibiting PDE-4", "Blocking histamine"], answer: "Binding free IgE", explanation: "Omalizumab is an anti-IgE monoclonal antibody."),
+            .multipleChoice(id: "q6c_4", subsectionId: "6c", question: "Theophylline's therapeutic range is:", options: ["5-15 mcg/mL", "0.5-2 ng/mL", "10-20 mcg/mL", "0.6-1.2 mEq/L"], answer: "5-15 mcg/mL", explanation: "Theophylline has a narrow therapeutic index of 5-15 mcg/mL."),
+            .trueFalse(id: "q6c_5", subsectionId: "6c", question: "Roflumilast is a bronchodilator.", answer: false, explanation: "Roflumilast is a PDE-4 inhibitor that reduces inflammation; it is NOT a bronchodilator."),
+            .multipleChoice(id: "q6c_6", subsectionId: "6c", question: "Dupilumab (Dupixent) blocks which interleukins?", options: ["IL-4 and IL-13", "IL-1 and IL-6", "IL-2 and IL-12", "IL-5 only"], answer: "IL-4 and IL-13", explanation: "Dupilumab targets IL-4 and IL-13 signaling in type 2 inflammation."),
+            .selectAll(id: "q6c_7", subsectionId: "6c", question: "Select ALL biologic agents for severe asthma:", options: ["Omalizumab", "Dupilumab", "Montelukast", "Albuterol"], correctAnswers: ["Omalizumab", "Dupilumab"], explanation: "Montelukast is oral; albuterol is a SABA. Biologics are injectable."),
+            .matching(id: "q6c_8", subsectionId: "6c", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Montelukast", right: "Singulair"), MatchingPair(left: "Omalizumab", right: "Xolair"), MatchingPair(left: "Dupilumab", right: "Dupixent"), MatchingPair(left: "Roflumilast", right: "Daliresp")], explanation: "Key specialty respiratory drug brand names."),
+            .multipleChoice(id: "q6c_9", subsectionId: "6c", difficulty: .hard, question: "Which agent requires a 2-hour observation after first doses due to anaphylaxis risk?", options: ["Omalizumab", "Montelukast", "Theophylline", "Roflumilast"], answer: "Omalizumab", explanation: "Omalizumab carries a Black Box for anaphylaxis; observe patients."),
+        ]
+
+        bank["6d"] = {
+            var mastery: [Question] = []
+            for (key, questions) in bank where key.hasPrefix("6") && key != "6d" {
+                mastery.append(contentsOf: questions.prefix(6))
+            }
+            return mastery
+        }()
+
+        bank["7a"] = [
+            .fillBlank(id: "q7a_1", subsectionId: "7a", question: "All PPIs end in _____.", options: ["-prazole", "-tidine", "-setron", "-pril"], answer: "-prazole", explanation: "The -prazole suffix identifies proton pump inhibitors."),
+            .trueFalse(id: "q7a_2", subsectionId: "7a", question: "PPIs should be taken 30-60 minutes before the first meal.", answer: true, explanation: "PPIs need an acidic environment to activate; take before eating."),
+            .multipleChoice(id: "q7a_3", subsectionId: "7a", question: "Which PPI should be avoided with clopidogrel?", options: ["Omeprazole", "Pantoprazole", "Lansoprazole", "Rabeprazole"], answer: "Omeprazole", explanation: "Omeprazole inhibits CYP2C19, reducing clopidogrel activation."),
+            .multipleChoice(id: "q7a_4", subsectionId: "7a", question: "The brand name of omeprazole is:", options: ["Prilosec", "Nexium", "Protonix", "Prevacid"], answer: "Prilosec", explanation: "Omeprazole is sold as Prilosec."),
+            .trueFalse(id: "q7a_5", subsectionId: "7a", question: "Long-term PPI use can increase C. difficile risk.", answer: true, explanation: "Reduced stomach acid allows C. diff overgrowth."),
+            .selectAll(id: "q7a_6", subsectionId: "7a", question: "Select ALL long-term risks of PPI use:", options: ["C. diff", "Bone fractures", "Hypomagnesemia", "Hyperkalemia"], correctAnswers: ["C. diff", "Bone fractures", "Hypomagnesemia"], explanation: "PPIs do not cause hyperkalemia."),
+            .fillBlank(id: "q7a_7", subsectionId: "7a", question: "H2 blockers end in _____.", options: ["-tidine", "-prazole", "-setron", "-olol"], answer: "-tidine", explanation: "The -tidine suffix identifies H2 receptor antagonists."),
+            .multipleChoice(id: "q7a_8", subsectionId: "7a", question: "The brand name of famotidine is:", options: ["Pepcid", "Prilosec", "Carafate", "Nexium"], answer: "Pepcid", explanation: "Famotidine is sold as Pepcid."),
+            .matching(id: "q7a_9", subsectionId: "7a", question: "Match PPI to brand name:", pairs: [MatchingPair(left: "Omeprazole", right: "Prilosec"), MatchingPair(left: "Esomeprazole", right: "Nexium"), MatchingPair(left: "Pantoprazole", right: "Protonix"), MatchingPair(left: "Lansoprazole", right: "Prevacid")], explanation: "Key PPI brand-generic pairs."),
+            .multipleChoice(id: "q7a_10", subsectionId: "7a", question: "Which PPI is preferred with clopidogrel?", options: ["Pantoprazole", "Omeprazole", "Esomeprazole", "Lansoprazole"], answer: "Pantoprazole", explanation: "Pantoprazole has less CYP2C19 interaction than omeprazole."),
+            .trueFalse(id: "q7a_11", subsectionId: "7a", difficulty: .medium, question: "Sucralfate should be taken with food for best effect.", answer: false, explanation: "Sucralfate should be taken on an empty stomach to coat the ulcer."),
+        ]
+
+        bank["7b"] = [
+            .multipleChoice(id: "q7b_1", subsectionId: "7b", question: "First-line antiemetic for most nausea/vomiting is:", options: ["Ondansetron", "Promethazine", "Metoclopramide", "Scopolamine"], answer: "Ondansetron", explanation: "Ondansetron (Zofran) is first-line for most N/V."),
+            .fillBlank(id: "q7b_2", subsectionId: "7b", question: "The brand name of ondansetron is _____.", options: ["Zofran", "Phenergan", "Reglan", "Emend"], answer: "Zofran", explanation: "Ondansetron is sold as Zofran."),
+            .trueFalse(id: "q7b_3", subsectionId: "7b", question: "Metoclopramide has a Black Box Warning for tardive dyskinesia.", answer: true, explanation: "Long-term use can cause irreversible tardive dyskinesia."),
+            .multipleChoice(id: "q7b_4", subsectionId: "7b", question: "Scopolamine patch is best for:", options: ["Motion sickness", "Chemotherapy N/V", "Morning sickness", "Gastroparesis"], answer: "Motion sickness", explanation: "Transdermal scopolamine is first-line for motion sickness."),
+            .trueFalse(id: "q7b_5", subsectionId: "7b", question: "Promethazine is safe in children under 2 years old.", answer: false, explanation: "Black Box: avoid in children < 2 due to respiratory depression risk."),
+            .multipleChoice(id: "q7b_6", subsectionId: "7b", question: "Aprepitant (Emend) is primarily used for:", options: ["Highly emetogenic chemotherapy", "Motion sickness", "Morning sickness", "Gastroparesis"], answer: "Highly emetogenic chemotherapy", explanation: "NK1 antagonists are added for high emetic risk chemotherapy."),
+            .fillBlank(id: "q7b_7", subsectionId: "7b", question: "The brand name of metoclopramide is _____.", options: ["Reglan", "Zofran", "Phenergan", "Emend"], answer: "Reglan", explanation: "Metoclopramide is sold as Reglan."),
+            .selectAll(id: "q7b_8", subsectionId: "7b", question: "Select ALL 5-HT3 antagonist side effects:", options: ["Headache", "Constipation", "QT prolongation", "Tardive dyskinesia"], correctAnswers: ["Headache", "Constipation", "QT prolongation"], explanation: "Tardive dyskinesia is associated with metoclopramide, not ondansetron."),
+            .matching(id: "q7b_9", subsectionId: "7b", question: "Match antiemetic to brand name:", pairs: [MatchingPair(left: "Ondansetron", right: "Zofran"), MatchingPair(left: "Promethazine", right: "Phenergan"), MatchingPair(left: "Metoclopramide", right: "Reglan"), MatchingPair(left: "Aprepitant", right: "Emend")], explanation: "Key antiemetic brand-generic pairs."),
+            .multipleChoice(id: "q7b_10", subsectionId: "7b", difficulty: .medium, question: "Metoclopramide should be limited to how many weeks of use?", options: ["12 weeks", "4 weeks", "24 weeks", "No limit"], answer: "12 weeks", explanation: "Limit to 12 weeks due to tardive dyskinesia risk."),
+        ]
+
+        bank["7c"] = [
+            .multipleChoice(id: "q7c_1", subsectionId: "7c", question: "First-line treatment for chronic constipation is:", options: ["Polyethylene glycol (MiraLAX)", "Bisacodyl", "Docusate", "Senna"], answer: "Polyethylene glycol (MiraLAX)", explanation: "PEG (MiraLAX) is first-line osmotic laxative for chronic constipation."),
+            .fillBlank(id: "q7c_2", subsectionId: "7c", question: "The brand name of docusate sodium is _____.", options: ["Colace", "MiraLAX", "Dulcolax", "Senokot"], answer: "Colace", explanation: "Docusate sodium is sold as Colace."),
+            .trueFalse(id: "q7c_3", subsectionId: "7c", question: "Mesalamine is first-line for mild-moderate ulcerative colitis.", answer: true, explanation: "5-ASA agents like mesalamine are first-line for mild-moderate UC."),
+            .multipleChoice(id: "q7c_4", subsectionId: "7c", question: "Before starting infliximab, you must screen for:", options: ["Tuberculosis", "Diabetes", "Hypothyroidism", "Anemia"], answer: "Tuberculosis", explanation: "Anti-TNF agents can reactivate latent TB; mandatory screening."),
+            .trueFalse(id: "q7c_5", subsectionId: "7c", question: "Bisacodyl (Dulcolax) is safe for long-term daily use.", answer: false, explanation: "Stimulant laxatives should be used short-term to avoid dependence."),
+            .multipleChoice(id: "q7c_6", subsectionId: "7c", question: "The brand name of mesalamine is:", options: ["Asacol/Lialda", "Remicade", "Colace", "MiraLAX"], answer: "Asacol/Lialda", explanation: "Mesalamine has multiple formulations including Asacol and Lialda."),
+            .selectAll(id: "q7c_7", subsectionId: "7c", question: "Select ALL osmotic laxatives:", options: ["Polyethylene glycol", "Lactulose", "Bisacodyl", "Docusate"], correctAnswers: ["Polyethylene glycol", "Lactulose"], explanation: "Bisacodyl is stimulant; docusate is a stool softener."),
+            .matching(id: "q7c_8", subsectionId: "7c", question: "Match drug to brand name:", pairs: [MatchingPair(left: "PEG", right: "MiraLAX"), MatchingPair(left: "Docusate", right: "Colace"), MatchingPair(left: "Bisacodyl", right: "Dulcolax"), MatchingPair(left: "Infliximab", right: "Remicade")], explanation: "Key GI drug brand names."),
+            .multipleChoice(id: "q7c_9", subsectionId: "7c", difficulty: .hard, question: "The IBD treatment step-up approach is:", options: ["5-ASA → steroids → biologics", "Biologics → steroids → 5-ASA", "Steroids → surgery → 5-ASA", "5-ASA → biologics → steroids"], answer: "5-ASA → steroids → biologics", explanation: "Treatment escalates from mild to severe disease."),
+        ]
+
+        bank["7d"] = {
+            var mastery: [Question] = []
+            for (key, questions) in bank where key.hasPrefix("7") && key != "7d" {
+                mastery.append(contentsOf: questions.prefix(6))
+            }
+            return mastery
+        }()
+
+        bank["8a"] = [
+            .trueFalse(id: "q8a_1", subsectionId: "8a", question: "All opioids cause constipation.", answer: true, explanation: "Constipation is a universal side effect of opioids (no tolerance develops)."),
+            .multipleChoice(id: "q8a_2", subsectionId: "8a", question: "Fentanyl is approximately how much more potent than morphine?", options: ["80-100x", "10x", "5x", "500x"], answer: "80-100x", explanation: "Fentanyl is 80-100 times more potent than morphine."),
+            .fillBlank(id: "q8a_3", subsectionId: "8a", question: "The opioid reversal agent is _____.", options: ["Naloxone", "Flumazenil", "Naltrexone", "Buprenorphine"], answer: "Naloxone", explanation: "Naloxone (Narcan) reverses opioid overdose."),
+            .multipleChoice(id: "q8a_4", subsectionId: "8a", question: "Morphine should be avoided in which condition?", options: ["Renal failure", "Headache", "Mild pain", "Dental pain"], answer: "Renal failure", explanation: "Morphine's active metabolite (M6G) accumulates in renal failure."),
+            .trueFalse(id: "q8a_5", subsectionId: "8a", question: "Tramadol can cause serotonin syndrome when combined with SSRIs.", answer: true, explanation: "Tramadol has SNRI activity and can cause serotonin syndrome with serotonergic drugs."),
+            .multipleChoice(id: "q8a_6", subsectionId: "8a", question: "The brand name of naloxone nasal spray is:", options: ["Narcan", "Vivitrol", "Suboxone", "Ultram"], answer: "Narcan", explanation: "Naloxone nasal spray is sold as Narcan (now OTC)."),
+            .fillBlank(id: "q8a_7", subsectionId: "8a", question: "The brand name of the fentanyl transdermal patch is _____.", options: ["Duragesic", "OxyContin", "MS Contin", "Norco"], answer: "Duragesic", explanation: "Fentanyl patch is sold as Duragesic."),
+            .selectAll(id: "q8a_8", subsectionId: "8a", question: "Select ALL signs of opioid overdose:", options: ["Pinpoint pupils", "Respiratory depression", "CNS depression", "Dilated pupils"], correctAnswers: ["Pinpoint pupils", "Respiratory depression", "CNS depression"], explanation: "Opioid overdose triad: miosis, respiratory depression, CNS depression."),
+            .matching(id: "q8a_9", subsectionId: "8a", question: "Match opioid to brand name:", pairs: [MatchingPair(left: "Morphine ER", right: "MS Contin"), MatchingPair(left: "Oxycodone ER", right: "OxyContin"), MatchingPair(left: "Fentanyl patch", right: "Duragesic"), MatchingPair(left: "Tramadol", right: "Ultram")], explanation: "Key opioid brand-generic pairs."),
+            .multipleChoice(id: "q8a_10", subsectionId: "8a", question: "Why might naloxone need repeated doses?", options: ["Its half-life is shorter than most opioids", "It only works once", "It is poorly absorbed", "Opioids have no half-life"], answer: "Its half-life is shorter than most opioids", explanation: "Naloxone's short duration means opioid effects can return."),
+            .trueFalse(id: "q8a_11", subsectionId: "8a", difficulty: .medium, question: "Tramadol lowers the seizure threshold.", answer: true, explanation: "Tramadol increases seizure risk, especially at high doses."),
+            .multipleChoice(id: "q8a_12", subsectionId: "8a", question: "Hydrocodone/acetaminophen is sold as:", options: ["Norco", "Percocet", "OxyContin", "Ultram"], answer: "Norco", explanation: "Norco and Vicodin contain hydrocodone/acetaminophen."),
+        ]
+
+        bank["8b"] = [
+            .trueFalse(id: "q8b_1", subsectionId: "8b", question: "NSAIDs have anti-inflammatory properties but acetaminophen does not.", answer: true, explanation: "Acetaminophen is an analgesic/antipyretic only; no anti-inflammatory effect."),
+            .multipleChoice(id: "q8b_2", subsectionId: "8b", question: "Maximum daily dose of acetaminophen for healthy adults is:", options: ["4 grams", "2 grams", "6 grams", "8 grams"], answer: "4 grams", explanation: "Max 4g/day; reduce to 2g/day with liver disease."),
+            .fillBlank(id: "q8b_3", subsectionId: "8b", question: "The antidote for acetaminophen overdose is _____.", options: ["N-acetylcysteine", "Naloxone", "Flumazenil", "Activated charcoal"], answer: "N-acetylcysteine", explanation: "NAC (N-acetylcysteine) replenishes glutathione to prevent hepatotoxicity."),
+            .multipleChoice(id: "q8b_4", subsectionId: "8b", question: "Which NSAID has the lowest cardiovascular risk?", options: ["Naproxen", "Celecoxib", "Ibuprofen", "Diclofenac"], answer: "Naproxen", explanation: "Naproxen has the lowest CV risk among commonly used NSAIDs."),
+            .trueFalse(id: "q8b_5", subsectionId: "8b", question: "Celecoxib is a COX-2 selective NSAID with less GI bleeding risk.", answer: true, explanation: "COX-2 selectivity reduces GI prostaglandin inhibition."),
+            .multipleChoice(id: "q8b_6", subsectionId: "8b", question: "Ketorolac (Toradol) should be limited to:", options: ["5 days", "14 days", "30 days", "No limit"], answer: "5 days", explanation: "Ketorolac is limited to 5 days due to high GI and renal risk."),
+            .fillBlank(id: "q8b_7", subsectionId: "8b", question: "The brand name of celecoxib is _____.", options: ["Celebrex", "Advil", "Aleve", "Toradol"], answer: "Celebrex", explanation: "Celecoxib is sold as Celebrex."),
+            .selectAll(id: "q8b_8", subsectionId: "8b", question: "Select ALL risks of NSAID use:", options: ["GI bleeding", "Renal impairment", "Cardiovascular events", "Hepatotoxicity"], correctAnswers: ["GI bleeding", "Renal impairment", "Cardiovascular events"], explanation: "Hepatotoxicity is primarily an acetaminophen concern."),
+            .matching(id: "q8b_9", subsectionId: "8b", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Ibuprofen", right: "Advil/Motrin"), MatchingPair(left: "Naproxen", right: "Aleve"), MatchingPair(left: "Celecoxib", right: "Celebrex"), MatchingPair(left: "Colchicine", right: "Colcrys")], explanation: "Key analgesic/anti-inflammatory brand names."),
+            .multipleChoice(id: "q8b_10", subsectionId: "8b", question: "Colchicine is first-line for:", options: ["Acute gout flares", "Osteoarthritis", "Rheumatoid arthritis", "Back pain"], answer: "Acute gout flares", explanation: "Colchicine is first-line for acute gout; also used for pericarditis."),
+            .trueFalse(id: "q8b_11", subsectionId: "8b", difficulty: .medium, question: "Acetaminophen is safe during pregnancy.", answer: true, explanation: "Acetaminophen is considered the safest analgesic in pregnancy."),
+        ]
+
+        bank["8c"] = [
+            .multipleChoice(id: "q8c_1", subsectionId: "8c", question: "The brand name of cyclobenzaprine is:", options: ["Flexeril", "Robaxin", "Lioresal", "Neurontin"], answer: "Flexeril", explanation: "Cyclobenzaprine is sold as Flexeril."),
+            .trueFalse(id: "q8c_2", subsectionId: "8c", question: "Baclofen can be stopped abruptly without risk.", answer: false, explanation: "Abrupt baclofen discontinuation can cause withdrawal seizures."),
+            .multipleChoice(id: "q8c_3", subsectionId: "8c", question: "Gabapentin is first-line for:", options: ["Neuropathic pain", "Acute surgical pain", "Migraine headache", "Muscle spasm"], answer: "Neuropathic pain", explanation: "Gabapentinoids are first-line agents for neuropathic pain."),
+            .fillBlank(id: "q8c_4", subsectionId: "8c", question: "The brand name of pregabalin is _____.", options: ["Lyrica", "Neurontin", "Flexeril", "Robaxin"], answer: "Lyrica", explanation: "Pregabalin is sold as Lyrica."),
+            .trueFalse(id: "q8c_5", subsectionId: "8c", question: "Pregabalin is a Schedule V controlled substance.", answer: true, explanation: "Pregabalin has recognized abuse potential and is Schedule V."),
+            .multipleChoice(id: "q8c_6", subsectionId: "8c", question: "Which muscle relaxant is preferred for spasticity in MS?", options: ["Baclofen", "Cyclobenzaprine", "Methocarbamol", "Carisoprodol"], answer: "Baclofen", explanation: "Baclofen (GABA-B agonist) is preferred for spasticity from MS or spinal cord injury."),
+            .fillBlank(id: "q8c_7", subsectionId: "8c", question: "The brand name of gabapentin is _____.", options: ["Neurontin", "Lyrica", "Flexeril", "Lioresal"], answer: "Neurontin", explanation: "Gabapentin is sold as Neurontin."),
+            .selectAll(id: "q8c_8", subsectionId: "8c", question: "Select ALL gabapentinoid side effects:", options: ["Sedation", "Dizziness", "Weight gain", "Dry cough"], correctAnswers: ["Sedation", "Dizziness", "Weight gain"], explanation: "Dry cough is an ACE inhibitor side effect, not gabapentinoid."),
+            .matching(id: "q8c_9", subsectionId: "8c", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Cyclobenzaprine", right: "Flexeril"), MatchingPair(left: "Baclofen", right: "Lioresal"), MatchingPair(left: "Gabapentin", right: "Neurontin"), MatchingPair(left: "Pregabalin", right: "Lyrica")], explanation: "Key muscle relaxant and neuropathic pain drug brand names."),
+            .multipleChoice(id: "q8c_10", subsectionId: "8c", difficulty: .medium, question: "Cyclobenzaprine should be avoided in elderly patients because:", options: ["Anticholinergic effects", "Renal toxicity", "QT prolongation", "Hepatotoxicity"], answer: "Anticholinergic effects", explanation: "Cyclobenzaprine is structurally similar to TCAs with anticholinergic burden."),
+        ]
+
+        bank["8d"] = {
+            var mastery: [Question] = []
+            for (key, questions) in bank where key.hasPrefix("8") && key != "8d" {
                 mastery.append(contentsOf: questions.prefix(6))
             }
             return mastery

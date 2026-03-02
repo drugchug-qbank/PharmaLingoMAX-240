@@ -195,10 +195,21 @@ class GameViewModel {
         if let lastActive = lastActiveDate {
             let lastDay = calendar.startOfDay(for: lastActive)
             let daysDiff = calendar.dateComponents([.day], from: lastDay, to: today).day ?? 0
-            if daysDiff >= 1 {
+            if daysDiff == 0 {
+                if currentStreak == 0 {
+                    currentStreak = 1
+                }
+                streakExtended = true
+            } else if daysDiff == 1 {
                 currentStreak += 1
                 streakExtended = true
-            } else if daysDiff == 0 {
+            } else {
+                if streakSaves > 0 && daysDiff == 2 {
+                    streakSaves -= 1
+                    currentStreak += 1
+                } else {
+                    currentStreak = 1
+                }
                 streakExtended = true
             }
         } else {
@@ -219,27 +230,20 @@ class GameViewModel {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
 
-        if let lastActive = lastActiveDate {
-            let lastDay = calendar.startOfDay(for: lastActive)
-            let daysDiff = calendar.dateComponents([.day], from: lastDay, to: today).day ?? 0
+        guard let lastActive = lastActiveDate else { return }
 
-            if daysDiff == 0 {
-                return
-            } else if daysDiff == 1 {
-                currentStreak += 1
-            } else {
-                if streakSaves > 0 && daysDiff == 2 {
-                    streakSaves -= 1
-                    currentStreak += 1
-                } else {
-                    currentStreak = 1
-                }
-            }
-        } else {
-            currentStreak = 1
+        let lastDay = calendar.startOfDay(for: lastActive)
+        let daysDiff = calendar.dateComponents([.day], from: lastDay, to: today).day ?? 0
+
+        if daysDiff <= 1 {
+            return
         }
 
-        lastActiveDate = Date()
+        if streakSaves > 0 && daysDiff == 2 {
+            streakSaves -= 1
+        } else {
+            currentStreak = 0
+        }
         save()
     }
 
