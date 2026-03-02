@@ -9,53 +9,53 @@ struct ProfileView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    VStack(spacing: 16) {
-                        Button {
-                            showAvatarCustomization = true
-                        } label: {
-                            ZStack(alignment: .bottomTrailing) {
-                                AvatarDisplayView(
-                                    animal: gameVM.avatarAnimal,
-                                    eyes: gameVM.avatarEyes,
-                                    mouth: gameVM.avatarMouth,
-                                    accessory: gameVM.avatarAccessory,
-                                    size: 90
-                                )
+            VStack(spacing: 0) {
+                VStack(spacing: 16) {
+                    Button {
+                        showAvatarCustomization = true
+                    } label: {
+                        ZStack(alignment: .bottomTrailing) {
+                            AvatarDisplayView(
+                                animal: gameVM.avatarAnimal,
+                                eyes: gameVM.avatarEyes,
+                                mouth: gameVM.avatarMouth,
+                                accessory: gameVM.avatarAccessory,
+                                size: 90
+                            )
 
-                                Image(systemName: "pencil.circle.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(.white)
-                                    .background(Circle().fill(AppTheme.primaryBlue).frame(width: 26, height: 26))
-                            }
-                        }
-                        .buttonStyle(.plain)
-
-                        VStack(spacing: 4) {
-                            HStack(spacing: 6) {
-                                Text(gameVM.username)
-                                    .font(AppTheme.funFont(.title2, weight: .heavy))
-                                    .foregroundStyle(.white)
-
-                                Text("Lv.\(gameVM.level)")
-                                    .font(AppTheme.funFont(.caption, weight: .heavy))
-                                    .foregroundStyle(AppTheme.darkBlue)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 3)
-                                    .background(AppTheme.warningYellow)
-                                    .clipShape(Capsule())
-                            }
-
-                            Text("Level \(gameVM.level) • \(gameVM.totalXP) XP")
-                                .font(AppTheme.funFont(.subheadline, weight: .medium))
-                                .foregroundStyle(.white.opacity(0.8))
+                            Image(systemName: "pencil.circle.fill")
+                                .font(.title3)
+                                .foregroundStyle(.white)
+                                .background(Circle().fill(AppTheme.primaryBlue).frame(width: 26, height: 26))
                         }
                     }
-                    .padding(.vertical, 24)
-                    .frame(maxWidth: .infinity)
-                    .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
+                    .buttonStyle(.plain)
 
+                    VStack(spacing: 4) {
+                        HStack(spacing: 6) {
+                            Text(gameVM.username)
+                                .font(AppTheme.funFont(.title2, weight: .heavy))
+                                .foregroundStyle(.white)
+
+                            Text("Lv.\(gameVM.level)")
+                                .font(AppTheme.funFont(.caption, weight: .heavy))
+                                .foregroundStyle(AppTheme.darkBlue)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(AppTheme.warningYellow)
+                                .clipShape(Capsule())
+                        }
+
+                        Text("Level \(gameVM.level) • \(gameVM.totalXP) XP")
+                            .font(AppTheme.funFont(.subheadline, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.8))
+                    }
+                }
+                .padding(.vertical, 24)
+                .frame(maxWidth: .infinity)
+                .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
+
+                ScrollView {
                     VStack(spacing: 16) {
                         HStack(spacing: 0) {
                             ProfileStatItem(icon: "flame.fill", value: "\(gameVM.currentStreak)", label: "Streak", color: AppTheme.accentOrange)
@@ -210,9 +210,9 @@ struct ProfileView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
+                .scrollIndicators(.hidden)
             }
             .background(Color(.systemGroupedBackground))
-            .scrollIndicators(.hidden)
             .sheet(isPresented: $showEditProfile) {
                 EditProfileSheet(gameVM: gameVM)
             }

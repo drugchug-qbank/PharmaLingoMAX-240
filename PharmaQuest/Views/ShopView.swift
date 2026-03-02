@@ -9,10 +9,10 @@ struct ShopView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    FunPageHeader(title: "Shop", subtitle: "Power up your learning!", icon: "bag.fill")
+            VStack(spacing: 0) {
+                FunPageHeader(title: "Shop", subtitle: "Power up your learning!", icon: "bag.fill")
 
+                ScrollView {
                     VStack(spacing: 16) {
                         HStack(spacing: 0) {
                             ShopStatBadge(icon: "heart.fill", value: "\(gameVM.hearts)", label: "Hearts", color: AppTheme.heartRed)
@@ -169,9 +169,9 @@ struct ShopView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
+                .scrollIndicators(.hidden)
             }
             .background(Color(.systemGroupedBackground))
-            .scrollIndicators(.hidden)
             .alert("Purchase Complete", isPresented: $showPurchaseAlert) {
                 Button("OK") { }
             } message: {

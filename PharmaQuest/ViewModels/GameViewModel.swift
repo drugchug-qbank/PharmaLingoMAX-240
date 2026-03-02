@@ -19,13 +19,13 @@ class GameViewModel {
     var lastActiveDate: Date?
     var lastHeartLossDate: Date?
 
-    var avatarAnimal: String = "hare.fill"
-    var avatarEyes: String = "default"
-    var avatarMouth: String = "default"
+    var avatarAnimal: String = "beaver"
+    var avatarEyes: String = "none"
+    var avatarMouth: String = "none"
     var avatarAccessory: String = "none"
-    var ownedAvatars: Set<String> = ["hare.fill", "tortoise.fill"]
-    var ownedEyes: Set<String> = ["default"]
-    var ownedMouths: Set<String> = ["default"]
+    var ownedAvatars: Set<String> = ["beaver", "bird", "bunny", "cat"]
+    var ownedEyes: Set<String> = ["none"]
+    var ownedMouths: Set<String> = ["none"]
     var ownedAccessories: Set<String> = ["none"]
 
     var username: String = "Student"
@@ -304,13 +304,13 @@ class GameViewModel {
         lastActiveDate = lastActiveInterval > 0 ? Date(timeIntervalSince1970: lastActiveInterval) : nil
         let lastHeartInterval = state["lastHeartLossDate"] as? Double ?? 0
         lastHeartLossDate = lastHeartInterval > 0 ? Date(timeIntervalSince1970: lastHeartInterval) : nil
-        avatarAnimal = state["avatarAnimal"] as? String ?? "hare.fill"
-        avatarEyes = state["avatarEyes"] as? String ?? "default"
-        avatarMouth = state["avatarMouth"] as? String ?? "default"
+        avatarAnimal = state["avatarAnimal"] as? String ?? "beaver"
+        avatarEyes = state["avatarEyes"] as? String ?? "none"
+        avatarMouth = state["avatarMouth"] as? String ?? "none"
         avatarAccessory = state["avatarAccessory"] as? String ?? "none"
-        ownedAvatars = Set(state["ownedAvatars"] as? [String] ?? ["hare.fill", "tortoise.fill"])
-        ownedEyes = Set(state["ownedEyes"] as? [String] ?? ["default"])
-        ownedMouths = Set(state["ownedMouths"] as? [String] ?? ["default"])
+        ownedAvatars = Set(state["ownedAvatars"] as? [String] ?? ["beaver", "bird", "bunny", "cat"])
+        ownedEyes = Set(state["ownedEyes"] as? [String] ?? ["none"])
+        ownedMouths = Set(state["ownedMouths"] as? [String] ?? ["none"])
         ownedAccessories = Set(state["ownedAccessories"] as? [String] ?? ["none"])
         username = state["username"] as? String ?? "Student"
         if let profRaw = state["selectedProfession"] as? String, let prof = Profession(rawValue: profRaw) {

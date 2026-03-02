@@ -19,10 +19,10 @@ struct LearnView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    HeaderBar(gameVM: gameVM)
+            VStack(spacing: 0) {
+                HeaderBar(gameVM: gameVM)
 
+                ScrollView {
                     VStack(spacing: 0) {
                         DailyQuestsCard(quests: gameVM.dailyQuests)
                             .padding(.horizontal, 16)
@@ -46,9 +46,9 @@ struct LearnView: View {
                     .padding(.bottom, 32)
                     .padding(.top, 4)
                 }
+                .scrollIndicators(.hidden)
             }
             .background(Color(.systemGroupedBackground))
-            .scrollIndicators(.hidden)
             .navigationDestination(item: $selectedModule) { module in
                 ModuleDetailView(
                     module: module,
@@ -104,6 +104,7 @@ struct ModuleTrailItem: View {
                     justUnlocked: isUnlocked && previousModuleUnlocked
                 )
                 .padding(.vertical, 4)
+                .zIndex(0)
             }
 
             ModuleCard(
@@ -113,6 +114,7 @@ struct ModuleTrailItem: View {
                 onTap: onTap
             )
             .padding(.horizontal, 16)
+            .zIndex(1)
         }
     }
 }
@@ -126,7 +128,7 @@ struct ModulePathConnector: View {
 
     @State private var glowPhase: CGFloat = 0
 
-    private let pathHeight: CGFloat = 50
+    private let pathHeight: CGFloat = 60
 
     var body: some View {
         GeometryReader { geo in

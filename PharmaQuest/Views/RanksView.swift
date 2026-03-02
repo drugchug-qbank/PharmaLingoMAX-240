@@ -28,97 +28,97 @@ struct RanksView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    VStack(spacing: 12) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Leaderboard")
-                                    .font(AppTheme.funFont(.largeTitle, weight: .heavy))
-                                    .foregroundStyle(.white)
-                                HStack(spacing: 4) {
-                                    Image(systemName: "shield.fill")
-                                        .foregroundStyle(Color(hex: "CD7F32"))
-                                    Text("Bronze League")
-                                        .font(AppTheme.funFont(.subheadline, weight: .bold))
-                                        .foregroundStyle(.white.opacity(0.8))
-                                }
-                            }
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-
-                        HStack {
-                            Image(systemName: "clock.fill")
-                                .foregroundStyle(.white.opacity(0.7))
-                            Text("Week ends in \(weekTimeRemaining)")
-                                .font(AppTheme.funFont(.subheadline, weight: .bold))
+            VStack(spacing: 0) {
+                VStack(spacing: 12) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Leaderboard")
+                                .font(AppTheme.funFont(.largeTitle, weight: .heavy))
                                 .foregroundStyle(.white)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .frame(maxWidth: .infinity)
-                        .background(.white.opacity(0.15))
-                        .clipShape(.rect(cornerRadius: 12))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(.white.opacity(0.6), lineWidth: 3)
-                        )
-                        .padding(.horizontal)
-
-                        HStack(spacing: 20) {
-                            VStack(spacing: 2) {
-                                Text("#\(userRank)")
-                                    .font(AppTheme.funFont(.title, weight: .heavy))
-                                    .foregroundStyle(AppTheme.warningYellow)
-                                Text("League Rank")
-                                    .font(AppTheme.funFont(.caption, weight: .medium))
-                                    .foregroundStyle(.white.opacity(0.7))
-                            }
-
-                            Divider().frame(height: 40).background(.white.opacity(0.3))
-
-                            VStack(spacing: 2) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "bolt.fill")
-                                        .foregroundStyle(AppTheme.warningYellow)
-                                    Text("\(gameVM.totalXP)")
-                                        .font(AppTheme.funFont(.title2, weight: .heavy))
-                                        .foregroundStyle(.white)
-                                }
-                                Text("This Week")
-                                    .font(AppTheme.funFont(.caption, weight: .medium))
-                                    .foregroundStyle(.white.opacity(0.7))
-                            }
-
-                            Divider().frame(height: 40).background(.white.opacity(0.3))
-
-                            VStack(spacing: 2) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "flame.fill")
-                                        .foregroundStyle(AppTheme.accentOrange)
-                                    Text("\(gameVM.currentStreak)")
-                                        .font(AppTheme.funFont(.title2, weight: .heavy))
-                                        .foregroundStyle(.white)
-                                }
-                                Text("Streak")
-                                    .font(AppTheme.funFont(.caption, weight: .medium))
-                                    .foregroundStyle(.white.opacity(0.7))
+                            HStack(spacing: 4) {
+                                Image(systemName: "shield.fill")
+                                    .foregroundStyle(Color(hex: "CD7F32"))
+                                Text("Bronze League")
+                                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                                    .foregroundStyle(.white.opacity(0.8))
                             }
                         }
-                        .padding(.vertical, 14)
-                        .frame(maxWidth: .infinity)
-                        .background(.white.opacity(0.1))
-                        .clipShape(.rect(cornerRadius: 14))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(.white.opacity(0.6), lineWidth: 3)
-                        )
-                        .padding(.horizontal)
+                        Spacer()
                     }
-                    .padding(.vertical, 16)
-                    .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
+                    .padding(.horizontal)
 
+                    HStack {
+                        Image(systemName: "clock.fill")
+                            .foregroundStyle(.white.opacity(0.7))
+                        Text("Week ends in \(weekTimeRemaining)")
+                            .font(AppTheme.funFont(.subheadline, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity)
+                    .background(.white.opacity(0.15))
+                    .clipShape(.rect(cornerRadius: 12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(.white.opacity(0.6), lineWidth: 3)
+                    )
+                    .padding(.horizontal)
+
+                    HStack(spacing: 20) {
+                        VStack(spacing: 2) {
+                            Text("#\(userRank)")
+                                .font(AppTheme.funFont(.title, weight: .heavy))
+                                .foregroundStyle(AppTheme.warningYellow)
+                            Text("League Rank")
+                                .font(AppTheme.funFont(.caption, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+
+                        Divider().frame(height: 40).background(.white.opacity(0.3))
+
+                        VStack(spacing: 2) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "bolt.fill")
+                                    .foregroundStyle(AppTheme.warningYellow)
+                                Text("\(gameVM.totalXP)")
+                                    .font(AppTheme.funFont(.title2, weight: .heavy))
+                                    .foregroundStyle(.white)
+                            }
+                            Text("This Week")
+                                .font(AppTheme.funFont(.caption, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+
+                        Divider().frame(height: 40).background(.white.opacity(0.3))
+
+                        VStack(spacing: 2) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "flame.fill")
+                                    .foregroundStyle(AppTheme.accentOrange)
+                                Text("\(gameVM.currentStreak)")
+                                    .font(AppTheme.funFont(.title2, weight: .heavy))
+                                    .foregroundStyle(.white)
+                            }
+                            Text("Streak")
+                                .font(AppTheme.funFont(.caption, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+                    }
+                    .padding(.vertical, 14)
+                    .frame(maxWidth: .infinity)
+                    .background(.white.opacity(0.1))
+                    .clipShape(.rect(cornerRadius: 14))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(.white.opacity(0.6), lineWidth: 3)
+                    )
+                    .padding(.horizontal)
+                }
+                .padding(.vertical, 16)
+                .background(AppTheme.headerGradient.ignoresSafeArea(edges: .top))
+
+                ScrollView {
                     VStack(spacing: 16) {
                         HStack(spacing: 0) {
                             ForEach(RanksTab.allCases, id: \.self) { tab in
@@ -163,9 +163,9 @@ struct RanksView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
+                .scrollIndicators(.hidden)
             }
             .background(Color(.systemGroupedBackground))
-            .scrollIndicators(.hidden)
             .task {
                 await loadLeaderboard()
             }
@@ -503,14 +503,13 @@ struct LeaderboardRow: View {
                 .foregroundStyle(rankColor)
                 .frame(width: 30)
 
-            ZStack {
-                Circle()
-                    .fill(isCurrentUser ? AppTheme.primaryBlue.opacity(0.15) : Color(.tertiarySystemFill))
-                    .frame(width: 38, height: 38)
-                Image(systemName: entry.avatarAnimal)
-                    .font(.subheadline)
-                    .foregroundStyle(isCurrentUser ? AppTheme.primaryBlue : .secondary)
-            }
+            AvatarDisplayView(
+                animal: entry.avatarAnimal,
+                eyes: "none",
+                mouth: "none",
+                accessory: "none",
+                size: 38
+            )
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.username)
@@ -643,13 +642,13 @@ struct AddFriendSheet: View {
                 } else {
                     List(searchResults, id: \.id) { user in
                         HStack(spacing: 12) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color(.tertiarySystemFill))
-                                    .frame(width: 40, height: 40)
-                                Image(systemName: user.avatarAnimal)
-                                    .foregroundStyle(.secondary)
-                            }
+                            AvatarDisplayView(
+                                animal: user.avatarAnimal,
+                                eyes: "none",
+                                mouth: "none",
+                                accessory: "none",
+                                size: 40
+                            )
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(user.username)

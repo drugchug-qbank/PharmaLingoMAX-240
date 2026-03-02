@@ -12,10 +12,10 @@ struct PracticeView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    FunPageHeader(title: "Practice", subtitle: "Strengthen your knowledge!", icon: "brain.head.profile.fill")
+            VStack(spacing: 0) {
+                FunPageHeader(title: "Practice", subtitle: "Strengthen your knowledge!", icon: "brain.head.profile.fill")
 
+                ScrollView {
                     VStack(spacing: 14) {
                         PracticeCard(
                             title: "Spaced Review",
@@ -135,9 +135,9 @@ struct PracticeView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
+                .scrollIndicators(.hidden)
             }
             .background(Color(.systemGroupedBackground))
-            .scrollIndicators(.hidden)
             .fullScreenCover(isPresented: $showQuickPractice) {
                 quickPracticeQuiz
             }

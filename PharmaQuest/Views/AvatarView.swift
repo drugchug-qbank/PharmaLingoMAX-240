@@ -12,30 +12,64 @@ struct AvatarDisplayView: View {
             Circle()
                 .fill(
                     LinearGradient(
-                        colors: [AppTheme.primaryBlue.opacity(0.2), AppTheme.xpPurple.opacity(0.15)],
+                        colors: [AppTheme.primaryBlue.opacity(0.15), AppTheme.xpPurple.opacity(0.1)],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     )
                 )
                 .frame(width: size, height: size)
 
-            Image(systemName: animal)
-                .font(.system(size: size * 0.4))
-                .foregroundStyle(AppTheme.primaryBlue)
+            if let url = AvatarShop.animalImageURL(for: animal), let imageURL = URL(string: url) {
+                AsyncImage(url: imageURL) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size * 0.85, height: size * 0.85)
+                    } else {
+                        Image(systemName: "hare.fill")
+                            .font(.system(size: size * 0.35))
+                            .foregroundStyle(AppTheme.primaryBlue)
+                    }
+                }
+            } else {
+                Image(systemName: "hare.fill")
+                    .font(.system(size: size * 0.35))
+                    .foregroundStyle(AppTheme.primaryBlue)
+            }
+
+            if let eyeURL = AvatarShop.eyesImageURL(for: eyes), let imageURL = URL(string: eyeURL) {
+                AsyncImage(url: imageURL) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size * 0.55, height: size * 0.3)
+                            .offset(y: -size * 0.06)
+                    }
+                }
+            }
+
+            if let mouthURL = AvatarShop.mouthImageURL(for: mouth), let imageURL = URL(string: mouthURL) {
+                AsyncImage(url: imageURL) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size * 0.35, height: size * 0.2)
+                            .offset(y: size * 0.15)
+                    }
+                }
+            }
 
             if accessory != "none", let acc = AvatarShop.accessories.first(where: { $0.id == accessory }) {
                 Image(systemName: acc.iconName)
                     .font(.system(size: size * 0.18))
                     .foregroundStyle(AppTheme.warningYellow)
-                    .offset(x: size * 0.25, y: -size * 0.3)
-            }
-
-            if eyes != "default", let eyeItem = AvatarShop.eyes.first(where: { $0.id == eyes }) {
-                Image(systemName: eyeItem.iconName)
-                    .font(.system(size: size * 0.12))
-                    .foregroundStyle(AppTheme.accentOrange)
-                    .offset(y: -size * 0.08)
+                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                    .offset(x: size * 0.28, y: -size * 0.32)
             }
         }
+        .clipShape(Circle())
     }
 }
 
@@ -54,7 +88,7 @@ struct AvatarCustomizationView: View {
         case animals = "Animals"
         case eyes = "Eyes"
         case mouths = "Mouths"
-        case accessories = "Accessories"
+        case accessories = "Extras"
 
         var icon: String {
             switch self {
@@ -77,19 +111,25 @@ struct AvatarCustomizationView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                VStack(spacing: 16) {
-                    AvatarDisplayView(
-                        animal: selectedAnimal,
-                        eyes: selectedEyes,
-                        mouth: selectedMouth,
-                        accessory: selectedAccessory,
-                        size: 120
+                ZStack {
+                    LinearGradient(
+                        colors: [AppTheme.primaryBlue.opacity(0.15), AppTheme.xpPurple.opacity(0.1)],
+                        startPoint: .topLeading, endPoint: .bottomTrailing
                     )
-                    .padding(.top, 8)
 
-                    CoinDisplay(amount: gameVM.coins)
+                    VStack(spacing: 12) {
+                        AvatarDisplayView(
+                            animal: selectedAnimal,
+                            eyes: selectedEyes,
+                            mouth: selectedMouth,
+                            accessory: selectedAccessory,
+                            size: 150
+                        )
+
+                        CoinDisplay(amount: gameVM.coins)
+                    }
                 }
-                .padding(.vertical, 16)
+                .frame(height: 220)
 
                 HStack(spacing: 0) {
                     ForEach(AvatarTab.allCases, id: \.self) { tab in
@@ -100,7 +140,7 @@ struct AvatarCustomizationView: View {
                                 Image(systemName: tab.icon)
                                     .font(.subheadline)
                                 Text(tab.rawValue)
-                                    .font(.caption2.bold())
+                                    .font(.caption2.weight(.bold))
                             }
                             .foregroundStyle(selectedTab == tab ? AppTheme.primaryBlue : .secondary)
                             .frame(maxWidth: .infinity)
@@ -115,16 +155,15 @@ struct AvatarCustomizationView: View {
                 .background(Color(.tertiarySystemFill))
                 .clipShape(.rect(cornerRadius: 14))
                 .padding(.horizontal)
+                .padding(.top, 8)
 
                 ScrollView {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 90))], spacing: 12) {
                         switch selectedTab {
                         case .animals:
                             ForEach(AvatarShop.animals) { animal in
-                                AvatarItemCard(
-                                    iconName: animal.iconName,
-                                    name: animal.name,
-                                    price: animal.price,
+                                AnimalAvatarCard(
+                                    animal: animal,
                                     isSelected: selectedAnimal == animal.id,
                                     isOwned: gameVM.ownedAvatars.contains(animal.id)
                                 ) {
@@ -133,31 +172,33 @@ struct AvatarCustomizationView: View {
                             }
                         case .eyes:
                             ForEach(AvatarShop.eyes) { eye in
-                                AvatarItemCard(
-                                    iconName: eye.iconName,
+                                EyesMouthCard(
+                                    imageURL: eye.imageURL,
                                     name: eye.name,
                                     price: eye.price,
                                     isSelected: selectedEyes == eye.id,
-                                    isOwned: gameVM.ownedEyes.contains(eye.id)
+                                    isOwned: gameVM.ownedEyes.contains(eye.id),
+                                    isNone: eye.id == "none"
                                 ) {
                                     handlePurchase(itemId: eye.id, price: eye.price, category: .eyes)
                                 }
                             }
                         case .mouths:
                             ForEach(AvatarShop.mouths) { mouth in
-                                AvatarItemCard(
-                                    iconName: mouth.iconName,
+                                EyesMouthCard(
+                                    imageURL: mouth.imageURL,
                                     name: mouth.name,
                                     price: mouth.price,
                                     isSelected: selectedMouth == mouth.id,
-                                    isOwned: gameVM.ownedMouths.contains(mouth.id)
+                                    isOwned: gameVM.ownedMouths.contains(mouth.id),
+                                    isNone: mouth.id == "none"
                                 ) {
                                     handlePurchase(itemId: mouth.id, price: mouth.price, category: .mouths)
                                 }
                             }
                         case .accessories:
                             ForEach(AvatarShop.accessories) { acc in
-                                AvatarItemCard(
+                                AccessoryCard(
                                     iconName: acc.iconName,
                                     name: acc.name,
                                     price: acc.price,
@@ -173,7 +214,7 @@ struct AvatarCustomizationView: View {
                 }
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Customize Avatar")
+            .navigationTitle("Your Avatar")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -185,6 +226,8 @@ struct AvatarCustomizationView: View {
                         gameVM.save()
                         dismiss()
                     }
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryBlue)
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -208,11 +251,13 @@ struct AvatarCustomizationView: View {
         }
 
         if isOwned {
-            switch category {
-            case .animals: selectedAnimal = itemId
-            case .eyes: selectedEyes = itemId
-            case .mouths: selectedMouth = itemId
-            case .accessories: selectedAccessory = itemId
+            withAnimation(.spring(duration: 0.3)) {
+                switch category {
+                case .animals: selectedAnimal = itemId
+                case .eyes: selectedEyes = itemId
+                case .mouths: selectedMouth = itemId
+                case .accessories: selectedAccessory = itemId
+                }
             }
             return
         }
@@ -223,27 +268,174 @@ struct AvatarCustomizationView: View {
             return
         }
 
-        switch category {
-        case .animals:
-            gameVM.ownedAvatars.insert(itemId)
-            selectedAnimal = itemId
-        case .eyes:
-            gameVM.ownedEyes.insert(itemId)
-            selectedEyes = itemId
-        case .mouths:
-            gameVM.ownedMouths.insert(itemId)
-            selectedMouth = itemId
-        case .accessories:
-            gameVM.ownedAccessories.insert(itemId)
-            selectedAccessory = itemId
+        withAnimation(.spring(duration: 0.3)) {
+            switch category {
+            case .animals:
+                gameVM.ownedAvatars.insert(itemId)
+                selectedAnimal = itemId
+            case .eyes:
+                gameVM.ownedEyes.insert(itemId)
+                selectedEyes = itemId
+            case .mouths:
+                gameVM.ownedMouths.insert(itemId)
+                selectedMouth = itemId
+            case .accessories:
+                gameVM.ownedAccessories.insert(itemId)
+                selectedAccessory = itemId
+            }
         }
         gameVM.save()
-        purchaseMessage = "Purchased! Tap Save to apply."
+        purchaseMessage = "Unlocked! Tap Save to keep changes."
         showPurchaseAlert = true
     }
 }
 
-struct AvatarItemCard: View {
+struct AnimalAvatarCard: View {
+    let animal: AvatarAnimal
+    let isSelected: Bool
+    let isOwned: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                ZStack {
+                    Circle()
+                        .fill(isSelected ? AppTheme.primaryBlue.opacity(0.15) : Color(.tertiarySystemFill))
+                        .frame(width: 64, height: 64)
+
+                    if let url = URL(string: animal.imageURL) {
+                        AsyncImage(url: url) { phase in
+                            if let image = phase.image {
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 52, height: 52)
+                            } else {
+                                ProgressView()
+                                    .frame(width: 52, height: 52)
+                            }
+                        }
+                    }
+
+                    if !isOwned {
+                        Circle()
+                            .fill(.black.opacity(0.3))
+                            .frame(width: 64, height: 64)
+                        Image(systemName: "lock.fill")
+                            .font(.caption)
+                            .foregroundStyle(.white)
+                    }
+                }
+
+                Text(animal.name)
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+
+                if isOwned {
+                    Text(isSelected ? "Selected" : "Owned")
+                        .font(.caption2)
+                        .foregroundStyle(isSelected ? AppTheme.primaryBlue : AppTheme.successGreen)
+                } else {
+                    HStack(spacing: 2) {
+                        Image(systemName: "bitcoinsign.circle.fill")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.accentOrange)
+                        Text("\(animal.price)")
+                            .font(.caption2.weight(.bold))
+                    }
+                }
+            }
+            .padding(8)
+            .background(isSelected ? AppTheme.primaryBlue.opacity(0.05) : .clear)
+            .clipShape(.rect(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? AppTheme.primaryBlue : .clear, lineWidth: 2.5)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct EyesMouthCard: View {
+    let imageURL: String
+    let name: String
+    let price: Int
+    let isSelected: Bool
+    let isOwned: Bool
+    let isNone: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(isSelected ? AppTheme.primaryBlue.opacity(0.12) : Color(.tertiarySystemFill))
+                        .frame(width: 64, height: 64)
+
+                    if isNone {
+                        Image(systemName: "circle.slash")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                    } else if let url = URL(string: imageURL) {
+                        AsyncImage(url: url) { phase in
+                            if let image = phase.image {
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 50, height: 50)
+                            } else {
+                                ProgressView()
+                                    .frame(width: 50, height: 50)
+                            }
+                        }
+                    }
+
+                    if !isOwned && !isNone {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.black.opacity(0.25))
+                            .frame(width: 64, height: 64)
+                        Image(systemName: "lock.fill")
+                            .font(.caption)
+                            .foregroundStyle(.white)
+                    }
+                }
+
+                Text(name)
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+
+                if isOwned || isNone {
+                    Text(isSelected ? "Selected" : (isNone ? "Free" : "Owned"))
+                        .font(.caption2)
+                        .foregroundStyle(isSelected ? AppTheme.primaryBlue : AppTheme.successGreen)
+                } else {
+                    HStack(spacing: 2) {
+                        Image(systemName: "bitcoinsign.circle.fill")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.accentOrange)
+                        Text("\(price)")
+                            .font(.caption2.weight(.bold))
+                    }
+                }
+            }
+            .padding(8)
+            .background(isSelected ? AppTheme.primaryBlue.opacity(0.05) : .clear)
+            .clipShape(.rect(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? AppTheme.primaryBlue : .clear, lineWidth: 2.5)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct AccessoryCard: View {
     let iconName: String
     let name: String
     let price: Int
@@ -264,21 +456,21 @@ struct AvatarItemCard: View {
                 }
 
                 Text(name)
-                    .font(.caption2.bold())
+                    .font(.caption2.weight(.bold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
                 if isOwned {
-                    Text("Owned")
+                    Text(isSelected ? "Selected" : "Owned")
                         .font(.caption2)
-                        .foregroundStyle(AppTheme.successGreen)
+                        .foregroundStyle(isSelected ? AppTheme.primaryBlue : AppTheme.successGreen)
                 } else if price > 0 {
                     HStack(spacing: 2) {
                         Image(systemName: "bitcoinsign.circle.fill")
                             .font(.caption2)
                             .foregroundStyle(AppTheme.accentOrange)
                         Text("\(price)")
-                            .font(.caption2.bold())
+                            .font(.caption2.weight(.bold))
                     }
                 } else {
                     Text("Free")
