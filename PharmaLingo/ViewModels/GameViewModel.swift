@@ -498,14 +498,20 @@ class GameViewModel {
     }
 
     func syncAvatarToCloud() {
+        let animal = avatarAnimal
+        let eyes = avatarEyes
+        let mouth = avatarMouth
+        let accessory = avatarAccessory
+        let bodyColor = avatarBodyColor
+        let bgColor = avatarBgColor
         Task {
             await SupabaseService.shared.saveAvatarToCloud(
-                animal: avatarAnimal,
-                eyes: avatarEyes,
-                mouth: avatarMouth,
-                accessory: avatarAccessory,
-                bodyColor: avatarBodyColor,
-                bgColor: avatarBgColor
+                animal: animal,
+                eyes: eyes,
+                mouth: mouth,
+                accessory: accessory,
+                bodyColor: bodyColor,
+                bgColor: bgColor
             )
         }
     }

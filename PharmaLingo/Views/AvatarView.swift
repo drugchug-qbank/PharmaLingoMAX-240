@@ -157,7 +157,6 @@ struct AvatarCustomizationView: View {
                         gameVM.avatarBgColor = selectedBgColor
                         gameVM.save()
                         gameVM.syncAvatarToCloud()
-                        gameVM.syncToCloud()
                         dismiss()
                     }
                     .font(.headline)

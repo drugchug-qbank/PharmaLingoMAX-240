@@ -457,7 +457,14 @@ class SupabaseService {
     }
 
     func saveAvatarToCloud(animal: String, eyes: String, mouth: String, accessory: String, bodyColor: String, bgColor: String) async {
-        guard let profile = currentProfile else { return }
+        guard var profile = currentProfile else { return }
+        profile.avatarAnimal = animal
+        profile.avatarEyes = eyes
+        profile.avatarMouth = mouth
+        profile.avatarAccessory = accessory
+        profile.avatarBodyColor = bodyColor
+        profile.avatarBgColor = bgColor
+        currentProfile = profile
         let avatarData: [String: String] = [
             "avatar_animal": animal,
             "avatar_eyes": eyes,
@@ -471,7 +478,6 @@ class SupabaseService {
                 .update(avatarData)
                 .eq("id", value: profile.id)
                 .execute()
-            await fetchProfile()
         } catch {
             print("Failed to save avatar: \(error)")
         }
