@@ -352,8 +352,8 @@ class SupabaseService {
         do {
             let session = try await client.auth.session
             currentUser = session.user
-            isAuthenticated = true
             await fetchProfile()
+            isAuthenticated = true
         } catch {
             isAuthenticated = false
             currentUser = nil

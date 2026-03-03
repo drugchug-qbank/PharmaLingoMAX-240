@@ -562,6 +562,8 @@ class GameViewModel {
     }
 
     func resetToDefaults() {
+        let oldUserId = currentUserId
+        currentUserId = nil
         hearts = 5
         coins = 50
         totalXP = 0
@@ -593,7 +595,12 @@ class GameViewModel {
         masteryMap = [:]
         streakExtended = false
         previousStreak = 0
-        currentUserId = nil
+        if let uid = oldUserId {
+            UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state_\(uid)")
+            UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map_\(uid)")
+        }
+        UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state")
+        UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map")
     }
 
     func recordQuestionAttempt(question: Question, isCorrect: Bool) {
@@ -722,13 +729,6 @@ class GameViewModel {
         }
         schoolName = profile.school
 
-        avatarAnimal = profile.avatarAnimal
-        avatarEyes = profile.avatarEyes
-        avatarMouth = profile.avatarMouth
-        avatarAccessory = profile.avatarAccessory
-        avatarBodyColor = profile.avatarBodyColor
-        avatarBgColor = profile.avatarBgColor
-
         totalXP = max(totalXP, profile.totalXP)
         coins = max(coins, profile.coins)
         currentStreak = max(currentStreak, profile.currentStreak)
@@ -787,6 +787,13 @@ class GameViewModel {
                 }
             }
         }
+
+        avatarAnimal = profile.avatarAnimal
+        avatarEyes = profile.avatarEyes
+        avatarMouth = profile.avatarMouth
+        avatarAccessory = profile.avatarAccessory
+        avatarBodyColor = profile.avatarBodyColor
+        avatarBgColor = profile.avatarBgColor
 
         checkStreak()
         regenerateHearts()
