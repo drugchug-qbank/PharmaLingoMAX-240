@@ -69,37 +69,37 @@ nonisolated struct UserProfile: Codable, Sendable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        username = try container.decode(String.self, forKey: .username)
-        profession = try container.decode(String.self, forKey: .profession)
-        school = try container.decode(String.self, forKey: .school)
-        avatarAnimal = try container.decode(String.self, forKey: .avatarAnimal)
-        avatarEyes = try container.decode(String.self, forKey: .avatarEyes)
-        avatarMouth = try container.decode(String.self, forKey: .avatarMouth)
-        avatarAccessory = try container.decode(String.self, forKey: .avatarAccessory)
+        username = (try? container.decode(String.self, forKey: .username)) ?? "Student"
+        profession = (try? container.decode(String.self, forKey: .profession)) ?? ""
+        school = (try? container.decode(String.self, forKey: .school)) ?? ""
+        avatarAnimal = (try? container.decode(String.self, forKey: .avatarAnimal)) ?? "beaver"
+        avatarEyes = (try? container.decode(String.self, forKey: .avatarEyes)) ?? "normal"
+        avatarMouth = (try? container.decode(String.self, forKey: .avatarMouth)) ?? "smile"
+        avatarAccessory = (try? container.decode(String.self, forKey: .avatarAccessory)) ?? "none"
         avatarBodyColor = (try? container.decode(String.self, forKey: .avatarBodyColor)) ?? ""
         avatarBgColor = (try? container.decode(String.self, forKey: .avatarBgColor)) ?? ""
-        totalXP = try container.decode(Int.self, forKey: .totalXP)
-        coins = try container.decode(Int.self, forKey: .coins)
-        currentStreak = try container.decode(Int.self, forKey: .currentStreak)
-        streakSaves = try container.decode(Int.self, forKey: .streakSaves)
-        hearts = try container.decode(Int.self, forKey: .hearts)
-        level = try container.decode(Int.self, forKey: .level)
-        weeklyXP = try container.decode(Int.self, forKey: .weeklyXP)
-        monthlyXP = try container.decode(Int.self, forKey: .monthlyXP)
-        completedSubsections = try container.decode(String.self, forKey: .completedSubsections)
-        subsectionStars = try container.decode(String.self, forKey: .subsectionStars)
-        hasSeenLearning = try container.decode(String.self, forKey: .hasSeenLearning)
-        questionsAnswered = try container.decode(Int.self, forKey: .questionsAnswered)
-        questionsCorrect = try container.decode(Int.self, forKey: .questionsCorrect)
-        lastActiveDate = try container.decodeIfPresent(String.self, forKey: .lastActiveDate)
-        lastHeartLossDate = try container.decodeIfPresent(String.self, forKey: .lastHeartLossDate)
-        ownedAvatars = try container.decode(String.self, forKey: .ownedAvatars)
-        ownedEyes = try container.decode(String.self, forKey: .ownedEyes)
-        ownedMouths = try container.decode(String.self, forKey: .ownedMouths)
-        ownedAccessories = try container.decode(String.self, forKey: .ownedAccessories)
-        professionDonations = try container.decode(Int.self, forKey: .professionDonations)
-        createdAt = try container.decodeIfPresent(String.self, forKey: .createdAt)
-        updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
+        totalXP = (try? container.decode(Int.self, forKey: .totalXP)) ?? 0
+        coins = (try? container.decode(Int.self, forKey: .coins)) ?? 0
+        currentStreak = (try? container.decode(Int.self, forKey: .currentStreak)) ?? 0
+        streakSaves = (try? container.decode(Int.self, forKey: .streakSaves)) ?? 0
+        hearts = (try? container.decode(Int.self, forKey: .hearts)) ?? 5
+        level = (try? container.decode(Int.self, forKey: .level)) ?? 1
+        weeklyXP = (try? container.decode(Int.self, forKey: .weeklyXP)) ?? 0
+        monthlyXP = (try? container.decode(Int.self, forKey: .monthlyXP)) ?? 0
+        completedSubsections = (try? container.decode(String.self, forKey: .completedSubsections)) ?? "[]"
+        subsectionStars = (try? container.decode(String.self, forKey: .subsectionStars)) ?? "{}"
+        hasSeenLearning = (try? container.decode(String.self, forKey: .hasSeenLearning)) ?? "[]"
+        questionsAnswered = (try? container.decode(Int.self, forKey: .questionsAnswered)) ?? 0
+        questionsCorrect = (try? container.decode(Int.self, forKey: .questionsCorrect)) ?? 0
+        lastActiveDate = try? container.decode(String.self, forKey: .lastActiveDate)
+        lastHeartLossDate = try? container.decode(String.self, forKey: .lastHeartLossDate)
+        ownedAvatars = (try? container.decode(String.self, forKey: .ownedAvatars)) ?? "[]"
+        ownedEyes = (try? container.decode(String.self, forKey: .ownedEyes)) ?? "[]"
+        ownedMouths = (try? container.decode(String.self, forKey: .ownedMouths)) ?? "[]"
+        ownedAccessories = (try? container.decode(String.self, forKey: .ownedAccessories)) ?? "[]"
+        professionDonations = (try? container.decode(Int.self, forKey: .professionDonations)) ?? 0
+        createdAt = try? container.decode(String.self, forKey: .createdAt)
+        updatedAt = try? container.decode(String.self, forKey: .updatedAt)
     }
 
     init(id: String, username: String, profession: String, school: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, totalXP: Int, coins: Int, currentStreak: Int, streakSaves: Int, hearts: Int, level: Int, weeklyXP: Int, monthlyXP: Int, completedSubsections: String, subsectionStars: String, hasSeenLearning: String, questionsAnswered: Int, questionsCorrect: Int, lastActiveDate: String?, lastHeartLossDate: String?, ownedAvatars: String, ownedEyes: String, ownedMouths: String, ownedAccessories: String, professionDonations: Int, createdAt: String?, updatedAt: String?) {
@@ -169,18 +169,18 @@ nonisolated struct LeaderboardRecord: Codable, Sendable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        username = try container.decode(String.self, forKey: .username)
-        avatarAnimal = try container.decode(String.self, forKey: .avatarAnimal)
-        avatarEyes = try container.decode(String.self, forKey: .avatarEyes)
-        avatarMouth = try container.decode(String.self, forKey: .avatarMouth)
-        avatarAccessory = try container.decode(String.self, forKey: .avatarAccessory)
+        username = (try? container.decode(String.self, forKey: .username)) ?? "User"
+        avatarAnimal = (try? container.decode(String.self, forKey: .avatarAnimal)) ?? "beaver"
+        avatarEyes = (try? container.decode(String.self, forKey: .avatarEyes)) ?? "normal"
+        avatarMouth = (try? container.decode(String.self, forKey: .avatarMouth)) ?? "smile"
+        avatarAccessory = (try? container.decode(String.self, forKey: .avatarAccessory)) ?? "none"
         avatarBodyColor = (try? container.decode(String.self, forKey: .avatarBodyColor)) ?? ""
         avatarBgColor = (try? container.decode(String.self, forKey: .avatarBgColor)) ?? ""
-        weeklyXP = try container.decode(Int.self, forKey: .weeklyXP)
-        currentStreak = try container.decode(Int.self, forKey: .currentStreak)
-        level = try container.decode(Int.self, forKey: .level)
-        profession = try container.decode(String.self, forKey: .profession)
-        school = try container.decode(String.self, forKey: .school)
+        weeklyXP = (try? container.decode(Int.self, forKey: .weeklyXP)) ?? 0
+        currentStreak = (try? container.decode(Int.self, forKey: .currentStreak)) ?? 0
+        level = (try? container.decode(Int.self, forKey: .level)) ?? 1
+        profession = (try? container.decode(String.self, forKey: .profession)) ?? ""
+        school = (try? container.decode(String.self, forKey: .school)) ?? ""
     }
 
     init(id: String, username: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, weeklyXP: Int, currentStreak: Int, level: Int, profession: String, school: String) {
@@ -260,6 +260,63 @@ nonisolated struct ProfessionRanking: Codable, Sendable {
     enum CodingKeys: String, CodingKey {
         case profession
         case totalDonations = "total_donations"
+    }
+}
+
+nonisolated struct ProfileUpdateData: Encodable, Sendable {
+    let username: String
+    let profession: String
+    let school: String
+    let avatarAnimal: String
+    let avatarEyes: String
+    let avatarMouth: String
+    let avatarAccessory: String
+    let avatarBodyColor: String
+    let avatarBgColor: String
+    let totalXP: Int
+    let coins: Int
+    let currentStreak: Int
+    let streakSaves: Int
+    let hearts: Int
+    let level: Int
+    let weeklyXP: Int
+    let monthlyXP: Int
+    let completedSubsections: String
+    let subsectionStars: String
+    let hasSeenLearning: String
+    let questionsAnswered: Int
+    let questionsCorrect: Int
+    let ownedAvatars: String
+    let ownedEyes: String
+    let ownedMouths: String
+    let ownedAccessories: String
+    let professionDonations: Int
+
+    enum CodingKeys: String, CodingKey {
+        case username, profession, school
+        case avatarAnimal = "avatar_animal"
+        case avatarEyes = "avatar_eyes"
+        case avatarMouth = "avatar_mouth"
+        case avatarAccessory = "avatar_accessory"
+        case avatarBodyColor = "avatar_body_color"
+        case avatarBgColor = "avatar_bg_color"
+        case totalXP = "total_xp"
+        case coins
+        case currentStreak = "current_streak"
+        case streakSaves = "streak_saves"
+        case hearts, level
+        case weeklyXP = "weekly_xp"
+        case monthlyXP = "monthly_xp"
+        case completedSubsections = "completed_subsections"
+        case subsectionStars = "subsection_stars"
+        case hasSeenLearning = "has_seen_learning"
+        case questionsAnswered = "questions_answered"
+        case questionsCorrect = "questions_correct"
+        case ownedAvatars = "owned_avatars"
+        case ownedEyes = "owned_eyes"
+        case ownedMouths = "owned_mouths"
+        case ownedAccessories = "owned_accessories"
+        case professionDonations = "profession_donations"
     }
 }
 
@@ -400,7 +457,7 @@ class SupabaseService {
     }
 
     func syncGameState(from gameVM: GameViewModel) async {
-        guard var profile = currentProfile else { return }
+        guard let profile = currentProfile else { return }
 
         let encoder = JSONEncoder()
         let completedData = (try? encoder.encode(Array(gameVM.completedSubsections))) ?? Data()
@@ -411,43 +468,65 @@ class SupabaseService {
         let ownedMouthsData = (try? encoder.encode(Array(gameVM.ownedMouths))) ?? Data()
         let ownedAccessoriesData = (try? encoder.encode(Array(gameVM.ownedAccessories))) ?? Data()
 
-        profile.username = gameVM.username
-        profile.profession = gameVM.selectedProfession.rawValue
-        profile.school = gameVM.schoolName
-        profile.avatarAnimal = gameVM.avatarAnimal
-        profile.avatarEyes = gameVM.avatarEyes
-        profile.avatarMouth = gameVM.avatarMouth
-        profile.avatarAccessory = gameVM.avatarAccessory
-        profile.avatarBodyColor = gameVM.avatarBodyColor
-        profile.avatarBgColor = gameVM.avatarBgColor
-        profile.totalXP = gameVM.totalXP
-        profile.coins = gameVM.coins
-        profile.currentStreak = gameVM.currentStreak
-        profile.streakSaves = gameVM.streakSaves
-        profile.hearts = gameVM.hearts
-        profile.level = gameVM.level
-        profile.weeklyXP = gameVM.totalXP
-        profile.monthlyXP = gameVM.totalXP
-        profile.questionsAnswered = gameVM.questionsAnswered
-        profile.questionsCorrect = gameVM.questionsCorrect
-        profile.completedSubsections = String(data: completedData, encoding: .utf8) ?? "[]"
-        profile.subsectionStars = String(data: starsData, encoding: .utf8) ?? "{}"
-        profile.hasSeenLearning = String(data: learningData, encoding: .utf8) ?? "[]"
-        profile.ownedAvatars = String(data: ownedAvatarsData, encoding: .utf8) ?? "[]"
-        profile.ownedEyes = String(data: ownedEyesData, encoding: .utf8) ?? "[]"
-        profile.ownedMouths = String(data: ownedMouthsData, encoding: .utf8) ?? "[]"
-        profile.ownedAccessories = String(data: ownedAccessoriesData, encoding: .utf8) ?? "[]"
+        let updateData = ProfileUpdateData(
+            username: gameVM.username,
+            profession: gameVM.selectedProfession.rawValue,
+            school: gameVM.schoolName,
+            avatarAnimal: gameVM.avatarAnimal,
+            avatarEyes: gameVM.avatarEyes,
+            avatarMouth: gameVM.avatarMouth,
+            avatarAccessory: gameVM.avatarAccessory,
+            avatarBodyColor: gameVM.avatarBodyColor,
+            avatarBgColor: gameVM.avatarBgColor,
+            totalXP: gameVM.totalXP,
+            coins: gameVM.coins,
+            currentStreak: gameVM.currentStreak,
+            streakSaves: gameVM.streakSaves,
+            hearts: gameVM.hearts,
+            level: gameVM.level,
+            weeklyXP: gameVM.totalXP,
+            monthlyXP: gameVM.totalXP,
+            completedSubsections: String(data: completedData, encoding: .utf8) ?? "[]",
+            subsectionStars: String(data: starsData, encoding: .utf8) ?? "{}",
+            hasSeenLearning: String(data: learningData, encoding: .utf8) ?? "[]",
+            questionsAnswered: gameVM.questionsAnswered,
+            questionsCorrect: gameVM.questionsCorrect,
+            ownedAvatars: String(data: ownedAvatarsData, encoding: .utf8) ?? "[]",
+            ownedEyes: String(data: ownedEyesData, encoding: .utf8) ?? "[]",
+            ownedMouths: String(data: ownedMouthsData, encoding: .utf8) ?? "[]",
+            ownedAccessories: String(data: ownedAccessoriesData, encoding: .utf8) ?? "[]",
+            professionDonations: profile.professionDonations
+        )
 
-        await updateProfile(profile)
+        do {
+            try await client.from("profiles")
+                .update(updateData)
+                .eq("id", value: profile.id)
+                .execute()
+            await fetchProfile()
+        } catch {
+            print("Failed to sync game state: \(error)")
+        }
     }
 
     func fetchLeaderboard() async -> [LeaderboardRecord] {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         do {
-            let allRecords: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
+            let allProfiles: [UserProfile] = try await client.from("profiles")
+                .select()
                 .execute()
                 .value
+
+            let allRecords = allProfiles.map { p in
+                LeaderboardRecord(
+                    id: p.id, username: p.username,
+                    avatarAnimal: p.avatarAnimal, avatarEyes: p.avatarEyes,
+                    avatarMouth: p.avatarMouth, avatarAccessory: p.avatarAccessory,
+                    avatarBodyColor: p.avatarBodyColor, avatarBgColor: p.avatarBgColor,
+                    weeklyXP: p.weeklyXP, currentStreak: p.currentStreak,
+                    level: p.level, profession: p.profession, school: p.school
+                )
+            }
 
             let leagueSize = 30
             let calendar = Calendar.current
@@ -523,12 +602,21 @@ class SupabaseService {
             let friendIds = friends.map { $0.userId == userId ? $0.friendId : $0.userId }
             guard !friendIds.isEmpty else { return [] }
 
-            let records: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
+            let friendProfiles: [UserProfile] = try await client.from("profiles")
+                .select()
                 .in("id", values: friendIds)
-                .order("weekly_xp", ascending: false)
                 .execute()
                 .value
+            let records = friendProfiles.map { p in
+                LeaderboardRecord(
+                    id: p.id, username: p.username,
+                    avatarAnimal: p.avatarAnimal, avatarEyes: p.avatarEyes,
+                    avatarMouth: p.avatarMouth, avatarAccessory: p.avatarAccessory,
+                    avatarBodyColor: p.avatarBodyColor, avatarBgColor: p.avatarBgColor,
+                    weeklyXP: p.weeklyXP, currentStreak: p.currentStreak,
+                    level: p.level, profession: p.profession, school: p.school
+                )
+            }.sorted { $0.weeklyXP > $1.weeklyXP }
             return records
         } catch {
             print("Failed to fetch friends: \(error)")
@@ -596,11 +684,21 @@ class SupabaseService {
             guard !requests.isEmpty else { return [] }
 
             let senderIds = requests.map { $0.userId }
-            let profiles: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
+            let senderProfiles: [UserProfile] = try await client.from("profiles")
+                .select()
                 .in("id", values: senderIds)
                 .execute()
                 .value
+            let profiles = senderProfiles.map { p in
+                LeaderboardRecord(
+                    id: p.id, username: p.username,
+                    avatarAnimal: p.avatarAnimal, avatarEyes: p.avatarEyes,
+                    avatarMouth: p.avatarMouth, avatarAccessory: p.avatarAccessory,
+                    avatarBodyColor: p.avatarBodyColor, avatarBgColor: p.avatarBgColor,
+                    weeklyXP: p.weeklyXP, currentStreak: p.currentStreak,
+                    level: p.level, profession: p.profession, school: p.school
+                )
+            }
 
             let profileMap = Dictionary(uniqueKeysWithValues: profiles.map { ($0.id, $0) })
 
@@ -739,14 +837,23 @@ class SupabaseService {
         let trimmed = query.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return [] }
         do {
-            let allProfiles: [LeaderboardRecord] = try await client.from("profiles")
-                .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
+            let allUserProfiles: [UserProfile] = try await client.from("profiles")
+                .select()
                 .neq("id", value: userId)
                 .execute()
                 .value
             let lowered = trimmed.lowercased()
-            let filtered = allProfiles.filter { $0.username.lowercased().contains(lowered) }
-            return Array(filtered.prefix(20))
+            let filtered = allUserProfiles.filter { $0.username.lowercased().contains(lowered) }
+            return Array(filtered.prefix(20)).map { p in
+                LeaderboardRecord(
+                    id: p.id, username: p.username,
+                    avatarAnimal: p.avatarAnimal, avatarEyes: p.avatarEyes,
+                    avatarMouth: p.avatarMouth, avatarAccessory: p.avatarAccessory,
+                    avatarBodyColor: p.avatarBodyColor, avatarBgColor: p.avatarBgColor,
+                    weeklyXP: p.weeklyXP, currentStreak: p.currentStreak,
+                    level: p.level, profession: p.profession, school: p.school
+                )
+            }
         } catch {
             print("Failed to search users: \(error)")
             return []
