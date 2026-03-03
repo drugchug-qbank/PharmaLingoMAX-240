@@ -497,23 +497,15 @@ class GameViewModel {
         }
     }
 
-    func syncAvatarToCloud() {
-        let animal = avatarAnimal
-        let eyes = avatarEyes
-        let mouth = avatarMouth
-        let accessory = avatarAccessory
-        let bodyColor = avatarBodyColor
-        let bgColor = avatarBgColor
-        Task {
-            await SupabaseService.shared.saveAvatarToCloud(
-                animal: animal,
-                eyes: eyes,
-                mouth: mouth,
-                accessory: accessory,
-                bodyColor: bodyColor,
-                bgColor: bgColor
-            )
-        }
+    func syncAvatarToCloud() async -> Bool {
+        await SupabaseService.shared.saveAvatarToCloud(
+            animal: avatarAnimal,
+            eyes: avatarEyes,
+            mouth: avatarMouth,
+            accessory: avatarAccessory,
+            bodyColor: avatarBodyColor,
+            bgColor: avatarBgColor
+        )
     }
 
     private func checkStreak() {
@@ -726,7 +718,6 @@ class GameViewModel {
     func loadFromProfile(_ profile: UserProfile) {
         currentUserId = profile.id
 
-        load()
         loadMastery()
 
         username = profile.username
@@ -735,13 +726,37 @@ class GameViewModel {
         }
         schoolName = profile.school
 
-        totalXP = max(totalXP, profile.totalXP)
-        coins = max(coins, profile.coins)
-        currentStreak = max(currentStreak, profile.currentStreak)
-        streakSaves = max(streakSaves, profile.streakSaves)
-        hearts = max(hearts, profile.hearts)
-        questionsAnswered = max(questionsAnswered, profile.questionsAnswered)
-        questionsCorrect = max(questionsCorrect, profile.questionsCorrect)
+        avatarAnimal = profile.avatarAnimal
+        avatarEyes = profile.avatarEyes
+        avatarMouth = profile.avatarMouth
+        avatarAccessory = profile.avatarAccessory
+        avatarBodyColor = profile.avatarBodyColor
+        avatarBgColor = profile.avatarBgColor
+
+        let localState = UserDefaults.standard.dictionary(forKey: userDefaultsKey)
+        let localXP = localState?["totalXP"] as? Int ?? 0
+        let localCoins = localState?["coins"] as? Int ?? 0
+        let localStreak = localState?["currentStreak"] as? Int ?? 0
+        let localStreakSaves = localState?["streakSaves"] as? Int ?? 0
+        let localHearts = localState?["hearts"] as? Int ?? 5
+        let localQA = localState?["questionsAnswered"] as? Int ?? 0
+        let localQC = localState?["questionsCorrect"] as? Int ?? 0
+
+        totalXP = max(localXP, profile.totalXP)
+        coins = max(localCoins, profile.coins)
+        currentStreak = max(localStreak, profile.currentStreak)
+        streakSaves = max(localStreakSaves, profile.streakSaves)
+        hearts = max(localHearts, profile.hearts)
+        questionsAnswered = max(localQA, profile.questionsAnswered)
+        questionsCorrect = max(localQC, profile.questionsCorrect)
+
+        let localCompleted = Set(localState?["completedSubsections"] as? [String] ?? [])
+        let localStars = localState?["subsectionStars"] as? [String: Int] ?? [:]
+        let localSeen = Set(localState?["hasSeenLearning"] as? [String] ?? [])
+
+        completedSubsections = localCompleted
+        subsectionStars = localStars
+        hasSeenLearning = localSeen
 
         let decoder = JSONDecoder()
         if let data = profile.completedSubsections.data(using: .utf8),
@@ -758,6 +773,17 @@ class GameViewModel {
            let arr = try? decoder.decode([String].self, from: data) {
             hasSeenLearning.formUnion(Set(arr))
         }
+
+        let localOwnedAvatars = Set(localState?["ownedAvatars"] as? [String] ?? ["beaver", "bird", "bunny", "cat"])
+        let localOwnedEyes = Set(localState?["ownedEyes"] as? [String] ?? ["normal", "happy", "big"])
+        let localOwnedMouths = Set(localState?["ownedMouths"] as? [String] ?? ["smile", "bigSmile", "tiny"])
+        let localOwnedAccessories = Set(localState?["ownedAccessories"] as? [String] ?? ["none"])
+
+        ownedAvatars = localOwnedAvatars
+        ownedEyes = localOwnedEyes
+        ownedMouths = localOwnedMouths
+        ownedAccessories = localOwnedAccessories
+
         if let data = profile.ownedAvatars.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
             ownedAvatars.formUnion(Set(arr))
@@ -779,31 +805,45 @@ class GameViewModel {
             let isoFormatter = ISO8601DateFormatter()
             isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
             if let d = isoFormatter.date(from: dateStr) {
-                if lastActiveDate == nil || d > lastActiveDate! {
+                let localInterval = localState?["lastActiveDate"] as? Double ?? 0
+                let localDate = localInterval > 0 ? Date(timeIntervalSince1970: localInterval) : nil
+                if localDate == nil || d > localDate! {
                     lastActiveDate = d
+                } else {
+                    lastActiveDate = localDate
                 }
             }
+        } else {
+            let localInterval = localState?["lastActiveDate"] as? Double ?? 0
+            lastActiveDate = localInterval > 0 ? Date(timeIntervalSince1970: localInterval) : nil
         }
         if let dateStr = profile.lastHeartLossDate, !dateStr.isEmpty {
             let isoFormatter = ISO8601DateFormatter()
             isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
             if let d = isoFormatter.date(from: dateStr) {
-                if lastHeartLossDate == nil || d > lastHeartLossDate! {
+                let localInterval = localState?["lastHeartLossDate"] as? Double ?? 0
+                let localDate = localInterval > 0 ? Date(timeIntervalSince1970: localInterval) : nil
+                if localDate == nil || d > localDate! {
                     lastHeartLossDate = d
+                } else {
+                    lastHeartLossDate = localDate
                 }
             }
+        } else {
+            let localInterval = localState?["lastHeartLossDate"] as? Double ?? 0
+            lastHeartLossDate = localInterval > 0 ? Date(timeIntervalSince1970: localInterval) : nil
         }
 
-        avatarAnimal = profile.avatarAnimal
-        avatarEyes = profile.avatarEyes
-        avatarMouth = profile.avatarMouth
-        avatarAccessory = profile.avatarAccessory
-        avatarBodyColor = profile.avatarBodyColor
-        avatarBgColor = profile.avatarBgColor
+        dailyBrandBlitzCount = localState?["dailyBrandBlitzCount"] as? Int ?? 0
+        dailyQuickPracticeCount = localState?["dailyQuickPracticeCount"] as? Int ?? 0
+        dailySpacedReviewCount = localState?["dailySpacedReviewCount"] as? Int ?? 0
+        dailyPracticeDate = localState?["dailyPracticeDate"] as? String ?? ""
+        lastQuestDate = localState?["lastQuestDate"] as? String ?? ""
 
         checkStreak()
         regenerateHearts()
         refreshDailyQuests()
+        resetDailyPracticeCounts()
         save()
     }
 }

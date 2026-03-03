@@ -456,8 +456,9 @@ class SupabaseService {
         }
     }
 
-    func saveAvatarToCloud(animal: String, eyes: String, mouth: String, accessory: String, bodyColor: String, bgColor: String) async {
-        guard var profile = currentProfile else { return }
+    @discardableResult
+    func saveAvatarToCloud(animal: String, eyes: String, mouth: String, accessory: String, bodyColor: String, bgColor: String) async -> Bool {
+        guard var profile = currentProfile else { return false }
         profile.avatarAnimal = animal
         profile.avatarEyes = eyes
         profile.avatarMouth = mouth
@@ -478,8 +479,11 @@ class SupabaseService {
                 .update(avatarData)
                 .eq("id", value: profile.id)
                 .execute()
+            await fetchProfile()
+            return true
         } catch {
             print("Failed to save avatar: \(error)")
+            return false
         }
     }
 

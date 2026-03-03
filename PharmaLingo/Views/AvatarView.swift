@@ -48,6 +48,7 @@ struct AvatarCustomizationView: View {
     @State private var showPurchaseAlert: Bool = false
     @State private var purchaseMessage: String = ""
     @State private var previewBounce: Bool = false
+    @State private var isSaving: Bool = false
 
     enum AvatarTab: String, CaseIterable {
         case animals = "Animal"
@@ -149,6 +150,7 @@ struct AvatarCustomizationView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        isSaving = true
                         gameVM.avatarAnimal = selectedAnimal.rawValue
                         gameVM.avatarEyes = selectedEyes.rawValue
                         gameVM.avatarMouth = selectedMouth.rawValue
@@ -156,11 +158,15 @@ struct AvatarCustomizationView: View {
                         gameVM.avatarBodyColor = selectedBodyColor
                         gameVM.avatarBgColor = selectedBgColor
                         gameVM.save()
-                        gameVM.syncAvatarToCloud()
-                        dismiss()
+                        Task {
+                            _ = await gameVM.syncAvatarToCloud()
+                            isSaving = false
+                            dismiss()
+                        }
                     }
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryBlue)
+                    .disabled(isSaving)
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
