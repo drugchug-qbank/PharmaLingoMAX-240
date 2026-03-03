@@ -709,18 +709,10 @@ class GameViewModel {
         }
         schoolName = profile.school
 
-        if !profile.avatarAnimal.isEmpty {
-            avatarAnimal = profile.avatarAnimal
-        }
-        if !profile.avatarEyes.isEmpty {
-            avatarEyes = profile.avatarEyes
-        }
-        if !profile.avatarMouth.isEmpty {
-            avatarMouth = profile.avatarMouth
-        }
-        if !profile.avatarAccessory.isEmpty {
-            avatarAccessory = profile.avatarAccessory
-        }
+        avatarAnimal = profile.avatarAnimal.isEmpty ? avatarAnimal : profile.avatarAnimal
+        avatarEyes = profile.avatarEyes.isEmpty ? avatarEyes : profile.avatarEyes
+        avatarMouth = profile.avatarMouth.isEmpty ? avatarMouth : profile.avatarMouth
+        avatarAccessory = profile.avatarAccessory.isEmpty ? avatarAccessory : profile.avatarAccessory
         avatarBodyColor = profile.avatarBodyColor
         avatarBgColor = profile.avatarBgColor
 

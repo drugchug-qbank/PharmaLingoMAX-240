@@ -442,15 +442,68 @@ class SupabaseService {
     }
 
     func fetchLeaderboard() async -> [LeaderboardRecord] {
+        guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         do {
-            let records: [LeaderboardRecord] = try await client.from("profiles")
+            let allRecords: [LeaderboardRecord] = try await client.from("profiles")
                 .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
-                .order("weekly_xp", ascending: false)
-                .order("created_at", ascending: true)
-                .limit(100)
                 .execute()
                 .value
-            return records
+
+            let leagueSize = 30
+            let calendar = Calendar.current
+            let weekOfYear = calendar.component(.weekOfYear, from: Date())
+            let year = calendar.component(.yearForWeekOfYear, from: Date())
+            let weeklySeed = year * 100 + weekOfYear
+
+            var levelGroups: [Int: [LeaderboardRecord]] = [:]
+            for record in allRecords {
+                let bracket = max(1, record.level / 3)
+                levelGroups[bracket, default: []].append(record)
+            }
+
+            var currentUserBracket = 1
+            if let myRecord = allRecords.first(where: { $0.id == userId }) {
+                currentUserBracket = max(1, myRecord.level / 3)
+            }
+
+            var pool = levelGroups[currentUserBracket] ?? []
+            if pool.isEmpty {
+                pool = allRecords
+            }
+
+            if !pool.contains(where: { $0.id == userId }) {
+                if let myRecord = allRecords.first(where: { $0.id == userId }) {
+                    pool.append(myRecord)
+                }
+            }
+
+            pool.sort { a, b in
+                let hashA = abs("\(a.id)-\(weeklySeed)".hashValue)
+                let hashB = abs("\(b.id)-\(weeklySeed)".hashValue)
+                return hashA < hashB
+            }
+
+            let myIndex = pool.firstIndex(where: { $0.id == userId }) ?? 0
+            let leagueIndex = myIndex / leagueSize
+            let startIdx = leagueIndex * leagueSize
+            let endIdx = min(startIdx + leagueSize, pool.count)
+
+            var leagueMembers = Array(pool[startIdx..<endIdx])
+
+            if !leagueMembers.contains(where: { $0.id == userId }) {
+                if let myRecord = allRecords.first(where: { $0.id == userId }) {
+                    leagueMembers.append(myRecord)
+                }
+            }
+
+            leagueMembers.sort { a, b in
+                if a.weeklyXP != b.weeklyXP {
+                    return a.weeklyXP > b.weeklyXP
+                }
+                return a.id < b.id
+            }
+
+            return leagueMembers
         } catch {
             print("Failed to fetch leaderboard: \(error)")
             return []
@@ -683,16 +736,19 @@ class SupabaseService {
 
     func searchUsers(query: String) async -> [LeaderboardRecord] {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
+        let trimmed = query.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return [] }
         do {
-            let results: [LeaderboardRecord] = try await client.from("profiles")
+            let allProfiles: [LeaderboardRecord] = try await client.from("profiles")
                 .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
-                .ilike("username", pattern: "%\(query)%")
                 .neq("id", value: userId)
-                .limit(20)
                 .execute()
                 .value
-            return results
+            let lowered = trimmed.lowercased()
+            let filtered = allProfiles.filter { $0.username.lowercased().contains(lowered) }
+            return Array(filtered.prefix(20))
         } catch {
+            print("Failed to search users: \(error)")
             return []
         }
     }
