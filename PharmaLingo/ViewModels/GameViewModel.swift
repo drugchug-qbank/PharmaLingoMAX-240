@@ -560,7 +560,6 @@ class GameViewModel {
     }
 
     func resetToDefaults() {
-        let oldUserId = currentUserId
         currentUserId = nil
         hearts = 5
         coins = 50
@@ -593,10 +592,6 @@ class GameViewModel {
         masteryMap = [:]
         streakExtended = false
         previousStreak = 0
-        if let uid = oldUserId {
-            UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state_\(uid)")
-            UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map_\(uid)")
-        }
         UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state")
         UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map")
     }
@@ -718,6 +713,7 @@ class GameViewModel {
     func loadFromProfile(_ profile: UserProfile) {
         currentUserId = profile.id
 
+        load()
         loadMastery()
 
         username = profile.username
@@ -726,12 +722,24 @@ class GameViewModel {
         }
         schoolName = profile.school
 
-        avatarAnimal = profile.avatarAnimal
-        avatarEyes = profile.avatarEyes
-        avatarMouth = profile.avatarMouth
-        avatarAccessory = profile.avatarAccessory
-        avatarBodyColor = profile.avatarBodyColor
-        avatarBgColor = profile.avatarBgColor
+        let cloudHasAvatar = profile.avatarAnimal != "beaver" || profile.avatarEyes != "normal" || profile.avatarMouth != "smile" || profile.avatarAccessory != "none" || !profile.avatarBodyColor.isEmpty || !profile.avatarBgColor.isEmpty
+        let localHasAvatar = avatarAnimal != "beaver" || avatarEyes != "normal" || avatarMouth != "smile" || avatarAccessory != "none" || !avatarBodyColor.isEmpty || !avatarBgColor.isEmpty
+
+        if cloudHasAvatar {
+            avatarAnimal = profile.avatarAnimal
+            avatarEyes = profile.avatarEyes
+            avatarMouth = profile.avatarMouth
+            avatarAccessory = profile.avatarAccessory
+            avatarBodyColor = profile.avatarBodyColor
+            avatarBgColor = profile.avatarBgColor
+        } else if !localHasAvatar {
+            avatarAnimal = profile.avatarAnimal
+            avatarEyes = profile.avatarEyes
+            avatarMouth = profile.avatarMouth
+            avatarAccessory = profile.avatarAccessory
+            avatarBodyColor = profile.avatarBodyColor
+            avatarBgColor = profile.avatarBgColor
+        }
 
         let localState = UserDefaults.standard.dictionary(forKey: userDefaultsKey)
         let localXP = localState?["totalXP"] as? Int ?? 0
@@ -845,5 +853,11 @@ class GameViewModel {
         refreshDailyQuests()
         resetDailyPracticeCounts()
         save()
+
+        if localHasAvatar && !cloudHasAvatar {
+            Task {
+                _ = await syncAvatarToCloud()
+            }
+        }
     }
 }
