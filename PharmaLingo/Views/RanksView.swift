@@ -188,7 +188,8 @@ struct RanksView: View {
     }
 
     private var userRank: Int {
-        if let idx = leaderboard.firstIndex(where: { $0.id == supabase.currentUser?.id.uuidString.lowercased() }) {
+        guard let userId = supabase.currentUser?.id.uuidString.lowercased() else { return 0 }
+        if let idx = leaderboard.firstIndex(where: { $0.id == userId }) {
             return idx + 1
         }
         return leaderboard.count + 1
@@ -223,59 +224,12 @@ struct RanksView: View {
         async let pr = supabase.fetchPendingRequests()
         async let sr = supabase.fetchSchoolRankings()
         async let prr = supabase.fetchProfessionRankings()
-        let realLeaderboard = await lb
+        leaderboard = await lb
         friends = await fr
         pendingRequests = await pr
         schoolRankings = await sr
         professionRankings = await prr
-        leaderboard = padLeaderboard(realLeaderboard)
         isLoadingLeaderboard = false
-    }
-
-    private func padLeaderboard(_ real: [LeaderboardRecord]) -> [LeaderboardRecord] {
-        let targetCount = 30
-        guard real.count < targetCount else { return real }
-
-        let placeholderNames = [
-            "PharmaStar", "MedStudent42", "DrugNerd", "PillPusher", "RxQueen",
-            "BioWizard", "ChemGeek", "HealthHero", "MedMaster", "ScriptKing",
-            "PharmaPro", "CureSeeker", "DoseDoctor", "MedWhiz", "RxRanger",
-            "PillPal", "DrugBuff", "MedNinja", "PharmAce", "CureCrafter",
-            "DoseHero", "ScriptSage", "MedMaven", "RxRookie", "PillPioneer",
-            "BioBlitz", "ChemChamp", "HealthHack", "MedMotion", "CureQuest"
-        ]
-        let animals = AnimalType.allCases.map { $0.rawValue }
-        let eyes = ["normal", "happy", "big", "sleepy", "wink"]
-        let mouths = ["smile", "bigSmile", "tiny", "tongue", "oh"]
-
-        let realIds = Set(real.map { $0.id })
-        var result = real
-
-        for i in 0..<(targetCount - real.count) {
-            let seed = i + 7
-            let placeholderId = "placeholder_\(i)"
-            guard !realIds.contains(placeholderId) else { continue }
-            let animal = animals[seed % animals.count]
-            let defaultColor = AnimalType(rawValue: animal)?.defaultColorHex ?? "90A4AE"
-            let bgColors = ["FFF9C4", "FCE4EC", "E3F2FD", "E8F5E9", "F3E5F5", "FFF3E0", "E0F2F1"]
-            let entry = LeaderboardRecord(
-                id: placeholderId,
-                username: placeholderNames[i % placeholderNames.count],
-                avatarAnimal: animal,
-                avatarEyes: eyes[seed % eyes.count],
-                avatarMouth: mouths[seed % mouths.count],
-                avatarAccessory: "none",
-                avatarBodyColor: defaultColor,
-                avatarBgColor: bgColors[seed % bgColors.count],
-                weeklyXP: 0,
-                currentStreak: 0,
-                level: 1,
-                profession: Profession.allCases[seed % Profession.allCases.count].rawValue,
-                school: ""
-            )
-            result.append(entry)
-        }
-        return result
     }
 
     @ViewBuilder
@@ -933,6 +887,7 @@ struct AddFriendSheet: View {
     @State private var isSearching: Bool = false
     @State private var sentRequests: Set<String> = []
     @State private var errorMessage: String?
+    @State private var searchTask: Task<Void, Never>?
 
     var onRequestSent: () -> Void
 
@@ -948,6 +903,18 @@ struct AddFriendSheet: View {
                         .autocorrectionDisabled()
                         .onSubmit {
                             Task { await search() }
+                        }
+                        .onChange(of: searchText) { _, newValue in
+                            searchTask?.cancel()
+                            if newValue.trimmingCharacters(in: .whitespaces).isEmpty {
+                                searchResults = []
+                                return
+                            }
+                            searchTask = Task {
+                                try? await Task.sleep(for: .milliseconds(300))
+                                guard !Task.isCancelled else { return }
+                                await search()
+                            }
                         }
                 }
                 .padding(12)

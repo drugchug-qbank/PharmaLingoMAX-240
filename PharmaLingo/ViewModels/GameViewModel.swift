@@ -39,6 +39,11 @@ class GameViewModel {
     private var lastQuestDate: String = ""
     var masteryMap: [String: MasteryRecord] = [:]
 
+    var dailyBrandBlitzCount: Int = 0
+    var dailyQuickPracticeCount: Int = 0
+    var dailySpacedReviewCount: Int = 0
+    private var dailyPracticeDate: String = ""
+
     private static let allQuestPool: [[DailyQuest]] = [
         [
             DailyQuest(id: "dq_lesson1", title: "Complete 1 Lesson", description: "Finish any lesson", iconName: "book.fill", target: 1, current: 0, coinReward: 20),
@@ -110,7 +115,61 @@ class GameViewModel {
         checkStreak()
         regenerateHearts()
         refreshDailyQuests()
+        resetDailyPracticeCounts()
         Task { await refreshProStatus() }
+    }
+
+    private func resetDailyPracticeCounts() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let today = formatter.string(from: Date())
+        if dailyPracticeDate != today {
+            dailyBrandBlitzCount = 0
+            dailyQuickPracticeCount = 0
+            dailySpacedReviewCount = 0
+            dailyPracticeDate = today
+            save()
+        }
+    }
+
+    func canUsePracticeMode(_ mode: PracticeMode) -> PracticeAccess {
+        if isProUser { return .allowed }
+        let count: Int
+        switch mode {
+        case .brandBlitz: count = dailyBrandBlitzCount
+        case .quickPractice: count = dailyQuickPracticeCount
+        case .spacedReview: count = dailySpacedReviewCount
+        }
+        if count == 0 { return .allowed }
+        if count == 1 { return .watchAd }
+        return .locked
+    }
+
+    func recordPracticeModeUse(_ mode: PracticeMode) {
+        switch mode {
+        case .brandBlitz: dailyBrandBlitzCount += 1
+        case .quickPractice: dailyQuickPracticeCount += 1
+        case .spacedReview: dailySpacedReviewCount += 1
+        }
+        save()
+    }
+
+    func mistakeQuestions() -> [Question] {
+        let wrongKeys = masteryMap.filter { $0.value.totalAttempts > $0.value.correctAttempts }.map(\.key)
+        guard !wrongKeys.isEmpty else { return [] }
+        var questions: [Question] = []
+        let dataService = DrugDataService.shared
+        for module in dataService.modules {
+            for sub in module.subsections {
+                let subQuestions = dataService.allQuestions(for: sub.id)
+                for q in subQuestions {
+                    if wrongKeys.contains(q.masteryKey) {
+                        questions.append(q)
+                    }
+                }
+            }
+        }
+        return Array(questions.shuffled().prefix(15))
     }
 
     func refreshProStatus() async {
@@ -583,6 +642,10 @@ class GameViewModel {
             "schoolName": schoolName,
             "lastQuestDate": lastQuestDate,
             "dailyQuestProgress": dailyQuests.map { ["id": $0.id, "current": $0.current] as [String : Any] },
+            "dailyBrandBlitzCount": dailyBrandBlitzCount,
+            "dailyQuickPracticeCount": dailyQuickPracticeCount,
+            "dailySpacedReviewCount": dailySpacedReviewCount,
+            "dailyPracticeDate": dailyPracticeDate,
         ]
         UserDefaults.standard.set(state, forKey: userDefaultsKey)
     }
@@ -619,6 +682,10 @@ class GameViewModel {
         }
         schoolName = state["schoolName"] as? String ?? ""
         lastQuestDate = state["lastQuestDate"] as? String ?? ""
+        dailyBrandBlitzCount = state["dailyBrandBlitzCount"] as? Int ?? 0
+        dailyQuickPracticeCount = state["dailyQuickPracticeCount"] as? Int ?? 0
+        dailySpacedReviewCount = state["dailySpacedReviewCount"] as? Int ?? 0
+        dailyPracticeDate = state["dailyPracticeDate"] as? String ?? ""
         if let questProgress = state["dailyQuestProgress"] as? [[String: Any]] {
             for progress in questProgress {
                 if let id = progress["id"] as? String, let current = progress["current"] as? Int {
@@ -641,12 +708,22 @@ class GameViewModel {
             selectedProfession = prof
         }
         schoolName = profile.school
-        avatarAnimal = profile.avatarAnimal
-        avatarEyes = profile.avatarEyes
-        avatarMouth = profile.avatarMouth
-        avatarAccessory = profile.avatarAccessory
+
+        if !profile.avatarAnimal.isEmpty {
+            avatarAnimal = profile.avatarAnimal
+        }
+        if !profile.avatarEyes.isEmpty {
+            avatarEyes = profile.avatarEyes
+        }
+        if !profile.avatarMouth.isEmpty {
+            avatarMouth = profile.avatarMouth
+        }
+        if !profile.avatarAccessory.isEmpty {
+            avatarAccessory = profile.avatarAccessory
+        }
         avatarBodyColor = profile.avatarBodyColor
         avatarBgColor = profile.avatarBgColor
+
         totalXP = max(totalXP, profile.totalXP)
         coins = max(coins, profile.coins)
         currentStreak = max(currentStreak, profile.currentStreak)

@@ -4,7 +4,13 @@ struct PracticeView: View {
     let gameVM: GameViewModel
     @State private var showQuickPractice: Bool = false
     @State private var showBrandBlitz: Bool = false
+    @State private var showSpacedReview: Bool = false
+    @State private var showReviewMistakes: Bool = false
     @State private var showMasteryDetail: Bool = false
+    @State private var showPaywall: Bool = false
+    @State private var showAdPrompt: Bool = false
+    @State private var pendingAdMode: PracticeMode?
+    @State private var showLockedAlert: Bool = false
 
     private var allDrugs: [Drug] {
         DrugDataService.shared.modules.flatMap { $0.subsections.flatMap { $0.drugs } }
@@ -19,12 +25,15 @@ struct PracticeView: View {
                     VStack(spacing: 14) {
                         PracticeCard(
                             title: "Spaced Review",
-                            subtitle: "\(max(1, gameVM.completedSubsections.count)) drug\(gameVM.completedSubsections.count == 1 ? "" : "s") due for review",
+                            subtitle: spacedReviewSubtitle,
                             iconName: "arrow.clockwise.circle.fill",
                             gradient: [Color(hex: "FF6B35"), Color(hex: "F7931E")],
-                            badgeCount: gameVM.completedSubsections.count
+                            badgeCount: dueReviewCount,
+                            accessBadge: gameVM.isProUser ? nil : practiceBadge(.spacedReview)
                         ) {
-                            showQuickPractice = true
+                            handlePracticeAccess(.spacedReview) {
+                                showSpacedReview = true
+                            }
                         }
 
                         PracticeCard(
@@ -32,9 +41,12 @@ struct PracticeView: View {
                             subtitle: "10 random questions from all categories",
                             iconName: "bolt.circle.fill",
                             gradient: [Color(hex: "E91E63"), Color(hex: "FF5722")],
-                            badgeCount: nil
+                            badgeCount: nil,
+                            accessBadge: gameVM.isProUser ? nil : practiceBadge(.quickPractice)
                         ) {
-                            showQuickPractice = true
+                            handlePracticeAccess(.quickPractice) {
+                                showQuickPractice = true
+                            }
                         }
 
                         PracticeCard(
@@ -42,9 +54,12 @@ struct PracticeView: View {
                             subtitle: "15 rapid-fire brand/generic questions",
                             iconName: "arrow.triangle.2.circlepath.circle.fill",
                             gradient: [Color(hex: "9C27B0"), Color(hex: "E040FB")],
-                            badgeCount: nil
+                            badgeCount: nil,
+                            accessBadge: gameVM.isProUser ? nil : practiceBadge(.brandBlitz)
                         ) {
-                            showBrandBlitz = true
+                            handlePracticeAccess(.brandBlitz) {
+                                showBrandBlitz = true
+                            }
                         }
 
                         HStack(spacing: 0) {
@@ -101,35 +116,7 @@ struct PracticeView: View {
                         .padding(16)
                         .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.4))
 
-                        VStack(alignment: .leading, spacing: 12) {
-                            FunSectionHeader(icon: "exclamationmark.triangle.fill", title: "Review Mistakes", color: AppTheme.accentOrange)
-
-                            let mistakeCount = gameVM.questionsAnswered - gameVM.questionsCorrect
-                            HStack(spacing: 12) {
-                                Image(systemName: "arrow.counterclockwise.circle.fill")
-                                    .font(.title2)
-                                    .foregroundStyle(AppTheme.heartRed)
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("\(mistakeCount) mistakes this week")
-                                        .font(AppTheme.funFont(.subheadline, weight: .semibold))
-                                    Text("\(max(0, mistakeCount / 3)) drugs to review")
-                                        .font(AppTheme.funFont(.caption, weight: .medium))
-                                        .foregroundStyle(.secondary)
-                                }
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(14)
-                            .background(Color(.tertiarySystemFill))
-                            .clipShape(.rect(cornerRadius: 14))
-                        }
-                        .padding(16)
-                        .cardStyle(borderColor: AppTheme.accentOrange.opacity(0.5))
+                        reviewMistakesCard
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -139,15 +126,162 @@ struct PracticeView: View {
             }
             .background(Color(.systemGroupedBackground))
             .fullScreenCover(isPresented: $showQuickPractice) {
+                gameVM.recordPracticeModeUse(.quickPractice)
+                gameVM.recordPracticeComplete()
+            } content: {
                 quickPracticeQuiz
             }
+            .fullScreenCover(isPresented: $showSpacedReview) {
+                gameVM.recordPracticeModeUse(.spacedReview)
+                gameVM.recordPracticeComplete()
+            } content: {
+                spacedReviewQuiz
+            }
             .fullScreenCover(isPresented: $showBrandBlitz) {
+                gameVM.recordPracticeModeUse(.brandBlitz)
+                gameVM.recordBrandBlitzComplete()
+            } content: {
                 BrandBlitzQuizView(gameVM: gameVM)
+            }
+            .fullScreenCover(isPresented: $showReviewMistakes) {
+                reviewMistakesQuiz
             }
             .sheet(isPresented: $showMasteryDetail) {
                 DrugMasteryListView(drugs: allDrugs, gameVM: gameVM)
             }
+            .sheet(isPresented: $showPaywall) {
+                ProPaywallView()
+            }
+            .alert("Watch an Ad?", isPresented: $showAdPrompt) {
+                Button("Watch Ad") {
+                    if let mode = pendingAdMode {
+                        AdService.shared.showRewardedAd { success in
+                            if success {
+                                launchMode(mode)
+                            }
+                        }
+                    }
+                }
+                Button("Get PRO") {
+                    showPaywall = true
+                }
+                Button("Cancel", role: .cancel) {
+                    pendingAdMode = nil
+                }
+            } message: {
+                Text("You've used your free daily attempt. Watch an ad for one more, or upgrade to PRO for unlimited access.")
+            }
+            .alert("Daily Limit Reached", isPresented: $showLockedAlert) {
+                Button("Get PRO") {
+                    showPaywall = true
+                }
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("You've used all your free attempts for today. Upgrade to PRO for unlimited practice!")
+            }
         }
+    }
+
+    private var dueReviewCount: Int {
+        gameVM.dueReviewKeys().count
+    }
+
+    private var spacedReviewSubtitle: String {
+        let due = dueReviewCount
+        if due > 0 {
+            return "\(due) item\(due == 1 ? "" : "s") due for review"
+        }
+        return "Review completed topics with spaced repetition"
+    }
+
+    private func practiceBadge(_ mode: PracticeMode) -> String? {
+        let access = gameVM.canUsePracticeMode(mode)
+        switch access {
+        case .allowed: return nil
+        case .watchAd: return "Ad"
+        case .locked: return "PRO"
+        }
+    }
+
+    private func handlePracticeAccess(_ mode: PracticeMode, action: () -> Void) {
+        let access = gameVM.canUsePracticeMode(mode)
+        switch access {
+        case .allowed:
+            action()
+        case .watchAd:
+            pendingAdMode = mode
+            showAdPrompt = true
+        case .locked:
+            showLockedAlert = true
+        }
+    }
+
+    private func launchMode(_ mode: PracticeMode) {
+        switch mode {
+        case .brandBlitz: showBrandBlitz = true
+        case .quickPractice: showQuickPractice = true
+        case .spacedReview: showSpacedReview = true
+        }
+    }
+
+    @ViewBuilder
+    private var reviewMistakesCard: some View {
+        let mistakeQuestions = gameVM.mistakeQuestions()
+        let mistakeCount = mistakeQuestions.count
+
+        Button {
+            if gameVM.isProUser {
+                if mistakeCount > 0 {
+                    showReviewMistakes = true
+                }
+            } else {
+                showPaywall = true
+            }
+        } label: {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    FunSectionHeader(icon: "exclamationmark.triangle.fill", title: "Review Mistakes", color: AppTheme.accentOrange)
+                    Spacer()
+                    if !gameVM.isProUser {
+                        Text("PRO")
+                            .font(AppTheme.funFont(.caption2, weight: .heavy))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(LinearGradient(colors: [AppTheme.accentOrange, AppTheme.heartRed], startPoint: .leading, endPoint: .trailing))
+                            .clipShape(Capsule())
+                    }
+                }
+
+                HStack(spacing: 12) {
+                    Image(systemName: "arrow.counterclockwise.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(AppTheme.heartRed)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(mistakeCount > 0 ? "\(mistakeCount) questions to review" : "No mistakes yet")
+                            .font(AppTheme.funFont(.subheadline, weight: .semibold))
+                        Text(mistakeCount > 0 ? "Practice the questions you got wrong" : "Keep practicing to track your mistakes")
+                            .font(AppTheme.funFont(.caption, weight: .medium))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    if mistakeCount > 0 {
+                        Image(systemName: gameVM.isProUser ? "chevron.right" : "lock.fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(14)
+                .background(Color(.tertiarySystemFill))
+                .clipShape(.rect(cornerRadius: 14))
+            }
+            .padding(16)
+            .cardStyle(borderColor: AppTheme.accentOrange.opacity(0.5))
+        }
+        .buttonStyle(.plain)
     }
 
     private var masteredCount: Int {
@@ -174,6 +308,47 @@ struct PracticeView: View {
         let subsectionId = allCompleted.first ?? "1a"
         let sub = DrugDataService.shared.subsection(for: subsectionId) ?? DrugDataService.shared.modules[0].subsections[0]
         QuizView(subsection: sub, gameVM: gameVM)
+    }
+
+    @ViewBuilder
+    private var spacedReviewQuiz: some View {
+        let dueKeys = gameVM.dueReviewKeys()
+        let subsectionId: String = {
+            for key in dueKeys {
+                let parts = key.split(separator: "_")
+                if parts.count > 1 {
+                    let subId = String(parts.last!)
+                    if DrugDataService.shared.subsection(for: subId) != nil {
+                        return subId
+                    }
+                }
+            }
+            return gameVM.completedSubsections.first ?? "1a"
+        }()
+        let sub = DrugDataService.shared.subsection(for: subsectionId) ?? DrugDataService.shared.modules[0].subsections[0]
+        QuizView(subsection: sub, gameVM: gameVM)
+    }
+
+    @ViewBuilder
+    private var reviewMistakesQuiz: some View {
+        let questions = gameVM.mistakeQuestions()
+        if !questions.isEmpty {
+            let sub = DrugDataService.shared.subsection(for: questions[0].subsectionId) ?? DrugDataService.shared.modules[0].subsections[0]
+            QuizView(subsection: sub, gameVM: gameVM)
+        } else {
+            VStack(spacing: 20) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 56))
+                    .foregroundStyle(AppTheme.successGreen)
+                Text("No Mistakes!")
+                    .font(AppTheme.funFont(.title, weight: .heavy))
+                Text("You haven't gotten any questions wrong yet. Keep it up!")
+                    .font(AppTheme.funFont(.body, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
 }
 
@@ -289,6 +464,7 @@ struct PracticeCard: View {
     let iconName: String
     let gradient: [Color]
     let badgeCount: Int?
+    var accessBadge: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -299,9 +475,20 @@ struct PracticeCard: View {
                     .foregroundStyle(.white)
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
-                        .font(AppTheme.funFont(.headline, weight: .heavy))
-                        .foregroundStyle(.white)
+                    HStack(spacing: 6) {
+                        Text(title)
+                            .font(AppTheme.funFont(.headline, weight: .heavy))
+                            .foregroundStyle(.white)
+                        if let badge = accessBadge {
+                            Text(badge)
+                                .font(AppTheme.funFont(.caption2, weight: .heavy))
+                                .foregroundStyle(gradient[0])
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(.white.opacity(0.9))
+                                .clipShape(Capsule())
+                        }
+                    }
                     Text(subtitle)
                         .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.white.opacity(0.85))

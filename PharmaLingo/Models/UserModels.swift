@@ -107,6 +107,18 @@ nonisolated struct FriendDetailProfile: Identifiable, Sendable {
     }
 }
 
+nonisolated enum PracticeMode: Sendable {
+    case brandBlitz
+    case quickPractice
+    case spacedReview
+}
+
+nonisolated enum PracticeAccess: Sendable {
+    case allowed
+    case watchAd
+    case locked
+}
+
 nonisolated struct DailyXPRecord: Codable, Sendable {
     let date: String
     let xpEarned: Int

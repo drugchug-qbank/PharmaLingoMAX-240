@@ -446,7 +446,8 @@ class SupabaseService {
             let records: [LeaderboardRecord] = try await client.from("profiles")
                 .select("id, username, avatar_animal, avatar_eyes, avatar_mouth, avatar_accessory, avatar_body_color, avatar_bg_color, weekly_xp, current_streak, level, profession, school")
                 .order("weekly_xp", ascending: false)
-                .limit(30)
+                .order("created_at", ascending: true)
+                .limit(100)
                 .execute()
                 .value
             return records
