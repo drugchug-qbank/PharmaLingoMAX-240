@@ -156,6 +156,7 @@ struct AvatarCustomizationView: View {
                         gameVM.avatarBodyColor = selectedBodyColor
                         gameVM.avatarBgColor = selectedBgColor
                         gameVM.save()
+                        gameVM.syncAvatarToCloud()
                         gameVM.syncToCloud()
                         dismiss()
                     }

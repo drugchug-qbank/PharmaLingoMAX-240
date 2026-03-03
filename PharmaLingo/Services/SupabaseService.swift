@@ -456,6 +456,27 @@ class SupabaseService {
         }
     }
 
+    func saveAvatarToCloud(animal: String, eyes: String, mouth: String, accessory: String, bodyColor: String, bgColor: String) async {
+        guard let profile = currentProfile else { return }
+        let avatarData: [String: String] = [
+            "avatar_animal": animal,
+            "avatar_eyes": eyes,
+            "avatar_mouth": mouth,
+            "avatar_accessory": accessory,
+            "avatar_body_color": bodyColor,
+            "avatar_bg_color": bgColor
+        ]
+        do {
+            try await client.from("profiles")
+                .update(avatarData)
+                .eq("id", value: profile.id)
+                .execute()
+            await fetchProfile()
+        } catch {
+            print("Failed to save avatar: \(error)")
+        }
+    }
+
     func syncGameState(from gameVM: GameViewModel) async {
         guard let profile = currentProfile else { return }
 

@@ -34,5 +34,16 @@ struct ContentView: View {
                 gameVM.loadFromProfile(profile)
             }
         }
+        .onChange(of: supabase.currentProfile?.avatarAnimal) { _, _ in
+            if let profile = supabase.currentProfile {
+                gameVM.avatarAnimal = profile.avatarAnimal
+                gameVM.avatarEyes = profile.avatarEyes
+                gameVM.avatarMouth = profile.avatarMouth
+                gameVM.avatarAccessory = profile.avatarAccessory
+                gameVM.avatarBodyColor = profile.avatarBodyColor
+                gameVM.avatarBgColor = profile.avatarBgColor
+                gameVM.save()
+            }
+        }
     }
 }

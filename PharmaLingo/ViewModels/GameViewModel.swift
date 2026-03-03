@@ -497,6 +497,19 @@ class GameViewModel {
         }
     }
 
+    func syncAvatarToCloud() {
+        Task {
+            await SupabaseService.shared.saveAvatarToCloud(
+                animal: avatarAnimal,
+                eyes: avatarEyes,
+                mouth: avatarMouth,
+                accessory: avatarAccessory,
+                bodyColor: avatarBodyColor,
+                bgColor: avatarBgColor
+            )
+        }
+    }
+
     private func checkStreak() {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
@@ -709,10 +722,10 @@ class GameViewModel {
         }
         schoolName = profile.school
 
-        avatarAnimal = profile.avatarAnimal.isEmpty ? avatarAnimal : profile.avatarAnimal
-        avatarEyes = profile.avatarEyes.isEmpty ? avatarEyes : profile.avatarEyes
-        avatarMouth = profile.avatarMouth.isEmpty ? avatarMouth : profile.avatarMouth
-        avatarAccessory = profile.avatarAccessory.isEmpty ? avatarAccessory : profile.avatarAccessory
+        avatarAnimal = profile.avatarAnimal
+        avatarEyes = profile.avatarEyes
+        avatarMouth = profile.avatarMouth
+        avatarAccessory = profile.avatarAccessory
         avatarBodyColor = profile.avatarBodyColor
         avatarBgColor = profile.avatarBgColor
 
@@ -779,6 +792,5 @@ class GameViewModel {
         regenerateHearts()
         refreshDailyQuests()
         save()
-        syncToCloud()
     }
 }
