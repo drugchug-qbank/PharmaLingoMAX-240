@@ -1,0 +1,468 @@
+PHARMALINGO — TOP 300 DRUG COURSE OUTLINE (vNext)
+Total unique drug entries: 300
+
+NOTE FOR RORK:
+- This outline is organized as Module -> Submodule -> Drug list.
+- "Mastering" subsections contain *no new drugs*; they should generate mixed-review quizzes pulling from previously unlocked subsections.
+
+MODULE 1. Cardiovascular I: HTN & HF Workhorses
+1a. ACE Inhibitors & ARBs
+  - Benazepril (Lotensin)
+  - Enalapril (Vasotec)
+  - Irbesartan (Avapro)
+  - Lisinopril (Zestril/Prinivil)
+  - Losartan (Cozaar)
+  - Olmesartan (Benicar)
+  - Ramipril (Altace)
+  - Valsartan (Diovan)
+
+1b. Thiazide & Loop Diuretics
+  - Bumetanide (Bumex)
+  - Chlorthalidone (Thalitone)
+  - Furosemide (Lasix)
+  - Hydrochlorothiazide (Microzide)
+  - Torsemide (Demadex)
+
+1c. Beta-Blockers
+  - Atenolol (Tenormin)
+  - Bisoprolol (Zebeta)
+  - Carvedilol (Coreg)
+  - Metoprolol succinate (Toprol XL)
+  - Metoprolol tartrate (Lopressor)
+  - Propranolol (Inderal)
+
+1d. MRAs & ARNI
+  - Eplerenone (Inspra)
+  - Sacubitril/Valsartan (Entresto)
+  - Spironolactone (Aldactone)
+
+1e. Mastering Cardiovascular I (Mixed Review)
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+1f. Calcium Channel Blockers
+  - Amlodipine (Norvasc)
+  - Diltiazem (Cardizem)
+  - Nifedipine (Procardia)
+  - Verapamil (Calan)
+
+1g. Mastering Cardiovascular I (Boss Level)
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 2. Cardiovascular II: Lipids & Thrombosis
+2a. Statins (HMG-CoA Reductase Inhibitors)
+  - Atorvastatin (Lipitor)
+  - Lovastatin (Mevacor)
+  - Pravastatin (Pravachol)
+  - Rosuvastatin (Crestor)
+  - Simvastatin (Zocor)
+
+2b. Non-Statin Lipids (Ezetimibe, PCSK9, Fibrates, Omega-3)
+  - Alirocumab (Praluent)
+  - Evolocumab (Repatha)
+  - Ezetimibe (Zetia)
+  - Fenofibrate (Tricor)
+  - Gemfibrozil (Lopid)
+  - Icosapent ethyl (Vascepa)
+
+2c. Antiplatelets
+  - Aspirin (Bayer/Ecotrin)
+  - Clopidogrel (Plavix)
+  - Ticagrelor (Brilinta)
+
+2d. Anticoagulants
+  - Apixaban (Eliquis)
+  - Enoxaparin (Lovenox)
+  - Rivaroxaban (Xarelto)
+  - Warfarin (Coumadin)
+
+2e. Antianginals & Nitrates
+  - Isosorbide dinitrate (Isordil)
+  - Isosorbide mononitrate (Imdur)
+  - Nitroglycerin (IV) (Tridil)
+  - Nitroglycerin (sublingual) (Nitrostat)
+  - Ranolazine (Ranexa)
+
+2f. Anti-Arrhythmics
+  - Adenosine (Adenocard)
+  - Amiodarone (Cordarone/Pacerone)
+  - Digoxin (Lanoxin)
+  - Dronedarone (Multaq)
+  - Flecainide (Tambocor)
+  - Sotalol (Betapace)
+
+2g. Mastering Cardiovascular II
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 3. Endocrine & Diabetes
+3a. Insulin Overview (Basal & Bolus)
+  - Insulin aspart (NovoLog)
+  - Insulin detemir (Levemir)
+  - Insulin glargine (Lantus)
+  - Insulin lispro (Humalog)
+  - Regular insulin (Humulin R/Novolin R)
+
+3b. Metformin & Oral Agents Overview
+  - Metformin (Glucophage)
+  - Pioglitazone (Actos)
+
+3c. SGLT2 Inhibitors
+  - Dapagliflozin (Farxiga)
+  - Empagliflozin (Jardiance)
+
+3d. GLP-1, DPP-4, Sulfonylureas (High-Yield)
+  - Glimepiride (Amaryl)
+  - Glipizide (Glucotrol)
+  - Liraglutide (Victoza/Saxenda)
+  - Semaglutide (Ozempic/Wegovy)
+  - Sitagliptin (Januvia)
+
+3e. Thyroid (Replacement + Anti-thyroid)
+  - Levothyroxine (Synthroid)
+  - Liothyronine (Cytomel)
+  - Methimazole (Tapazole)
+  - Propylthiouracil (PTU) (PTU)
+
+3f. Adrenal Steroids (Systemic Corticosteroids)
+  - Dexamethasone (Decadron)
+  - Hydrocortisone (Cortef/Solu-Cortef)
+  - Methylprednisolone (Medrol/Solu-Medrol)
+  - Prednisone (Deltasone)
+
+3g. Mastering Endocrine & Diabetes
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 4. CNS & Psych
+4a. Antidepressants I (SSRIs, SNRIs)
+  - Duloxetine (Cymbalta)
+  - Escitalopram (Lexapro)
+  - Fluoxetine (Prozac)
+  - Paroxetine (Paxil)
+  - Sertraline (Zoloft)
+  - Venlafaxine (Effexor XR)
+
+4b. Antidepressants II + Mood Stabilizers (TCAs, Atypicals, Lithium)
+  - Amitriptyline
+  - Bupropion
+  - Buspirone
+  - Citalopram
+  - Clonazepam
+  - Desvenlafaxine
+  - Doxepin
+  - Hydroxyzine
+  - Lithium (Lithobid)
+  - Mirtazapine
+  - Nortriptyline
+  - Trazodone
+
+4c. Antipsychotics (Typical + Atypical)
+  - Aripiprazole (Abilify)
+  - Clozapine (Clozaril)
+  - Haloperidol (Haldol)
+  - Olanzapine (Zyprexa)
+  - Quetiapine (Seroquel)
+  - Risperidone (Risperdal)
+
+4d. Anxiolytics & Sedatives (Benzos, Z-drugs, Sleep)
+  - Alprazolam (Xanax)
+  - Diazepam (Valium)
+  - Lorazepam (Ativan)
+  - Midazolam (Versed)
+  - Suvorexant (Belsomra)
+  - Zolpidem (Ambien)
+
+4e. Stimulants & ADHD Meds
+  - Amphetamine/dextroamphetamine salts
+  - Atomoxetine
+  - Dexmethylphenidate
+  - Guanfacine ER
+  - Lisdexamfetamine
+  - Methylphenidate
+
+4f. Mastering CNS & Psych
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 5. Pain, Inflammation & Rheum
+5a. NSAIDs & Acetaminophen (incl. high-frequency combos)
+  - Acetaminophen (Tylenol)
+  - Acetaminophen/Butalbital/Caffeine
+  - Acetaminophen/Oxycodone
+  - Celecoxib (Celebrex)
+  - Diclofenac
+  - Etodolac
+  - Ibuprofen (Advil/Motrin)
+  - Indomethacin
+  - Ketorolac (Toradol)
+  - Lidocaine (patch)
+  - Meloxicam
+  - Nabumetone
+  - Naproxen (Aleve/Naprosyn)
+
+5b. Opioids & Pain Management Basics + Adjuncts
+  - Baclofen (Lioresal)
+  - Cyclobenzaprine (Flexeril)
+  - Fentanyl (Duragesic (patch))
+  - Gabapentin (Neurontin)
+  - Hydrocodone/Acetaminophen (Norco/Vicodin)
+  - Methocarbamol (Robaxin)
+  - Morphine (MS Contin)
+  - Naloxone (Narcan)
+  - Oxycodone (OxyContin/Roxicodone)
+  - Pregabalin (Lyrica)
+  - Tramadol (Ultram)
+
+5c. Gout Medications
+  - Allopurinol (Zyloprim)
+  - Colchicine (Colcrys)
+  - Febuxostat (Uloric)
+
+5d. DMARDs & Biologics + Immunosuppressants
+  - Adalimumab (Humira)
+  - Azathioprine (Imuran)
+  - Cyclosporine (Neoral/Sandimmune)
+  - Etanercept (Enbrel)
+  - Hydroxychloroquine (Plaquenil)
+  - Methotrexate (Trexall/Rheumatrex)
+  - Mycophenolate mofetil (CellCept)
+  - Tacrolimus (Prograf)
+
+5e. Systemic Steroids in Rheum
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+5f. Mastering Pain, Inflammation & Rheum
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 6. Infectious Disease
+6a. Antibiotic Strategy & Big Buckets
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+6b. Beta-Lactams (Penicillins + Cephalosporins)
+  - Amoxicillin (Amoxil)
+  - Amoxicillin/Clavulanate (Augmentin)
+  - Cefepime (Maxipime)
+  - Ceftriaxone (Rocephin)
+  - Cephalexin (Keflex)
+  - Piperacillin/Tazobactam (Zosyn)
+
+6c. Macrolides, Fluoroquinolones, Tetracyclines
+  - Azithromycin (Zithromax/Z-Pack)
+  - Ciprofloxacin (Cipro)
+  - Clarithromycin (Biaxin)
+  - Doxycycline (Vibramycin)
+  - Levofloxacin (Levaquin)
+
+6d. Sulfonamides & Other Common Antibiotics
+  - Daptomycin (Cubicin)
+  - Linezolid (Zyvox)
+  - Trimethoprim/Sulfamethoxazole (Bactrim)
+  - Vancomycin (IV) (Vancocin)
+  - Vancomycin (oral) (Vancocin)
+
+6e. Antifungals & Antivirals (High-Yield Only)
+  - Acyclovir
+  - Cefdinir
+  - Cefuroxime
+  - Clindamycin
+  - Erythromycin
+  - Fluconazole
+  - Ketoconazole (systemic/topical)
+  - Metronidazole
+  - Moxifloxacin
+  - Nirmatrelvir/Ritonavir
+  - Nitrofurantoin
+  - Nystatin
+  - Ofloxacin (otic/ophthalmic)
+  - Oseltamivir
+  - Penicillin V
+  - Polymyxin B/Trimethoprim (ophthalmic)
+  - Terbinafine
+  - Tobramycin (ophthalmic)
+  - Valacyclovir
+
+6f. Mastering Infectious Disease
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 7. Respiratory & Allergy
+7a. Asthma/COPD Overview (Stepwise Logic)
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+7b. Inhaled Bronchodilators (SABA, LABA, LAMA)
+  - Albuterol (ProAir/Ventolin)
+  - Ipratropium (Atrovent)
+  - Levalbuterol (Xopenex)
+  - Tiotropium (Spiriva)
+  - Umeclidinium/Vilanterol (Anoro Ellipta)
+
+7c. Inhaled Corticosteroids & Combos
+  - Budesonide (inhaled) (Pulmicort)
+  - Budesonide/Formoterol (Symbicort)
+  - Fluticasone (inhaled) (Flovent HFA)
+  - Fluticasone/Salmeterol (Advair)
+  - Mometasone/Formoterol (Dulera)
+  - Salmeterol (Serevent)
+
+7d. Leukotriene Modifiers & Other Controllers
+  - Dupilumab (Dupixent)
+  - Montelukast (Singulair)
+  - Omalizumab (Xolair)
+  - Roflumilast (Daliresp)
+  - Theophylline (Theo-24)
+
+7e. Antihistamines & Nasal Steroids
+  - Azelastine (nasal)
+  - Cetirizine
+  - Diphenhydramine
+  - Fexofenadine
+  - Fluticasone (nasal)
+  - Levocetirizine
+  - Loratadine
+  - Loratadine/Pseudoephedrine
+  - Mometasone (nasal)
+  - Pseudoephedrine
+
+7f. Mastering Respiratory & Allergy
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 8. GI & Hepatic
+8a. Acid Suppression (PPIs, H2 Blockers, Mucosal Protection)
+  - Esomeprazole (Nexium)
+  - Famotidine (Pepcid)
+  - Lansoprazole (Prevacid)
+  - Omeprazole (Prilosec)
+  - Pantoprazole (Protonix)
+  - Sucralfate (Carafate)
+
+8b. Antiemetics
+  - Aprepitant (Emend)
+  - Metoclopramide (Reglan)
+  - Ondansetron (Zofran)
+  - Promethazine (Phenergan)
+  - Scopolamine (Transderm Scop)
+
+8c. Laxatives & Antidiarrheals
+  - Bisacodyl (Dulcolax)
+  - Diphenoxylate/Atropine
+  - Docusate sodium (Colace)
+  - Lactulose
+  - Linaclotide
+  - Loperamide
+  - Polyethylene glycol (MiraLAX)
+  - Polyethylene glycol w/ electrolytes
+  - Senna/Docusate
+
+8d. Antispasmodics
+  - Dicyclomine
+
+8e. IBD (High-Yield Only)
+  - Infliximab (Remicade)
+  - Mesalamine (Asacol/Lialda)
+
+8f. Mastering GI & Hepatic
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 9. Neuro & Seizure Disorders
+9a. Seizure Meds Overview
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+9b. Classic Antiepileptics
+  - Carbamazepine (Tegretol)
+  - Phenytoin (Dilantin)
+  - Valproic acid (Depakote)
+
+9c. Newer Seizure/Tremor Agents
+  - Lamotrigine (Lamictal)
+  - Levetiracetam (Keppra)
+  - Oxcarbazepine
+  - Primidone
+
+9d. Migraine + Cognition + Vestibular (High-Yield Neuro)
+  - Donepezil
+  - Meclizine
+  - Melatonin
+  - Memantine
+  - Rimegepant
+  - Rizatriptan
+  - Sumatriptan
+  - Topiramate
+
+9e. Parkinson’s Disease Medications
+  - Pramipexole
+  - Ropinirole
+
+9f. Mastering Neuro & Seizure Disorders
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+
+MODULE 10. GU, End-Organs & Misc High-Yield
+10a. BPH + Overactive Bladder + Urinary Analgesics
+  - Dutasteride (Avodart)
+  - Finasteride (Proscar/Propecia)
+  - Mirabegron (Myrbetriq)
+  - Oxybutynin (Ditropan)
+  - Phenazopyridine
+  - Sildenafil (Viagra)
+  - Solifenacin
+  - Tadalafil (Cialis)
+  - Tamsulosin (Flomax)
+
+10b. Osteoporosis & Bone Health
+  - Alendronate (Fosamax)
+  - Denosumab (Prolia)
+  - Risedronate (Actonel)
+  - Teriparatide (Forteo)
+  - Zoledronic acid (Reclast)
+
+10c. Contraceptives & Hormonal Therapy
+  - Conjugated estrogens (Premarin)
+  - Drospirenone/Ethinyl estradiol
+  - Estradiol
+  - Ethinyl estradiol/Etonogestrel (vaginal ring)
+  - Ethinyl estradiol/Levonorgestrel
+  - Ethinyl estradiol/Norgestimate (Ortho Tri-Cyclen)
+  - Levonorgestrel IUD (Mirena)
+  - Medroxyprogesterone (depot) (Depo-Provera)
+  - Norethindrone (Micronor/Camila)
+  - Progesterone
+  - Raloxifene (Evista)
+  - Testosterone
+
+10d. Smoking Cessation & Dependence Meds
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
+10e. Eye/Ear + Dermatology + Misc "Can't Miss" Top 300
+  - Atropine (AtroPen)
+  - Betamethasone (topical)
+  - Bimatoprost
+  - Brimonidine
+  - Chlorhexidine
+  - Ciclopirox
+  - Ciprofloxacin/Dexamethasone (otic)
+  - Clobetasol
+  - Dexamethasone/Neomycin/Polymyxin B (otic/ophthalmic)
+  - Dorzolamide
+  - Dorzolamide/Timolol
+  - Epinephrine (EpiPen)
+  - Flumazenil (Romazicon)
+  - Fluorouracil (topical)
+  - Hydroquinone
+  - Iron (ferrous sulfate) (Feosol)
+  - Ketotifen (ophthalmic)
+  - Latanoprost
+  - Mupirocin
+  - Olopatadine (ophthalmic)
+  - Potassium chloride (K-Dur/Klor-Con)
+  - Timolol (ophthalmic)
+  - Tretinoin
+  - Triamcinolone (topical)
+  - Vitamin D (cholecalciferol) (D3)
+
+10f. Mastering GU, End-Organs & Misc
+  (Mastery/Review — no new drugs; pull 10–15 questions from this module + 2–4 from prior modules)
+
