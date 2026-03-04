@@ -218,15 +218,17 @@ struct ShopView: View {
                             ShopItemRow(
                                 icon: "2x.circle.fill",
                                 iconColor: AppTheme.primaryBlue,
-                                title: "Double XP (1 Hour)",
-                                subtitle: "Earn double XP for the next hour",
+                                title: gameVM.hasActiveDoubleXP ? "Double XP Active!" : "Double XP (1 Hour)",
+                                subtitle: gameVM.hasActiveDoubleXP ? "Already active — earning double XP" : "Earn double XP for the next hour",
                                 price: "150",
                                 priceIcon: "bitcoinsign.circle.fill",
                                 priceColor: AppTheme.accentOrange,
-                                isEnabled: gameVM.coins >= 150
+                                isEnabled: gameVM.coins >= 150 && !gameVM.hasActiveDoubleXP
                             ) {
                                 if gameVM.spendCoins(150) {
-                                    purchaseMessage = "Double XP activated for 1 hour!"
+                                    gameVM.activateDoubleXP()
+                                    gameVM.syncToCloud()
+                                    purchaseMessage = "Double XP activated for 1 hour! All XP earned will be doubled."
                                     showPurchaseAlert = true
                                 }
                             }

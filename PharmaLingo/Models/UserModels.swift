@@ -119,6 +119,17 @@ nonisolated enum PracticeAccess: Sendable {
     case locked
 }
 
+nonisolated enum BoostType: String, Codable, Sendable {
+    case doubleXP
+}
+
+nonisolated struct ActiveBoost: Codable, Sendable {
+    let type: BoostType
+    let expiresAt: Date
+
+    var isActive: Bool { Date() < expiresAt }
+}
+
 nonisolated struct DailyXPRecord: Codable, Sendable {
     let date: String
     let xpEarned: Int

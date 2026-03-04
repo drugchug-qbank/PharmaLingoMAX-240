@@ -9,6 +9,7 @@ class GameViewModel {
     var totalXP: Int = 0
     var currentStreak: Int = 0
     var streakSaves: Int = 0
+    var activeBoosts: [ActiveBoost] = []
 
     var subsectionStars: [String: Int] = [:]
     var completedSubsections: Set<String> = []
@@ -155,7 +156,7 @@ class GameViewModel {
     }
 
     func mistakeQuestions() -> [Question] {
-        let wrongKeys = masteryMap.filter { $0.value.totalAttempts > $0.value.correctAttempts }.map(\.key)
+        let wrongKeys = Set(masteryMap.filter { $0.value.totalAttempts > $0.value.correctAttempts }.map(\.key))
         guard !wrongKeys.isEmpty else { return [] }
         var questions: [Question] = []
         let dataService = DrugDataService.shared
@@ -187,11 +188,26 @@ class GameViewModel {
     }
 
     func xpMultiplier() -> Double {
-        isProUser ? 1.5 : 1.0
+        var multiplier = isProUser ? 1.5 : 1.0
+        if activeBoosts.contains(where: { $0.type == .doubleXP && $0.isActive }) {
+            multiplier *= 2.0
+        }
+        return multiplier
     }
 
     func coinMultiplier() -> Double {
         isProUser ? 1.5 : 1.0
+    }
+
+    func activateDoubleXP() {
+        let boost = ActiveBoost(type: .doubleXP, expiresAt: Date().addingTimeInterval(3600))
+        activeBoosts.removeAll { !$0.isActive }
+        activeBoosts.append(boost)
+        save()
+    }
+
+    var hasActiveDoubleXP: Bool {
+        activeBoosts.contains { $0.type == .doubleXP && $0.isActive }
     }
 
     private func refreshDailyQuests() {
@@ -254,6 +270,7 @@ class GameViewModel {
     }
 
     func loseHeart() {
+        guard !isProUser else { return }
         guard hearts > 0 else { return }
         hearts -= 1
         if lastHeartLossDate == nil || hearts == maxHearts - 1 {
@@ -274,12 +291,14 @@ class GameViewModel {
     }
 
     func earnXP(_ amount: Int) {
-        totalXP += amount
+        let adjusted = Int(Double(amount) * xpMultiplier())
+        totalXP += adjusted
         save()
     }
 
     func earnCoins(_ amount: Int) {
-        coins += amount
+        let adjusted = Int(Double(amount) * coinMultiplier())
+        coins += adjusted
         save()
     }
 
@@ -590,6 +609,7 @@ class GameViewModel {
         dailyQuests = []
         lastQuestDate = ""
         masteryMap = [:]
+        activeBoosts = []
         streakExtended = false
         previousStreak = 0
         UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state")
@@ -659,6 +679,7 @@ class GameViewModel {
             "dailyQuickPracticeCount": dailyQuickPracticeCount,
             "dailySpacedReviewCount": dailySpacedReviewCount,
             "dailyPracticeDate": dailyPracticeDate,
+            "activeBoosts": activeBoosts.filter { $0.isActive }.map { ["type": $0.type.rawValue, "expiresAt": $0.expiresAt.timeIntervalSince1970] as [String : Any] },
         ]
         UserDefaults.standard.set(state, forKey: userDefaultsKey)
     }
@@ -699,6 +720,15 @@ class GameViewModel {
         dailyQuickPracticeCount = state["dailyQuickPracticeCount"] as? Int ?? 0
         dailySpacedReviewCount = state["dailySpacedReviewCount"] as? Int ?? 0
         dailyPracticeDate = state["dailyPracticeDate"] as? String ?? ""
+        if let boostData = state["activeBoosts"] as? [[String: Any]] {
+            activeBoosts = boostData.compactMap { dict in
+                guard let typeRaw = dict["type"] as? String,
+                      let type = BoostType(rawValue: typeRaw),
+                      let expiresAt = dict["expiresAt"] as? Double else { return nil }
+                let boost = ActiveBoost(type: type, expiresAt: Date(timeIntervalSince1970: expiresAt))
+                return boost.isActive ? boost : nil
+            }
+        }
         if let questProgress = state["dailyQuestProgress"] as? [[String: Any]] {
             for progress in questProgress {
                 if let id = progress["id"] as? String, let current = progress["current"] as? Int {

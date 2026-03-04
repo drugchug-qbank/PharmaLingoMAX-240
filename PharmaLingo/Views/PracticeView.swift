@@ -126,22 +126,16 @@ struct PracticeView: View {
             }
             .background(Color(.systemGroupedBackground))
             .fullScreenCover(isPresented: $showQuickPractice) {
-                gameVM.recordPracticeModeUse(.quickPractice)
-                gameVM.recordPracticeComplete()
-            } content: {
                 quickPracticeQuiz
             }
             .fullScreenCover(isPresented: $showSpacedReview) {
-                gameVM.recordPracticeModeUse(.spacedReview)
-                gameVM.recordPracticeComplete()
-            } content: {
                 spacedReviewQuiz
             }
             .fullScreenCover(isPresented: $showBrandBlitz) {
-                gameVM.recordPracticeModeUse(.brandBlitz)
-                gameVM.recordBrandBlitzComplete()
-            } content: {
-                BrandBlitzQuizView(gameVM: gameVM)
+                BrandBlitzQuizView(gameVM: gameVM, onQuizComplete: {
+                    gameVM.recordPracticeModeUse(.brandBlitz)
+                    gameVM.recordBrandBlitzComplete()
+                })
             }
             .fullScreenCover(isPresented: $showReviewMistakes) {
                 reviewMistakesQuiz
@@ -302,39 +296,53 @@ struct PracticeView: View {
         return subsections.contains(sub.id) ? min(gameVM.starsFor(sub.id) + 1, 5) : 0
     }
 
+    private var fallbackSubsection: Subsection {
+        DrugDataService.shared.modules[0].subsections[0]
+    }
+
     @ViewBuilder
     private var quickPracticeQuiz: some View {
-        let allCompleted = gameVM.completedSubsections
-        let subsectionId = allCompleted.first ?? "1a"
-        let sub = DrugDataService.shared.subsection(for: subsectionId) ?? DrugDataService.shared.modules[0].subsections[0]
-        QuizView(subsection: sub, gameVM: gameVM)
+        let questions = generateQuickPracticeQuestions()
+        QuizView(
+            subsection: fallbackSubsection,
+            gameVM: gameVM,
+            customQuestions: questions,
+            customTitle: "Quick Practice",
+            onQuizComplete: {
+                gameVM.recordPracticeModeUse(.quickPractice)
+                gameVM.recordPracticeComplete()
+            }
+        )
     }
 
     @ViewBuilder
     private var spacedReviewQuiz: some View {
-        let dueKeys = gameVM.dueReviewKeys()
-        let subsectionId: String = {
-            for key in dueKeys {
-                let parts = key.split(separator: "_")
-                if parts.count > 1 {
-                    let subId = String(parts.last!)
-                    if DrugDataService.shared.subsection(for: subId) != nil {
-                        return subId
-                    }
-                }
+        let questions = generateSpacedReviewQuestions()
+        QuizView(
+            subsection: fallbackSubsection,
+            gameVM: gameVM,
+            customQuestions: questions,
+            customTitle: "Spaced Review",
+            onQuizComplete: {
+                gameVM.recordPracticeModeUse(.spacedReview)
+                gameVM.recordPracticeComplete()
             }
-            return gameVM.completedSubsections.first ?? "1a"
-        }()
-        let sub = DrugDataService.shared.subsection(for: subsectionId) ?? DrugDataService.shared.modules[0].subsections[0]
-        QuizView(subsection: sub, gameVM: gameVM)
+        )
     }
 
     @ViewBuilder
     private var reviewMistakesQuiz: some View {
         let questions = gameVM.mistakeQuestions()
         if !questions.isEmpty {
-            let sub = DrugDataService.shared.subsection(for: questions[0].subsectionId) ?? DrugDataService.shared.modules[0].subsections[0]
-            QuizView(subsection: sub, gameVM: gameVM)
+            QuizView(
+                subsection: fallbackSubsection,
+                gameVM: gameVM,
+                customQuestions: questions,
+                customTitle: "Review Mistakes",
+                onQuizComplete: {
+                    gameVM.recordPracticeComplete()
+                }
+            )
         } else {
             VStack(spacing: 20) {
                 Image(systemName: "checkmark.circle.fill")
@@ -349,6 +357,38 @@ struct PracticeView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+
+    private func generateQuickPracticeQuestions() -> [Question] {
+        var allQ: [Question] = []
+        for module in DrugDataService.shared.modules {
+            for sub in module.subsections where !sub.isMasteryQuiz {
+                allQ.append(contentsOf: DrugDataService.shared.allQuestions(for: sub.id))
+            }
+        }
+        return Array(allQ.shuffled().prefix(10))
+    }
+
+    private func generateSpacedReviewQuestions() -> [Question] {
+        let dueKeys = Set(gameVM.dueReviewKeys())
+        var questions: [Question] = []
+        for module in DrugDataService.shared.modules {
+            for sub in module.subsections where !sub.isMasteryQuiz {
+                let subQuestions = DrugDataService.shared.allQuestions(for: sub.id)
+                for q in subQuestions where dueKeys.contains(q.masteryKey) {
+                    questions.append(q)
+                }
+            }
+        }
+        if questions.isEmpty {
+            for subId in gameVM.completedSubsections {
+                questions.append(contentsOf: DrugDataService.shared.allQuestions(for: subId))
+            }
+        }
+        if questions.isEmpty {
+            questions = generateQuickPracticeQuestions()
+        }
+        return Array(questions.shuffled().prefix(15))
     }
 }
 

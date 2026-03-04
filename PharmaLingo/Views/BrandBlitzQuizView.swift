@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BrandBlitzQuizView: View {
     let gameVM: GameViewModel
+    var onQuizComplete: (() -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     @State private var quizVM: QuizViewModel?
     @State private var showResult: Bool = false
@@ -74,7 +75,7 @@ struct BrandBlitzQuizView: View {
     }
 
     private func setupBlitz() {
-        if gameVM.hearts <= 0 {
+        if !gameVM.hasUnlimitedHearts && gameVM.hearts <= 0 {
             showNoHeartsAlert = true
             return
         }
@@ -193,7 +194,7 @@ struct BrandBlitzQuizView: View {
                     }
                     gameVM.recordConsecutiveCorrect(quizVM.maxConsecutive)
 
-                    if gameVM.hearts <= 0 {
+                    if !gameVM.hasUnlimitedHearts && gameVM.hearts <= 0 {
                         dismiss()
                         return
                     }
@@ -209,6 +210,7 @@ struct BrandBlitzQuizView: View {
                             coinsEarned: max(quizVM.coinsEarned / 2, quizVM.correctCount)
                         )
                         gameVM.updateStreak()
+                        onQuizComplete?()
                         withAnimation { showResult = true }
                     } else {
                         withAnimation(.spring(duration: 0.3)) {

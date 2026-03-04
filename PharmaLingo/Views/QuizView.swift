@@ -3,6 +3,9 @@ import SwiftUI
 struct QuizView: View {
     let subsection: Subsection
     let gameVM: GameViewModel
+    var customQuestions: [Question] = []
+    var customTitle: String? = nil
+    var onQuizComplete: (() -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     @State private var quizVM: QuizViewModel?
     @State private var showResult: Bool = false
@@ -140,27 +143,35 @@ struct QuizView: View {
     }
 
     private func setupQuiz() {
-        if gameVM.hearts <= 0 {
+        if !gameVM.hasUnlimitedHearts && gameVM.hearts <= 0 {
             showNoHeartsAlert = true
             return
         }
 
-        let questions = QuizEngine.shared.buildSessionQuestions(
-            subsectionId: subsection.id,
-            isMastery: subsection.isMasteryQuiz,
-            completedSubsections: gameVM.completedSubsections,
-            masteryMap: gameVM.masteryMap
-        )
+        let questions: [Question]
+        if !customQuestions.isEmpty {
+            questions = customQuestions
+        } else {
+            questions = QuizEngine.shared.buildSessionQuestions(
+                subsectionId: subsection.id,
+                isMastery: subsection.isMasteryQuiz,
+                completedSubsections: gameVM.completedSubsections,
+                masteryMap: gameVM.masteryMap
+            )
+        }
 
         if questions.isEmpty {
             hasNoQuestions = true
             return
         }
 
+        let sessionId = !customQuestions.isEmpty ? "practice" : subsection.id
+        let sessionTitle = customTitle ?? subsection.title
+
         quizVM = QuizViewModel(
-            subsectionId: subsection.id,
-            title: subsection.title,
-            isMastery: subsection.isMasteryQuiz,
+            subsectionId: sessionId,
+            title: sessionTitle,
+            isMastery: customQuestions.isEmpty && subsection.isMasteryQuiz,
             questions: questions
         )
     }
@@ -301,6 +312,7 @@ struct QuizView: View {
                             coinsEarned: quizVM.coinsEarned
                         )
                         gameVM.updateStreak()
+                        onQuizComplete?()
                         withAnimation { showResult = true }
                     } else {
                         withAnimation(.spring(duration: 0.3)) {

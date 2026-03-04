@@ -588,8 +588,8 @@ class SupabaseService {
             }
 
             pool.sort { a, b in
-                let hashA = abs("\(a.id)-\(weeklySeed)".hashValue)
-                let hashB = abs("\(b.id)-\(weeklySeed)".hashValue)
+                let hashA = Self.stableHash("\(a.id)-\(weeklySeed)")
+                let hashB = Self.stableHash("\(b.id)-\(weeklySeed)")
                 return hashA < hashB
             }
 
@@ -861,6 +861,14 @@ class SupabaseService {
             print("Failed to donate: \(error)")
             return false
         }
+    }
+
+    private static func stableHash(_ string: String) -> UInt64 {
+        var hash: UInt64 = 5381
+        for byte in string.utf8 {
+            hash = ((hash &<< 5) &+ hash) &+ UInt64(byte)
+        }
+        return hash
     }
 
     func searchUsers(query: String) async -> [LeaderboardRecord] {
