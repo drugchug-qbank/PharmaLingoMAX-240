@@ -38,6 +38,7 @@ nonisolated enum QuestionObjective: String, Sendable {
     case interaction
     case pearl
     case moa
+    case dosing
     case mixedReview
 }
 

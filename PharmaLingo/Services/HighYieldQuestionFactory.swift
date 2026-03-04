@@ -6,7 +6,8 @@ nonisolated enum ConceptBucket: String, Sendable, CaseIterable {
     case sideEffect
     case blackBoxContraindication
     case pearlDifferentiator
-    
+    case dosing
+
     var label: String {
         switch self {
         case .classPattern: "Class Pattern"
@@ -14,9 +15,10 @@ nonisolated enum ConceptBucket: String, Sendable, CaseIterable {
         case .sideEffect: "Side Effects"
         case .blackBoxContraindication: "Black Box / Safety"
         case .pearlDifferentiator: "Pearls"
+        case .dosing: "Dosing"
         }
     }
-    
+
     var objectiveMapping: QuestionObjective {
         switch self {
         case .classPattern: .suffixId
@@ -24,6 +26,7 @@ nonisolated enum ConceptBucket: String, Sendable, CaseIterable {
         case .sideEffect: .adverseEffect
         case .blackBoxContraindication: .contraindication
         case .pearlDifferentiator: .pearl
+        case .dosing: .dosing
         }
     }
 }
@@ -38,9 +41,10 @@ struct HighYieldQuestionFactory {
         var sideEffect: [Question] = []
         var blackBoxContraindication: [Question] = []
         var pearlDifferentiator: [Question] = []
+        var dosing: [Question] = []
 
         func all() -> [Question] {
-            classPattern + indication + sideEffect + blackBoxContraindication + pearlDifferentiator
+            classPattern + indication + sideEffect + blackBoxContraindication + pearlDifferentiator + dosing
         }
 
         func forBucket(_ bucket: ConceptBucket) -> [Question] {
@@ -50,6 +54,7 @@ struct HighYieldQuestionFactory {
             case .sideEffect: sideEffect
             case .blackBoxContraindication: blackBoxContraindication
             case .pearlDifferentiator: pearlDifferentiator
+            case .dosing: dosing
             }
         }
     }
@@ -69,10 +74,15 @@ struct HighYieldQuestionFactory {
             result.sideEffect.append(contentsOf: sideEffectQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs, sameClassMap: sameClassMap))
             result.blackBoxContraindication.append(contentsOf: blackBoxQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs))
             result.pearlDifferentiator.append(contentsOf: pearlQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs, sameClassMap: sameClassMap))
+            result.dosing.append(contentsOf: dosingQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs))
         }
 
         result.indication.append(contentsOf: matchingIndicationQuestions(drugs: drugs, sid: sid))
         result.classPattern.append(contentsOf: matchingClassQuestions(drugs: drugs, sid: sid))
+        result.sideEffect.append(contentsOf: matchingSideEffectQuestions(drugs: drugs, sid: sid))
+        result.dosing.append(contentsOf: matchingDosingQuestions(drugs: drugs, sid: sid))
+        result.classPattern.append(contentsOf: selectAllClassQuestions(drugs: drugs, sid: sid, allDrugs: moduleDrugs))
+        result.blackBoxContraindication.append(contentsOf: selectAllPregnancyQuestions(drugs: drugs, sid: sid))
 
         return result
     }
@@ -114,7 +124,7 @@ struct HighYieldQuestionFactory {
         qs.append(.trueFalse(
             id: "hy_\(sid)_\(drug.id)_sfx_tf1",
             subsectionId: sid, difficulty: .easy,
-            question: "The suffix \(drug.suffix) identifies \(drug.drugClass) drugs.",
+            question: "\(drug.genericName) (\(drug.brandName)) is a \(drug.drugClass) identified by the suffix \(drug.suffix).",
             answer: true,
             explanation: "Rule: \(drug.suffix) = \(drug.drugClass).\nWhy: All drugs ending in \(drug.suffix) share the same mechanism of action.",
             objective: .suffixId, relatedDrugIds: [drug.id], tags: [drug.suffix], source: .generated
@@ -134,15 +144,15 @@ struct HighYieldQuestionFactory {
             ))
         }
 
-        if d3.count >= 2 {
-            let wrongSuffix = d3[0]
+        if !otherClasses.isEmpty {
+            let wrongClass = otherClasses.shuffledStable(seed: drug.id + "hy_fctf").first!
             qs.append(.trueFalse(
-                id: "hy_\(sid)_\(drug.id)_sfx_tf2",
+                id: "hy_\(sid)_\(drug.id)_cls_tf2",
                 subsectionId: sid, difficulty: .easy,
-                question: "\(drug.genericName) ends in \(wrongSuffix) because it is a \(drug.drugClass).",
+                question: "\(drug.genericName) (\(drug.brandName)) is a \(wrongClass).",
                 answer: false,
-                explanation: "Rule: \(drug.genericName) ends in \(drug.suffix), not \(wrongSuffix).\nWhy: \(drug.suffix) identifies \(drug.drugClass) drugs.",
-                objective: .suffixId, relatedDrugIds: [drug.id], tags: [drug.suffix], source: .generated
+                explanation: "Rule: \(drug.genericName) is a \(drug.drugClass), not a \(wrongClass).\nWhy: The suffix \(drug.suffix) identifies \(drug.drugClass) drugs.",
+                objective: .classId, relatedDrugIds: [drug.id], tags: [drug.drugClass], source: .generated
             ))
         }
 
@@ -274,6 +284,29 @@ struct HighYieldQuestionFactory {
             }
         }
 
+        qs.append(.trueFalse(
+            id: "hy_\(sid)_\(drug.id)_se_fc1",
+            subsectionId: sid, difficulty: .medium,
+            question: "\(drug.genericName) (\(drug.brandName)) is a \(drug.drugClass) that commonly causes \(primarySE).",
+            answer: true,
+            explanation: "Rule: \(primarySE) is a known side effect of \(drug.genericName).\nWhy: Associating drugs with their characteristic side effects is high-yield.",
+            objective: .adverseEffect, relatedDrugIds: [drug.id], tags: drug.sideEffects, source: .generated
+        ))
+
+        if drug.sideEffects.count >= 2 {
+            let wrongSE = Array(otherSEs).shuffledStable(seed: drug.id + "hy_se_fc2").first
+            if let wrong = wrongSE {
+                qs.append(.trueFalse(
+                    id: "hy_\(sid)_\(drug.id)_se_fc2",
+                    subsectionId: sid, difficulty: .medium,
+                    question: "\(drug.genericName) (\(drug.brandName)) commonly causes \(wrong).",
+                    answer: false,
+                    explanation: "Rule: \(drug.genericName) causes \(drug.sideEffects.prefix(3).joined(separator: ", ")), not \(wrong).\nWhy: Distinguishing side effects between drug classes prevents misattribution.",
+                    objective: .adverseEffect, relatedDrugIds: [drug.id], tags: drug.sideEffects, source: .generated
+                ))
+            }
+        }
+
         let classmates = (sameClassMap[drug.drugClass] ?? []).filter { $0.id != drug.id }
         let uniqueSEs = drug.sideEffects.filter { se in
             !classmates.contains(where: { $0.sideEffects.contains(se) })
@@ -325,7 +358,7 @@ struct HighYieldQuestionFactory {
             qs.append(.trueFalse(
                 id: "hy_\(sid)_\(drug.id)_bbw_tf\(idx)",
                 subsectionId: sid, difficulty: .medium,
-                question: "\(drug.genericName) has a Black Box Warning: \(bbw)",
+                question: "\(drug.genericName) (\(drug.brandName)) carries a Black Box Warning for: \(bbw).",
                 answer: true,
                 explanation: "Rule: \(drug.genericName) carries a Black Box Warning for this.\nWhy: Black Box Warnings represent the most serious FDA safety concerns.",
                 objective: .contraindication, relatedDrugIds: [drug.id], tags: ["black_box"], source: .generated
@@ -393,13 +426,12 @@ struct HighYieldQuestionFactory {
     private func pearlQuestions(drug: Drug, sid: String, allDrugs: [Drug], sameClassMap: [String: [Drug]]) -> [Question] {
         var qs: [Question] = []
 
-        for (idx, pearl) in drug.clinicalPearls.enumerated() {
-            guard filterTrialContent(pearl) else { continue }
-
+        let filteredPearls = drug.clinicalPearls.filter(filterTrialContent)
+        for (idx, pearl) in filteredPearls.enumerated() {
             qs.append(.trueFalse(
                 id: "hy_\(sid)_\(drug.id)_pearl_tf\(idx)",
                 subsectionId: sid, difficulty: idx == 0 ? .medium : .hard,
-                question: "\(drug.genericName): \(pearl)",
+                question: "\(drug.genericName) (\(drug.brandName)): \(pearl)",
                 answer: true,
                 explanation: "Rule: \(pearl)\nWhy: This is a high-yield clinical pearl for \(drug.genericName).",
                 objective: .pearl, relatedDrugIds: [drug.id], tags: [drug.drugClass], source: .generated
@@ -408,7 +440,6 @@ struct HighYieldQuestionFactory {
 
         let classmates = (sameClassMap[drug.drugClass] ?? []).filter { $0.id != drug.id }
         if !classmates.isEmpty {
-            let filteredPearls = drug.clinicalPearls.filter(filterTrialContent)
             if let distinctPearl = filteredPearls.first {
                 let otherNames = classmates.shuffledStable(seed: drug.id + "hy_diff1").prefix(3).map(\.genericName)
                 if otherNames.count >= 2 {
@@ -422,6 +453,84 @@ struct HighYieldQuestionFactory {
                         objective: .pearl, relatedDrugIds: [drug.id], tags: [drug.drugClass], source: .generated
                     ))
                 }
+            }
+
+            if filteredPearls.count >= 2 {
+                let wrongPearl = classmates.compactMap { $0.clinicalPearls.first(where: filterTrialContent) }
+                    .shuffledStable(seed: drug.id + "hy_pearl_fc").first
+                if let wp = wrongPearl {
+                    qs.append(.trueFalse(
+                        id: "hy_\(sid)_\(drug.id)_pearl_fc1",
+                        subsectionId: sid, difficulty: .hard,
+                        question: "\(drug.genericName) is distinguished by: \(wp)",
+                        answer: false,
+                        explanation: "Rule: \(filteredPearls[0]) is the distinguishing pearl for \(drug.genericName), not \(wp).\nWhy: Knowing drug-specific pearls prevents mix-ups within the same class.",
+                        objective: .pearl, relatedDrugIds: [drug.id], tags: [drug.drugClass], source: .generated
+                    ))
+                }
+            }
+        }
+
+        return qs
+    }
+
+    // MARK: - Dosing Templates
+
+    private func dosingQuestions(drug: Drug, sid: String, allDrugs: [Drug]) -> [Question] {
+        guard !drug.commonDosing.isEmpty else { return [] }
+        var qs: [Question] = []
+
+        let startDose = drug.commonDosing.first(where: { $0.context.contains("start") })
+        if let sd = startDose {
+            let otherDoses = allDrugs.filter { $0.id != drug.id && !$0.commonDosing.isEmpty }
+                .compactMap { $0.commonDosing.first(where: { $0.context.contains("start") })?.dose }
+            let distractors = Array(Set(otherDoses).subtracting([sd.dose]))
+                .shuffledStable(seed: drug.id + "hy_dose1").prefix(3)
+            if distractors.count >= 2 {
+                let opts = (Array(distractors) + [sd.dose]).shuffledStable(seed: drug.id + "hy_dose1o")
+                qs.append(.multipleChoice(
+                    id: "hy_\(sid)_\(drug.id)_dose_mc1",
+                    subsectionId: sid, difficulty: .medium,
+                    question: "What is the typical starting dose of \(drug.genericName) for HTN?",
+                    options: opts, answer: sd.dose,
+                    explanation: "Rule: \(drug.genericName) starts at \(sd.dose) for HTN.\nWhy: Knowing starting doses prevents under- or over-dosing at initiation.",
+                    objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing", drug.drugClass], source: .generated
+                ))
+
+                let fbOpts = (Array(distractors.prefix(3)) + [sd.dose]).shuffledStable(seed: drug.id + "hy_dose_fb1")
+                qs.append(.fillBlank(
+                    id: "hy_\(sid)_\(drug.id)_dose_fb1",
+                    subsectionId: sid, difficulty: .medium,
+                    question: "The starting dose of \(drug.genericName) (\(drug.brandName)) for HTN is _____.",
+                    options: Array(fbOpts), answer: sd.dose,
+                    explanation: "Rule: Start \(drug.genericName) at \(sd.dose) for HTN.\nWhy: Accurate dosing recall is essential for safe prescribing.",
+                    objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
+                ))
+            }
+        }
+
+        qs.append(.trueFalse(
+            id: "hy_\(sid)_\(drug.id)_dose_fc1",
+            subsectionId: sid, difficulty: .medium,
+            question: "\(drug.genericName) (\(drug.brandName)): \(drug.commonDosing[0].context) is \(drug.commonDosing[0].dose).",
+            answer: true,
+            explanation: "Rule: \(drug.genericName) \(drug.commonDosing[0].context) = \(drug.commonDosing[0].dose).\nWhy: Know starting doses for commonly prescribed medications.",
+            objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
+        ))
+
+        if drug.commonDosing.count >= 2 {
+            let wrongDose = allDrugs.filter { $0.id != drug.id && !$0.commonDosing.isEmpty }
+                .compactMap { $0.commonDosing.first?.dose }
+                .shuffledStable(seed: drug.id + "hy_dose_fc2").first
+            if let wd = wrongDose {
+                qs.append(.trueFalse(
+                    id: "hy_\(sid)_\(drug.id)_dose_fc2",
+                    subsectionId: sid, difficulty: .medium,
+                    question: "The typical starting dose of \(drug.genericName) for HTN is \(wd).",
+                    answer: false,
+                    explanation: "Rule: \(drug.genericName) starts at \(drug.commonDosing[0].dose), not \(wd).\nWhy: Confusing doses between drugs is a common prescribing error.",
+                    objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
+                ))
             }
         }
 
@@ -439,7 +548,7 @@ struct HighYieldQuestionFactory {
         guard pairs.count >= 3 else { return [] }
         return [.matching(
             id: "hy_\(sid)_match_ind",
-            subsectionId: sid, difficulty: .expert,
+            subsectionId: sid, difficulty: .hard,
             question: "Match each drug to its primary indication:",
             pairs: Array(pairs.prefix(4)),
             explanation: "Rule: Each drug has a primary approved indication.\nWhy: Rapid drug-to-indication recall is tested heavily on licensing exams.",
@@ -464,6 +573,83 @@ struct HighYieldQuestionFactory {
             pairs: Array(pairs.prefix(4)),
             explanation: "Rule: Drugs are grouped by class based on shared mechanism.\nWhy: Class identification predicts side effects and indications.",
             objective: .classId, relatedDrugIds: drugs.map(\.id), tags: [], source: .generated
+        )]
+    }
+
+    private func matchingSideEffectQuestions(drugs: [Drug], sid: String) -> [Question] {
+        let drugsWithSE = drugs.filter { !$0.sideEffects.isEmpty }
+        guard drugsWithSE.count >= 3 else { return [] }
+        let pairs = drugsWithSE.prefix(4).map { d in
+            MatchingPair(left: d.genericName, right: d.sideEffects.first!)
+        }
+        return [.matching(
+            id: "hy_\(sid)_match_se",
+            subsectionId: sid, difficulty: .hard,
+            question: "Match each drug to its hallmark side effect:",
+            pairs: Array(pairs),
+            explanation: "Rule: Each drug has characteristic adverse effects.\nWhy: Side effect matching helps identify the causative agent.",
+            objective: .adverseEffect, relatedDrugIds: drugsWithSE.prefix(4).map(\.id), tags: [], source: .generated
+        )]
+    }
+
+    private func matchingDosingQuestions(drugs: [Drug], sid: String) -> [Question] {
+        let drugsWithDosing = drugs.filter { !$0.commonDosing.isEmpty }
+        guard drugsWithDosing.count >= 3 else { return [] }
+        let pairs = drugsWithDosing.prefix(4).compactMap { d -> MatchingPair? in
+            guard let start = d.commonDosing.first(where: { $0.context.contains("start") }) else { return nil }
+            return MatchingPair(left: d.genericName, right: start.dose)
+        }
+        guard pairs.count >= 3 else { return [] }
+        return [.matching(
+            id: "hy_\(sid)_match_dose",
+            subsectionId: sid, difficulty: .hard,
+            question: "Match each drug to its starting dose for HTN:",
+            pairs: Array(pairs.prefix(4)),
+            explanation: "Rule: Each antihypertensive has a specific starting dose.\nWhy: Dose recall is essential for safe prescribing.",
+            objective: .dosing, relatedDrugIds: drugsWithDosing.prefix(4).map(\.id), tags: ["dosing"], source: .generated
+        )]
+    }
+
+    // MARK: - Extra Select-All Questions
+
+    private func selectAllClassQuestions(drugs: [Drug], sid: String, allDrugs: [Drug]) -> [Question] {
+        let groups = Dictionary(grouping: drugs, by: \.drugClass)
+        var qs: [Question] = []
+        for (cls, clsDrugs) in groups where clsDrugs.count >= 2 {
+            let correctNames = clsDrugs.map(\.genericName)
+            let wrongDrugs = drugs.filter { $0.drugClass != cls }
+            let wrongNames = Array(wrongDrugs.map(\.genericName).shuffledStable(seed: sid + cls + "sa_cls").prefix(2))
+            guard !wrongNames.isEmpty else { continue }
+            let allOpts = (correctNames + wrongNames).shuffledStable(seed: sid + cls + "sa_clso")
+            qs.append(.selectAll(
+                id: "hy_\(sid)_sa_cls_\(cls.replacingOccurrences(of: " ", with: "_"))",
+                subsectionId: sid, difficulty: .medium,
+                question: "Select ALL drugs that are \(cls)s:",
+                options: allOpts, correctAnswers: Set(correctNames),
+                explanation: "Rule: \(correctNames.joined(separator: ", ")) are all \(cls)s.\nWhy: Grouping drugs by class predicts shared effects and indications.",
+                objective: .classId, relatedDrugIds: clsDrugs.map(\.id), tags: [cls], source: .generated
+            ))
+        }
+        return qs
+    }
+
+    private func selectAllPregnancyQuestions(drugs: [Drug], sid: String) -> [Question] {
+        let unsafeDrugs = drugs.filter { $0.majorContraindications.contains(where: { $0.lowercased().contains("pregnancy") }) }
+        let safeDrugs = drugs.filter { !$0.majorContraindications.contains(where: { $0.lowercased().contains("pregnancy") }) }
+        guard unsafeDrugs.count >= 2 else { return [] }
+        let correctNames = unsafeDrugs.prefix(5).map(\.genericName)
+        var allOpts = Array(correctNames)
+        if !safeDrugs.isEmpty {
+            allOpts.append(contentsOf: safeDrugs.prefix(2).map(\.genericName))
+        }
+        allOpts = allOpts.shuffledStable(seed: sid + "sa_preg")
+        return [.selectAll(
+            id: "hy_\(sid)_sa_preg",
+            subsectionId: sid, difficulty: .hard,
+            question: "Select ALL drugs contraindicated in pregnancy:",
+            options: allOpts, correctAnswers: Set(correctNames),
+            explanation: "Rule: \(correctNames.joined(separator: ", ")) are all contraindicated in pregnancy.\nWhy: Teratogenicity is a critical safety concern.",
+            objective: .contraindication, relatedDrugIds: unsafeDrugs.prefix(5).map(\.id), tags: ["pregnancy"], source: .generated
         )]
     }
 

@@ -1,5 +1,10 @@
 import Foundation
 
+nonisolated struct DoseFact: Hashable, Sendable {
+    let context: String
+    let dose: String
+}
+
 nonisolated struct Drug: Identifiable, Hashable, Sendable {
     let id: String
     let genericName: String
@@ -12,6 +17,7 @@ nonisolated struct Drug: Identifiable, Hashable, Sendable {
     let blackBoxWarnings: [String]
     let majorContraindications: [String]
     let monitoring: [String]
+    let commonDosing: [DoseFact]
 
     init(
         id: String,
@@ -24,7 +30,8 @@ nonisolated struct Drug: Identifiable, Hashable, Sendable {
         clinicalPearls: [String],
         blackBoxWarnings: [String] = [],
         majorContraindications: [String] = [],
-        monitoring: [String] = []
+        monitoring: [String] = [],
+        commonDosing: [DoseFact] = []
     ) {
         self.id = id
         self.genericName = genericName
@@ -37,6 +44,7 @@ nonisolated struct Drug: Identifiable, Hashable, Sendable {
         self.blackBoxWarnings = blackBoxWarnings
         self.majorContraindications = majorContraindications
         self.monitoring = monitoring
+        self.commonDosing = commonDosing
     }
 }
 

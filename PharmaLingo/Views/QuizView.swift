@@ -240,6 +240,7 @@ struct QuizView: View {
             case .monitoring: ("Monitoring", "heart.text.square.fill")
             case .interaction: ("Interactions", "arrow.triangle.2.circlepath")
             case .moa: ("Mechanism", "gearshape.fill")
+            case .dosing: ("Dosing", "pills.fill")
             case .mixedReview: ("Review", "arrow.clockwise")
             }
         }()

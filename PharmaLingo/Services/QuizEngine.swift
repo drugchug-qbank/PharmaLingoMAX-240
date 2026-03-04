@@ -29,7 +29,7 @@ struct QuizEngine {
         let reviewCount = reviewSubIds.isEmpty ? 0 : Int.random(in: 2...min(4, totalCount - 6))
         let focusCount = totalCount - reviewCount
 
-        let focusQuestions = selectTeachingArcQuestions(
+        var focusQuestions = selectTeachingArcQuestions(
             subsectionId: subsectionId,
             count: focusCount,
             masteryMap: masteryMap
@@ -43,7 +43,16 @@ struct QuizEngine {
             excludeIds: Set(focusQuestions.map(\.id))
         )
 
-        return interleaveQuestions(focus: focusQuestions, review: reviewQuestions, masteryMap: masteryMap)
+        var combined = interleaveQuestions(focus: focusQuestions, review: reviewQuestions, masteryMap: masteryMap)
+
+        combined = enforceTypeQuotas(
+            combined,
+            subsectionId: subsectionId,
+            completedSubsections: completedSubsections,
+            totalCount: totalCount
+        )
+
+        return combined
     }
 
     // MARK: - Teaching Arc Selection
@@ -62,40 +71,41 @@ struct QuizEngine {
 
         let warmupTarget = Int.random(in: 1...2)
         let coreUseTarget = Int.random(in: 2...3)
-        let safetyTarget = Int.random(in: 3...min(5, count - warmupTarget - coreUseTarget))
+        let safetyTarget = Int.random(in: 2...min(4, max(2, count - warmupTarget - coreUseTarget - 2)))
+        let dosingTarget = 1
         let diffTarget = Int.random(in: 1...2)
         let challengeTarget = avgMastery >= 3 ? 1 : 0
 
         var selected: [Question] = []
         var usedIds: Set<String> = []
 
-        func pickFrom(_ pool: [Question], target: Int, preferDifficulty: [QuestionDifficulty]? = nil, adaptToMastery: Bool = true) {
+        func pickFrom(_ pool: [Question], target: Int, preferDifficulty: [QuestionDifficulty]? = nil) {
+            guard target > 0 else { return }
             var candidates = pool.filter { !usedIds.contains($0.id) }
-            if adaptToMastery, let prefs = preferDifficulty {
+            if let prefs = preferDifficulty {
                 let preferred = candidates.filter { prefs.contains($0.difficulty) }
                 let rest = candidates.filter { !prefs.contains($0.difficulty) }
                 candidates = preferred.shuffled() + rest.shuffled()
             } else {
                 candidates = candidates.shuffled()
             }
+            var picked = 0
             for q in candidates {
+                guard picked < target else { break }
+                guard selected.count < count else { return }
                 guard !usedIds.contains(q.id) else { continue }
                 selected.append(q)
                 usedIds.insert(q.id)
-                if selected.count - (selected.count - target) >= target { break }
-                if selected.count >= count { return }
+                picked += 1
             }
         }
 
         let diffForMastery = difficultyPreference(avgMastery: avgMastery)
 
-        let startCount = selected.count
-        pickFrom(bucketed.classPattern, target: warmupTarget, preferDifficulty: [.easy], adaptToMastery: false)
-        let warmupGot = selected.count - startCount
-
-        if warmupGot < warmupTarget {
+        pickFrom(bucketed.classPattern, target: warmupTarget, preferDifficulty: [.easy])
+        if selected.count < warmupTarget {
             let legacySuffix = legacyPool.filter { $0.objective == .suffixId || $0.objective == .classId }
-            pickFrom(legacySuffix, target: warmupTarget - warmupGot, preferDifficulty: [.easy])
+            pickFrom(legacySuffix, target: warmupTarget - selected.count, preferDifficulty: [.easy])
         }
 
         let coreStart = selected.count
@@ -107,12 +117,20 @@ struct QuizEngine {
         }
 
         let safetyStart = selected.count
-        pickFrom(bucketed.sideEffect, target: safetyTarget / 2 + 1, preferDifficulty: diffForMastery)
+        pickFrom(bucketed.sideEffect, target: (safetyTarget + 1) / 2, preferDifficulty: diffForMastery)
         pickFrom(bucketed.blackBoxContraindication, target: safetyTarget - (selected.count - safetyStart), preferDifficulty: diffForMastery)
         let safetyGot = selected.count - safetyStart
         if safetyGot < safetyTarget {
             let legacySafety = legacyPool.filter { $0.objective == .adverseEffect || $0.objective == .contraindication }
             pickFrom(legacySafety, target: safetyTarget - safetyGot, preferDifficulty: diffForMastery)
+        }
+
+        let dosingStart = selected.count
+        pickFrom(bucketed.dosing, target: dosingTarget, preferDifficulty: diffForMastery)
+        let dosingGot = selected.count - dosingStart
+        if dosingGot < dosingTarget {
+            let legacyDosing = legacyPool.filter { $0.objective == .dosing }
+            pickFrom(legacyDosing, target: dosingTarget - dosingGot, preferDifficulty: diffForMastery)
         }
 
         let diffStart = selected.count
@@ -142,6 +160,74 @@ struct QuizEngine {
         selected = addWeakConceptReinforcement(selected, subsectionId: subsectionId, masteryMap: masteryMap, bucketed: bucketed, legacyPool: legacyPool, maxCount: count)
 
         return selected
+    }
+
+    // MARK: - Enforce Matching/SelectAll Quotas
+
+    private func enforceTypeQuotas(
+        _ questions: [Question],
+        subsectionId: String,
+        completedSubsections: Set<String>,
+        totalCount: Int
+    ) -> [Question] {
+        var result = questions
+        let matchingTarget = Int.random(in: 1...3)
+        let selectAllTarget = Int.random(in: 1...3)
+
+        let currentMatching = result.filter { $0.type == .matching }.count
+        let currentSelectAll = result.filter { $0.type == .selectAll }.count
+
+        let usedIds = Set(result.map(\.id))
+
+        var extraPool: [Question] = []
+        if currentMatching < matchingTarget || currentSelectAll < selectAllTarget {
+            if let sub = dataService.subsection(for: subsectionId) {
+                let bucketed = hyFactory.generateBucketed(for: sub)
+                extraPool.append(contentsOf: bucketed.all().filter { !usedIds.contains($0.id) })
+            }
+            let legacy = dataService.allQuestions(for: subsectionId).filter { !usedIds.contains($0.id) }
+            extraPool.append(contentsOf: legacy)
+
+            for compId in completedSubsections where compId != subsectionId {
+                if let compSub = dataService.subsection(for: compId) {
+                    let compBucketed = hyFactory.generateBucketed(for: compSub)
+                    extraPool.append(contentsOf: compBucketed.all().filter { !usedIds.contains($0.id) })
+                }
+            }
+        }
+
+        var usedExtraIds = usedIds
+
+        func swapInType(_ targetType: QuestionType, needed: Int) {
+            guard needed > 0 else { return }
+            let available = extraPool.filter { $0.type == targetType && !usedExtraIds.contains($0.id) }.shuffled()
+            var added = 0
+            for q in available {
+                guard added < needed else { break }
+                let swapOutIdx = result.lastIndex(where: {
+                    $0.type != .matching && $0.type != .selectAll
+                })
+                if let idx = swapOutIdx, result.count >= totalCount {
+                    result[idx] = q
+                } else if result.count < totalCount {
+                    result.append(q)
+                } else {
+                    break
+                }
+                usedExtraIds.insert(q.id)
+                added += 1
+            }
+        }
+
+        let matchingNeeded = max(0, matchingTarget - currentMatching)
+        let selectAllNeeded = max(0, selectAllTarget - currentSelectAll)
+
+        swapInType(.matching, needed: matchingNeeded)
+        swapInType(.selectAll, needed: selectAllNeeded)
+
+        result = Array(result.prefix(totalCount))
+
+        return enforceVariety(result)
     }
 
     private func addWeakConceptReinforcement(
