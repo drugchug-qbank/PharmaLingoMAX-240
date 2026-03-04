@@ -57,20 +57,6 @@ struct QuizEngine {
 
     // MARK: - Teaching Arc Selection
 
-    private func loadCuratedBank(for subsectionId: String) -> [Question] {
-        let loaded = QuestionBankLoader.load(subsectionId: subsectionId)
-        guard !loaded.isEmpty else { return [] }
-        let ids = Set<String>()
-        var deduped: [Question] = []
-        var seen = ids
-        for q in loaded {
-            guard !seen.contains(q.id) else { continue }
-            seen.insert(q.id)
-            deduped.append(q)
-        }
-        return deduped
-    }
-
     private func selectTeachingArcQuestions(
         subsectionId: String,
         count: Int,
@@ -78,18 +64,8 @@ struct QuizEngine {
     ) -> [Question] {
         guard let subsection = dataService.subsection(for: subsectionId) else { return [] }
 
-        let curatedBank = loadCuratedBank(for: subsectionId)
-        let hasCuratedBank = !curatedBank.isEmpty
-
-        let bucketed: HighYieldQuestionFactory.BucketedQuestions
-        let legacyPool: [Question]
-        if hasCuratedBank {
-            bucketed = bucketCuratedQuestions(curatedBank)
-            legacyPool = []
-        } else {
-            bucketed = hyFactory.generateBucketed(for: subsection)
-            legacyPool = dataService.allQuestions(for: subsectionId)
-        }
+        let bucketed = hyFactory.generateBucketed(for: subsection)
+        let legacyPool = dataService.allQuestions(for: subsectionId)
 
         let avgMastery = averageMastery(for: subsectionId, masteryMap: masteryMap)
 
@@ -186,33 +162,6 @@ struct QuizEngine {
         return selected
     }
 
-    private func bucketCuratedQuestions(_ questions: [Question]) -> HighYieldQuestionFactory.BucketedQuestions {
-        var result = HighYieldQuestionFactory.BucketedQuestions()
-        for q in questions {
-            switch q.objective {
-            case .suffixId, .classId:
-                result.classPattern.append(q)
-            case .indication:
-                result.indication.append(q)
-            case .adverseEffect:
-                result.sideEffect.append(q)
-            case .contraindication:
-                result.blackBoxContraindication.append(q)
-            case .pearl, .moa, .interaction:
-                result.pearlDifferentiator.append(q)
-            case .dosing:
-                result.dosing.append(q)
-            case .brandGeneric, .genericBrand:
-                result.classPattern.append(q)
-            case .monitoring:
-                result.sideEffect.append(q)
-            case .mixedReview:
-                result.pearlDifferentiator.append(q)
-            }
-        }
-        return result
-    }
-
     // MARK: - Enforce Matching/SelectAll Quotas
 
     private func enforceTypeQuotas(
@@ -224,37 +173,25 @@ struct QuizEngine {
         var result = questions
         let matchingTarget = Int.random(in: 1...3)
         let selectAllTarget = Int.random(in: 1...3)
-        let dosingTarget = 1
 
         let currentMatching = result.filter { $0.type == .matching }.count
         let currentSelectAll = result.filter { $0.type == .selectAll }.count
-        let currentDosing = result.filter { $0.objective == .dosing }.count
 
         let usedIds = Set(result.map(\.id))
 
         var extraPool: [Question] = []
-        let needsMore = currentMatching < matchingTarget || currentSelectAll < selectAllTarget || currentDosing < dosingTarget
-        if needsMore {
-            var seenIds = usedIds
-
-            func appendUnique(_ qs: [Question]) {
-                for q in qs where !seenIds.contains(q.id) {
-                    extraPool.append(q)
-                    seenIds.insert(q.id)
-                }
-            }
-
-            appendUnique(loadCuratedBank(for: subsectionId))
-
+        if currentMatching < matchingTarget || currentSelectAll < selectAllTarget {
             if let sub = dataService.subsection(for: subsectionId) {
-                appendUnique(hyFactory.generateBucketed(for: sub).all())
+                let bucketed = hyFactory.generateBucketed(for: sub)
+                extraPool.append(contentsOf: bucketed.all().filter { !usedIds.contains($0.id) })
             }
-            appendUnique(dataService.allQuestions(for: subsectionId))
+            let legacy = dataService.allQuestions(for: subsectionId).filter { !usedIds.contains($0.id) }
+            extraPool.append(contentsOf: legacy)
 
             for compId in completedSubsections where compId != subsectionId {
-                appendUnique(loadCuratedBank(for: compId))
                 if let compSub = dataService.subsection(for: compId) {
-                    appendUnique(hyFactory.generateBucketed(for: compSub).all())
+                    let compBucketed = hyFactory.generateBucketed(for: compSub)
+                    extraPool.append(contentsOf: compBucketed.all().filter { !usedIds.contains($0.id) })
                 }
             }
         }
@@ -268,7 +205,7 @@ struct QuizEngine {
             for q in available {
                 guard added < needed else { break }
                 let swapOutIdx = result.lastIndex(where: {
-                    $0.type != .matching && $0.type != .selectAll && $0.objective != .dosing
+                    $0.type != .matching && $0.type != .selectAll
                 })
                 if let idx = swapOutIdx, result.count >= totalCount {
                     result[idx] = q
@@ -282,30 +219,11 @@ struct QuizEngine {
             }
         }
 
-        func swapInObjective(_ objective: QuestionObjective, needed: Int) {
-            guard needed > 0 else { return }
-            let available = extraPool.filter { $0.objective == objective && !usedExtraIds.contains($0.id) }.shuffled()
-            var added = 0
-            for q in available {
-                guard added < needed else { break }
-                let swapOutIdx = result.lastIndex(where: {
-                    $0.type != .matching && $0.type != .selectAll && $0.objective != .dosing
-                })
-                if let idx = swapOutIdx, result.count >= totalCount {
-                    result[idx] = q
-                } else if result.count < totalCount {
-                    result.append(q)
-                } else {
-                    break
-                }
-                usedExtraIds.insert(q.id)
-                added += 1
-            }
-        }
+        let matchingNeeded = max(0, matchingTarget - currentMatching)
+        let selectAllNeeded = max(0, selectAllTarget - currentSelectAll)
 
-        swapInType(.matching, needed: max(0, matchingTarget - currentMatching))
-        swapInType(.selectAll, needed: max(0, selectAllTarget - currentSelectAll))
-        swapInObjective(.dosing, needed: max(0, dosingTarget - currentDosing))
+        swapInType(.matching, needed: matchingNeeded)
+        swapInType(.selectAll, needed: selectAllNeeded)
 
         result = Array(result.prefix(totalCount))
 
@@ -375,14 +293,9 @@ struct QuizEngine {
         let moduleSubIds = module.subsections.filter { !$0.isMasteryQuiz }.map(\.id)
         var allPool: [Question] = []
         for subId in moduleSubIds {
-            let curated = loadCuratedBank(for: subId)
-            if !curated.isEmpty {
-                allPool.append(contentsOf: curated)
-            } else {
-                allPool.append(contentsOf: dataService.allQuestions(for: subId))
-                if let sub = dataService.subsection(for: subId) {
-                    allPool.append(contentsOf: hyFactory.generateBucketed(for: sub).all())
-                }
+            allPool.append(contentsOf: dataService.allQuestions(for: subId))
+            if let sub = dataService.subsection(for: subId) {
+                allPool.append(contentsOf: hyFactory.generateBucketed(for: sub).all())
             }
         }
 
@@ -422,12 +335,7 @@ struct QuizEngine {
 
         var candidatePool: [Question] = []
         for subId in reviewSubIds {
-            let curated = loadCuratedBank(for: subId)
-            if !curated.isEmpty {
-                candidatePool.append(contentsOf: curated)
-            } else {
-                candidatePool.append(contentsOf: dataService.allQuestions(for: subId))
-            }
+            candidatePool.append(contentsOf: dataService.allQuestions(for: subId))
         }
         candidatePool = candidatePool.filter { !excludeIds.contains($0.id) }
 
