@@ -473,81 +473,64 @@ struct QuestionFactory {
         guard drugs.count >= 3 else { return [] }
         var qs: [Question] = []
 
-        let brandGenericPairs = drugs.prefix(4).map { MatchingPair(left: $0.genericName, right: $0.brandName) }
-        if brandGenericPairs.count >= 3 {
+        let eligible = drugs.filter { !$0.brandName.isEmpty }
+        if eligible.count >= 3 {
+            let pairs = eligible.map { MatchingPair(left: $0.genericName, right: $0.brandName) }
             qs.append(.matching(
                 id: "gen_\(sid)_match_bg",
                 subsectionId: sid,
-                difficulty: .hard,
+                difficulty: .medium,
                 question: "Match each generic name to its brand name:",
-                pairs: Array(brandGenericPairs),
-                explanation: "These are key brand-generic pairs for this subsection. Key takeaway: Fluent recall of brand-generic pairs is foundational for pharmacy practice.",
+                pairs: pairs,
+                explanation: "Rule: Brand-generic recall is essential for clinical practice.\nWhy: Prescriptions may use either name.",
                 objective: .genericBrand,
-                relatedDrugIds: drugs.prefix(4).map(\.id),
-                tags: [],
+                relatedDrugIds: eligible.map(\.id),
+                tags: ["brand", "generic"],
                 source: .generated
             ))
         }
 
         let classGroups = Dictionary(grouping: drugs, by: \.drugClass)
         if classGroups.count >= 2 {
-            var classPairs: [MatchingPair] = []
-            for (cls, clsDrugs) in classGroups {
-                if let first = clsDrugs.first {
-                    classPairs.append(MatchingPair(left: first.genericName, right: cls))
-                }
-            }
-            if classPairs.count >= 3 {
+            let selected = Array(drugs.prefix(min(7, drugs.count)))
+            let classPairs = selected.map { MatchingPair(left: $0.genericName, right: $0.drugClass) }
+            if classPairs.count >= 4 {
                 qs.append(.matching(
                     id: "gen_\(sid)_match_dc",
                     subsectionId: sid,
                     difficulty: .hard,
                     question: "Match each drug to its drug class:",
-                    pairs: Array(classPairs.prefix(4)),
-                    explanation: "Understanding drug classifications is essential for pharmacology. Key takeaway: Grouping drugs by class reveals shared mechanisms, indications, and side effect profiles.",
+                    pairs: classPairs,
+                    explanation: "Rule: Drugs are grouped by class based on shared mechanism.\nWhy: Class identification predicts side effects and indications.",
                     objective: .classId,
-                    relatedDrugIds: drugs.map(\.id),
+                    relatedDrugIds: selected.map(\.id),
                     tags: Array(classGroups.keys),
                     source: .generated
                 ))
             }
         }
 
-        if drugs.count >= 4 {
-            let lateDrugs = Array(drugs.suffix(from: min(2, drugs.count)))
-            let latePairs = lateDrugs.prefix(4).map { MatchingPair(left: $0.genericName, right: $0.brandName) }
-            if latePairs.count >= 3 {
-                qs.append(.matching(
-                    id: "gen_\(sid)_match_bg2",
-                    subsectionId: sid,
-                    difficulty: .expert,
-                    question: "Match these additional generic names to their brand names:",
-                    pairs: Array(latePairs),
-                    explanation: "Additional brand-generic pairs for this subsection. Key takeaway: Comprehensive brand-generic knowledge across the entire subsection builds exam confidence.",
-                    objective: .genericBrand,
-                    relatedDrugIds: lateDrugs.prefix(4).map(\.id),
-                    tags: [],
-                    source: .generated
-                ))
+        let drugsWithDosing = drugs.filter { !$0.commonDosing.isEmpty }
+        if drugsWithDosing.count >= 3 {
+            var dosePairs: [MatchingPair] = []
+            var usedDoses: Set<String> = []
+            for d in drugsWithDosing {
+                if let start = d.commonDosing.first(where: { $0.context.contains("start") && !usedDoses.contains($0.dose) }) {
+                    dosePairs.append(MatchingPair(left: d.genericName, right: start.dose))
+                    usedDoses.insert(start.dose)
+                }
             }
-        }
-
-        if drugs.count >= 3 {
-            let indicationPairs = drugs.prefix(4).compactMap { d -> MatchingPair? in
-                guard let ind = d.indications.first else { return nil }
-                return MatchingPair(left: d.genericName, right: ind)
-            }
-            if indicationPairs.count >= 3 {
+            if dosePairs.count >= 3 {
                 qs.append(.matching(
-                    id: "gen_\(sid)_match_ind",
+                    id: "gen_\(sid)_match_dose",
                     subsectionId: sid,
-                    difficulty: .expert,
-                    question: "Match each drug to its primary indication:",
-                    pairs: Array(indicationPairs.prefix(4)),
-                    explanation: "Linking drugs to their primary indications reinforces clinical decision-making. Key takeaway: Rapid drug-to-indication recall is tested heavily on licensing exams.",
-                    objective: .indication,
-                    relatedDrugIds: drugs.prefix(4).map(\.id),
-                    tags: [],
+                    difficulty: .hard,
+                    question: "Match each drug to its starting dose:",
+                    pairs: dosePairs,
+                    explanation: "Rule: Each drug has a specific starting dose.\nWhy: Dose recall is essential for safe prescribing.",
+                    objective: .dosing,
+                    relatedDrugIds: dosePairs.compactMap { p in drugsWithDosing.first(where: { $0.genericName == p.left })?.id },
+                    tags: ["dosing"],
                     source: .generated
                 ))
             }

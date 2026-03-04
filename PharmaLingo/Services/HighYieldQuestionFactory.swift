@@ -77,10 +77,9 @@ struct HighYieldQuestionFactory {
             result.dosing.append(contentsOf: dosingQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs))
         }
 
-        result.indication.append(contentsOf: matchingIndicationQuestions(drugs: drugs, sid: sid))
-        result.classPattern.append(contentsOf: matchingClassQuestions(drugs: drugs, sid: sid))
-        result.sideEffect.append(contentsOf: matchingSideEffectQuestions(drugs: drugs, sid: sid))
-        result.dosing.append(contentsOf: matchingDosingQuestions(drugs: drugs, sid: sid))
+        result.classPattern.append(contentsOf: matchingBrandGenericAllDrugs(drugs: drugs, sid: sid))
+        result.classPattern.append(contentsOf: matchingDrugClassQuestions(drugs: drugs, sid: sid))
+        result.dosing.append(contentsOf: matchingDrugDoseQuestions(drugs: drugs, sid: sid))
         result.classPattern.append(contentsOf: selectAllClassQuestions(drugs: drugs, sid: sid, allDrugs: moduleDrugs))
         result.blackBoxContraindication.append(contentsOf: selectAllPregnancyQuestions(drugs: drugs, sid: sid))
 
@@ -531,82 +530,50 @@ struct HighYieldQuestionFactory {
         return qs
     }
 
-    // MARK: - Matching Questions
+    // MARK: - Matching Questions (3 types only)
 
-    private func matchingIndicationQuestions(drugs: [Drug], sid: String) -> [Question] {
-        guard drugs.count >= 3 else { return [] }
-        var pairs: [MatchingPair] = []
-        var usedRights: Set<String> = []
-        for d in drugs {
-            if let ind = d.indications.first(where: { !usedRights.contains($0) }) {
-                pairs.append(MatchingPair(left: d.genericName, right: ind))
-                usedRights.insert(ind)
-            }
-            if pairs.count >= 4 { break }
-        }
-        guard pairs.count >= 3 else {
-            return matchingBrandGenericQuestions(drugs: drugs, sid: sid, tag: "ind_fallback")
-        }
-        return [.matching(
-            id: "hy_\(sid)_match_ind",
-            subsectionId: sid, difficulty: .hard,
-            question: "Match each drug to its primary indication:",
+    private func matchingBrandGenericAllDrugs(drugs: [Drug], sid: String) -> [Question] {
+        let eligible = drugs.filter { !$0.brandName.isEmpty }
+        guard eligible.count >= 3 else { return [] }
+        let pairs = eligible.map { MatchingPair(left: $0.genericName, right: $0.brandName) }
+        var qs: [Question] = []
+        qs.append(.matching(
+            id: "hy_\(sid)_match_bg_all",
+            subsectionId: sid, difficulty: .medium,
+            question: "Match each generic name to its brand name:",
             pairs: pairs,
-            explanation: "Rule: Each drug has a primary approved indication.\nWhy: Rapid drug-to-indication recall is tested heavily on licensing exams.",
-            objective: .indication, relatedDrugIds: pairs.compactMap { p in drugs.first(where: { $0.genericName == p.left })?.id }, tags: [], source: .generated
-        )]
+            explanation: "Rule: Brand-generic recall is essential for clinical practice.\nWhy: Prescriptions may use either name — you must recognize both.",
+            objective: .genericBrand, relatedDrugIds: eligible.map(\.id), tags: ["brand", "generic"], source: .generated
+        ))
+        let reversePairs = eligible.map { MatchingPair(left: $0.brandName, right: $0.genericName) }
+        qs.append(.matching(
+            id: "hy_\(sid)_match_gb_all",
+            subsectionId: sid, difficulty: .medium,
+            question: "Match each brand name to its generic name:",
+            pairs: reversePairs,
+            explanation: "Rule: Brand-generic recall is essential for clinical practice.\nWhy: Charts and labels may show either name.",
+            objective: .brandGeneric, relatedDrugIds: eligible.map(\.id), tags: ["brand", "generic"], source: .generated
+        ))
+        return qs
     }
 
-    private func matchingClassQuestions(drugs: [Drug], sid: String) -> [Question] {
+    private func matchingDrugClassQuestions(drugs: [Drug], sid: String) -> [Question] {
         let groups = Dictionary(grouping: drugs, by: \.drugClass)
-        guard groups.count >= 2 else {
-            return matchingBrandGenericQuestions(drugs: drugs, sid: sid, tag: "cls_fallback")
-        }
-        var pairs: [MatchingPair] = []
-        for (cls, clsDrugs) in groups {
-            if let first = clsDrugs.first {
-                pairs.append(MatchingPair(left: first.genericName, right: cls))
-            }
-        }
-        guard pairs.count >= 2 else {
-            return matchingBrandGenericQuestions(drugs: drugs, sid: sid, tag: "cls_fallback")
-        }
+        guard groups.count >= 2 else { return [] }
+        let selected = drugs.shuffledStable(seed: sid + "match_cls_all").prefix(min(7, drugs.count))
+        let pairs = selected.map { MatchingPair(left: $0.genericName, right: $0.drugClass) }
+        guard pairs.count >= 4 else { return [] }
         return [.matching(
             id: "hy_\(sid)_match_cls",
             subsectionId: sid, difficulty: .hard,
             question: "Match each drug to its drug class:",
-            pairs: Array(pairs.prefix(4)),
+            pairs: Array(pairs),
             explanation: "Rule: Drugs are grouped by class based on shared mechanism.\nWhy: Class identification predicts side effects and indications.",
-            objective: .classId, relatedDrugIds: drugs.map(\.id), tags: [], source: .generated
+            objective: .classId, relatedDrugIds: selected.map(\.id), tags: [], source: .generated
         )]
     }
 
-    private func matchingSideEffectQuestions(drugs: [Drug], sid: String) -> [Question] {
-        let drugsWithSE = drugs.filter { !$0.sideEffects.isEmpty }
-        guard drugsWithSE.count >= 3 else { return [] }
-        var pairs: [MatchingPair] = []
-        var usedRights: Set<String> = []
-        for d in drugsWithSE {
-            if let se = d.sideEffects.first(where: { !usedRights.contains($0) }) {
-                pairs.append(MatchingPair(left: d.genericName, right: se))
-                usedRights.insert(se)
-            }
-            if pairs.count >= 4 { break }
-        }
-        guard pairs.count >= 3 else {
-            return matchingBrandGenericQuestions(drugs: drugs, sid: sid, tag: "se_fallback")
-        }
-        return [.matching(
-            id: "hy_\(sid)_match_se",
-            subsectionId: sid, difficulty: .hard,
-            question: "Match each drug to its hallmark side effect:",
-            pairs: pairs,
-            explanation: "Rule: Each drug has characteristic adverse effects.\nWhy: Side effect matching helps identify the causative agent.",
-            objective: .adverseEffect, relatedDrugIds: pairs.compactMap { p in drugs.first(where: { $0.genericName == p.left })?.id }, tags: [], source: .generated
-        )]
-    }
-
-    private func matchingDosingQuestions(drugs: [Drug], sid: String) -> [Question] {
+    private func matchingDrugDoseQuestions(drugs: [Drug], sid: String) -> [Question] {
         let drugsWithDosing = drugs.filter { !$0.commonDosing.isEmpty }
         guard drugsWithDosing.count >= 3 else { return [] }
         var pairs: [MatchingPair] = []
@@ -616,11 +583,8 @@ struct HighYieldQuestionFactory {
                 pairs.append(MatchingPair(left: d.genericName, right: start.dose))
                 usedDoses.insert(start.dose)
             }
-            if pairs.count >= 4 { break }
         }
-        guard pairs.count >= 3 else {
-            return matchingBrandGenericQuestions(drugs: drugsWithDosing, sid: sid, tag: "dose_fallback")
-        }
+        guard pairs.count >= 3 else { return [] }
         return [.matching(
             id: "hy_\(sid)_match_dose",
             subsectionId: sid, difficulty: .hard,
@@ -674,20 +638,7 @@ struct HighYieldQuestionFactory {
         )]
     }
 
-    private func matchingBrandGenericQuestions(drugs: [Drug], sid: String, tag: String) -> [Question] {
-        let eligible = drugs.filter { !$0.brandName.isEmpty }
-        guard eligible.count >= 3 else { return [] }
-        let selected = Array(eligible.shuffledStable(seed: sid + tag).prefix(4))
-        let pairs = selected.map { MatchingPair(left: $0.genericName, right: $0.brandName) }
-        return [.matching(
-            id: "hy_\(sid)_match_bg_\(tag)",
-            subsectionId: sid, difficulty: .medium,
-            question: "Match each generic name to its brand name:",
-            pairs: pairs,
-            explanation: "Rule: Brand-generic recall is essential for clinical practice.",
-            objective: .genericBrand, relatedDrugIds: selected.map(\.id), tags: ["brand", "generic"], source: .generated
-        )]
-    }
+
 
     // MARK: - Vignette Stems
 
