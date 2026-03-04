@@ -26,7 +26,7 @@ struct QuizEngine {
     ) -> [Question] {
         let totalCount = Int.random(in: 10...15)
         let reviewSubIds = completedSubsections.filter { $0 != subsectionId }
-        let reviewCount = reviewSubIds.isEmpty ? 0 : Int.random(in: 2...min(4, totalCount - 6))
+        let reviewCount = reviewSubIds.isEmpty ? 0 : min(2, totalCount - 6)
         let focusCount = totalCount - reviewCount
 
         var focusQuestions = selectTeachingArcQuestions(
@@ -64,7 +64,26 @@ struct QuizEngine {
     ) -> [Question] {
         guard let subsection = dataService.subsection(for: subsectionId) else { return [] }
 
-        let bucketed = hyFactory.generateBucketed(for: subsection)
+        var bucketed = hyFactory.generateBucketed(for: subsection)
+        let curatedPool = dataService.questions(for: subsectionId).shuffled()
+        for cq in curatedPool {
+            switch cq.objective {
+            case .suffixId, .classId, .genericBrand, .brandGeneric:
+                bucketed.classPattern.append(cq)
+            case .indication:
+                bucketed.indication.append(cq)
+            case .adverseEffect:
+                bucketed.sideEffect.append(cq)
+            case .contraindication:
+                bucketed.blackBoxContraindication.append(cq)
+            case .pearl, .moa:
+                bucketed.pearlDifferentiator.append(cq)
+            case .dosing:
+                bucketed.dosing.append(cq)
+            default:
+                bucketed.pearlDifferentiator.append(cq)
+            }
+        }
         let legacyPool = dataService.allQuestions(for: subsectionId)
 
         let avgMastery = averageMastery(for: subsectionId, masteryMap: masteryMap)
