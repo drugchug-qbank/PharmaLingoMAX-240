@@ -51,8 +51,6 @@ extension DrugDataService {
             LearningSlide(id: "ls1d_2", title: "ARNI: Entresto", content: "Sacubitril/Valsartan combines neprilysin inhibitor with ARB.", bulletPoints: ["MUST have 36-hour washout from ACE inhibitor", "NEVER combine with ACE inhibitor"], highlightText: "Entresto: 36-hour ACE washout required"),
         ])
 
-        let sub1e = Subsection(id: "1e", moduleId: "m1", code: "1e", title: "Mastering Cardiovascular I", description: "Mixed review of HTN & HF drugs", iconName: "trophy.fill", drugs: [], isMasteryQuiz: true, learningSlides: [])
-
         let sub1f = Subsection(id: "1f", moduleId: "m1", code: "1f", title: "Calcium Channel Blockers", description: "Dihydropyridines and Non-dihydropyridines", iconName: "waveform.path.ecg", drugs: [
             Drug(id: "d23", genericName: "Amlodipine", brandName: "Norvasc", drugClass: "DHP CCB", suffix: "-dipine", indications: ["HTN", "Angina"], sideEffects: ["Peripheral edema", "Flushing"], clinicalPearls: ["Most commonly prescribed CCB", "Long half-life"]),
             Drug(id: "d24", genericName: "Nifedipine", brandName: "Procardia", drugClass: "DHP CCB", suffix: "-dipine", indications: ["HTN", "Angina", "Raynaud's"], sideEffects: ["Peripheral edema", "Reflex tachycardia"], clinicalPearls: ["Extended release preferred"]),
@@ -64,7 +62,7 @@ extension DrugDataService {
 
         let sub1g = Subsection(id: "1g", moduleId: "m1", code: "1g", title: "Mastering Cardiovascular I (Boss)", description: "Comprehensive cardiovascular review", iconName: "trophy.fill", drugs: [], isMasteryQuiz: true, learningSlides: [])
 
-        return DrugModule(id: "m1", number: 1, title: "Cardiovascular I", subtitle: "HTN & HF Workhorses", iconName: "heart.fill", accentColorHex: "E53935", subsections: [sub1a, sub1b, sub1c, sub1d, sub1e, sub1f, sub1g])
+        return DrugModule(id: "m1", number: 1, title: "Cardiovascular I", subtitle: "HTN & HF Workhorses", iconName: "heart.fill", accentColorHex: "E53935", subsections: [sub1a, sub1b, sub1c, sub1d, sub1f, sub1g])
     }
 
     // MARK: - Module 2: Cardiovascular II
