@@ -12,6 +12,7 @@ struct QuizView: View {
     @State private var showNoHeartsAlert: Bool = false
     @State private var bounceCorrect: Bool = false
     @State private var shakeWrong: Bool = false
+    @State private var showCorrectCelebration: Bool = false
     @State private var hasNoQuestions: Bool = false
     @State private var showOutOfHearts: Bool = false
     @State private var showPaywall: Bool = false
@@ -55,7 +56,10 @@ struct QuizView: View {
                     ScrollView {
                         if let question = quizVM.currentQuestion {
                             VStack(spacing: 20) {
-                                questionTypeLabel(question.type)
+                                HStack(spacing: 8) {
+                                    conceptLabel(question.objective)
+                                    questionTypeLabel(question.type)
+                                }
 
                                 Text(question.questionText)
                                     .font(AppTheme.funFont(.title3, weight: .bold))
@@ -224,6 +228,36 @@ struct QuizView: View {
     }
 
     @ViewBuilder
+    private func conceptLabel(_ objective: QuestionObjective) -> some View {
+        let (text, icon): (String, String) = {
+            switch objective {
+            case .suffixId, .classId: ("Class Pattern", "textformat.abc")
+            case .indication: ("Indications", "cross.case.fill")
+            case .adverseEffect: ("Side Effects", "exclamationmark.triangle.fill")
+            case .contraindication: ("Black Box / Safety", "shield.fill")
+            case .pearl: ("Pearls", "star.fill")
+            case .brandGeneric, .genericBrand: ("Drug Names", "pill.fill")
+            case .monitoring: ("Monitoring", "heart.text.square.fill")
+            case .interaction: ("Interactions", "arrow.triangle.2.circlepath")
+            case .moa: ("Mechanism", "gearshape.fill")
+            case .mixedReview: ("Review", "arrow.clockwise")
+            }
+        }()
+
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 9, weight: .bold))
+            Text(text.uppercased())
+                .font(AppTheme.funFont(.caption2, weight: .heavy))
+        }
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 4)
+        .background(Color(.tertiarySystemFill))
+        .clipShape(Capsule())
+    }
+
+    @ViewBuilder
     private func questionTypeLabel(_ type: QuestionType) -> some View {
         let (text, color): (String, Color) = {
             switch type {
@@ -262,20 +296,59 @@ struct QuizView: View {
 
     @ViewBuilder
     private func feedbackView(quizVM: QuizViewModel, question: Question) -> some View {
-        VStack(spacing: 8) {
-            HStack {
+        let parts = parseExplanation(question.explanation)
+        VStack(spacing: 10) {
+            HStack(spacing: 6) {
                 Image(systemName: quizVM.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .font(.title2)
-                Text(quizVM.isCorrect ? "Correct!" : "Incorrect")
+                    .symbolEffect(.bounce, value: showCorrectCelebration)
+                Text(quizVM.isCorrect ? correctCelebrationText() : "Not quite")
                     .font(AppTheme.funFont(.headline, weight: .heavy))
             }
             .foregroundStyle(quizVM.isCorrect ? AppTheme.successGreen : AppTheme.heartRed)
 
-            Text(question.explanation)
-                .font(AppTheme.funFont(.subheadline, weight: .medium))
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
+            if let rule = parts.rule {
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.warningYellow)
+                    Text(rule)
+                        .font(AppTheme.funFont(.subheadline, weight: .bold))
+                        .foregroundStyle(.primary)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(AppTheme.warningYellow.opacity(0.1))
+                .clipShape(.rect(cornerRadius: 10))
+            }
+
+            if let why = parts.why {
+                Text(why)
+                    .font(AppTheme.funFont(.caption, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            if let pearl = parts.pearl {
+                HStack(alignment: .top, spacing: 4) {
+                    Image(systemName: "star.fill")
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.xpPurple)
+                    Text(pearl)
+                        .font(AppTheme.funFont(.caption, weight: .semibold))
+                        .foregroundStyle(AppTheme.xpPurple)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            if parts.rule == nil {
+                Text(question.explanation)
+                    .font(AppTheme.funFont(.subheadline, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(16)
         .frame(maxWidth: .infinity)
@@ -283,6 +356,31 @@ struct QuizView: View {
         .clipShape(.rect(cornerRadius: 14))
         .padding(.horizontal)
         .transition(.scale.combined(with: .opacity))
+    }
+
+    private func correctCelebrationText() -> String {
+        ["Correct!", "Nailed it!", "Nice one!", "You got it!", "Exactly right!"].randomElement()!
+    }
+
+    private struct ExplanationParts {
+        var rule: String?
+        var why: String?
+        var pearl: String?
+    }
+
+    private func parseExplanation(_ text: String) -> ExplanationParts {
+        var parts = ExplanationParts()
+        let lines = text.components(separatedBy: "\n").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        for line in lines {
+            if line.hasPrefix("Rule:") {
+                parts.rule = String(line.dropFirst(5)).trimmingCharacters(in: .whitespaces)
+            } else if line.hasPrefix("Why:") {
+                parts.why = String(line.dropFirst(4)).trimmingCharacters(in: .whitespaces)
+            } else if line.hasPrefix("Pearl:") {
+                parts.pearl = String(line.dropFirst(6)).trimmingCharacters(in: .whitespaces)
+            }
+        }
+        return parts
     }
 
     @ViewBuilder
@@ -339,6 +437,7 @@ struct QuizView: View {
                     }
                     if quizVM.isCorrect {
                         bounceCorrect.toggle()
+                        showCorrectCelebration.toggle()
                     } else {
                         shakeWrong.toggle()
                     }

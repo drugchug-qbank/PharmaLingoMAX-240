@@ -9,6 +9,35 @@ nonisolated struct Drug: Identifiable, Hashable, Sendable {
     let indications: [String]
     let sideEffects: [String]
     let clinicalPearls: [String]
+    let blackBoxWarnings: [String]
+    let majorContraindications: [String]
+    let monitoring: [String]
+
+    init(
+        id: String,
+        genericName: String,
+        brandName: String,
+        drugClass: String,
+        suffix: String,
+        indications: [String],
+        sideEffects: [String],
+        clinicalPearls: [String],
+        blackBoxWarnings: [String] = [],
+        majorContraindications: [String] = [],
+        monitoring: [String] = []
+    ) {
+        self.id = id
+        self.genericName = genericName
+        self.brandName = brandName
+        self.drugClass = drugClass
+        self.suffix = suffix
+        self.indications = indications
+        self.sideEffects = sideEffects
+        self.clinicalPearls = clinicalPearls
+        self.blackBoxWarnings = blackBoxWarnings
+        self.majorContraindications = majorContraindications
+        self.monitoring = monitoring
+    }
 }
 
 nonisolated struct LearningSlide: Identifiable, Hashable, Sendable {

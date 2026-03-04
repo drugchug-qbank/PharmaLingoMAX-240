@@ -3,7 +3,7 @@ import Foundation
 struct QuizEngine {
     static let shared = QuizEngine()
     private let dataService = DrugDataService.shared
-    private let factory = QuestionFactory.shared
+    private let hyFactory = HighYieldQuestionFactory.shared
 
     func buildSessionQuestions(
         subsectionId: String,
@@ -17,17 +17,19 @@ struct QuizEngine {
         return buildLessonSession(subsectionId: subsectionId, completedSubsections: completedSubsections, masteryMap: masteryMap)
     }
 
-    // MARK: - Lesson Session (10-15 focus + 2-4 review)
+    // MARK: - Lesson Session (TOTAL 10–15 questions including review)
 
     private func buildLessonSession(
         subsectionId: String,
         completedSubsections: Set<String>,
         masteryMap: [String: MasteryRecord]
     ) -> [Question] {
-        let focusCount = Int.random(in: 12...15)
-        let reviewCount = Int.random(in: 2...4)
+        let totalCount = Int.random(in: 10...15)
+        let reviewSubIds = completedSubsections.filter { $0 != subsectionId }
+        let reviewCount = reviewSubIds.isEmpty ? 0 : Int.random(in: 2...min(4, totalCount - 6))
+        let focusCount = totalCount - reviewCount
 
-        let focusQuestions = selectFocusQuestions(
+        let focusQuestions = selectTeachingArcQuestions(
             subsectionId: subsectionId,
             count: focusCount,
             masteryMap: masteryMap
@@ -44,7 +46,155 @@ struct QuizEngine {
         return interleaveQuestions(focus: focusQuestions, review: reviewQuestions, masteryMap: masteryMap)
     }
 
-    // MARK: - Mastery Session (30 questions from all completed subsections in module)
+    // MARK: - Teaching Arc Selection
+
+    private func selectTeachingArcQuestions(
+        subsectionId: String,
+        count: Int,
+        masteryMap: [String: MasteryRecord]
+    ) -> [Question] {
+        guard let subsection = dataService.subsection(for: subsectionId) else { return [] }
+
+        let bucketed = hyFactory.generateBucketed(for: subsection)
+        let legacyPool = dataService.allQuestions(for: subsectionId)
+
+        let avgMastery = averageMastery(for: subsectionId, masteryMap: masteryMap)
+
+        let warmupTarget = Int.random(in: 1...2)
+        let coreUseTarget = Int.random(in: 2...3)
+        let safetyTarget = Int.random(in: 3...min(5, count - warmupTarget - coreUseTarget))
+        let diffTarget = Int.random(in: 1...2)
+        let challengeTarget = avgMastery >= 3 ? 1 : 0
+
+        var selected: [Question] = []
+        var usedIds: Set<String> = []
+
+        func pickFrom(_ pool: [Question], target: Int, preferDifficulty: [QuestionDifficulty]? = nil, adaptToMastery: Bool = true) {
+            var candidates = pool.filter { !usedIds.contains($0.id) }
+            if adaptToMastery, let prefs = preferDifficulty {
+                let preferred = candidates.filter { prefs.contains($0.difficulty) }
+                let rest = candidates.filter { !prefs.contains($0.difficulty) }
+                candidates = preferred.shuffled() + rest.shuffled()
+            } else {
+                candidates = candidates.shuffled()
+            }
+            for q in candidates {
+                guard !usedIds.contains(q.id) else { continue }
+                selected.append(q)
+                usedIds.insert(q.id)
+                if selected.count - (selected.count - target) >= target { break }
+                if selected.count >= count { return }
+            }
+        }
+
+        let diffForMastery = difficultyPreference(avgMastery: avgMastery)
+
+        let startCount = selected.count
+        pickFrom(bucketed.classPattern, target: warmupTarget, preferDifficulty: [.easy], adaptToMastery: false)
+        let warmupGot = selected.count - startCount
+
+        if warmupGot < warmupTarget {
+            let legacySuffix = legacyPool.filter { $0.objective == .suffixId || $0.objective == .classId }
+            pickFrom(legacySuffix, target: warmupTarget - warmupGot, preferDifficulty: [.easy])
+        }
+
+        let coreStart = selected.count
+        pickFrom(bucketed.indication, target: coreUseTarget, preferDifficulty: diffForMastery)
+        let coreGot = selected.count - coreStart
+        if coreGot < coreUseTarget {
+            let legacyInd = legacyPool.filter { $0.objective == .indication }
+            pickFrom(legacyInd, target: coreUseTarget - coreGot, preferDifficulty: diffForMastery)
+        }
+
+        let safetyStart = selected.count
+        pickFrom(bucketed.sideEffect, target: safetyTarget / 2 + 1, preferDifficulty: diffForMastery)
+        pickFrom(bucketed.blackBoxContraindication, target: safetyTarget - (selected.count - safetyStart), preferDifficulty: diffForMastery)
+        let safetyGot = selected.count - safetyStart
+        if safetyGot < safetyTarget {
+            let legacySafety = legacyPool.filter { $0.objective == .adverseEffect || $0.objective == .contraindication }
+            pickFrom(legacySafety, target: safetyTarget - safetyGot, preferDifficulty: diffForMastery)
+        }
+
+        let diffStart = selected.count
+        pickFrom(bucketed.pearlDifferentiator, target: diffTarget, preferDifficulty: [.hard, .medium])
+        let diffGot = selected.count - diffStart
+        if diffGot < diffTarget {
+            let legacyPearl = legacyPool.filter { $0.objective == .pearl }
+            pickFrom(legacyPearl, target: diffTarget - diffGot)
+        }
+
+        if challengeTarget > 0 {
+            let challengePool = (bucketed.all() + legacyPool).filter {
+                ($0.difficulty == .expert || $0.difficulty == .hard) &&
+                ($0.type == .selectAll || $0.type == .matching) &&
+                !usedIds.contains($0.id)
+            }
+            pickFrom(challengePool, target: challengeTarget, preferDifficulty: [.expert, .hard])
+        }
+
+        if selected.count < count {
+            let remaining = (bucketed.all() + legacyPool).filter { !usedIds.contains($0.id) }
+            pickFrom(remaining, target: count - selected.count, preferDifficulty: diffForMastery)
+        }
+
+        selected = Array(selected.prefix(count))
+
+        selected = addWeakConceptReinforcement(selected, subsectionId: subsectionId, masteryMap: masteryMap, bucketed: bucketed, legacyPool: legacyPool, maxCount: count)
+
+        return selected
+    }
+
+    private func addWeakConceptReinforcement(
+        _ questions: [Question],
+        subsectionId: String,
+        masteryMap: [String: MasteryRecord],
+        bucketed: HighYieldQuestionFactory.BucketedQuestions,
+        legacyPool: [Question],
+        maxCount: Int
+    ) -> [Question] {
+        var result = questions
+        let usedIds = Set(result.map(\.id))
+
+        let wrongKeys = result.compactMap { q -> String? in
+            let record = masteryMap[q.masteryKey]
+            if let r = record, r.level <= 1, r.totalAttempts > 0 { return q.masteryKey }
+            return nil
+        }
+
+        guard !wrongKeys.isEmpty, result.count < maxCount else { return result }
+
+        let weakKeySet = Set(wrongKeys)
+        let reinforcementPool = (bucketed.all() + legacyPool).filter { q in
+            !usedIds.contains(q.id) && weakKeySet.contains(q.masteryKey)
+        }
+
+        for q in reinforcementPool.shuffled().prefix(maxCount - result.count) {
+            let alreadyHasType = result.contains(where: { $0.masteryKey == q.masteryKey && $0.type == q.type })
+            if !alreadyHasType {
+                result.append(q)
+            }
+        }
+
+        return Array(result.prefix(maxCount))
+    }
+
+    private func averageMastery(for subsectionId: String, masteryMap: [String: MasteryRecord]) -> Int {
+        let relevantKeys = masteryMap.filter { $0.key.contains(subsectionId) || $0.value.totalAttempts > 0 }
+        guard !relevantKeys.isEmpty else { return 0 }
+        let total = relevantKeys.values.reduce(0) { $0 + $1.level }
+        return total / relevantKeys.count
+    }
+
+    private func difficultyPreference(avgMastery: Int) -> [QuestionDifficulty] {
+        switch avgMastery {
+        case 0...1: return [.easy, .medium]
+        case 2: return [.medium, .easy]
+        case 3: return [.medium, .hard]
+        default: return [.hard, .expert]
+        }
+    }
+
+    // MARK: - Mastery Session
 
     private func buildMasterySession(
         subsectionId: String,
@@ -58,9 +208,14 @@ struct QuizEngine {
         var allPool: [Question] = []
         for subId in moduleSubIds {
             allPool.append(contentsOf: dataService.allQuestions(for: subId))
+            if let sub = dataService.subsection(for: subId) {
+                allPool.append(contentsOf: hyFactory.generateBucketed(for: sub).all())
+            }
         }
 
-        let sorted = allPool.sorted { q1, q2 in
+        let uniquePool = Dictionary(grouping: allPool, by: \.id).compactMap(\.value.first)
+
+        let sorted = uniquePool.sorted { q1, q2 in
             let m1 = masteryMap[q1.masteryKey]?.level ?? 0
             let m2 = masteryMap[q2.masteryKey]?.level ?? 0
             if m1 != m2 { return m1 < m2 }
@@ -77,67 +232,10 @@ struct QuizEngine {
             if selected.count >= 30 { break }
         }
 
-        return orderByAdaptiveDifficulty(selected, masteryMap: masteryMap)
+        return enforceVariety(selected)
     }
 
-    // MARK: - Focus Question Selection
-
-    private func selectFocusQuestions(
-        subsectionId: String,
-        count: Int,
-        masteryMap: [String: MasteryRecord]
-    ) -> [Question] {
-        let allPool = dataService.allQuestions(for: subsectionId)
-        guard !allPool.isEmpty else { return [] }
-
-        let easy = allPool.filter { $0.difficulty == .easy }.shuffled()
-        let medium = allPool.filter { $0.difficulty == .medium }.shuffled()
-        let hard = allPool.filter { $0.difficulty == .hard || $0.difficulty == .expert }.shuffled()
-
-        let weakQuestions = allPool.filter { q in
-            let record = masteryMap[q.masteryKey]
-            return record == nil || (record?.level ?? 0) <= 1
-        }.shuffled()
-
-        var selected: [Question] = []
-        var usedIds: Set<String> = []
-
-        let easyCount = min(easy.count, max(3, count / 3))
-        for q in easy.prefix(easyCount) where !usedIds.contains(q.id) {
-            selected.append(q)
-            usedIds.insert(q.id)
-        }
-
-        for q in weakQuestions where !usedIds.contains(q.id) {
-            selected.append(q)
-            usedIds.insert(q.id)
-            if selected.count >= count / 2 { break }
-        }
-
-        for q in medium where !usedIds.contains(q.id) {
-            selected.append(q)
-            usedIds.insert(q.id)
-            if selected.count >= count - 2 { break }
-        }
-
-        for q in hard where !usedIds.contains(q.id) {
-            selected.append(q)
-            usedIds.insert(q.id)
-            if selected.count >= count { break }
-        }
-
-        if selected.count < count {
-            for q in allPool.shuffled() where !usedIds.contains(q.id) {
-                selected.append(q)
-                usedIds.insert(q.id)
-                if selected.count >= count { break }
-            }
-        }
-
-        return Array(selected.prefix(count))
-    }
-
-    // MARK: - Review Question Selection (spaced repetition priority)
+    // MARK: - Review Question Selection
 
     private func selectReviewQuestions(
         currentSubsectionId: String,
@@ -147,7 +245,7 @@ struct QuizEngine {
         excludeIds: Set<String>
     ) -> [Question] {
         let reviewSubIds = completedSubsections.filter { $0 != currentSubsectionId }
-        guard !reviewSubIds.isEmpty else { return [] }
+        guard !reviewSubIds.isEmpty, count > 0 else { return [] }
 
         var candidatePool: [Question] = []
         for subId in reviewSubIds {
@@ -159,10 +257,8 @@ struct QuizEngine {
             guard let record = masteryMap[q.masteryKey] else { return true }
             return record.isDue
         }.sorted { q1, q2 in
-            let r1 = masteryMap[q1.masteryKey]
-            let r2 = masteryMap[q2.masteryKey]
-            let d1 = r1?.nextDueDate ?? .distantPast
-            let d2 = r2?.nextDueDate ?? .distantPast
+            let d1 = masteryMap[q1.masteryKey]?.nextDueDate ?? .distantPast
+            let d2 = masteryMap[q2.masteryKey]?.nextDueDate ?? .distantPast
             return d1 < d2
         }
 
@@ -172,11 +268,9 @@ struct QuizEngine {
 
         for q in dueItems {
             guard !usedIds.contains(q.id) else { continue }
-            if usedSubsections.count < count {
-                selected.append(q)
-                usedIds.insert(q.id)
-                usedSubsections.insert(q.subsectionId)
-            }
+            selected.append(q)
+            usedIds.insert(q.id)
+            usedSubsections.insert(q.subsectionId)
             if selected.count >= count { break }
         }
 
@@ -191,22 +285,22 @@ struct QuizEngine {
         return Array(selected.prefix(count))
     }
 
-    // MARK: - Interleave + Adaptive Ordering
+    // MARK: - Interleave + Enforce Variety
 
     private func interleaveQuestions(
         focus: [Question],
         review: [Question],
         masteryMap: [String: MasteryRecord]
     ) -> [Question] {
-        var ordered = orderByAdaptiveDifficulty(focus, masteryMap: masteryMap)
+        var ordered = focus
 
-        let reviewPositions = calculateReviewPositions(focusCount: ordered.count, reviewCount: review.count)
-        for (i, pos) in reviewPositions.enumerated() where i < review.count {
+        let positions = calculateReviewPositions(focusCount: ordered.count, reviewCount: review.count)
+        for (i, pos) in positions.enumerated() where i < review.count {
             let insertAt = min(pos, ordered.count)
             ordered.insert(review[i], at: insertAt)
         }
 
-        return enforceTypeVariety(ordered)
+        return enforceVariety(ordered)
     }
 
     private func calculateReviewPositions(focusCount: Int, reviewCount: Int) -> [Int] {
@@ -217,35 +311,18 @@ struct QuizEngine {
         }
     }
 
-    private func orderByAdaptiveDifficulty(_ questions: [Question], masteryMap: [String: MasteryRecord]) -> [Question] {
-        var easy = questions.filter { $0.difficulty == .easy }.shuffled()
-        var medium = questions.filter { $0.difficulty == .medium }.shuffled()
-        let hard = questions.filter { $0.difficulty == .hard || $0.difficulty == .expert }.shuffled()
-
-        _ = medium.partition { q in
-            let level = masteryMap[q.masteryKey]?.level ?? 0
-            return level >= 3
-        }
-
-        var result: [Question] = []
-        let easySlice = min(easy.count, 4)
-        result.append(contentsOf: easy.prefix(easySlice))
-        easy = Array(easy.dropFirst(easySlice))
-
-        result.append(contentsOf: medium)
-        result.append(contentsOf: easy)
-        result.append(contentsOf: hard)
-
-        return result
-    }
-
-    private func enforceTypeVariety(_ questions: [Question]) -> [Question] {
+    private func enforceVariety(_ questions: [Question]) -> [Question] {
         var result = questions
         guard result.count > 3 else { return result }
 
         for i in 2..<result.count {
             if result[i].type == result[i-1].type && result[i].type == result[i-2].type {
                 if let swapIdx = ((i+1)..<result.count).first(where: { result[$0].type != result[i].type }) {
+                    result.swapAt(i, swapIdx)
+                }
+            }
+            if result[i].objective == result[i-1].objective && result[i].objective == result[i-2].objective {
+                if let swapIdx = ((i+1)..<result.count).first(where: { result[$0].objective != result[i].objective }) {
                     result.swapAt(i, swapIdx)
                 }
             }
