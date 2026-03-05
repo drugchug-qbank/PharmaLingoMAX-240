@@ -1,0 +1,548 @@
+// PharmaLingo — Module 1c (Beta-Blockers)
+// Curated Add-On Question Pack (40 questions)
+// IDs: q1c_add_001 ... q1c_add_040
+//
+// Integration options:
+//
+// Option A (recommended, clean diff):
+// 1) Add this file to your project.
+// 2) In DrugDataService.populateCuratedBank(_:), AFTER the existing `bank["1c"] = [...]` block,
+//    append:
+//
+//    bank["1c"]?.append(contentsOf: Self.curatedAddOnQuestions_1c)
+//
+// Option B (quick paste):
+// - Copy the questions inside the array below and paste them into the existing `bank["1c"] = [` array.
+//
+// Notes:
+// - All questions are single-best-answer (4–5 choices; here: 5 choices each).
+// - Stems are written to avoid exact duplicates of your existing curated + generated templates.
+// - Objectives + relatedDrugIds are set to improve spaced-repetition behavior.
+
+import Foundation
+
+extension DrugDataService {
+    static let curatedAddOnQuestions_1c: [Question] = [
+
+        .multipleChoice(
+            id: "q1c_add_001",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Metoprolol succinate is a beta-1 selective beta blocker used for hypertension, angina, and chronic HFrEF when stable. Which brand name matches metoprolol succinate?",
+            options: ["Toprol XL", "Lopressor", "Coreg", "Tenormin", "Zebeta"],
+            answer: "Toprol XL",
+            explanation: "Metoprolol succinate (the extended-release metoprolol used in chronic HFrEF and HTN/angina) is marketed as Toprol XL. Remember: Toprol XL = succinate (ER).",
+            objective: .genericBrand,
+            relatedDrugIds: ["d14"],
+            tags: ["Selective Beta-1 Blocker", "brand", "Metoprolol succinate"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_002",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Toprol XL is a once-daily beta blocker commonly used for hypertension and chronic HFrEF. Toprol XL contains which generic medication?",
+            options: ["Metoprolol succinate", "Metoprolol tartrate", "Carvedilol", "Bisoprolol", "Atenolol"],
+            answer: "Metoprolol succinate",
+            explanation: "Toprol XL contains metoprolol succinate (extended release). Contrasting it with Lopressor (metoprolol tartrate, immediate release) is a classic high-yield distinction.",
+            objective: .brandGeneric,
+            relatedDrugIds: ["d14"],
+            tags: ["Selective Beta-1 Blocker", "generic", "Toprol XL"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_003",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Metoprolol tartrate is an immediate-release beta-1 selective beta blocker often used for hypertension, acute MI settings, and rate control. Which brand name matches metoprolol tartrate?",
+            options: ["Lopressor", "Toprol XL", "Coreg", "Inderal", "Tenormin"],
+            answer: "Lopressor",
+            explanation: "Metoprolol tartrate (immediate-release, often BID dosing) is marketed as Lopressor. Think: LOPRESSOR = tartrate (IR).",
+            objective: .genericBrand,
+            relatedDrugIds: ["d15"],
+            tags: ["Selective Beta-1 Blocker", "brand", "Metoprolol tartrate"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_004",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Lopressor is a beta blocker that is commonly dosed more than once daily because it is the immediate-release formulation. Lopressor contains which generic medication?",
+            options: ["Metoprolol tartrate", "Metoprolol succinate", "Carvedilol", "Propranolol", "Bisoprolol"],
+            answer: "Metoprolol tartrate",
+            explanation: "Lopressor contains metoprolol tartrate (immediate release). This is different from Toprol XL, which contains metoprolol succinate (extended release).",
+            objective: .brandGeneric,
+            relatedDrugIds: ["d15"],
+            tags: ["Selective Beta-1 Blocker", "generic", "Lopressor"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_005",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Carvedilol is a beta blocker used in chronic HFrEF and hypertension, and it also has alpha-1 blocking activity. Which brand name matches carvedilol?",
+            options: ["Coreg", "Tenormin", "Zebeta", "Lopressor", "Toprol XL"],
+            answer: "Coreg",
+            explanation: "Carvedilol is marketed as Coreg. Carvedilol is unique here because it blocks beta receptors AND alpha-1 receptors (helping lower peripheral vascular resistance).",
+            objective: .genericBrand,
+            relatedDrugIds: ["d16"],
+            tags: ["Non-selective Beta + Alpha Blocker", "brand", "Carvedilol"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_006",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Coreg is a brand-name medication used for chronic HFrEF and hypertension. Coreg contains which generic beta blocker?",
+            options: ["Carvedilol", "Propranolol", "Atenolol", "Metoprolol succinate", "Bisoprolol"],
+            answer: "Carvedilol",
+            explanation: "Coreg contains carvedilol, a nonselective beta blocker with additional alpha-1 blockade. That alpha-1 effect is why dizziness/orthostasis can be more noticeable.",
+            objective: .brandGeneric,
+            relatedDrugIds: ["d16"],
+            tags: ["Non-selective Beta + Alpha Blocker", "generic", "Coreg"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_007",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Atenolol is a beta-1 selective beta blocker commonly used for hypertension and angina and is known for renal elimination. Which brand name matches atenolol?",
+            options: ["Tenormin", "Inderal", "Zebeta", "Coreg", "Toprol XL"],
+            answer: "Tenormin",
+            explanation: "Atenolol is marketed as Tenormin. A common pearl: atenolol is renally eliminated, so renal function matters more for dosing/monitoring than for many other beta blockers.",
+            objective: .genericBrand,
+            relatedDrugIds: ["d17"],
+            tags: ["Selective Beta-1 Blocker", "brand", "Atenolol"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_008",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Tenormin is a brand-name beta blocker used for hypertension and angina. Tenormin contains which generic medication?",
+            options: ["Atenolol", "Bisoprolol", "Carvedilol", "Propranolol", "Metoprolol tartrate"],
+            answer: "Atenolol",
+            explanation: "Tenormin contains atenolol, a beta-1 selective blocker commonly used for HTN/angina and cleared primarily by the kidney.",
+            objective: .brandGeneric,
+            relatedDrugIds: ["d17"],
+            tags: ["Selective Beta-1 Blocker", "generic", "Tenormin"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_009",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Bisoprolol is a highly beta-1 selective beta blocker used for hypertension and chronic HFrEF when stable. Which brand name matches bisoprolol?",
+            options: ["Zebeta", "Tenormin", "Inderal", "Lopressor", "Coreg"],
+            answer: "Zebeta",
+            explanation: "Bisoprolol is marketed as Zebeta. It's often remembered as one of the more beta-1 selective options, making it a common \"safer choice\" when bronchospasm is a concern.",
+            objective: .genericBrand,
+            relatedDrugIds: ["d19"],
+            tags: ["Selective Beta-1 Blocker", "brand", "Bisoprolol"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_010",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Zebeta is a brand-name beta blocker used for hypertension and chronic HFrEF. Zebeta contains which generic medication?",
+            options: ["Bisoprolol", "Metoprolol succinate", "Metoprolol tartrate", "Atenolol", "Carvedilol"],
+            answer: "Bisoprolol",
+            explanation: "Zebeta contains bisoprolol. Keep it distinct from Tenormin (atenolol) and Coreg (carvedilol).",
+            objective: .brandGeneric,
+            relatedDrugIds: ["d19"],
+            tags: ["Selective Beta-1 Blocker", "generic", "Zebeta"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_011",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Propranolol is a nonselective beta blocker (blocks beta-1 and beta-2) commonly used for hypertension, essential tremor, and migraine prophylaxis. Which brand name matches propranolol?",
+            options: ["Inderal", "Tenormin", "Zebeta", "Coreg", "Lopressor"],
+            answer: "Inderal",
+            explanation: "Propranolol is marketed as Inderal. Because it is nonselective, it can cause bronchospasm in susceptible patients and can mask adrenergic warning signs of hypoglycemia.",
+            objective: .genericBrand,
+            relatedDrugIds: ["d18"],
+            tags: ["Non-selective Beta Blocker", "brand", "Propranolol"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_012",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "Inderal is a brand-name beta blocker often used for tremor and migraine prophylaxis because it is nonselective. Inderal contains which generic medication?",
+            options: ["Propranolol", "Carvedilol", "Atenolol", "Bisoprolol", "Metoprolol tartrate"],
+            answer: "Propranolol",
+            explanation: "Inderal contains propranolol, a nonselective beta blocker (beta-1 + beta-2). Nonselective blockade is why asthma/COPD and hypoglycemia masking are key counseling points.",
+            objective: .brandGeneric,
+            relatedDrugIds: ["d18"],
+            tags: ["Non-selective Beta Blocker", "generic", "Inderal"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_013",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Beta-1 selective blockers are often used for chronic stable angina. Which physiologic effect best explains how beta-1 blockade improves angina symptoms?",
+            options: ["Increased myocardial contractility", "Decreased heart rate and contractility, lowering myocardial oxygen demand", "Direct coronary vasodilation as the primary effect", "Increased AV node conduction to speed the heart", "Increased renin release to raise blood pressure"],
+            answer: "Decreased heart rate and contractility, lowering myocardial oxygen demand",
+            explanation: "Beta-1 blockade decreases heart rate and contractility, which reduces myocardial oxygen demand-one of the main reasons beta blockers help chronic stable angina.",
+            objective: .moa,
+            relatedDrugIds: ["d14", "d17"],
+            tags: ["Beta Blocker", "MOA", "Angina"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_014",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "One way beta blockers lower blood pressure is by blocking beta-1 receptors on juxtaglomerular cells in the kidney. This decreases release of which hormone?",
+            options: ["Aldosterone", "Renin", "Antidiuretic hormone (ADH)", "Bradykinin", "Histamine"],
+            answer: "Renin",
+            explanation: "Blocking beta-1 receptors on juxtaglomerular (JG) cells decreases renin release, reducing downstream RAAS activity and helping lower blood pressure.",
+            objective: .moa,
+            relatedDrugIds: ["d14", "d15", "d16", "d17", "d18", "d19"],
+            tags: ["Beta Blocker", "MOA", "RAAS"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_015",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Among the beta blockers in this subsection, which medication is notable for providing BOTH beta blockade and alpha-1 blockade (helping lower peripheral vascular resistance)?",
+            options: ["Carvedilol", "Atenolol", "Bisoprolol", "Metoprolol succinate", "Propranolol"],
+            answer: "Carvedilol",
+            explanation: "Carvedilol blocks beta receptors and alpha-1 receptors. The alpha-1 blockade lowers peripheral vascular resistance but can also contribute to orthostatic hypotension.",
+            objective: .pearl,
+            relatedDrugIds: ["d16"],
+            tags: ["Beta Blocker", "alpha-1 block", "Carvedilol"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_016",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "A patient starts carvedilol for heart failure and feels lightheaded when standing. Taking carvedilol with food is often recommended to reduce which high-yield adverse effect?",
+            options: ["Dry cough from bradykinin buildup", "Orthostatic hypotension/dizziness", "Hyperkalemia from aldosterone blockade", "Ototoxicity", "Reflex tachycardia as the main issue"],
+            answer: "Orthostatic hypotension/dizziness",
+            explanation: "Carvedilol's alpha-1 blockade can cause orthostatic hypotension (lightheadedness on standing). Taking it with food can blunt peak levels and reduce dizziness/orthostasis.",
+            objective: .pearl,
+            relatedDrugIds: ["d16"],
+            tags: ["Carvedilol", "administration", "orthostasis"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_017",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "A student wants to minimize CNS side effects when choosing a beta blocker. Which beta blocker is generally LESS likely to cause CNS effects (e.g., vivid dreams or depressed mood) because it is relatively more hydrophilic?",
+            options: ["Atenolol", "Propranolol", "Carvedilol", "Metoprolol succinate", "Metoprolol tartrate"],
+            answer: "Atenolol",
+            explanation: "Atenolol is relatively more hydrophilic and crosses the blood-brain barrier less than more lipophilic beta blockers (like propranolol), so CNS side effects are often less prominent.",
+            objective: .pearl,
+            relatedDrugIds: ["d17"],
+            tags: ["Atenolol", "CNS", "pharmacokinetics"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_018",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Which beta blocker in this subsection is most associated with renal elimination and therefore often needs closer dose consideration in significant renal impairment?",
+            options: ["Atenolol", "Carvedilol", "Propranolol", "Metoprolol succinate", "Metoprolol tartrate"],
+            answer: "Atenolol",
+            explanation: "Atenolol is primarily renally eliminated (a classic pearl). In reduced kidney function, clinicians often adjust dosing and monitor renal function more closely.",
+            objective: .monitoring,
+            relatedDrugIds: ["d17"],
+            tags: ["Atenolol", "renal", "monitoring"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_019",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "A patient needs a beta blocker that is commonly used for BOTH essential tremor and migraine prophylaxis. Which medication best fits that role?",
+            options: ["Propranolol", "Atenolol", "Bisoprolol", "Metoprolol succinate", "Carvedilol"],
+            answer: "Propranolol",
+            explanation: "Propranolol is a nonselective beta blocker that is commonly used for essential tremor and migraine prophylaxis (in addition to HTN).",
+            objective: .indication,
+            relatedDrugIds: ["d18"],
+            tags: ["Propranolol", "tremor", "migraine prophylaxis"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_020",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Which beta blocker is considered one of the guideline-supported options for chronic stable HFrEF AND is often remembered as the most beta-1 selective agent in this list?",
+            options: ["Bisoprolol", "Atenolol", "Metoprolol tartrate", "Propranolol", "Carvedilol"],
+            answer: "Bisoprolol",
+            explanation: "Bisoprolol is highly beta-1 selective and is one of the commonly referenced beta blockers used in chronic stable HFrEF (along with metoprolol succinate and carvedilol).",
+            objective: .pearl,
+            relatedDrugIds: ["d19"],
+            tags: ["Bisoprolol", "beta-1 selective", "HFrEF"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_021",
+            subsectionId: "1c",
+            difficulty: .hard,
+            question: "Toprol XL and Lopressor both contain metoprolol, but they are NOT interchangeable. Which pairing correctly matches the formulation to its common dosing pattern?",
+            options: ["Toprol XL = metoprolol tartrate (IR), usually BID; Lopressor = metoprolol succinate (ER), usually daily", "Toprol XL = metoprolol succinate (ER), usually once daily; Lopressor = metoprolol tartrate (IR), often twice daily", "Toprol XL = carvedilol, usually daily; Lopressor = propranolol, usually TID", "Toprol XL = atenolol, usually daily; Lopressor = bisoprolol, usually daily", "Toprol XL = bisoprolol, usually daily; Lopressor = carvedilol, usually BID"],
+            answer: "Toprol XL = metoprolol succinate (ER), usually once daily; Lopressor = metoprolol tartrate (IR), often twice daily",
+            explanation: "Toprol XL contains metoprolol succinate (extended release, often once daily). Lopressor contains metoprolol tartrate (immediate release, often BID). This distinction is very high yield for boards and clinical practice.",
+            objective: .pearl,
+            relatedDrugIds: ["d14", "d15"],
+            tags: ["Metoprolol", "formulation", "Toprol XL vs Lopressor"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_022",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "For rate control and some acute MI situations, clinicians often choose the immediate-release formulation of metoprolol. Which metoprolol formulation is immediate release?",
+            options: ["Metoprolol tartrate", "Metoprolol succinate", "Carvedilol", "Bisoprolol", "Atenolol"],
+            answer: "Metoprolol tartrate",
+            explanation: "Metoprolol tartrate is the immediate-release form (often BID). Metoprolol succinate is the extended-release form (often once daily) used in chronic stable HFrEF.",
+            objective: .pearl,
+            relatedDrugIds: ["d15"],
+            tags: ["Metoprolol tartrate", "rate control", "immediate release"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_023",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "In chronic stable HFrEF, only certain beta blockers are used because of proven benefit. If choosing metoprolol for HFrEF, which formulation is preferred?",
+            options: ["Metoprolol succinate", "Metoprolol tartrate", "Propranolol", "Atenolol", "None of the above"],
+            answer: "Metoprolol succinate",
+            explanation: "Metoprolol succinate (extended release) is the metoprolol formulation used in chronic stable HFrEF. Metoprolol tartrate is commonly used for rate control/acute settings but is not the preferred HF formulation.",
+            objective: .indication,
+            relatedDrugIds: ["d14", "d15"],
+            tags: ["HFrEF", "Metoprolol", "succinate vs tartrate"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_024",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Which situation is a major reason to AVOID initiating or rapidly up-titrating beta blockers until the patient is stabilized?",
+            options: ["Chronic, stable hypertension without symptoms", "Well-compensated chronic HFrEF on guideline therapy", "Acute decompensated heart failure with pulmonary edema", "History of migraine headaches", "History of essential tremor"],
+            answer: "Acute decompensated heart failure with pulmonary edema",
+            explanation: "Beta blockers are used in chronic stable HFrEF, but starting or aggressively increasing them during acute decompensated HF can worsen hemodynamics due to negative inotropy/chronotropy.",
+            objective: .contraindication,
+            relatedDrugIds: ["d14", "d16", "d19"],
+            tags: ["Beta Blocker", "contraindication", "decompensated HF"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_025",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "A patient with asthma accidentally takes a nonselective beta blocker and develops wheezing. The bronchospasm is primarily due to blockade of which receptor in bronchial smooth muscle?",
+            options: ["Beta-1", "Beta-2", "Alpha-1", "Muscarinic M2", "Angiotensin II (AT1)"],
+            answer: "Beta-2",
+            explanation: "Beta-2 receptors mediate bronchodilation. Blocking beta-2 receptors (as with nonselective beta blockers) can trigger bronchospasm, especially in asthma/COPD.",
+            objective: .moa,
+            relatedDrugIds: ["d18", "d16"],
+            tags: ["Nonselective beta blocker", "bronchospasm", "Beta-2"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_026",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Which beta blocker is nonselective (blocks beta-1 and beta-2) but does NOT add alpha-1 blockade?",
+            options: ["Propranolol", "Carvedilol", "Atenolol", "Bisoprolol", "Metoprolol succinate"],
+            answer: "Propranolol",
+            explanation: "Propranolol blocks beta-1 and beta-2 (nonselective) without alpha-1 blockade. Carvedilol is also nonselective at beta receptors but additionally blocks alpha-1.",
+            objective: .classId,
+            relatedDrugIds: ["d18", "d16"],
+            tags: ["Beta Blocker", "selectivity", "Propranolol"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_027",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "A patient is overtreated with a beta-1 blocker and becomes dizzy with a very slow pulse. Which adverse effect most directly reflects excessive beta-1 blockade in the heart?",
+            options: ["Sinus bradycardia", "Severe dry cough", "Ototoxicity", "Hyperuricemia", "Hypocalcemia"],
+            answer: "Sinus bradycardia",
+            explanation: "Beta-1 blockade slows the sinus node and AV node and reduces contractility. Too much beta blockade commonly presents as bradycardia (and sometimes hypotension).",
+            objective: .adverseEffect,
+            relatedDrugIds: ["d14", "d15", "d17", "d19"],
+            tags: ["Beta Blocker", "bradycardia", "adverse effect"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_028",
+            subsectionId: "1c",
+            difficulty: .hard,
+            question: "Beta blockers can blunt adrenergic warning signs of hypoglycemia. In a patient on insulin, which symptom is LEAST likely to be masked by a beta blocker?",
+            options: ["Tremor", "Palpitations", "Tachycardia", "Anxiety", "Sweating (diaphoresis)"],
+            answer: "Sweating (diaphoresis)",
+            explanation: "Beta blockers can mask adrenergic symptoms like tremor, palpitations, and tachycardia. Sweating is primarily cholinergic and is often preserved-so it may remain an important warning sign.",
+            objective: .interaction,
+            relatedDrugIds: ["d18"],
+            tags: ["Propranolol", "hypoglycemia", "counseling"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_029",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "A patient taking metoprolol is prescribed an additional medication that also slows AV node conduction. Which add-on medication most increases the risk of marked bradycardia or heart block when combined with a beta blocker?",
+            options: ["Verapamil", "Amlodipine", "Losartan", "Hydrochlorothiazide", "Atorvastatin"],
+            answer: "Verapamil",
+            explanation: "Non-dihydropyridine calcium channel blockers (verapamil, diltiazem) also slow AV node conduction. Combined with beta blockers, they can cause severe bradycardia or heart block.",
+            objective: .interaction,
+            relatedDrugIds: ["d14", "d15"],
+            tags: ["Beta Blocker", "interaction", "AV node"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_030",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Many beta blockers carry a boxed warning about abrupt discontinuation. What is the safest general way to stop a beta blocker that a patient has been taking chronically?",
+            options: ["Stop immediately; rebound effects are minimal", "Taper the dose gradually over time rather than stopping suddenly", "Switch to an ARB and stop the beta blocker the same day", "Double the dose for 2 days, then stop", "Only stop on weekends to reduce symptoms"],
+            answer: "Taper the dose gradually over time rather than stopping suddenly",
+            explanation: "Abrupt discontinuation can cause rebound tachycardia and worsen angina (and may precipitate serious cardiac events). The high-yield counseling point: taper rather than stopping suddenly.",
+            objective: .contraindication,
+            relatedDrugIds: ["d14", "d15", "d16", "d17", "d18", "d19"],
+            tags: ["Beta Blocker", "boxed warning", "discontinuation"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_031",
+            subsectionId: "1c",
+            difficulty: .hard,
+            question: "Carvedilol lowers heart rate and also lowers peripheral vascular resistance. Which receptor-blocking profile best explains carvedilol's effects?",
+            options: ["Blocks beta-1 only", "Blocks beta-1 and beta-2 only", "Blocks beta-1, beta-2, and alpha-1", "Blocks alpha-1 only", "Blocks angiotensin II (AT1) receptors"],
+            answer: "Blocks beta-1, beta-2, and alpha-1",
+            explanation: "Carvedilol blocks beta-1 and beta-2 receptors (nonselective) and also blocks alpha-1 receptors. Alpha-1 blockade reduces peripheral vascular resistance but can increase orthostatic symptoms.",
+            objective: .moa,
+            relatedDrugIds: ["d16"],
+            tags: ["Carvedilol", "MOA", "alpha-1"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_032",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Which beta blocker is most likely to cause orthostatic hypotension compared with a purely beta-1 selective option because it has additional alpha-1 blockade?",
+            options: ["Carvedilol", "Atenolol", "Bisoprolol", "Metoprolol succinate", "Metoprolol tartrate"],
+            answer: "Carvedilol",
+            explanation: "Carvedilol's alpha-1 blockade can contribute to orthostatic hypotension (lightheadedness when standing), especially early in therapy or with dose increases.",
+            objective: .adverseEffect,
+            relatedDrugIds: ["d16"],
+            tags: ["Carvedilol", "orthostatic hypotension", "adverse effect"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_033",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "A beta-1 selective blocker is chosen for a patient with hypertension and chronic stable angina, and the clinician wants one that is primarily cleared by the kidney. Which drug best matches that description?",
+            options: ["Atenolol", "Metoprolol succinate", "Metoprolol tartrate", "Bisoprolol", "Propranolol"],
+            answer: "Atenolol",
+            explanation: "Atenolol is beta-1 selective and is a classic example of a beta blocker that is primarily renally eliminated (a high-yield monitoring/dosing pearl).",
+            objective: .indication,
+            relatedDrugIds: ["d17"],
+            tags: ["Atenolol", "angina", "renal elimination"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_034",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Because atenolol is primarily cleared by the kidney, which monitoring item is especially appropriate to periodically check while a patient is on atenolol?",
+            options: ["INR", "Serum creatinine / renal function", "Thyroid-stimulating hormone (TSH)", "Creatine kinase (CK)", "Serum calcium"],
+            answer: "Serum creatinine / renal function",
+            explanation: "For atenolol, renal function is especially important because the drug is primarily cleared by the kidney. Declining kidney function can increase drug exposure and bradycardia risk.",
+            objective: .monitoring,
+            relatedDrugIds: ["d17"],
+            tags: ["Atenolol", "monitoring", "renal function"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_035",
+            subsectionId: "1c",
+            difficulty: .easy,
+            question: "A clinician wants to prevent symptomatic bradycardia when starting or titrating a beta blocker. Which parameter is the MOST essential routine monitoring target at the bedside?",
+            options: ["Heart rate", "INR", "aPTT", "Serum magnesium", "Serum calcium"],
+            answer: "Heart rate",
+            explanation: "Because beta blockers slow the heart rate and AV node conduction, checking heart rate (and blood pressure) is the most immediate and practical way to monitor for excessive beta blockade.",
+            objective: .monitoring,
+            relatedDrugIds: ["d14", "d15", "d16", "d17", "d18", "d19"],
+            tags: ["Beta Blocker", "monitoring", "heart rate"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_036",
+            subsectionId: "1c",
+            difficulty: .hard,
+            question: "A patient with diabetes is started on a nonselective beta blocker. Which counseling point is most accurate about hypoglycemia recognition while on this medication?",
+            options: ["Hypoglycemia becomes impossible to detect", "Adrenergic symptoms like tremor and palpitations may be blunted", "Sweating is always completely masked", "Blood glucose will always increase due to beta blockade", "Only beta-1 selective blockers mask hypoglycemia"],
+            answer: "Adrenergic symptoms like tremor and palpitations may be blunted",
+            explanation: "Nonselective beta blockers (and beta blockers in general) can blunt adrenergic warning signs of hypoglycemia such as tremor, palpitations, and tachycardia. Patients should monitor glucose closely and watch for other signs like sweating.",
+            objective: .interaction,
+            relatedDrugIds: ["d18"],
+            tags: ["Beta Blocker", "diabetes", "hypoglycemia masking"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_037",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "Which adverse effect is most classically associated with beta blockers as a group and commonly affects adherence, even when the drug is working as intended?",
+            options: ["Fatigue/exercise intolerance", "Dry cough from bradykinin buildup", "Severe hypercalcemia", "Ototoxicity", "Blue-gray skin discoloration"],
+            answer: "Fatigue/exercise intolerance",
+            explanation: "Many patients report fatigue or reduced exercise tolerance on beta blockers due to decreased heart rate and contractility. This is a common high-yield adverse effect to recognize and counsel about.",
+            objective: .adverseEffect,
+            relatedDrugIds: ["d14", "d15", "d16", "d17", "d18", "d19"],
+            tags: ["Beta Blocker", "fatigue", "adverse effect"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_038",
+            subsectionId: "1c",
+            difficulty: .hard,
+            question: "A student is trying to keep Toprol XL and Lopressor straight. Which statement is correct?",
+            options: ["Toprol XL is metoprolol tartrate; Lopressor is metoprolol succinate", "Toprol XL is metoprolol succinate; Lopressor is metoprolol tartrate", "Toprol XL is propranolol; Lopressor is atenolol", "Toprol XL is carvedilol; Lopressor is bisoprolol", "Toprol XL and Lopressor are identical and fully interchangeable"],
+            answer: "Toprol XL is metoprolol succinate; Lopressor is metoprolol tartrate",
+            explanation: "Toprol XL = metoprolol succinate (ER). Lopressor = metoprolol tartrate (IR). This comes up constantly in pharmacology recall and in heart failure vs rate-control decision making.",
+            objective: .brandGeneric,
+            relatedDrugIds: ["d14", "d15"],
+            tags: ["Metoprolol", "brand vs generic", "Toprol XL/Lopressor"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_039",
+            subsectionId: "1c",
+            difficulty: .hard,
+            question: "A patient has a history of second- or third-degree AV block and no pacemaker. Which statement best describes beta blocker use in this setting?",
+            options: ["Beta blockers are preferred because they improve AV conduction", "Beta blockers should generally be avoided because they can worsen conduction block", "Only nonselective beta blockers are safe", "Only carvedilol is safe due to alpha blockade", "Beta blockers have no effect on AV conduction"],
+            answer: "Beta blockers should generally be avoided because they can worsen conduction block",
+            explanation: "Beta blockers slow AV node conduction. In significant conduction disease (e.g., 2nd/3rd degree heart block without a pacemaker), they can worsen block and cause symptomatic bradycardia.",
+            objective: .contraindication,
+            relatedDrugIds: ["d14", "d16"],
+            tags: ["Beta Blocker", "contraindication", "heart block"],
+            source: .curated
+        ),
+        .multipleChoice(
+            id: "q1c_add_040",
+            subsectionId: "1c",
+            difficulty: .medium,
+            question: "A patient with hypertension wants a beta blocker, but they also have a history of bronchospasm with nonselective agents. Which option in this list best represents a beta-1 selective beta blocker choice?",
+            options: ["Bisoprolol", "Propranolol", "Carvedilol", "Inderal", "Coreg"],
+            answer: "Bisoprolol",
+            explanation: "Bisoprolol is beta-1 selective. Propranolol and carvedilol are nonselective at beta receptors (and carvedilol also blocks alpha-1). When bronchospasm risk is a concern, beta-1 selectivity is a high-yield consideration.",
+            objective: .classId,
+            relatedDrugIds: ["d19"],
+            tags: ["Beta Blocker", "selectivity", "Bisoprolol"],
+            source: .curated
+        )
+    ]
+}
