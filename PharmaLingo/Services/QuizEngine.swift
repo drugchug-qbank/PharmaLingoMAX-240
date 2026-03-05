@@ -385,7 +385,7 @@ struct QuizEngine {
         let maxTotal = 30
         let remainingSlots = maxTotal - bgMatchingQuestions.count
 
-        var selected: [Question] = bgMatchingQuestions
+        var selected: [Question] = []
         var usedIds: Set<String> = bgIds
 
         var addedCount = 0
@@ -395,6 +395,13 @@ struct QuizEngine {
             usedIds.insert(q.id)
             addedCount += 1
             if addedCount >= remainingSlots { break }
+        }
+
+        selected.shuffle()
+
+        for bg in bgMatchingQuestions {
+            let position = Int.random(in: 0...selected.count)
+            selected.insert(bg, at: position)
         }
 
         return enforceVariety(selected)
