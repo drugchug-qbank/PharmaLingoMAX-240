@@ -172,6 +172,7 @@ struct DrugDataService {
         bank["1a"]?.append(contentsOf: Self.curatedAddOnQuestions_1a)
         bank["1b"]?.append(contentsOf: Self.curatedAddOnQuestions_1b)
         bank["1c"]?.append(contentsOf: Self.curatedAddOnQuestions_1c)
+        bank["1d"]?.append(contentsOf: Self.curatedAddOnQuestions_1d)
         bank["2b"] = [
             .multipleChoice(id: "q2b_1", subsectionId: "2b", question: "Ezetimibe works by:", options: ["Blocking intestinal cholesterol absorption", "Inhibiting HMG-CoA reductase", "Binding bile acids", "Activating LDL receptors"], answer: "Blocking intestinal cholesterol absorption", explanation: "Rule: Ezetimibe blocks the NPC1L1 transporter in the intestine."),
             .trueFalse(id: "q2b_3", subsectionId: "2b", question: "PCSK9 inhibitors are oral medications.", answer: false, explanation: "Rule: PCSK9 inhibitors are subcutaneous injections (monoclonal antibodies)."),
