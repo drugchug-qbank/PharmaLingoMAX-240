@@ -176,6 +176,7 @@ struct DrugDataService {
         bank["1b"]?.append(contentsOf: Self.curatedAddOnQuestions_1b)
         bank["1c"]?.append(contentsOf: Self.curatedAddOnQuestions_1c)
         bank["1d"]?.append(contentsOf: Self.curatedAddOnQuestions_1d)
+        bank["2a"]?.append(contentsOf: Self.curatedAddOnQuestions_2a)
         if bank[Self.ccbSubsectionId] == nil { bank[Self.ccbSubsectionId] = [] }
         bank[Self.ccbSubsectionId]?.append(contentsOf: Self.curatedAddOnQuestions_1e)
         bank["2b"] = [
