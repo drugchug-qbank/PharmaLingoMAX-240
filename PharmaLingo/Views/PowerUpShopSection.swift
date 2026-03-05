@@ -42,16 +42,16 @@ struct PowerUpShopCard: View {
                 ZStack {
                     Circle()
                         .fill(iconColor.opacity(0.15))
-                        .frame(width: 44, height: 44)
+                        .frame(width: 56, height: 56)
                     if type.usesCustomImage {
                         Image(type.customImageName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 28, height: 28)
+                            .frame(width: 40, height: 40)
                             .opacity(isUnlocked ? 1.0 : 0.5)
                     } else {
                         Image(systemName: type.iconName)
-                            .font(.title3)
+                            .font(.title2)
                             .foregroundStyle(isUnlocked ? iconColor : .secondary)
                     }
                 }

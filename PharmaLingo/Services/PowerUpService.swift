@@ -30,14 +30,14 @@ nonisolated enum PowerUpType: String, CaseIterable, Sendable {
     }
 
     var usesCustomImage: Bool {
-        self == .shieldHeart || self == .pharmaVision
+        true
     }
 
     var customImageName: String {
         switch self {
+        case .fiftyFifty: "FiftyFifty"
         case .shieldHeart: "ShieldHeart"
         case .pharmaVision: "PharmaVision"
-        default: ""
         }
     }
 

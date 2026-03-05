@@ -380,13 +380,13 @@ struct QuizView: View {
                                     Image(type.customImageName)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 22, height: 22)
+                                        .frame(width: 36, height: 36)
                                 } else {
                                     Image(systemName: type.iconName)
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .font(.system(size: 28, weight: .semibold))
                                 }
                             }
-                                .frame(width: 36, height: 36)
+                                .frame(width: 52, height: 52)
                                 .background(
                                     isActive ? powerUpActiveColor(type).opacity(0.25) :
                                     canUse ? Color(.tertiarySystemFill) : Color(.quaternarySystemFill)
@@ -398,16 +398,16 @@ struct QuizView: View {
                                 )
 
                             Text("\(count)")
-                                .font(.system(size: 10, weight: .heavy, design: .rounded))
+                                .font(.system(size: 11, weight: .heavy, design: .rounded))
                                 .foregroundStyle(.white)
-                                .frame(width: 16, height: 16)
+                                .frame(width: 18, height: 18)
                                 .background(count > 0 ? powerUpActiveColor(type) : Color(.systemGray3))
                                 .clipShape(Circle())
-                                .offset(x: 4, y: -4)
+                                .offset(x: 5, y: -5)
                         }
 
                         Text(type.displayName)
-                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
                             .lineLimit(1)
                     }
                     .foregroundStyle(canUse ? .primary : .tertiary)
