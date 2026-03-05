@@ -83,6 +83,7 @@ struct ProPaywallView: View {
             BenefitRow(icon: "heart.fill", iconColor: AppTheme.heartRed, title: "Unlimited Hearts", subtitle: "Never stop learning")
             BenefitRow(icon: "arrow.clockwise.circle.fill", iconColor: AppTheme.primaryBlue, title: "Unlimited Reviews", subtitle: "Practice anytime, anywhere")
             BenefitRow(icon: "bolt.fill", iconColor: AppTheme.warningYellow, title: "50% Bonus XP & Gold", subtitle: "Level up faster")
+            BenefitRow(icon: "bolt.circle.fill", iconColor: AppTheme.funTeal, title: "+1 Power-Up Capacity", subtitle: "Hold 1 extra of every power-up")
             BenefitRow(icon: "sparkles", iconColor: AppTheme.xpPurple, title: "Pro Badge", subtitle: "Stand out on the leaderboard")
         }
         .padding(16)
@@ -490,7 +491,7 @@ struct BonusRewardsView: View {
                         }
                         .disabled(isLoadingAd)
 
-                        Text("Watch a short ad for bonus gold, streak saves, or 2x XP")
+                        Text("Watch a short ad for bonus gold, streak saves, or power-ups")
                             .font(AppTheme.funFont(.caption, weight: .medium))
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
@@ -544,17 +545,33 @@ struct BonusRewardsView: View {
     }
 
     private func generateBonus() {
-        let roll = Int.random(in: 1...100)
-        if roll <= 10 && gameVM.streakSaves < 3 {
-            gameVM.streakSaves += 1
-            gameVM.save()
-            bonusMessage = "You earned a Streak Save! 🛡️"
-        } else if roll <= 35 {
-            gameVM.earnCoins(25)
-            bonusMessage = "You earned 25 bonus coins!"
+        if let powerUpType = PowerUpRewardGenerator.rollForPowerUp() {
+            let result = gameVM.awardPowerUpFromReward(powerUpType)
+            switch result {
+            case .added:
+                bonusMessage = "You earned a \(powerUpType.displayName) power-up!"
+            case .convertedToGold(let amount):
+                bonusMessage = "\(powerUpType.displayName) full - converted to \(amount) coins!"
+            case .suggestEnhancement(let type):
+                bonusMessage = "\(type.displayName) is full! Upgrade capacity in the Shop."
+            case .suggestPro:
+                bonusMessage = "Power-up inventory full! Go Pro for +1 capacity."
+            case .lost:
+                bonusMessage = "\(powerUpType.displayName) inventory full."
+            }
         } else {
-            gameVM.earnCoins(15)
-            bonusMessage = "You earned 15 bonus coins!"
+            let roll = Int.random(in: 1...100)
+            if roll <= 15 && gameVM.streakSaves < 3 {
+                gameVM.streakSaves += 1
+                gameVM.save()
+                bonusMessage = "You earned a Streak Save!"
+            } else if roll <= 50 {
+                gameVM.earnCoins(25)
+                bonusMessage = "You earned 25 bonus coins!"
+            } else {
+                gameVM.earnCoins(15)
+                bonusMessage = "You earned 15 bonus coins!"
+            }
         }
         withAnimation(.spring(duration: 0.5)) {
             bonusAwarded = true

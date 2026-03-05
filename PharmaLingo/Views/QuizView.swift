@@ -18,6 +18,7 @@ struct QuizView: View {
     @State private var showPaywall: Bool = false
     @State private var adWatchesUsed: Int = 0
     private let maxAdWatches: Int = 3
+    @State private var shieldJustSaved: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -52,6 +53,8 @@ struct QuizView: View {
                 } else {
                     quizHeader(quizVM: quizVM)
                     progressBar(quizVM: quizVM)
+
+                    powerUpBar(quizVM: quizVM)
 
                     ScrollView {
                         if let question = quizVM.currentQuestion {
@@ -359,6 +362,86 @@ struct QuizView: View {
         .transition(.scale.combined(with: .opacity))
     }
 
+    @ViewBuilder
+    private func powerUpBar(quizVM: QuizViewModel) -> some View {
+        HStack(spacing: 10) {
+            ForEach(PowerUpType.allCases, id: \.rawValue) { type in
+                let count = gameVM.powerUpCount(for: type)
+                let canUse = quizVM.canUsePowerUp(type) && count > 0
+                let isActive = activePowerUpState(type, quizVM: quizVM)
+
+                Button {
+                    activatePowerUp(type, quizVM: quizVM)
+                } label: {
+                    VStack(spacing: 3) {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: type.iconName)
+                                .font(.system(size: 18, weight: .semibold))
+                                .frame(width: 36, height: 36)
+                                .background(
+                                    isActive ? powerUpActiveColor(type).opacity(0.25) :
+                                    canUse ? Color(.tertiarySystemFill) : Color(.quaternarySystemFill)
+                                )
+                                .clipShape(Circle())
+                                .overlay(
+                                    Circle()
+                                        .stroke(isActive ? powerUpActiveColor(type) : .clear, lineWidth: 2)
+                                )
+
+                            Text("\(count)")
+                                .font(.system(size: 10, weight: .heavy, design: .rounded))
+                                .foregroundStyle(.white)
+                                .frame(width: 16, height: 16)
+                                .background(count > 0 ? powerUpActiveColor(type) : Color(.systemGray3))
+                                .clipShape(Circle())
+                                .offset(x: 4, y: -4)
+                        }
+
+                        Text(type.displayName)
+                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .lineLimit(1)
+                    }
+                    .foregroundStyle(canUse ? .primary : .tertiary)
+                }
+                .disabled(!canUse)
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(Color(.secondarySystemBackground))
+    }
+
+    private func activePowerUpState(_ type: PowerUpType, quizVM: QuizViewModel) -> Bool {
+        switch type {
+        case .fiftyFifty: quizVM.fiftyFiftyUsedOnQuestion
+        case .shieldHeart: quizVM.shieldActiveOnQuestion
+        case .pharmaVision: quizVM.pharmaVisionUsedOnQuestion
+        }
+    }
+
+    private func powerUpActiveColor(_ type: PowerUpType) -> Color {
+        switch type {
+        case .fiftyFifty: AppTheme.primaryBlue
+        case .shieldHeart: AppTheme.successGreen
+        case .pharmaVision: AppTheme.warningYellow
+        }
+    }
+
+    private func activatePowerUp(_ type: PowerUpType, quizVM: QuizViewModel) {
+        guard gameVM.consumePowerUp(type) else { return }
+        withAnimation(.spring(duration: 0.3)) {
+            switch type {
+            case .fiftyFifty:
+                quizVM.activateFiftyFifty()
+            case .shieldHeart:
+                quizVM.activateShield()
+            case .pharmaVision:
+                quizVM.activatePharmaVision()
+            }
+        }
+    }
+
     private func correctCelebrationText() -> String {
         ["Correct!", "Nailed it!", "Nice one!", "You got it!", "Exactly right!"].randomElement()!
     }
@@ -391,7 +474,11 @@ struct QuizView: View {
             if quizVM.hasAnswered {
                 Button {
                     if !quizVM.isCorrect {
-                        gameVM.loseHeart()
+                        if quizVM.shieldActiveOnQuestion {
+                            shieldJustSaved = true
+                        } else {
+                            gameVM.loseHeart()
+                        }
                     }
                     gameVM.recordConsecutiveCorrect(quizVM.maxConsecutive)
 

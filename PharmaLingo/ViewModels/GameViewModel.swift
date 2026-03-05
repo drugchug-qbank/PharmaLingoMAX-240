@@ -39,6 +39,7 @@ class GameViewModel {
     var dailyQuests: [DailyQuest] = []
     private var lastQuestDate: String = ""
     var masteryMap: [String: MasteryRecord] = [:]
+    var powerUpInventory: PowerUpInventory = .defaultInventory
 
     var dailyBrandBlitzCount: Int = 0
     var dailyQuickPracticeCount: Int = 0
@@ -578,6 +579,56 @@ class GameViewModel {
         return "pharmaquest_mastery_map"
     }
 
+    func powerUpMaxCapacity(for type: PowerUpType) -> Int {
+        powerUpInventory.maxCapacity(for: type, isPro: isProUser)
+    }
+
+    func powerUpCount(for type: PowerUpType) -> Int {
+        powerUpInventory.count(for: type)
+    }
+
+    func isPowerUpUnlocked(_ type: PowerUpType) -> Bool {
+        currentStreak >= type.streakRequirement
+    }
+
+    func purchasePowerUp(_ type: PowerUpType) -> Bool {
+        guard isPowerUpUnlocked(type) else { return false }
+        guard coins >= type.purchasePrice else { return false }
+        guard powerUpInventory.add(type, isPro: isProUser) else { return false }
+        coins -= type.purchasePrice
+        save()
+        return true
+    }
+
+    func purchasePowerUpEnhancement(_ type: PowerUpType) -> Bool {
+        guard !powerUpInventory.isEnhanced(type) else { return false }
+        guard coins >= type.enhancementPrice else { return false }
+        coins -= type.enhancementPrice
+        powerUpInventory.setEnhanced(type)
+        save()
+        return true
+    }
+
+    func consumePowerUp(_ type: PowerUpType) -> Bool {
+        guard powerUpInventory.consume(type) else { return false }
+        save()
+        return true
+    }
+
+    func awardPowerUpFromReward(_ type: PowerUpType) -> PowerUpOverflowResult {
+        let result = PowerUpRewardHandler.handleReward(type: type, inventory: &powerUpInventory, isPro: isProUser)
+        switch result {
+        case .added:
+            save()
+        case .convertedToGold(let amount):
+            coins += amount
+            save()
+        default:
+            break
+        }
+        return result
+    }
+
     func resetToDefaults() {
         currentUserId = nil
         hearts = 5
@@ -612,6 +663,7 @@ class GameViewModel {
         activeBoosts = []
         streakExtended = false
         previousStreak = 0
+        powerUpInventory = .defaultInventory
         UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state")
         UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map")
     }
@@ -680,6 +732,7 @@ class GameViewModel {
             "dailySpacedReviewCount": dailySpacedReviewCount,
             "dailyPracticeDate": dailyPracticeDate,
             "activeBoosts": activeBoosts.filter { $0.isActive }.map { ["type": $0.type.rawValue, "expiresAt": $0.expiresAt.timeIntervalSince1970] as [String : Any] },
+            "powerUpInventory": powerUpInventory.toDictionary(),
         ]
         UserDefaults.standard.set(state, forKey: userDefaultsKey)
     }
@@ -720,6 +773,9 @@ class GameViewModel {
         dailyQuickPracticeCount = state["dailyQuickPracticeCount"] as? Int ?? 0
         dailySpacedReviewCount = state["dailySpacedReviewCount"] as? Int ?? 0
         dailyPracticeDate = state["dailyPracticeDate"] as? String ?? ""
+        if let puData = state["powerUpInventory"] as? [String: Any] {
+            powerUpInventory = PowerUpInventory.from(puData)
+        }
         if let boostData = state["activeBoosts"] as? [[String: Any]] {
             activeBoosts = boostData.compactMap { dict in
                 guard let typeRaw = dict["type"] as? String,

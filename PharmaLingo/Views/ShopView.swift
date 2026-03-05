@@ -95,7 +95,7 @@ struct ShopView: View {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("PharmaLingo Pro Active")
                                         .font(AppTheme.funFont(.headline, weight: .heavy))
-                                    Text("Unlimited hearts & 50% bonus XP")
+                                    Text("Unlimited hearts, 50% bonus XP & +1 power-up capacity")
                                         .font(AppTheme.funFont(.caption, weight: .medium))
                                         .foregroundStyle(.secondary)
                                 }
@@ -195,7 +195,7 @@ struct ShopView: View {
                         .cardStyle(borderColor: AppTheme.heartRed.opacity(0.5))
 
                         VStack(alignment: .leading, spacing: 14) {
-                            FunSectionHeader(icon: "shield.checkered", title: "Power-Ups", color: AppTheme.xpPurple)
+                            FunSectionHeader(icon: "shield.checkered", title: "Boosts", color: AppTheme.xpPurple)
 
                             ShopItemRow(
                                 icon: "flame.fill",
@@ -235,6 +235,14 @@ struct ShopView: View {
                         }
                         .padding(16)
                         .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.5))
+
+                        PowerUpShopSection(
+                            gameVM: gameVM,
+                            onPurchase: { message in
+                                purchaseMessage = message
+                                showPurchaseAlert = true
+                            }
+                        )
 
                         Button {
                             showAvatarShop = true

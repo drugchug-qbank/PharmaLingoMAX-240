@@ -6,14 +6,17 @@ struct TrueFalseQuestionView: View {
     var body: some View {
         VStack(spacing: 12) {
             ForEach(["True", "False"], id: \.self) { option in
-                OptionButton(
-                    text: option,
-                    isSelected: quizVM.selectedAnswer == option,
-                    isCorrect: quizVM.hasAnswered ? option == quizVM.currentQuestion?.correctAnswer : nil,
-                    showResult: quizVM.hasAnswered
-                ) {
-                    guard !quizVM.hasAnswered else { return }
-                    quizVM.selectedAnswer = option
+                if !quizVM.eliminatedOptions.contains(option) {
+                    OptionButton(
+                        text: option,
+                        isSelected: quizVM.selectedAnswer == option,
+                        isCorrect: quizVM.hasAnswered ? option == quizVM.currentQuestion?.correctAnswer : nil,
+                        showResult: quizVM.hasAnswered,
+                        isPharmaVisionHighlight: quizVM.pharmaVisionHighlight == option && !quizVM.hasAnswered
+                    ) {
+                        guard !quizVM.hasAnswered else { return }
+                        quizVM.selectedAnswer = option
+                    }
                 }
             }
         }
@@ -51,14 +54,17 @@ struct FillBlankQuestionView: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 if let question = quizVM.currentQuestion {
                     ForEach(quizVM.shuffledOptions, id: \.self) { option in
-                        OptionChip(
-                            text: option,
-                            isSelected: quizVM.selectedAnswer == option,
-                            isCorrect: quizVM.hasAnswered ? option == question.correctAnswer : nil,
-                            showResult: quizVM.hasAnswered
-                        ) {
-                            guard !quizVM.hasAnswered else { return }
-                            quizVM.selectedAnswer = option
+                        if !quizVM.eliminatedOptions.contains(option) {
+                            OptionChip(
+                                text: option,
+                                isSelected: quizVM.selectedAnswer == option,
+                                isCorrect: quizVM.hasAnswered ? option == question.correctAnswer : nil,
+                                showResult: quizVM.hasAnswered,
+                                isPharmaVisionHighlight: quizVM.pharmaVisionHighlight == option && !quizVM.hasAnswered
+                            ) {
+                                guard !quizVM.hasAnswered else { return }
+                                quizVM.selectedAnswer = option
+                            }
                         }
                     }
                 }
@@ -75,14 +81,17 @@ struct MultipleChoiceQuestionView: View {
         VStack(spacing: 10) {
             if let question = quizVM.currentQuestion {
                 ForEach(quizVM.shuffledOptions, id: \.self) { option in
-                    OptionButton(
-                        text: option,
-                        isSelected: quizVM.selectedAnswer == option,
-                        isCorrect: quizVM.hasAnswered ? option == question.correctAnswer : nil,
-                        showResult: quizVM.hasAnswered
-                    ) {
-                        guard !quizVM.hasAnswered else { return }
-                        quizVM.selectedAnswer = option
+                    if !quizVM.eliminatedOptions.contains(option) {
+                        OptionButton(
+                            text: option,
+                            isSelected: quizVM.selectedAnswer == option,
+                            isCorrect: quizVM.hasAnswered ? option == question.correctAnswer : nil,
+                            showResult: quizVM.hasAnswered,
+                            isPharmaVisionHighlight: quizVM.pharmaVisionHighlight == option && !quizVM.hasAnswered
+                        ) {
+                            guard !quizVM.hasAnswered else { return }
+                            quizVM.selectedAnswer = option
+                        }
                     }
                 }
             }
@@ -98,54 +107,71 @@ struct SelectAllQuestionView: View {
         VStack(spacing: 10) {
             if let question = quizVM.currentQuestion {
                 ForEach(quizVM.shuffledOptions, id: \.self) { option in
-                    let isSelected = quizVM.selectedAnswers.contains(option)
-                    let isActuallyCorrect = question.correctAnswers.contains(option)
+                    if !quizVM.eliminatedOptions.contains(option) {
+                        let isSelected = quizVM.selectedAnswers.contains(option)
+                        let isActuallyCorrect = question.correctAnswers.contains(option)
+                        let isVisionHighlight = quizVM.pharmaVisionHighlight == option && !quizVM.hasAnswered
 
-                    Button {
-                        guard !quizVM.hasAnswered else { return }
-                        quizVM.toggleSelectAllOption(option)
-                    } label: {
-                        HStack(spacing: 12) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(checkboxBorderColor(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered), lineWidth: 2.5)
-                                    .frame(width: 26, height: 26)
-                                if isSelected {
+                        Button {
+                            guard !quizVM.hasAnswered else { return }
+                            quizVM.toggleSelectAllOption(option)
+                        } label: {
+                            HStack(spacing: 12) {
+                                ZStack {
                                     RoundedRectangle(cornerRadius: 8)
-                                        .fill(checkboxFillColor(isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered))
+                                        .stroke(checkboxBorderColor(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered), lineWidth: 2.5)
                                         .frame(width: 26, height: 26)
-                                    Image(systemName: "checkmark")
-                                        .font(AppTheme.funFont(.caption, weight: .heavy))
-                                        .foregroundStyle(.white)
+                                    if isSelected {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(checkboxFillColor(isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered))
+                                            .frame(width: 26, height: 26)
+                                        Image(systemName: "checkmark")
+                                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                                            .foregroundStyle(.white)
+                                    }
+                                }
+
+                                Text(option)
+                                    .font(AppTheme.funFont(.body, weight: .medium))
+                                    .foregroundStyle(.primary)
+                                    .multilineTextAlignment(.leading)
+
+                                Spacer()
+
+                                if isVisionHighlight {
+                                    Image(systemName: "eye.fill")
+                                        .foregroundStyle(AppTheme.warningYellow)
+                                }
+
+                                if quizVM.hasAnswered {
+                                    if isActuallyCorrect {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundStyle(AppTheme.successGreen)
+                                    } else if isSelected && !isActuallyCorrect {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(AppTheme.heartRed)
+                                    }
                                 }
                             }
-
-                            Text(option)
-                                .font(AppTheme.funFont(.body, weight: .medium))
-                                .foregroundStyle(.primary)
-                                .multilineTextAlignment(.leading)
-
-                            Spacer()
-
-                            if quizVM.hasAnswered {
-                                if isActuallyCorrect {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(AppTheme.successGreen)
-                                } else if isSelected && !isActuallyCorrect {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(AppTheme.heartRed)
-                                }
-                            }
+                            .padding(14)
+                            .background(
+                                isVisionHighlight
+                                    ? AppTheme.warningYellow.opacity(0.12)
+                                    : selectAllBackground(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered)
+                            )
+                            .clipShape(.rect(cornerRadius: 14))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(
+                                        isVisionHighlight
+                                            ? AppTheme.warningYellow.opacity(0.7)
+                                            : selectAllBorder(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered),
+                                        lineWidth: 2.5
+                                    )
+                            )
                         }
-                        .padding(14)
-                        .background(selectAllBackground(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered))
-                        .clipShape(.rect(cornerRadius: 14))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(selectAllBorder(isSelected: isSelected, isCorrect: isActuallyCorrect, showResult: quizVM.hasAnswered), lineWidth: 2.5)
-                        )
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -290,6 +316,7 @@ struct OptionButton: View {
     let isSelected: Bool
     let isCorrect: Bool?
     let showResult: Bool
+    var isPharmaVisionHighlight: Bool = false
     let action: () -> Void
 
     var body: some View {
@@ -300,6 +327,10 @@ struct OptionButton: View {
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
                 Spacer()
+                if isPharmaVisionHighlight && !showResult {
+                    Image(systemName: "eye.fill")
+                        .foregroundStyle(AppTheme.warningYellow)
+                }
                 if showResult, let isCorrect {
                     Image(systemName: isCorrect ? "checkmark.circle.fill" : (isSelected ? "xmark.circle.fill" : ""))
                         .foregroundStyle(isCorrect ? AppTheme.successGreen : AppTheme.heartRed)
@@ -312,6 +343,10 @@ struct OptionButton: View {
                 RoundedRectangle(cornerRadius: 14)
                     .stroke(borderColor, lineWidth: 2.5)
             )
+            .shadow(
+                color: isPharmaVisionHighlight && !showResult ? AppTheme.warningYellow.opacity(0.35) : .clear,
+                radius: 6, x: 0, y: 2
+            )
         }
         .buttonStyle(.plain)
     }
@@ -322,6 +357,9 @@ struct OptionButton: View {
             if isSelected { return AppTheme.heartRed.opacity(0.1) }
             return Color(.tertiarySystemFill)
         }
+        if isPharmaVisionHighlight {
+            return AppTheme.warningYellow.opacity(0.12)
+        }
         return isSelected ? AppTheme.primaryBlue.opacity(0.1) : Color(.tertiarySystemFill)
     }
 
@@ -330,6 +368,9 @@ struct OptionButton: View {
             if let isCorrect, isCorrect { return AppTheme.successGreen }
             if isSelected { return AppTheme.heartRed }
             return .clear
+        }
+        if isPharmaVisionHighlight {
+            return AppTheme.warningYellow.opacity(0.7)
         }
         return isSelected ? AppTheme.primaryBlue : .clear
     }
@@ -340,6 +381,7 @@ struct OptionChip: View {
     let isSelected: Bool
     let isCorrect: Bool?
     let showResult: Bool
+    var isPharmaVisionHighlight: Bool = false
     let action: () -> Void
 
     var body: some View {
@@ -355,7 +397,12 @@ struct OptionChip: View {
                     RoundedRectangle(cornerRadius: 14)
                         .stroke(chipBorder, lineWidth: 2.5)
                 )
-                .shadow(color: isSelected ? chipBackground.opacity(0.3) : .clear, radius: 4, y: 2)
+                .shadow(
+                    color: isPharmaVisionHighlight && !showResult
+                        ? AppTheme.warningYellow.opacity(0.4)
+                        : (isSelected ? chipBackground.opacity(0.3) : .clear),
+                    radius: 4, y: 2
+                )
         }
         .buttonStyle(.plain)
     }
@@ -366,6 +413,9 @@ struct OptionChip: View {
             if isSelected { return AppTheme.heartRed }
             return Color(.tertiarySystemFill)
         }
+        if isPharmaVisionHighlight {
+            return AppTheme.warningYellow.opacity(0.2)
+        }
         return isSelected ? AppTheme.primaryBlue : Color(.tertiarySystemFill)
     }
 
@@ -374,6 +424,9 @@ struct OptionChip: View {
             if let isCorrect, isCorrect { return AppTheme.successGreen }
             if isSelected { return AppTheme.heartRed }
             return .clear
+        }
+        if isPharmaVisionHighlight {
+            return AppTheme.warningYellow.opacity(0.7)
         }
         return isSelected ? AppTheme.primaryBlue : .clear
     }

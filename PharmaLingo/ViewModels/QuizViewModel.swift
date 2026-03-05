@@ -16,6 +16,12 @@ class QuizViewModel {
     var hasAnswered: Bool = false
     var isCorrect: Bool = false
     var correctCount: Int = 0
+
+    var fiftyFiftyUsedOnQuestion: Bool = false
+    var shieldActiveOnQuestion: Bool = false
+    var pharmaVisionUsedOnQuestion: Bool = false
+    var eliminatedOptions: Set<String> = []
+    var pharmaVisionHighlight: String?
     var wrongCount: Int = 0
     var consecutiveCorrect: Int = 0
     var maxConsecutive: Int = 0
@@ -108,7 +114,65 @@ class QuizViewModel {
         selectedMatchLeft = nil
         hasAnswered = false
         isCorrect = false
+        fiftyFiftyUsedOnQuestion = false
+        shieldActiveOnQuestion = false
+        pharmaVisionUsedOnQuestion = false
+        eliminatedOptions = []
+        pharmaVisionHighlight = nil
         prepareShuffledOptions()
+    }
+
+    func canUsePowerUp(_ type: PowerUpType) -> Bool {
+        guard let q = currentQuestion else { return false }
+        guard !hasAnswered else { return false }
+        guard type.supportsQuestionType(q.type) else { return false }
+        switch type {
+        case .fiftyFifty: return !fiftyFiftyUsedOnQuestion
+        case .shieldHeart: return !shieldActiveOnQuestion
+        case .pharmaVision: return !pharmaVisionUsedOnQuestion
+        }
+    }
+
+    func activateFiftyFifty() {
+        guard let q = currentQuestion, !fiftyFiftyUsedOnQuestion else { return }
+        fiftyFiftyUsedOnQuestion = true
+
+        switch q.type {
+        case .multipleChoice, .trueFalse, .fillBlank:
+            let incorrectOptions = shuffledOptions.filter { $0 != q.correctAnswer }
+            let countToRemove = max(incorrectOptions.count / 2, 1)
+            let toEliminate = Set(incorrectOptions.shuffled().prefix(countToRemove))
+            eliminatedOptions = toEliminate
+        case .selectAll:
+            let incorrectOptions = shuffledOptions.filter { !q.correctAnswers.contains($0) }
+            let countToRemove = max(incorrectOptions.count / 2, 1)
+            let toEliminate = Set(incorrectOptions.shuffled().prefix(countToRemove))
+            eliminatedOptions = toEliminate
+        case .matching:
+            break
+        }
+    }
+
+    func activateShield() {
+        guard !shieldActiveOnQuestion else { return }
+        shieldActiveOnQuestion = true
+    }
+
+    func activatePharmaVision() {
+        guard let q = currentQuestion, !pharmaVisionUsedOnQuestion else { return }
+        pharmaVisionUsedOnQuestion = true
+
+        switch q.type {
+        case .multipleChoice, .trueFalse, .fillBlank:
+            pharmaVisionHighlight = q.correctAnswer
+        case .selectAll:
+            let visibleCorrect = shuffledOptions.filter {
+                q.correctAnswers.contains($0) && !eliminatedOptions.contains($0)
+            }
+            pharmaVisionHighlight = visibleCorrect.randomElement()
+        case .matching:
+            break
+        }
     }
 
     private func calculateRewards() {
