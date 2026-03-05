@@ -375,8 +375,17 @@ struct QuizView: View {
                 } label: {
                     VStack(spacing: 3) {
                         ZStack(alignment: .topTrailing) {
-                            Image(systemName: type.iconName)
-                                .font(.system(size: 18, weight: .semibold))
+                            Group {
+                                if type.usesCustomImage {
+                                    Image(type.customImageName)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 22, height: 22)
+                                } else {
+                                    Image(systemName: type.iconName)
+                                        .font(.system(size: 18, weight: .semibold))
+                                }
+                            }
                                 .frame(width: 36, height: 36)
                                 .background(
                                     isActive ? powerUpActiveColor(type).opacity(0.25) :

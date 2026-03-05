@@ -24,8 +24,19 @@ nonisolated enum PowerUpType: String, CaseIterable, Sendable {
     var iconName: String {
         switch self {
         case .fiftyFifty: "circle.lefthalf.striped.horizontal"
-        case .shieldHeart: "shield.lefthalf.filled.badge.checkmark"
+        case .shieldHeart: ""
         case .pharmaVision: "eye.fill"
+        }
+    }
+
+    var usesCustomImage: Bool {
+        self == .shieldHeart
+    }
+
+    var customImageName: String {
+        switch self {
+        case .shieldHeart: "ShieldHeart"
+        default: ""
         }
     }
 

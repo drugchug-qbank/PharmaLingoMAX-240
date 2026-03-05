@@ -43,9 +43,17 @@ struct PowerUpShopCard: View {
                     Circle()
                         .fill(iconColor.opacity(0.15))
                         .frame(width: 44, height: 44)
-                    Image(systemName: type.iconName)
-                        .font(.title3)
-                        .foregroundStyle(isUnlocked ? iconColor : .secondary)
+                    if type.usesCustomImage {
+                        Image(type.customImageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 28, height: 28)
+                            .opacity(isUnlocked ? 1.0 : 0.5)
+                    } else {
+                        Image(systemName: type.iconName)
+                            .font(.title3)
+                            .foregroundStyle(isUnlocked ? iconColor : .secondary)
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
