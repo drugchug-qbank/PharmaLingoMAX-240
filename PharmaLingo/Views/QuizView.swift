@@ -380,13 +380,13 @@ struct QuizView: View {
                                     Image(type.customImageName)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 72, height: 72)
+                                        .frame(width: 52, height: 52)
                                 } else {
                                     Image(systemName: type.iconName)
-                                        .font(.system(size: 48, weight: .semibold))
+                                        .font(.system(size: 32, weight: .semibold))
                                 }
                             }
-                                .frame(width: 90, height: 90)
+                                .frame(width: 56, height: 56)
                                 .background(
                                     isActive ? powerUpActiveColor(type).opacity(0.25) :
                                     canUse ? Color(.tertiarySystemFill) : Color(.quaternarySystemFill)
