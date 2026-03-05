@@ -140,12 +140,12 @@ class QuizViewModel {
         switch q.type {
         case .multipleChoice, .trueFalse, .fillBlank:
             let incorrectOptions = shuffledOptions.filter { $0 != q.correctAnswer }
-            let countToRemove = max(incorrectOptions.count / 2, 1)
+            let countToRemove = max(incorrectOptions.count - 1, 1)
             let toEliminate = Set(incorrectOptions.shuffled().prefix(countToRemove))
             eliminatedOptions = toEliminate
         case .selectAll:
             let incorrectOptions = shuffledOptions.filter { !q.correctAnswers.contains($0) }
-            let countToRemove = max(incorrectOptions.count / 2, 1)
+            let countToRemove = max(incorrectOptions.count - 1, 1)
             let toEliminate = Set(incorrectOptions.shuffled().prefix(countToRemove))
             eliminatedOptions = toEliminate
         case .matching:
