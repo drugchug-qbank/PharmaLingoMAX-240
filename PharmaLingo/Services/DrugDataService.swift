@@ -170,6 +170,7 @@ struct DrugDataService {
             .multipleChoice(id: "q2a_10", subsectionId: "2a", question: "Which statin has the fewest drug interactions?", options: ["Pravastatin", "Simvastatin", "Atorvastatin", "Lovastatin"], answer: "Pravastatin", explanation: "Rule: Pravastatin is not metabolized by CYP3A4.\nPearl: Fewer drug interactions than other statins."),
         ]
         bank["1a"]?.append(contentsOf: Self.curatedAddOnQuestions_1a)
+        bank["1b"]?.append(contentsOf: Self.curatedAddOnQuestions_1b)
         bank["2b"] = [
             .multipleChoice(id: "q2b_1", subsectionId: "2b", question: "Ezetimibe works by:", options: ["Blocking intestinal cholesterol absorption", "Inhibiting HMG-CoA reductase", "Binding bile acids", "Activating LDL receptors"], answer: "Blocking intestinal cholesterol absorption", explanation: "Rule: Ezetimibe blocks the NPC1L1 transporter in the intestine."),
             .trueFalse(id: "q2b_3", subsectionId: "2b", question: "PCSK9 inhibitors are oral medications.", answer: false, explanation: "Rule: PCSK9 inhibitors are subcutaneous injections (monoclonal antibodies)."),
