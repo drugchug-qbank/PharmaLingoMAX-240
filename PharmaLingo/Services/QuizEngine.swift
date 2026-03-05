@@ -193,10 +193,46 @@ struct QuizEngine {
         let matchingTarget = Int.random(in: 1...3)
         let selectAllTarget = Int.random(in: 1...3)
 
+        var usedIds = Set(result.map(\.id))
+
+        let hasBrandGenericMatching = result.contains { q in
+            q.type == .matching
+            && (q.objective == .genericBrand || q.objective == .brandGeneric)
+            && q.subsectionId == subsectionId
+        }
+
+        if !hasBrandGenericMatching {
+            var bgCandidate: Question?
+            if let sub = dataService.subsection(for: subsectionId) {
+                let bucketed = hyFactory.generateBucketed(for: sub)
+                bgCandidate = bucketed.classPattern.first { q in
+                    q.type == .matching
+                    && (q.objective == .genericBrand || q.objective == .brandGeneric)
+                    && !usedIds.contains(q.id)
+                }
+            }
+            if bgCandidate == nil {
+                bgCandidate = dataService.allQuestions(for: subsectionId).first { q in
+                    q.type == .matching
+                    && (q.objective == .genericBrand || q.objective == .brandGeneric)
+                    && !usedIds.contains(q.id)
+                }
+            }
+            if let bg = bgCandidate {
+                let swapOutIdx = result.lastIndex(where: {
+                    $0.type != .matching && $0.type != .selectAll
+                })
+                if let idx = swapOutIdx, result.count >= totalCount {
+                    result[idx] = bg
+                } else if result.count < totalCount {
+                    result.append(bg)
+                }
+                usedIds.insert(bg.id)
+            }
+        }
+
         let currentMatching = result.filter { $0.type == .matching }.count
         let currentSelectAll = result.filter { $0.type == .selectAll }.count
-
-        let usedIds = Set(result.map(\.id))
 
         var extraPool: [Question] = []
         if currentMatching < matchingTarget || currentSelectAll < selectAllTarget {
@@ -320,21 +356,45 @@ struct QuizEngine {
 
         let uniquePool = Dictionary(grouping: allPool, by: \.id).compactMap(\.value.first)
 
-        let sorted = uniquePool.sorted { q1, q2 in
+        var bgMatchingQuestions: [Question] = []
+        var usedBGSubsections: Set<String> = []
+        for subId in moduleSubIds {
+            let bgCandidates = uniquePool.filter { q in
+                q.type == .matching
+                && (q.objective == .genericBrand || q.objective == .brandGeneric)
+                && q.subsectionId == subId
+                && !usedBGSubsections.contains(subId)
+            }
+            if let bg = bgCandidates.first {
+                bgMatchingQuestions.append(bg)
+                usedBGSubsections.insert(subId)
+            }
+            if bgMatchingQuestions.count >= 5 { break }
+        }
+
+        let bgIds = Set(bgMatchingQuestions.map(\.id))
+
+        let nonBGPool = uniquePool.filter { !bgIds.contains($0.id) }
+        let sorted = nonBGPool.sorted { q1, q2 in
             let m1 = masteryMap[q1.masteryKey]?.level ?? 0
             let m2 = masteryMap[q2.masteryKey]?.level ?? 0
             if m1 != m2 { return m1 < m2 }
             return q1.difficulty.rawValue < q2.difficulty.rawValue
         }
 
-        var selected: [Question] = []
-        var usedIds: Set<String> = []
+        let maxTotal = 30
+        let remainingSlots = maxTotal - bgMatchingQuestions.count
 
+        var selected: [Question] = bgMatchingQuestions
+        var usedIds: Set<String> = bgIds
+
+        var addedCount = 0
         for q in sorted {
             guard !usedIds.contains(q.id) else { continue }
             selected.append(q)
             usedIds.insert(q.id)
-            if selected.count >= 30 { break }
+            addedCount += 1
+            if addedCount >= remainingSlots { break }
         }
 
         return enforceVariety(selected)
