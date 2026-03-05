@@ -25,6 +25,9 @@ struct DrugDataService {
                     }
                 }
                 bank[sub.id] = mastery
+                if sub.id == Self.masteringCv1SubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_1fMastery)
+                }
             }
         }
         self.questionBank = bank
