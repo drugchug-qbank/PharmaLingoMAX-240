@@ -380,7 +380,8 @@ struct QuizView: View {
                                     Image(type.customImageName)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 52, height: 52)
+                                        .frame(width: 156, height: 156)
+                                        .scaleEffect(1.0)
                                 } else {
                                     Image(systemName: type.iconName)
                                         .font(.system(size: 32, weight: .semibold))
