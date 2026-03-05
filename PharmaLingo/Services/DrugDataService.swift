@@ -187,5 +187,8 @@ struct DrugDataService {
             .matching(id: "q2b_9", subsectionId: "2b", question: "Match drug to brand name:", pairs: [MatchingPair(left: "Ezetimibe", right: "Zetia"), MatchingPair(left: "Evolocumab", right: "Repatha"), MatchingPair(left: "Fenofibrate", right: "Tricor"), MatchingPair(left: "Icosapent ethyl", right: "Vascepa")], explanation: "Key non-statin lipid drug brand names."),
         ]
         bank["2b"]?.append(contentsOf: Self.curatedAddOnQuestions_2b)
+
+        if bank["2c"] == nil { bank["2c"] = [] }
+        bank["2c"]?.append(contentsOf: Self.curatedAddOnQuestions_2c)
     }
 }
