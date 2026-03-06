@@ -433,12 +433,7 @@ struct QuizView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(Color(hex: "#ffffff").opacity(0.50))
-        .overlay(alignment: .top) {
-            Rectangle().fill(Color.black).frame(height: 1.5)
-        }
-        .overlay(alignment: .bottom) {
-            Rectangle().fill(Color.black).frame(height: 1.5)
-        }
+
     }
 
     private func activePowerUpState(_ type: PowerUpType, quizVM: QuizViewModel) -> Bool {
