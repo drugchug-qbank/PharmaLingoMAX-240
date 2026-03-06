@@ -63,6 +63,8 @@ struct FriendProfileView: View {
                     .padding(16)
                     .cardStyle()
 
+                    friendClinicalAuraSection(friend: friend)
+
                     xpComparisonSection(friend: friend)
 
                     VStack(alignment: .leading, spacing: 12) {
@@ -259,6 +261,53 @@ struct FriendProfileView: View {
                 .foregroundStyle(color)
         }
         .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private func friendClinicalAuraSection(friend: FriendDetailProfile) -> some View {
+        HStack(spacing: 16) {
+            VStack(spacing: 4) {
+                Image(systemName: "sparkles")
+                    .font(.title3)
+                    .foregroundStyle(AppTheme.primaryBlue)
+                Text("Clinical Aura")
+                    .font(AppTheme.funFont(.caption, weight: .heavy))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 2) {
+                let myPoints = gameVM.clinicalAuraPoints
+                HStack(spacing: 8) {
+                    VStack(spacing: 2) {
+                        Text("You")
+                            .font(AppTheme.funFont(.caption2, weight: .medium))
+                            .foregroundStyle(.secondary)
+                        Text("\(myPoints)")
+                            .font(AppTheme.funFont(.title3, weight: .heavy))
+                            .foregroundStyle(myPoints >= 0 ? AppTheme.primaryBlue : AppTheme.heartRed)
+                            .monospacedDigit()
+                    }
+
+                    Text("vs")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.tertiary)
+
+                    VStack(spacing: 2) {
+                        Text(friend.username)
+                            .font(AppTheme.funFont(.caption2, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                        Text("--")
+                            .font(AppTheme.funFont(.title3, weight: .heavy))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.3))
     }
 
     private func estimateDailyXP(totalXP: Int) -> [Int] {

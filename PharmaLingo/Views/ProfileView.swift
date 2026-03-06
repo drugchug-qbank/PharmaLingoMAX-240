@@ -77,6 +77,8 @@ struct ProfileView: View {
                         .padding(16)
                         .cardStyle()
 
+                        clinicalAuraCard
+
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 FunSectionHeader(icon: "flame.fill", title: "Streak Status", color: AppTheme.accentOrange)
@@ -305,6 +307,49 @@ struct ProfileView: View {
                 Text("Are you sure you want to sign out?")
             }
         }
+    }
+}
+
+extension ProfileView {
+    @ViewBuilder
+    var clinicalAuraCard: some View {
+        let points = gameVM.clinicalAuraPoints
+        let isPositive = points >= 0
+
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
+                Image(systemName: "sparkles")
+                    .font(AppTheme.funFont(.title3, weight: .bold))
+                    .foregroundStyle(isPositive ? AppTheme.primaryBlue : AppTheme.heartRed)
+                Text("Clinical Aura")
+                    .font(AppTheme.funFont(.title3, weight: .bold))
+            }
+
+            HStack(spacing: 16) {
+                VStack(spacing: 4) {
+                    Text("\(points)")
+                        .font(.system(size: 36, weight: .heavy, design: .rounded))
+                        .foregroundStyle(isPositive ? AppTheme.primaryBlue : AppTheme.heartRed)
+                        .monospacedDigit()
+                    Text("Aura Points")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("Daily Clinical Quiz")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(.secondary)
+                    Text("+1 correct / -1 incorrect")
+                        .font(AppTheme.funFont(.caption2, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                }
+            }
+        }
+        .padding(16)
+        .cardStyle(borderColor: (isPositive ? AppTheme.primaryBlue : AppTheme.heartRed).opacity(0.4))
     }
 }
 

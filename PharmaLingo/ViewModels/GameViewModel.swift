@@ -42,6 +42,7 @@ class GameViewModel {
     var powerUpInventory: PowerUpInventory = .defaultInventory
 
     var devModeUnlockAll: Bool = false
+    var clinicalAuraPoints: Int = 0
 
     var dailyBrandBlitzCount: Int = 0
     var dailyQuickPracticeCount: Int = 0
@@ -282,6 +283,18 @@ class GameViewModel {
             lastHeartLossDate = Date()
         }
         save()
+    }
+
+    func addClinicalAuraPoint() {
+        clinicalAuraPoints += 1
+        save()
+        syncToCloud()
+    }
+
+    func removeClinicalAuraPoint() {
+        clinicalAuraPoints -= 1
+        save()
+        syncToCloud()
     }
 
     func addHeart() {
@@ -664,6 +677,7 @@ class GameViewModel {
         dailyQuests = []
         lastQuestDate = ""
         masteryMap = [:]
+        clinicalAuraPoints = 0
         activeBoosts = []
         streakExtended = false
         previousStreak = 0
@@ -737,6 +751,7 @@ class GameViewModel {
             "dailyPracticeDate": dailyPracticeDate,
             "activeBoosts": activeBoosts.filter { $0.isActive }.map { ["type": $0.type.rawValue, "expiresAt": $0.expiresAt.timeIntervalSince1970] as [String : Any] },
             "powerUpInventory": powerUpInventory.toDictionary(),
+            "clinicalAuraPoints": clinicalAuraPoints,
         ]
         UserDefaults.standard.set(state, forKey: userDefaultsKey)
     }
@@ -777,6 +792,7 @@ class GameViewModel {
         dailyQuickPracticeCount = state["dailyQuickPracticeCount"] as? Int ?? 0
         dailySpacedReviewCount = state["dailySpacedReviewCount"] as? Int ?? 0
         dailyPracticeDate = state["dailyPracticeDate"] as? String ?? ""
+        clinicalAuraPoints = state["clinicalAuraPoints"] as? Int ?? 0
         if let puData = state["powerUpInventory"] as? [String: Any] {
             powerUpInventory = PowerUpInventory.from(puData)
         }

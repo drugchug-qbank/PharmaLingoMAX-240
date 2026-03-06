@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct PracticeView: View {
     let gameVM: GameViewModel
@@ -11,6 +12,9 @@ struct PracticeView: View {
     @State private var showAdPrompt: Bool = false
     @State private var pendingAdMode: PracticeMode?
     @State private var showLockedAlert: Bool = false
+    @State private var showClinicalQuiz: Bool = false
+    @State private var clinicalCountdown: TimeInterval = 0
+    private let clinicalTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var allDrugs: [Drug] {
         DrugDataService.shared.modules.flatMap { $0.subsections.flatMap { $0.drugs } }
@@ -23,6 +27,8 @@ struct PracticeView: View {
 
                 ScrollView {
                     VStack(spacing: 14) {
+                        clinicalQOTDCard
+
                         PracticeCard(
                             title: "Spaced Review",
                             subtitle: spacedReviewSubtitle,
@@ -164,6 +170,9 @@ struct PracticeView: View {
                 }
             } message: {
                 Text("You've used your free daily attempt. Watch an ad for one more, or upgrade to PRO for unlimited access.")
+            }
+            .fullScreenCover(isPresented: $showClinicalQuiz) {
+                ClinicalQuizView(gameVM: gameVM)
             }
             .alert("Daily Limit Reached", isPresented: $showLockedAlert) {
                 Button("Get PRO") {
@@ -357,6 +366,143 @@ struct PracticeView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+
+    @ViewBuilder
+    private var clinicalQOTDCard: some View {
+        let hasAnswered = hasAnsweredClinicalToday
+        let todaysResult = todaysClinicalResult
+
+        Button {
+            showClinicalQuiz = true
+        } label: {
+            VStack(spacing: 0) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color(hex: "1a237e"), Color(hex: "0d47a1")],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 48, height: 48)
+                        Image(systemName: "cross.case.fill")
+                            .font(.title3)
+                            .foregroundStyle(.white)
+                    }
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: 6) {
+                            Text("Clinical Question of the Day")
+                                .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                                .foregroundStyle(.white)
+                        }
+                        if hasAnswered {
+                            HStack(spacing: 4) {
+                                Image(systemName: todaysResult == true ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                    .font(.caption2)
+                                Text(todaysResult == true ? "Answered Correctly" : "Answered Incorrectly")
+                                    .font(AppTheme.funFont(.caption, weight: .bold))
+                            }
+                            .foregroundStyle(todaysResult == true ? AppTheme.successGreen : AppTheme.heartRed)
+                        } else {
+                            Text("Test your clinical reasoning")
+                                .font(AppTheme.funFont(.caption, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.8))
+                        }
+                    }
+
+                    Spacer()
+
+                    VStack(spacing: 2) {
+                        if !hasAnswered {
+                            Text("EXPIRES")
+                                .font(.system(size: 8, weight: .heavy, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.6))
+                        }
+                        Text(clinicalCountdownString)
+                            .font(.system(size: 13, weight: .bold, design: .monospaced))
+                            .foregroundStyle(AppTheme.warningYellow)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(.white.opacity(0.12))
+                    .clipShape(.rect(cornerRadius: 10))
+                }
+                .padding(16)
+
+                HStack(spacing: 16) {
+                    let points = gameVM.clinicalAuraPoints
+                    HStack(spacing: 4) {
+                        Image(systemName: "sparkles")
+                            .font(.caption2)
+                        Text("Aura: \(points)")
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                    }
+                    .foregroundStyle(points >= 0 ? AppTheme.primaryBlue : AppTheme.heartRed)
+
+                    Spacer()
+
+                    if hasAnswered {
+                        Text("Tap to review")
+                            .font(AppTheme.funFont(.caption2, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.6))
+                    } else {
+                        Text("1 attempt only")
+                            .font(AppTheme.funFont(.caption2, weight: .bold))
+                            .foregroundStyle(AppTheme.warningYellow.opacity(0.8))
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+                .padding(.top, 2)
+            }
+            .background(
+                LinearGradient(
+                    colors: [Color(hex: "0d1b2a"), Color(hex: "1b263b"), Color(hex: "1a237e")],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                )
+            )
+            .clipShape(.rect(cornerRadius: 18))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color(hex: "415a77").opacity(0.5), Color(hex: "778da9").opacity(0.3)],
+                            startPoint: .topLeading, endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .shadow(color: Color(hex: "0d1b2a").opacity(0.4), radius: 12, x: 0, y: 6)
+        }
+        .buttonStyle(.plain)
+        .onReceive(clinicalTimer) { _ in
+            clinicalCountdown = ClinicalQuizService.timeUntilMidnight()
+        }
+        .onAppear {
+            clinicalCountdown = ClinicalQuizService.timeUntilMidnight()
+        }
+    }
+
+    private var clinicalCountdownString: String {
+        let hours = Int(clinicalCountdown) / 3600
+        let minutes = (Int(clinicalCountdown) % 3600) / 60
+        let seconds = Int(clinicalCountdown) % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    private var hasAnsweredClinicalToday: Bool {
+        let today = ClinicalQuizService.todayDateString()
+        let answered = UserDefaults.standard.dictionary(forKey: "cqotd_answered_dates") as? [String: Bool] ?? [:]
+        return answered[today] != nil
+    }
+
+    private var todaysClinicalResult: Bool? {
+        let today = ClinicalQuizService.todayDateString()
+        let answered = UserDefaults.standard.dictionary(forKey: "cqotd_answered_dates") as? [String: Bool] ?? [:]
+        return answered[today]
     }
 
     private func generateQuickPracticeQuestions() -> [Question] {
