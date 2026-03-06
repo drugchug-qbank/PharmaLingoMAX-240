@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AuthView: View {
     @State private var authVM = AuthViewModel()
-    @State private var animateGradient: Bool = false
+    var onSignUpTapped: () -> Void
 
     var body: some View {
         ZStack {
@@ -41,27 +41,20 @@ struct AuthView: View {
                     }
 
                     VStack(spacing: 16) {
-                        if authVM.isSignUp {
-                            signUpFields
-                        } else {
-                            signInFields
+                        VStack(spacing: 12) {
+                            AuthTextField(icon: "envelope.fill", placeholder: "Email", text: $authVM.email, isSecure: false)
+                            AuthTextField(icon: "lock.fill", placeholder: "Password", text: $authVM.password, isSecure: true)
                         }
 
                         Button {
-                            Task {
-                                if authVM.isSignUp {
-                                    await authVM.signUp()
-                                } else {
-                                    await authVM.signIn()
-                                }
-                            }
+                            Task { await authVM.signIn() }
                         } label: {
                             Group {
                                 if authVM.isLoading {
                                     ProgressView()
                                         .tint(.white)
                                 } else {
-                                    Text(authVM.isSignUp ? "Create Account" : "Sign In")
+                                    Text("Sign In")
                                         .font(AppTheme.funFont(.headline, weight: .bold))
                                 }
                             }
@@ -74,12 +67,9 @@ struct AuthView: View {
                         .disabled(authVM.isLoading)
 
                         Button {
-                            withAnimation(.spring(duration: 0.3)) {
-                                authVM.isSignUp.toggle()
-                                authVM.errorMessage = nil
-                            }
+                            onSignUpTapped()
                         } label: {
-                            Text(authVM.isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up")
+                            Text("Don't have an account? Sign Up")
                                 .font(AppTheme.funFont(.subheadline, weight: .bold))
                                 .foregroundStyle(.white.opacity(0.9))
                         }
@@ -98,60 +88,6 @@ struct AuthView: View {
             Button("OK") {}
         } message: {
             Text(authVM.errorMessage ?? "Something went wrong")
-        }
-        .alert("Check Your Email", isPresented: $authVM.showConfirmation) {
-            Button("OK") {
-                authVM.isSignUp = false
-            }
-        } message: {
-            Text("We sent a confirmation link to \(authVM.email). Please confirm your email, then sign in.")
-        }
-    }
-
-    @ViewBuilder
-    private var signInFields: some View {
-        VStack(spacing: 12) {
-            AuthTextField(icon: "envelope.fill", placeholder: "Email", text: $authVM.email, isSecure: false)
-            AuthTextField(icon: "lock.fill", placeholder: "Password", text: $authVM.password, isSecure: true)
-        }
-    }
-
-    @ViewBuilder
-    private var signUpFields: some View {
-        VStack(spacing: 12) {
-            AuthTextField(icon: "person.fill", placeholder: "Username", text: $authVM.username, isSecure: false)
-            AuthTextField(icon: "envelope.fill", placeholder: "Email", text: $authVM.email, isSecure: false)
-            AuthTextField(icon: "lock.fill", placeholder: "Password", text: $authVM.password, isSecure: true)
-            AuthTextField(icon: "lock.shield.fill", placeholder: "Confirm Password", text: $authVM.confirmPassword, isSecure: true)
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text("I am a...")
-                    .font(AppTheme.funFont(.subheadline, weight: .bold))
-                    .foregroundStyle(.primary)
-
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(Profession.allCases, id: \.self) { prof in
-                            Button {
-                                authVM.selectedProfession = prof
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: prof.iconName)
-                                        .font(.caption)
-                                    Text(prof.rawValue)
-                                        .font(AppTheme.funFont(.caption, weight: .heavy))
-                                }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(authVM.selectedProfession == prof ? AppTheme.primaryBlue : Color(.tertiarySystemFill))
-                                .foregroundStyle(authVM.selectedProfession == prof ? .white : .primary)
-                                .clipShape(Capsule())
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                }
-            }
         }
     }
 }
