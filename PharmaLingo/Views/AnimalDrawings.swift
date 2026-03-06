@@ -961,7 +961,7 @@ struct AnimalAvatarView: View {
 
     private func drawMouth(context: inout GraphicsContext, style: MouthStyle, size: CGFloat) {
         let s = size
-        let mouthY: CGFloat = s * 0.63
+        let mouthY: CGFloat = s * 0.66
         let centerX: CGFloat = s * 0.50
         let mouthW: CGFloat = s * 0.13
         let mc = Color(hex: "2C2C2C").opacity(0.90)
