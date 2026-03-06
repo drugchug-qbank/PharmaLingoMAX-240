@@ -432,7 +432,7 @@ struct QuizView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
-        .background(Color(hex: "22e0ff").opacity(0.50))
+        .background(Color(hex: "#ffffff").opacity(0.50))
         .overlay(alignment: .top) {
             Rectangle().fill(Color.black).frame(height: 1.5)
         }
