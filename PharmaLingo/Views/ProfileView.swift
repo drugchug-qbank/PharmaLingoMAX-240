@@ -239,6 +239,31 @@ struct ProfileView: View {
                         .padding(16)
                         .cardStyle(borderColor: AppTheme.heartRed.opacity(0.5))
 
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("DEVELOPER")
+                                .font(AppTheme.funFont(.caption, weight: .heavy))
+                                .foregroundStyle(.orange)
+
+                            Toggle(isOn: Bindable(gameVM).devModeUnlockAll) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "lock.open.fill")
+                                        .font(.title3)
+                                        .foregroundStyle(.orange)
+
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Unlock All Quizzes")
+                                            .font(AppTheme.funFont(.subheadline, weight: .bold))
+                                        Text("Bypass progression for testing")
+                                            .font(AppTheme.funFont(.caption, weight: .medium))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+                            .tint(.orange)
+                        }
+                        .padding(16)
+                        .cardStyle(borderColor: Color.orange.opacity(0.5))
+
                         Button {
                             showSignOutAlert = true
                         } label: {

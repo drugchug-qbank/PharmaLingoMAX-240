@@ -41,6 +41,8 @@ class GameViewModel {
     var masteryMap: [String: MasteryRecord] = [:]
     var powerUpInventory: PowerUpInventory = .defaultInventory
 
+    var devModeUnlockAll: Bool = false
+
     var dailyBrandBlitzCount: Int = 0
     var dailyQuickPracticeCount: Int = 0
     var dailySpacedReviewCount: Int = 0
@@ -244,6 +246,7 @@ class GameViewModel {
     }
 
     func isSubsectionUnlocked(_ subsection: Subsection) -> Bool {
+        if devModeUnlockAll { return true }
         guard let module = dataService.module(for: subsection.moduleId) else { return false }
         guard let index = module.subsections.firstIndex(of: subsection) else { return false }
         if index == 0 {
@@ -259,6 +262,7 @@ class GameViewModel {
     }
 
     func isModuleUnlocked(_ module: DrugModule) -> Bool {
+        if devModeUnlockAll { return true }
         guard let firstSub = module.subsections.first else { return false }
         return isSubsectionUnlocked(firstSub)
     }
