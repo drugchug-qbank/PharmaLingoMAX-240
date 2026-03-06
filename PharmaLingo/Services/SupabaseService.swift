@@ -279,8 +279,6 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
     let avatarEyes: String
     let avatarMouth: String
     let avatarAccessory: String
-    let avatarBodyColor: String
-    let avatarBgColor: String
     let totalXP: Int
     let coins: Int
     let currentStreak: Int
@@ -306,8 +304,60 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
         case avatarEyes = "avatar_eyes"
         case avatarMouth = "avatar_mouth"
         case avatarAccessory = "avatar_accessory"
-        case avatarBodyColor = "avatar_body_color"
-        case avatarBgColor = "avatar_bg_color"
+        case totalXP = "total_xp"
+        case coins
+        case currentStreak = "current_streak"
+        case streakSaves = "streak_saves"
+        case hearts, level
+        case weeklyXP = "weekly_xp"
+        case monthlyXP = "monthly_xp"
+        case completedSubsections = "completed_subsections"
+        case subsectionStars = "subsection_stars"
+        case hasSeenLearning = "has_seen_learning"
+        case questionsAnswered = "questions_answered"
+        case questionsCorrect = "questions_correct"
+        case ownedAvatars = "owned_avatars"
+        case ownedEyes = "owned_eyes"
+        case ownedMouths = "owned_mouths"
+        case ownedAccessories = "owned_accessories"
+        case professionDonations = "profession_donations"
+    }
+}
+
+nonisolated struct SignUpProfileData: Encodable, Sendable {
+    let id: String
+    let username: String
+    let profession: String
+    let school: String = ""
+    let avatarAnimal: String = "beaver"
+    let avatarEyes: String = "normal"
+    let avatarMouth: String = "smile"
+    let avatarAccessory: String = "none"
+    let totalXP: Int = 0
+    let coins: Int = 50
+    let currentStreak: Int = 0
+    let streakSaves: Int = 0
+    let hearts: Int = 5
+    let level: Int = 1
+    let weeklyXP: Int = 0
+    let monthlyXP: Int = 0
+    let completedSubsections: String = "[]"
+    let subsectionStars: String = "{}"
+    let hasSeenLearning: String = "[]"
+    let questionsAnswered: Int = 0
+    let questionsCorrect: Int = 0
+    let ownedAvatars: String = "[\"beaver\",\"bird\",\"bunny\",\"cat\"]"
+    let ownedEyes: String = "[\"normal\",\"happy\",\"big\"]"
+    let ownedMouths: String = "[\"smile\",\"bigSmile\",\"tiny\"]"
+    let ownedAccessories: String = "[\"none\"]"
+    let professionDonations: Int = 0
+
+    enum CodingKeys: String, CodingKey {
+        case id, username, profession, school
+        case avatarAnimal = "avatar_animal"
+        case avatarEyes = "avatar_eyes"
+        case avatarMouth = "avatar_mouth"
+        case avatarAccessory = "avatar_accessory"
         case totalXP = "total_xp"
         case coins
         case currentStreak = "current_streak"
@@ -381,8 +431,17 @@ class SupabaseService {
         currentUser = session.user
         isAuthenticated = true
 
+        let userId = session.user.id.uuidString.lowercased()
+        let insertData = SignUpProfileData(
+            id: userId,
+            username: username,
+            profession: profession
+        )
+
+        try await client.from("profiles").insert(insertData).execute()
+
         let profile = UserProfile(
-            id: session.user.id.uuidString.lowercased(),
+            id: userId,
             username: username,
             profession: profession,
             school: "",
@@ -415,8 +474,6 @@ class SupabaseService {
             createdAt: nil,
             updatedAt: nil
         )
-
-        try await client.from("profiles").insert(profile).execute()
         currentProfile = profile
     }
 
@@ -453,9 +510,36 @@ class SupabaseService {
     }
 
     func updateProfile(_ profile: UserProfile) async {
+        let updateData = ProfileUpdateData(
+            username: profile.username,
+            profession: profile.profession,
+            school: profile.school,
+            avatarAnimal: profile.avatarAnimal,
+            avatarEyes: profile.avatarEyes,
+            avatarMouth: profile.avatarMouth,
+            avatarAccessory: profile.avatarAccessory,
+            totalXP: profile.totalXP,
+            coins: profile.coins,
+            currentStreak: profile.currentStreak,
+            streakSaves: profile.streakSaves,
+            hearts: profile.hearts,
+            level: profile.level,
+            weeklyXP: profile.weeklyXP,
+            monthlyXP: profile.monthlyXP,
+            completedSubsections: profile.completedSubsections,
+            subsectionStars: profile.subsectionStars,
+            hasSeenLearning: profile.hasSeenLearning,
+            questionsAnswered: profile.questionsAnswered,
+            questionsCorrect: profile.questionsCorrect,
+            ownedAvatars: profile.ownedAvatars,
+            ownedEyes: profile.ownedEyes,
+            ownedMouths: profile.ownedMouths,
+            ownedAccessories: profile.ownedAccessories,
+            professionDonations: profile.professionDonations
+        )
         do {
             try await client.from("profiles")
-                .update(profile)
+                .update(updateData)
                 .eq("id", value: profile.id)
                 .execute()
             currentProfile = profile
@@ -478,15 +562,23 @@ class SupabaseService {
             "avatar_animal": animal,
             "avatar_eyes": eyes,
             "avatar_mouth": mouth,
-            "avatar_accessory": accessory,
-            "avatar_body_color": bodyColor,
-            "avatar_bg_color": bgColor
+            "avatar_accessory": accessory
         ]
         do {
             try await client.from("profiles")
                 .update(avatarData)
                 .eq("id", value: profile.id)
                 .execute()
+
+            let colorData: [String: String] = [
+                "avatar_body_color": bodyColor,
+                "avatar_bg_color": bgColor
+            ]
+            try? await client.from("profiles")
+                .update(colorData)
+                .eq("id", value: profile.id)
+                .execute()
+
             await fetchProfile()
             return true
         } catch {
@@ -502,15 +594,23 @@ class SupabaseService {
             "avatar_animal": animal,
             "avatar_eyes": eyes,
             "avatar_mouth": mouth,
-            "avatar_accessory": accessory,
-            "avatar_body_color": bodyColor,
-            "avatar_bg_color": bgColor
+            "avatar_accessory": accessory
         ]
         do {
             try await client.from("profiles")
                 .update(data)
                 .eq("id", value: profile.id)
                 .execute()
+
+            let colorData: [String: String] = [
+                "avatar_body_color": bodyColor,
+                "avatar_bg_color": bgColor
+            ]
+            try? await client.from("profiles")
+                .update(colorData)
+                .eq("id", value: profile.id)
+                .execute()
+
             await fetchProfile()
         } catch {
             print("Failed to complete onboarding: \(error)")
@@ -537,8 +637,6 @@ class SupabaseService {
             avatarEyes: gameVM.avatarEyes,
             avatarMouth: gameVM.avatarMouth,
             avatarAccessory: gameVM.avatarAccessory,
-            avatarBodyColor: gameVM.avatarBodyColor,
-            avatarBgColor: gameVM.avatarBgColor,
             totalXP: gameVM.totalXP,
             coins: gameVM.coins,
             currentStreak: gameVM.currentStreak,

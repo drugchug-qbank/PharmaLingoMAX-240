@@ -11,7 +11,7 @@ struct OnboardingView: View {
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
 
-    @State private var selectedProfession: Profession = .pharmacy
+    @State private var selectedProfession: Profession?
 
     @State private var schoolSearch: String = ""
     @State private var selectedSchool: String = ""
@@ -278,10 +278,10 @@ struct OnboardingView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(AppTheme.successGreen)
+                    .background(selectedProfession != nil ? AppTheme.successGreen : Color.gray)
                     .clipShape(.rect(cornerRadius: 14))
                 }
-                .disabled(isLoading)
+                .disabled(isLoading || selectedProfession == nil)
                 .padding(.horizontal, 24)
 
                 Spacer().frame(height: 24)
@@ -850,6 +850,7 @@ struct OnboardingView: View {
     }
 
     private func createAccount() {
+        guard let profession = selectedProfession else { return }
         isLoading = true
         Task {
             do {
@@ -857,7 +858,7 @@ struct OnboardingView: View {
                     email: email.trimmingCharacters(in: .whitespaces),
                     password: password,
                     username: username.trimmingCharacters(in: .whitespaces),
-                    profession: selectedProfession.rawValue
+                    profession: profession.rawValue
                 )
                 isLoading = false
                 goForward()
