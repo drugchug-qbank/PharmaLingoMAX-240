@@ -166,10 +166,7 @@ class QuizViewModel {
         case .multipleChoice, .trueFalse, .fillBlank:
             pharmaVisionHighlights = [q.correctAnswer]
         case .selectAll:
-            let visibleCorrect = shuffledOptions.filter {
-                q.correctAnswers.contains($0) && !eliminatedOptions.contains($0)
-            }
-            pharmaVisionHighlights = Set(visibleCorrect)
+            pharmaVisionHighlights = q.correctAnswers
         case .matching:
             break
         }
