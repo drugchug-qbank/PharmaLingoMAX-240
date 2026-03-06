@@ -21,7 +21,7 @@ class QuizViewModel {
     var shieldActiveOnQuestion: Bool = false
     var pharmaVisionUsedOnQuestion: Bool = false
     var eliminatedOptions: Set<String> = []
-    var pharmaVisionHighlight: String?
+    var pharmaVisionHighlights: Set<String> = []
     var wrongCount: Int = 0
     var consecutiveCorrect: Int = 0
     var maxConsecutive: Int = 0
@@ -118,7 +118,7 @@ class QuizViewModel {
         shieldActiveOnQuestion = false
         pharmaVisionUsedOnQuestion = false
         eliminatedOptions = []
-        pharmaVisionHighlight = nil
+        pharmaVisionHighlights = []
         prepareShuffledOptions()
     }
 
@@ -164,12 +164,12 @@ class QuizViewModel {
 
         switch q.type {
         case .multipleChoice, .trueFalse, .fillBlank:
-            pharmaVisionHighlight = q.correctAnswer
+            pharmaVisionHighlights = [q.correctAnswer]
         case .selectAll:
             let visibleCorrect = shuffledOptions.filter {
                 q.correctAnswers.contains($0) && !eliminatedOptions.contains($0)
             }
-            pharmaVisionHighlight = visibleCorrect.randomElement()
+            pharmaVisionHighlights = Set(visibleCorrect)
         case .matching:
             break
         }

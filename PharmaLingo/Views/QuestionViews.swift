@@ -12,7 +12,7 @@ struct TrueFalseQuestionView: View {
                         isSelected: quizVM.selectedAnswer == option,
                         isCorrect: quizVM.hasAnswered ? option == quizVM.currentQuestion?.correctAnswer : nil,
                         showResult: quizVM.hasAnswered,
-                        isPharmaVisionHighlight: quizVM.pharmaVisionHighlight == option && !quizVM.hasAnswered
+                        isPharmaVisionHighlight: quizVM.pharmaVisionHighlights.contains(option) && !quizVM.hasAnswered
                     ) {
                         guard !quizVM.hasAnswered else { return }
                         quizVM.selectedAnswer = option
@@ -60,7 +60,7 @@ struct FillBlankQuestionView: View {
                                 isSelected: quizVM.selectedAnswer == option,
                                 isCorrect: quizVM.hasAnswered ? option == question.correctAnswer : nil,
                                 showResult: quizVM.hasAnswered,
-                                isPharmaVisionHighlight: quizVM.pharmaVisionHighlight == option && !quizVM.hasAnswered
+                                isPharmaVisionHighlight: quizVM.pharmaVisionHighlights.contains(option) && !quizVM.hasAnswered
                             ) {
                                 guard !quizVM.hasAnswered else { return }
                                 quizVM.selectedAnswer = option
@@ -87,7 +87,7 @@ struct MultipleChoiceQuestionView: View {
                             isSelected: quizVM.selectedAnswer == option,
                             isCorrect: quizVM.hasAnswered ? option == question.correctAnswer : nil,
                             showResult: quizVM.hasAnswered,
-                            isPharmaVisionHighlight: quizVM.pharmaVisionHighlight == option && !quizVM.hasAnswered
+                            isPharmaVisionHighlight: quizVM.pharmaVisionHighlights.contains(option) && !quizVM.hasAnswered
                         ) {
                             guard !quizVM.hasAnswered else { return }
                             quizVM.selectedAnswer = option
@@ -110,7 +110,7 @@ struct SelectAllQuestionView: View {
                     if !quizVM.eliminatedOptions.contains(option) {
                         let isSelected = quizVM.selectedAnswers.contains(option)
                         let isActuallyCorrect = question.correctAnswers.contains(option)
-                        let isVisionHighlight = quizVM.pharmaVisionHighlight == option && !quizVM.hasAnswered
+                        let isVisionHighlight = quizVM.pharmaVisionHighlights.contains(option) && !quizVM.hasAnswered
 
                         Button {
                             guard !quizVM.hasAnswered else { return }
