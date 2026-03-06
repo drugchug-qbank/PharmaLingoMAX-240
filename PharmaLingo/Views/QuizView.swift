@@ -380,8 +380,7 @@ struct QuizView: View {
                                     Image(type.customImageName)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 156, height: 156)
-                                        .scaleEffect(1.0)
+                                        .frame(width: quizIconSize(for: type), height: quizIconSize(for: type))
                                 } else {
                                     Image(systemName: type.iconName)
                                         .font(.system(size: 32, weight: .semibold))
@@ -432,9 +431,17 @@ struct QuizView: View {
 
     private func powerUpActiveColor(_ type: PowerUpType) -> Color {
         switch type {
-        case .fiftyFifty: AppTheme.primaryBlue
-        case .shieldHeart: AppTheme.successGreen
+        case .fiftyFifty: AppTheme.successGreen
+        case .shieldHeart: AppTheme.primaryBlue
         case .pharmaVision: AppTheme.warningYellow
+        }
+    }
+
+    private func quizIconSize(for type: PowerUpType) -> CGFloat {
+        switch type {
+        case .fiftyFifty: 94
+        case .shieldHeart: 140
+        case .pharmaVision: 78
         }
     }
 

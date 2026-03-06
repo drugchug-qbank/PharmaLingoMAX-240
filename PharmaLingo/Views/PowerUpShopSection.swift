@@ -47,7 +47,7 @@ struct PowerUpShopCard: View {
                         Image(type.customImageName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 144, height: 144)
+                            .frame(width: 108, height: 108)
                             .opacity(isUnlocked ? 1.0 : 0.5)
                     } else {
                         Image(systemName: type.iconName)
