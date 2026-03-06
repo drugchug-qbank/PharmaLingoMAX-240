@@ -8,6 +8,8 @@ struct ShopView: View {
     @State private var showAvatarShop: Bool = false
     @State private var showPaywall: Bool = false
     @State private var isLoadingAd: Bool = false
+    @State private var proGlowPhase: Bool = false
+    @State private var proShake: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -24,11 +26,11 @@ struct ShopView: View {
                         .padding(14)
                         .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
 
-                        VStack(spacing: 6) {
-                            HStack(spacing: 6) {
+                        VStack(spacing: 8) {
+                            HStack(spacing: 10) {
                                 ForEach(0..<gameVM.maxHearts, id: \.self) { i in
                                     Image(systemName: i < gameVM.hearts ? "heart.fill" : "heart")
-                                        .font(.title2)
+                                        .font(.system(size: 30))
                                         .foregroundStyle(i < gameVM.hearts ? AppTheme.heartRed : Color(.tertiaryLabel))
                                         .symbolEffect(.bounce, value: bounceHearts)
                                 }
@@ -38,11 +40,14 @@ struct ShopView: View {
                                 HeartRegenTimer(gameVM: gameVM)
                             } else {
                                 Text("Hearts Full!")
-                                    .font(AppTheme.funFont(.caption, weight: .bold))
+                                    .font(AppTheme.funFont(.subheadline, weight: .bold))
                                     .foregroundStyle(AppTheme.successGreen)
                             }
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 16)
+                        .frame(maxWidth: .infinity)
+                        .cardStyle(borderColor: AppTheme.heartRed.opacity(0.4))
 
                         if !gameVM.isProUser {
                             Button { showPaywall = true } label: {
@@ -84,9 +89,16 @@ struct ShopView: View {
                                     )
                                 )
                                 .clipShape(.rect(cornerRadius: 18))
-                                .shadow(color: AppTheme.xpPurple.opacity(0.3), radius: 8, x: 0, y: 4)
+                                .shadow(color: proGlowPhase ? AppTheme.xpPurple.opacity(0.6) : AppTheme.xpPurple.opacity(0.2), radius: proGlowPhase ? 14 : 6, x: 0, y: 4)
+                                .offset(x: proShake ? -3 : 0)
                             }
                             .buttonStyle(.plain)
+                            .onAppear {
+                                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                                    proGlowPhase = true
+                                }
+                                startShakeTimer()
+                            }
                         } else {
                             HStack(spacing: 12) {
                                 Image(systemName: "crown.fill")
@@ -107,6 +119,41 @@ struct ShopView: View {
                             .padding(16)
                             .cardStyle(borderColor: AppTheme.warningYellow.opacity(0.5))
                         }
+
+                        Button {
+                            showAvatarShop = true
+                        } label: {
+                            HStack(spacing: 14) {
+                                AvatarDisplayView(
+                                    animal: gameVM.avatarAnimal,
+                                    eyes: gameVM.avatarEyes,
+                                    mouth: gameVM.avatarMouth,
+                                    accessory: gameVM.avatarAccessory,
+                                    bodyColor: gameVM.avatarBodyColor,
+                                    backgroundColor: gameVM.avatarBgColor,
+                                    size: 52
+                                )
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("Avatar Shop")
+                                        .font(AppTheme.funFont(.headline, weight: .heavy))
+                                        .foregroundStyle(.primary)
+                                    Text("Customize your look with animals, eyes & accessories")
+                                        .font(AppTheme.funFont(.caption, weight: .medium))
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(AppTheme.successGreen.opacity(0.7))
+                            }
+                            .padding(16)
+                            .cardStyle(borderColor: AppTheme.successGreen.opacity(0.4))
+                        }
+                        .buttonStyle(.plain)
 
                         VStack(alignment: .leading, spacing: 14) {
                             FunSectionHeader(icon: "heart.fill", title: "Hearts", color: AppTheme.heartRed)
@@ -134,12 +181,12 @@ struct ShopView: View {
                                     iconColor: AppTheme.heartRed,
                                     title: "+1 Heart",
                                     subtitle: "Get one extra heart",
-                                    price: "100",
+                                    price: "300",
                                     priceIcon: "bitcoinsign.circle.fill",
                                     priceColor: AppTheme.accentOrange,
-                                    isEnabled: gameVM.coins >= 100 && gameVM.hearts < gameVM.maxHearts
+                                    isEnabled: gameVM.coins >= 300 && gameVM.hearts < gameVM.maxHearts
                                 ) {
-                                    if gameVM.spendCoins(100) {
+                                    if gameVM.spendCoins(300) {
                                         gameVM.addHeart()
                                         bounceHearts.toggle()
                                         purchaseMessage = "You got +1 heart!"
@@ -152,12 +199,12 @@ struct ShopView: View {
                                     iconColor: AppTheme.heartRed,
                                     title: "Full Refill",
                                     subtitle: "Restore all 5 hearts",
-                                    price: "300",
+                                    price: "1200",
                                     priceIcon: "bitcoinsign.circle.fill",
                                     priceColor: AppTheme.accentOrange,
-                                    isEnabled: gameVM.coins >= 300 && gameVM.hearts < gameVM.maxHearts
+                                    isEnabled: gameVM.coins >= 1200 && gameVM.hearts < gameVM.maxHearts
                                 ) {
-                                    if gameVM.spendCoins(300) {
+                                    if gameVM.spendCoins(1200) {
                                         gameVM.refillHearts()
                                         bounceHearts.toggle()
                                         purchaseMessage = "Hearts fully restored!"
@@ -202,12 +249,12 @@ struct ShopView: View {
                                 iconColor: AppTheme.accentOrange,
                                 title: "Streak Save",
                                 subtitle: "Protects your streak if you miss a day",
-                                price: "200",
+                                price: "1000",
                                 priceIcon: "bitcoinsign.circle.fill",
                                 priceColor: AppTheme.accentOrange,
-                                isEnabled: gameVM.coins >= 200
+                                isEnabled: gameVM.coins >= 1000
                             ) {
-                                if gameVM.spendCoins(200) {
+                                if gameVM.spendCoins(1000) {
                                     gameVM.streakSaves += 1
                                     gameVM.save()
                                     purchaseMessage = "Streak Save purchased! You have \(gameVM.streakSaves) save(s)."
@@ -218,17 +265,17 @@ struct ShopView: View {
                             ShopItemRow(
                                 icon: "2x.circle.fill",
                                 iconColor: AppTheme.primaryBlue,
-                                title: gameVM.hasActiveDoubleXP ? "Double XP Active!" : "Double XP (1 Hour)",
-                                subtitle: gameVM.hasActiveDoubleXP ? "Already active — earning double XP" : "Earn double XP for the next hour",
-                                price: "150",
+                                title: gameVM.hasActiveDoubleXP ? "Double XP Ready!" : "Double XP (Next Quiz)",
+                                subtitle: gameVM.hasActiveDoubleXP ? "Active — your next quiz will earn double XP" : "Double your XP on your next quiz attempt",
+                                price: "500",
                                 priceIcon: "bitcoinsign.circle.fill",
                                 priceColor: AppTheme.accentOrange,
-                                isEnabled: gameVM.coins >= 150 && !gameVM.hasActiveDoubleXP
+                                isEnabled: gameVM.coins >= 500 && !gameVM.hasActiveDoubleXP
                             ) {
-                                if gameVM.spendCoins(150) {
+                                if gameVM.spendCoins(500) {
                                     gameVM.activateDoubleXP()
                                     gameVM.syncToCloud()
-                                    purchaseMessage = "Double XP activated for 1 hour! All XP earned will be doubled."
+                                    purchaseMessage = "Double XP activated! Your next quiz will earn double XP."
                                     showPurchaseAlert = true
                                 }
                             }
@@ -244,40 +291,6 @@ struct ShopView: View {
                             }
                         )
 
-                        Button {
-                            showAvatarShop = true
-                        } label: {
-                            HStack(spacing: 14) {
-                                AvatarDisplayView(
-                                    animal: gameVM.avatarAnimal,
-                                    eyes: gameVM.avatarEyes,
-                                    mouth: gameVM.avatarMouth,
-                                    accessory: gameVM.avatarAccessory,
-                                    bodyColor: gameVM.avatarBodyColor,
-                                    backgroundColor: gameVM.avatarBgColor,
-                                    size: 52
-                                )
-
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text("Avatar Shop")
-                                        .font(AppTheme.funFont(.headline, weight: .heavy))
-                                        .foregroundStyle(.primary)
-                                    Text("Customize your look with animals, eyes & accessories")
-                                        .font(AppTheme.funFont(.caption, weight: .medium))
-                                        .foregroundStyle(.secondary)
-                                        .lineLimit(1)
-                                }
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right.circle.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(AppTheme.successGreen.opacity(0.7))
-                            }
-                            .padding(16)
-                            .cardStyle(borderColor: AppTheme.successGreen.opacity(0.4))
-                        }
-                        .buttonStyle(.plain)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -301,6 +314,20 @@ struct ShopView: View {
                 if !newValue {
                     Task { await gameVM.refreshProStatus() }
                 }
+            }
+        }
+    }
+
+    private func startShakeTimer() {
+        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+            Task { @MainActor in
+                withAnimation(.default) { proShake = true }
+                try? await Task.sleep(for: .milliseconds(80))
+                withAnimation(.default) { proShake = false }
+                try? await Task.sleep(for: .milliseconds(80))
+                withAnimation(.default) { proShake = true }
+                try? await Task.sleep(for: .milliseconds(80))
+                withAnimation(.default) { proShake = false }
             }
         }
     }

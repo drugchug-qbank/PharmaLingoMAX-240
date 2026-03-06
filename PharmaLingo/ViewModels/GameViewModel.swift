@@ -10,6 +10,7 @@ class GameViewModel {
     var currentStreak: Int = 0
     var streakSaves: Int = 0
     var activeBoosts: [ActiveBoost] = []
+    var doubleXPNextAttempt: Bool = false
 
     var subsectionStars: [String: Int] = [:]
     var completedSubsections: Set<String> = []
@@ -193,7 +194,7 @@ class GameViewModel {
 
     func xpMultiplier() -> Double {
         var multiplier = isProUser ? 1.5 : 1.0
-        if activeBoosts.contains(where: { $0.type == .doubleXP && $0.isActive }) {
+        if doubleXPNextAttempt {
             multiplier *= 2.0
         }
         return multiplier
@@ -204,14 +205,18 @@ class GameViewModel {
     }
 
     func activateDoubleXP() {
-        let boost = ActiveBoost(type: .doubleXP, expiresAt: Date().addingTimeInterval(3600))
-        activeBoosts.removeAll { !$0.isActive }
-        activeBoosts.append(boost)
+        doubleXPNextAttempt = true
         save()
     }
 
     var hasActiveDoubleXP: Bool {
-        activeBoosts.contains { $0.type == .doubleXP && $0.isActive }
+        doubleXPNextAttempt
+    }
+
+    func consumeDoubleXPIfActive() {
+        guard doubleXPNextAttempt else { return }
+        doubleXPNextAttempt = false
+        save()
     }
 
     private func refreshDailyQuests() {
@@ -311,6 +316,7 @@ class GameViewModel {
     func earnXP(_ amount: Int) {
         let adjusted = Int(Double(amount) * xpMultiplier())
         totalXP += adjusted
+        consumeDoubleXPIfActive()
         save()
     }
 
@@ -679,6 +685,7 @@ class GameViewModel {
         masteryMap = [:]
         clinicalAuraPoints = 0
         activeBoosts = []
+        doubleXPNextAttempt = false
         streakExtended = false
         previousStreak = 0
         powerUpInventory = .defaultInventory
@@ -750,6 +757,7 @@ class GameViewModel {
             "dailySpacedReviewCount": dailySpacedReviewCount,
             "dailyPracticeDate": dailyPracticeDate,
             "activeBoosts": activeBoosts.filter { $0.isActive }.map { ["type": $0.type.rawValue, "expiresAt": $0.expiresAt.timeIntervalSince1970] as [String : Any] },
+            "doubleXPNextAttempt": doubleXPNextAttempt,
             "powerUpInventory": powerUpInventory.toDictionary(),
             "clinicalAuraPoints": clinicalAuraPoints,
         ]
@@ -793,6 +801,7 @@ class GameViewModel {
         dailySpacedReviewCount = state["dailySpacedReviewCount"] as? Int ?? 0
         dailyPracticeDate = state["dailyPracticeDate"] as? String ?? ""
         clinicalAuraPoints = state["clinicalAuraPoints"] as? Int ?? 0
+        doubleXPNextAttempt = state["doubleXPNextAttempt"] as? Bool ?? false
         if let puData = state["powerUpInventory"] as? [String: Any] {
             powerUpInventory = PowerUpInventory.from(puData)
         }
