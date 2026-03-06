@@ -54,6 +54,8 @@ struct QuizView: View {
                     quizHeader(quizVM: quizVM)
                     progressBar(quizVM: quizVM)
 
+                    Spacer().frame(height: 8)
+
                     powerUpBar(quizVM: quizVM)
 
                     ScrollView {
@@ -416,14 +418,9 @@ struct QuizView: View {
                 .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
-        .background(
-            Capsule()
-                .fill(.white)
-                .stroke(AppTheme.primaryBlue, lineWidth: 1.5)
-        )
-        .padding(.horizontal)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background(Color.blue.opacity(0.08))
     }
 
     private func activePowerUpState(_ type: PowerUpType, quizVM: QuizViewModel) -> Bool {
