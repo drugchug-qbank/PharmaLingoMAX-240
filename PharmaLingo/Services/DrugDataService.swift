@@ -214,5 +214,8 @@ struct DrugDataService {
 
         if bank["3d"] == nil { bank["3d"] = [] }
         bank["3d"]?.append(contentsOf: Self.curatedAddOnQuestions_3d)
+
+        if bank["3e"] == nil { bank["3e"] = [] }
+        bank["3e"]?.append(contentsOf: Self.curatedAddOnQuestions_3e)
     }
 }
