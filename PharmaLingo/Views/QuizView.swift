@@ -420,7 +420,7 @@ struct QuizView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
-        .background(Color.blue.opacity(0.08))
+        .background(Color(hex: "22e0ff").opacity(0.15))
     }
 
     private func activePowerUpState(_ type: PowerUpType, quizVM: QuizViewModel) -> Bool {
