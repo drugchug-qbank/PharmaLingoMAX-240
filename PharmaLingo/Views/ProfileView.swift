@@ -73,11 +73,10 @@ struct ProfileView: View {
                             ProfileStatItem(icon: "flame.fill", value: "\(gameVM.currentStreak)", label: "Streak", color: AppTheme.accentOrange)
                             ProfileStatItem(icon: "target", value: "\(Int(gameVM.accuracy * 100))%", label: "Accuracy", color: AppTheme.primaryBlue)
                             ProfileStatItem(icon: "book.closed.fill", value: "\(gameVM.lessonsCompleted)", label: "Lessons", color: AppTheme.successGreen)
+                            ProfileStatItem(icon: "sparkles", value: "\(gameVM.clinicalAuraPoints)", label: "Aura", color: gameVM.clinicalAuraPoints >= 0 ? AppTheme.primaryBlue : AppTheme.heartRed)
                         }
                         .padding(16)
-                        .cardStyle()
-
-                        clinicalAuraCard
+                        .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
 
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
@@ -307,49 +306,6 @@ struct ProfileView: View {
                 Text("Are you sure you want to sign out?")
             }
         }
-    }
-}
-
-extension ProfileView {
-    @ViewBuilder
-    var clinicalAuraCard: some View {
-        let points = gameVM.clinicalAuraPoints
-        let isPositive = points >= 0
-
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 6) {
-                Image(systemName: "sparkles")
-                    .font(AppTheme.funFont(.title3, weight: .bold))
-                    .foregroundStyle(isPositive ? AppTheme.primaryBlue : AppTheme.heartRed)
-                Text("Clinical Aura")
-                    .font(AppTheme.funFont(.title3, weight: .bold))
-            }
-
-            HStack(spacing: 16) {
-                VStack(spacing: 4) {
-                    Text("\(points)")
-                        .font(.system(size: 36, weight: .heavy, design: .rounded))
-                        .foregroundStyle(isPositive ? AppTheme.primaryBlue : AppTheme.heartRed)
-                        .monospacedDigit()
-                    Text("Aura Points")
-                        .font(AppTheme.funFont(.caption, weight: .medium))
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text("Daily Clinical Quiz")
-                        .font(AppTheme.funFont(.caption, weight: .bold))
-                        .foregroundStyle(.secondary)
-                    Text("+1 correct / -1 incorrect")
-                        .font(AppTheme.funFont(.caption2, weight: .medium))
-                        .foregroundStyle(.tertiary)
-                }
-            }
-        }
-        .padding(16)
-        .cardStyle(borderColor: (isPositive ? AppTheme.primaryBlue : AppTheme.heartRed).opacity(0.4))
     }
 }
 
