@@ -19,6 +19,10 @@ struct QuizView: View {
     @State private var adWatchesUsed: Int = 0
     private let maxAdWatches: Int = 3
     @State private var shieldJustSaved: Bool = false
+    @State private var comboText: String = ""
+    @State private var showCombo: Bool = false
+    @State private var comboScale: CGFloat = 0.1
+    @State private var comboOpacity: Double = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -96,6 +100,13 @@ struct QuizView: View {
             }
         }
         .background(Color(.systemBackground))
+        .overlay(alignment: .bottom) {
+            if showCombo {
+                comboOverlay
+                    .transition(.scale.combined(with: .opacity))
+                    .allowsHitTesting(false)
+            }
+        }
         .onAppear { setupQuiz() }
         .sensoryFeedback(.success, trigger: bounceCorrect)
         .sensoryFeedback(.error, trigger: shakeWrong)
@@ -193,13 +204,13 @@ struct QuizView: View {
                     .font(.title2)
                     .foregroundStyle(.secondary)
             }
-
-            Spacer()
+            .layoutPriority(1)
 
             Text(quizVM.subsectionTitle)
-                .font(AppTheme.funFont(.subheadline, weight: .bold))
-
-            Spacer()
+                .font(AppTheme.funFont(.headline, weight: .bold))
+                .minimumScaleFactor(0.6)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
 
             HStack(spacing: 4) {
                 ForEach(0..<gameVM.maxHearts, id: \.self) { i in
@@ -208,6 +219,7 @@ struct QuizView: View {
                         .foregroundStyle(i < gameVM.hearts ? AppTheme.heartRed : Color(.tertiaryLabel))
                 }
             }
+            .layoutPriority(1)
         }
         .padding(.horizontal)
         .padding(.vertical, 12)
@@ -421,6 +433,12 @@ struct QuizView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(Color(hex: "22e0ff").opacity(0.50))
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color.black).frame(height: 1.5)
+        }
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(Color.black).frame(height: 1.5)
+        }
     }
 
     private func activePowerUpState(_ type: PowerUpType, quizVM: QuizViewModel) -> Bool {
@@ -486,6 +504,75 @@ struct QuizView: View {
         return parts
     }
 
+    private var comboOverlay: some View {
+        VStack(spacing: 4) {
+            Text(comboText)
+                .font(.system(size: 42, weight: .black, design: .rounded))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: comboGradientColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .shadow(color: comboGradientColors[0].opacity(0.6), radius: 12, x: 0, y: 4)
+                .scaleEffect(comboScale)
+                .opacity(comboOpacity)
+                .rotationEffect(.degrees(comboScale < 1 ? -5 : 0))
+        }
+        .padding(.bottom, 120)
+    }
+
+    private var comboGradientColors: [Color] {
+        if comboText.contains("PERFECT") {
+            return [Color(hex: "FFD700"), Color(hex: "FF6B00"), Color(hex: "FF1744")]
+        } else if comboText.contains("10") {
+            return [Color(hex: "FF1744"), Color(hex: "D500F9"), Color(hex: "651FFF")]
+        } else if comboText.contains("5") {
+            return [Color(hex: "00E676"), Color(hex: "00B0FF"), Color(hex: "2979FF")]
+        } else {
+            return [AppTheme.primaryBlue, AppTheme.funTeal]
+        }
+    }
+
+    private func checkComboStreak(quizVM: QuizViewModel) {
+        let streak = quizVM.consecutiveCorrect
+        var text: String?
+
+        if streak == quizVM.totalQuestions && quizVM.currentIndex == quizVM.totalQuestions - 1 {
+            text = "\u{1F31F} PERFECT \u{1F31F}"
+        } else if streak == 10 {
+            text = "\u{1F525} 10x COMBO \u{1F525}"
+        } else if streak == 5 {
+            text = "\u{26A1} 5x STREAK \u{26A1}"
+        } else if streak == 3 {
+            text = "\u{1F4AA} 3x ON FIRE!"
+        }
+
+        guard let displayText = text else { return }
+        comboText = displayText
+
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.5)) {
+            showCombo = true
+            comboScale = 1.2
+            comboOpacity = 1
+        }
+
+        withAnimation(.spring(response: 0.2, dampingFraction: 0.6).delay(0.35)) {
+            comboScale = 1.0
+        }
+
+        withAnimation(.easeOut(duration: 0.4).delay(1.5)) {
+            comboScale = 0.5
+            comboOpacity = 0
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            showCombo = false
+            comboScale = 0.1
+        }
+    }
+
     @ViewBuilder
     private func bottomBar(quizVM: QuizViewModel) -> some View {
         VStack(spacing: 0) {
@@ -545,6 +632,7 @@ struct QuizView: View {
                     if quizVM.isCorrect {
                         bounceCorrect.toggle()
                         showCorrectCelebration.toggle()
+                        checkComboStreak(quizVM: quizVM)
                     } else {
                         shakeWrong.toggle()
                     }
