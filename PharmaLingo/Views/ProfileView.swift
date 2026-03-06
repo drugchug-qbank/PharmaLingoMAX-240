@@ -69,14 +69,25 @@ struct ProfileView: View {
 
                 ScrollView {
                     VStack(spacing: 16) {
-                        HStack(spacing: 0) {
-                            ProfileStatItem(icon: "flame.fill", value: "\(gameVM.currentStreak)", label: "Streak", color: AppTheme.accentOrange)
-                            ProfileStatItem(icon: "target", value: "\(Int(gameVM.accuracy * 100))%", label: "Accuracy", color: AppTheme.primaryBlue)
-                            ProfileStatItem(icon: "book.closed.fill", value: "\(gameVM.lessonsCompleted)", label: "Lessons", color: AppTheme.successGreen)
-                            ProfileStatItem(icon: "sparkles", value: "\(gameVM.clinicalAuraPoints)", label: "Aura", color: gameVM.clinicalAuraPoints >= 0 ? AppTheme.primaryBlue : AppTheme.heartRed)
+                        NavigationLink {
+                            StatsDetailView(gameVM: gameVM)
+                        } label: {
+                            HStack(spacing: 0) {
+                                ProfileStatItem(icon: "flame.fill", value: "\(gameVM.currentStreak)", label: "Streak", color: AppTheme.accentOrange)
+                                ProfileStatItem(icon: "target", value: "\(Int(gameVM.accuracy * 100))%", label: "Accuracy", color: AppTheme.primaryBlue)
+                                ProfileStatItem(icon: "book.closed.fill", value: "\(gameVM.lessonsCompleted)", label: "Lessons", color: AppTheme.successGreen)
+                                ProfileStatItem(icon: "sparkles", value: "\(gameVM.clinicalAuraPoints)", label: "Aura", color: gameVM.clinicalAuraPoints >= 0 ? AppTheme.primaryBlue : AppTheme.heartRed)
+                            }
+                            .padding(16)
+                            .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
+                            .overlay(alignment: .topTrailing) {
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                                    .padding(12)
+                            }
                         }
-                        .padding(16)
-                        .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
+                        .buttonStyle(.plain)
 
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {

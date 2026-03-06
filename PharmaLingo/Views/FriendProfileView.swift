@@ -9,6 +9,9 @@ struct FriendProfileView: View {
     @State private var friendProfile: FriendDetailProfile?
     @State private var isLoading: Bool = true
     @State private var showRemoveAlert: Bool = false
+    @State private var friendshipStatus: FriendshipStatus = .friend
+    @State private var isSendingRequest: Bool = false
+    @State private var friendRequestError: String?
 
     var body: some View {
         ScrollView {
@@ -85,21 +88,7 @@ struct FriendProfileView: View {
 
                     achievementsSection(friend: friend)
 
-                    Button {
-                        showRemoveAlert = true
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "person.badge.minus")
-                            Text("Remove Friend")
-                        }
-                        .font(AppTheme.funFont(.subheadline, weight: .medium))
-                        .foregroundStyle(AppTheme.heartRed)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(AppTheme.heartRed.opacity(0.08))
-                        .clipShape(.rect(cornerRadius: 14))
-                    }
-                    .buttonStyle(.plain)
+                    friendActionButton
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 32)
@@ -120,7 +109,10 @@ struct FriendProfileView: View {
         .navigationTitle(friendName)
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            friendProfile = await supabase.fetchFriendProfile(friendId: friendId)
+            async let profileTask = supabase.fetchFriendProfile(friendId: friendId)
+            async let statusTask = supabase.checkFriendshipStatus(userId: friendId)
+            friendProfile = await profileTask
+            friendshipStatus = await statusTask
             isLoading = false
         }
         .alert("Remove Friend", isPresented: $showRemoveAlert) {
@@ -133,6 +125,92 @@ struct FriendProfileView: View {
             }
         } message: {
             Text("Are you sure you want to remove \(friendName) as a friend?")
+        }
+    }
+
+    @ViewBuilder
+    private var friendActionButton: some View {
+        switch friendshipStatus {
+        case .friend:
+            Button {
+                showRemoveAlert = true
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "person.badge.minus")
+                    Text("Remove Friend")
+                }
+                .font(AppTheme.funFont(.subheadline, weight: .medium))
+                .foregroundStyle(AppTheme.heartRed)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(AppTheme.heartRed.opacity(0.08))
+                .clipShape(.rect(cornerRadius: 14))
+            }
+            .buttonStyle(.plain)
+        case .notFriend:
+            VStack(spacing: 8) {
+                Button {
+                    isSendingRequest = true
+                    friendRequestError = nil
+                    Task {
+                        guard let friend = friendProfile else { return }
+                        do {
+                            try await supabase.sendFriendRequest(toUsername: friend.username)
+                            friendshipStatus = .pendingSent
+                        } catch {
+                            friendRequestError = error.localizedDescription
+                        }
+                        isSendingRequest = false
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        if isSendingRequest {
+                            ProgressView().tint(.white)
+                        } else {
+                            Image(systemName: "person.badge.plus")
+                            Text("Add Friend")
+                        }
+                    }
+                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(AppTheme.primaryBlue)
+                    .clipShape(.rect(cornerRadius: 14))
+                }
+                .buttonStyle(.plain)
+                .disabled(isSendingRequest)
+
+                if let error = friendRequestError {
+                    Text(error)
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(AppTheme.heartRed)
+                }
+            }
+        case .pendingSent:
+            HStack(spacing: 6) {
+                Image(systemName: "clock.fill")
+                Text("Friend Request Sent")
+            }
+            .font(AppTheme.funFont(.subheadline, weight: .medium))
+            .foregroundStyle(AppTheme.primaryBlue)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(AppTheme.primaryBlue.opacity(0.08))
+            .clipShape(.rect(cornerRadius: 14))
+        case .pendingReceived:
+            HStack(spacing: 6) {
+                Image(systemName: "bell.badge.fill")
+                Text("Pending Request")
+            }
+            .font(AppTheme.funFont(.subheadline, weight: .medium))
+            .foregroundStyle(AppTheme.accentOrange)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(AppTheme.accentOrange.opacity(0.08))
+            .clipShape(.rect(cornerRadius: 14))
+        case .isSelf:
+            EmptyView()
         }
     }
 

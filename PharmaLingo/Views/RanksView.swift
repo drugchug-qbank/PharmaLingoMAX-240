@@ -180,9 +180,11 @@ struct RanksView: View {
                     Task { pendingRequests = await supabase.fetchPendingRequests() }
                 })
             }
-            .navigationDestination(for: String.self) { friendId in
-                let name = friends.first(where: { $0.id == friendId })?.username ?? "Friend"
-                FriendProfileView(friendId: friendId, friendName: name, gameVM: gameVM)
+            .navigationDestination(for: String.self) { userId in
+                let name = friends.first(where: { $0.id == userId })?.username
+                    ?? leaderboard.first(where: { $0.id == userId })?.username
+                    ?? "User"
+                FriendProfileView(friendId: userId, friendName: name, gameVM: gameVM)
             }
         }
     }
@@ -266,22 +268,44 @@ struct RanksView: View {
             } else {
                 ForEach(Array(leaderboard.enumerated()), id: \.element.id) { index, entry in
                     let isCurrentUser = entry.id == supabase.currentUser?.id.uuidString.lowercased()
-                    LeaderboardRow(
-                        entry: LeaderboardEntry(
-                            id: entry.id,
-                            username: isCurrentUser ? gameVM.username : entry.username,
-                            avatarAnimal: isCurrentUser ? gameVM.avatarAnimal : entry.avatarAnimal,
-                            avatarEyes: isCurrentUser ? gameVM.avatarEyes : entry.avatarEyes,
-                            avatarMouth: isCurrentUser ? gameVM.avatarMouth : entry.avatarMouth,
-                            avatarAccessory: isCurrentUser ? gameVM.avatarAccessory : entry.avatarAccessory,
-                            avatarBodyColor: isCurrentUser ? gameVM.avatarBodyColor : entry.avatarBodyColor,
-                            avatarBgColor: isCurrentUser ? gameVM.avatarBgColor : entry.avatarBgColor,
-                            xpThisWeek: entry.weeklyXP,
-                            streak: entry.currentStreak,
-                            rank: index + 1
-                        ),
-                        isCurrentUser: isCurrentUser
-                    )
+                    if isCurrentUser {
+                        LeaderboardRow(
+                            entry: LeaderboardEntry(
+                                id: entry.id,
+                                username: gameVM.username,
+                                avatarAnimal: gameVM.avatarAnimal,
+                                avatarEyes: gameVM.avatarEyes,
+                                avatarMouth: gameVM.avatarMouth,
+                                avatarAccessory: gameVM.avatarAccessory,
+                                avatarBodyColor: gameVM.avatarBodyColor,
+                                avatarBgColor: gameVM.avatarBgColor,
+                                xpThisWeek: entry.weeklyXP,
+                                streak: entry.currentStreak,
+                                rank: index + 1
+                            ),
+                            isCurrentUser: true
+                        )
+                    } else {
+                        NavigationLink(value: entry.id) {
+                            LeaderboardRow(
+                                entry: LeaderboardEntry(
+                                    id: entry.id,
+                                    username: entry.username,
+                                    avatarAnimal: entry.avatarAnimal,
+                                    avatarEyes: entry.avatarEyes,
+                                    avatarMouth: entry.avatarMouth,
+                                    avatarAccessory: entry.avatarAccessory,
+                                    avatarBodyColor: entry.avatarBodyColor,
+                                    avatarBgColor: entry.avatarBgColor,
+                                    xpThisWeek: entry.weeklyXP,
+                                    streak: entry.currentStreak,
+                                    rank: index + 1
+                                ),
+                                isCurrentUser: false
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
         }

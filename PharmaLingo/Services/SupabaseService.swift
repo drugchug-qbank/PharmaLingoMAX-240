@@ -226,6 +226,14 @@ nonisolated struct FriendRequest: Codable, Sendable {
     }
 }
 
+nonisolated enum FriendshipStatus: Sendable {
+    case friend
+    case pendingSent
+    case pendingReceived
+    case notFriend
+    case isSelf
+}
+
 nonisolated enum SupabaseServiceError: Error, LocalizedError, Sendable {
     case emailConfirmationRequired
     case userNotFound
@@ -768,6 +776,24 @@ class SupabaseService {
             .delete()
             .or("and(user_id.eq.\(userId),friend_id.eq.\(friendId)),and(user_id.eq.\(friendId),friend_id.eq.\(userId))")
             .execute()
+    }
+
+    func checkFriendshipStatus(userId: String) async -> FriendshipStatus {
+        guard let currentId = currentUser?.id.uuidString.lowercased() else { return .notFriend }
+        guard currentId != userId else { return .isSelf }
+        do {
+            let records: [FriendRecord] = try await client.from("friends")
+                .select()
+                .or("and(user_id.eq.\(currentId),friend_id.eq.\(userId)),and(user_id.eq.\(userId),friend_id.eq.\(currentId))")
+                .execute()
+                .value
+            guard let record = records.first else { return .notFriend }
+            if record.status == "accepted" { return .friend }
+            if record.userId == currentId { return .pendingSent }
+            return .pendingReceived
+        } catch {
+            return .notFriend
+        }
     }
 
     func fetchFriendProfile(friendId: String) async -> FriendDetailProfile? {
