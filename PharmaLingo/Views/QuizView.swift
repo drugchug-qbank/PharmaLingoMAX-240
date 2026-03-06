@@ -416,9 +416,14 @@ struct QuizView: View {
                 .buttonStyle(.plain)
             }
         }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .background(
+            Capsule()
+                .fill(.white)
+                .stroke(AppTheme.primaryBlue, lineWidth: 1.5)
+        )
         .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(Color(.secondarySystemBackground))
     }
 
     private func activePowerUpState(_ type: PowerUpType, quizVM: QuizViewModel) -> Bool {
