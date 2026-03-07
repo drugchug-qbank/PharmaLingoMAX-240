@@ -37,6 +37,9 @@ struct DrugDataService {
                 if sub.id == Self.masteringCnsPsychSubsectionId {
                     bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_4fMastery)
                 }
+                if sub.id == Self.systemicSteroidsInRheumSubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_5eMastery)
+                }
             }
         }
         self.questionBank = bank
