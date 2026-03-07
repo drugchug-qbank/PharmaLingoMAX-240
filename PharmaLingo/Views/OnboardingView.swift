@@ -226,12 +226,10 @@ struct OnboardingView: View {
                             }
                         } label: {
                             HStack(spacing: 14) {
-                                Image(systemName: prof.iconName)
-                                    .font(.title2)
-                                    .foregroundStyle(selectedProfession == prof ? .white : AppTheme.primaryBlue)
+                                Image(prof.badgeImageName)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
                                     .frame(width: 44, height: 44)
-                                    .background(selectedProfession == prof ? Color.white.opacity(0.2) : AppTheme.primaryBlue.opacity(0.1))
-                                    .clipShape(Circle())
 
                                 Text(prof.rawValue)
                                     .font(AppTheme.funFont(.body, weight: .bold))
@@ -767,9 +765,10 @@ struct OnboardingView: View {
                             .frame(width: 26)
 
                         if let iconName = row.icon {
-                            Image(systemName: iconName)
-                                .font(.caption)
-                                .foregroundStyle(AppTheme.primaryBlue)
+                            Image(iconName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 20, height: 20)
                         }
 
                         Text(row.leading)
@@ -916,11 +915,11 @@ struct OnboardingView: View {
 
     private var sampleProfessionRankings: [(name: String, icon: String, donations: Int)] {
         [
-            ("Pharmacy", "cross.case.fill", 12450),
-            ("Nursing", "heart.text.clipboard.fill", 9820),
-            ("Physician MD", "stethoscope", 8340),
-            ("Physician Assistant", "person.badge.stethoscope", 5210),
-            ("Physician DO", "stethoscope", 3890),
+            ("Pharmacy", "ProfessionRX", 12450),
+            ("Nursing", "ProfessionRN", 9820),
+            ("Physician MD", "ProfessionMD", 8340),
+            ("Physician Assistant", "ProfessionPA", 5210),
+            ("Physician DO", "ProfessionDO", 3890),
         ]
     }
 

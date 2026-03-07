@@ -181,9 +181,10 @@ struct ProfileView: View {
                                 showEditProfile = true
                             } label: {
                                 HStack(spacing: 12) {
-                                    Image(systemName: gameVM.selectedProfession.iconName)
-                                        .font(.title3)
-                                        .foregroundStyle(AppTheme.xpPurple)
+                                    Image(gameVM.selectedProfession.badgeImageName)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 36, height: 36)
 
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(gameVM.selectedProfession.rawValue)
@@ -402,8 +403,10 @@ struct EditProfileSheet: View {
                             profession = prof
                         } label: {
                             HStack {
-                                Image(systemName: prof.iconName)
-                                    .foregroundStyle(AppTheme.primaryBlue)
+                                Image(prof.badgeImageName)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 28, height: 28)
                                 Text(prof.rawValue)
                                     .font(AppTheme.funFont(.body, weight: .medium))
                                     .foregroundStyle(.primary)

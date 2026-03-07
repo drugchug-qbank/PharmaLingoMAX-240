@@ -45,9 +45,15 @@ struct FriendProfileView: View {
                             }
 
                             if !friend.profession.isEmpty {
-                                Text(friend.profession)
-                                    .font(AppTheme.funFont(.subheadline, weight: .medium))
-                                    .foregroundStyle(.secondary)
+                                HStack(spacing: 6) {
+                                    Image(Profession.badgeImage(for: friend.profession))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 24, height: 24)
+                                    Text(friend.profession)
+                                        .font(AppTheme.funFont(.subheadline, weight: .medium))
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                             if !friend.school.isEmpty {
                                 Text(friend.school)

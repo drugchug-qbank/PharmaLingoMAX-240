@@ -509,9 +509,15 @@ struct PendingRequestRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(request.username)
                     .font(AppTheme.funFont(.subheadline, weight: .bold))
-                Text("Lv.\(request.level) • \(request.profession)")
-                    .font(AppTheme.funFont(.caption, weight: .medium))
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 4) {
+                    Image(Profession.badgeImage(for: request.profession))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 16, height: 16)
+                    Text("Lv.\(request.level) • \(request.profession)")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Spacer()
@@ -671,10 +677,10 @@ struct ProfessionBattleView: View {
                     ForEach(Profession.allCases, id: \.self) { prof in
                         let donations = rankingMap[prof.rawValue] ?? 0
                         HStack(spacing: 10) {
-                            Image(systemName: prof.iconName)
-                                .font(.caption)
-                                .foregroundStyle(prof == gameVM.selectedProfession ? AppTheme.primaryBlue : .secondary)
-                                .frame(width: 20)
+                            Image(prof.badgeImageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 24, height: 24)
                             Text(prof.rawValue)
                                 .font(AppTheme.funFont(.caption, weight: prof == gameVM.selectedProfession ? .heavy : .medium))
                                 .foregroundStyle(prof == gameVM.selectedProfession ? AppTheme.primaryBlue : .primary)
@@ -986,9 +992,15 @@ struct AddFriendSheet: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(user.username)
                                     .font(AppTheme.funFont(.subheadline, weight: .bold))
-                                Text("Lv.\(user.level) • \(user.profession)")
-                                    .font(AppTheme.funFont(.caption, weight: .medium))
-                                    .foregroundStyle(.secondary)
+                                HStack(spacing: 4) {
+                                    Image(Profession.badgeImage(for: user.profession))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 16, height: 16)
+                                    Text("Lv.\(user.level) • \(user.profession)")
+                                        .font(AppTheme.funFont(.caption, weight: .medium))
+                                        .foregroundStyle(.secondary)
+                                }
                             }
 
                             Spacer()

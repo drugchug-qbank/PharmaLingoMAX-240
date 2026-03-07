@@ -17,6 +17,24 @@ nonisolated enum Profession: String, CaseIterable, Sendable {
         case .other: "graduationcap.fill"
         }
     }
+
+    var badgeImageName: String {
+        switch self {
+        case .pharmacy: "ProfessionRX"
+        case .physicianMD: "ProfessionMD"
+        case .physicianDO: "ProfessionDO"
+        case .nursing: "ProfessionRN"
+        case .physicianAssistant: "ProfessionPA"
+        case .other: "ProfessionOther"
+        }
+    }
+
+    static func badgeImage(for professionString: String) -> String {
+        if let prof = Profession(rawValue: professionString) {
+            return prof.badgeImageName
+        }
+        return "ProfessionOther"
+    }
 }
 
 nonisolated enum LeagueRank: String, CaseIterable, Sendable {
