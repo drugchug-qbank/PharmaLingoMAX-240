@@ -209,7 +209,6 @@ struct BrandBlitzQuizView: View {
                             xpEarned: max(quizVM.xpEarned / 2, quizVM.correctCount * 5),
                             coinsEarned: max(quizVM.coinsEarned / 2, quizVM.correctCount)
                         )
-                        gameVM.updateStreak()
                         onQuizComplete?()
                         withAnimation { showResult = true }
                     } else {

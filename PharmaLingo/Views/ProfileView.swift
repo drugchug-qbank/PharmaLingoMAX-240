@@ -444,7 +444,15 @@ struct EditProfileSheet: View {
                         gameVM.selectedProfession = profession
                         gameVM.schoolName = schoolName
                         gameVM.save()
-                        gameVM.syncToCloud()
+                        Task {
+                            if let updated = await SupabaseService.shared.saveProfileInfo(
+                                username: username,
+                                profession: profession.rawValue,
+                                school: schoolName
+                            ) {
+                                gameVM.hydrateFromProfile(updated)
+                            }
+                        }
                         dismiss()
                     }
                 }

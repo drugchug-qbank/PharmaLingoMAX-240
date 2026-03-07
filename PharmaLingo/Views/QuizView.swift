@@ -598,7 +598,6 @@ struct QuizView: View {
                             xpEarned: quizVM.xpEarned,
                             coinsEarned: quizVM.coinsEarned
                         )
-                        gameVM.updateStreak()
                         onQuizComplete?()
                         withAnimation { showResult = true }
                     } else {

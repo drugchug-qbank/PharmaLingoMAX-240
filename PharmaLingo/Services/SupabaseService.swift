@@ -32,6 +32,7 @@ nonisolated struct UserProfile: Codable, Sendable {
     var ownedMouths: String
     var ownedAccessories: String
     var professionDonations: Int
+    var clinicalAuraPoints: Int
     var createdAt: String?
     var updatedAt: String?
 
@@ -62,6 +63,7 @@ nonisolated struct UserProfile: Codable, Sendable {
         case ownedMouths = "owned_mouths"
         case ownedAccessories = "owned_accessories"
         case professionDonations = "profession_donations"
+        case clinicalAuraPoints = "clinical_aura_points"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
@@ -98,11 +100,12 @@ nonisolated struct UserProfile: Codable, Sendable {
         ownedMouths = (try? container.decode(String.self, forKey: .ownedMouths)) ?? "[]"
         ownedAccessories = (try? container.decode(String.self, forKey: .ownedAccessories)) ?? "[]"
         professionDonations = (try? container.decode(Int.self, forKey: .professionDonations)) ?? 0
+        clinicalAuraPoints = (try? container.decode(Int.self, forKey: .clinicalAuraPoints)) ?? 0
         createdAt = try? container.decode(String.self, forKey: .createdAt)
         updatedAt = try? container.decode(String.self, forKey: .updatedAt)
     }
 
-    init(id: String, username: String, profession: String, school: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, totalXP: Int, coins: Int, currentStreak: Int, streakSaves: Int, hearts: Int, level: Int, weeklyXP: Int, monthlyXP: Int, completedSubsections: String, subsectionStars: String, hasSeenLearning: String, questionsAnswered: Int, questionsCorrect: Int, lastActiveDate: String?, lastHeartLossDate: String?, ownedAvatars: String, ownedEyes: String, ownedMouths: String, ownedAccessories: String, professionDonations: Int, createdAt: String?, updatedAt: String?) {
+    init(id: String, username: String, profession: String, school: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, totalXP: Int, coins: Int, currentStreak: Int, streakSaves: Int, hearts: Int, level: Int, weeklyXP: Int, monthlyXP: Int, completedSubsections: String, subsectionStars: String, hasSeenLearning: String, questionsAnswered: Int, questionsCorrect: Int, lastActiveDate: String?, lastHeartLossDate: String?, ownedAvatars: String, ownedEyes: String, ownedMouths: String, ownedAccessories: String, professionDonations: Int, clinicalAuraPoints: Int, createdAt: String?, updatedAt: String?) {
         self.id = id
         self.username = username
         self.profession = profession
@@ -133,6 +136,7 @@ nonisolated struct UserProfile: Codable, Sendable {
         self.ownedMouths = ownedMouths
         self.ownedAccessories = ownedAccessories
         self.professionDonations = professionDonations
+        self.clinicalAuraPoints = clinicalAuraPoints
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -279,6 +283,8 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
     let avatarEyes: String
     let avatarMouth: String
     let avatarAccessory: String
+    let avatarBodyColor: String
+    let avatarBgColor: String
     let totalXP: Int
     let coins: Int
     let currentStreak: Int
@@ -292,11 +298,14 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
     let hasSeenLearning: String
     let questionsAnswered: Int
     let questionsCorrect: Int
+    let lastActiveDate: String?
+    let lastHeartLossDate: String?
     let ownedAvatars: String
     let ownedEyes: String
     let ownedMouths: String
     let ownedAccessories: String
     let professionDonations: Int
+    let clinicalAuraPoints: Int
 
     enum CodingKeys: String, CodingKey {
         case username, profession, school
@@ -304,6 +313,8 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
         case avatarEyes = "avatar_eyes"
         case avatarMouth = "avatar_mouth"
         case avatarAccessory = "avatar_accessory"
+        case avatarBodyColor = "avatar_body_color"
+        case avatarBgColor = "avatar_bg_color"
         case totalXP = "total_xp"
         case coins
         case currentStreak = "current_streak"
@@ -316,11 +327,14 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
         case hasSeenLearning = "has_seen_learning"
         case questionsAnswered = "questions_answered"
         case questionsCorrect = "questions_correct"
+        case lastActiveDate = "last_active_date"
+        case lastHeartLossDate = "last_heart_loss_date"
         case ownedAvatars = "owned_avatars"
         case ownedEyes = "owned_eyes"
         case ownedMouths = "owned_mouths"
         case ownedAccessories = "owned_accessories"
         case professionDonations = "profession_donations"
+        case clinicalAuraPoints = "clinical_aura_points"
     }
 }
 
@@ -333,6 +347,8 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
     let avatarEyes: String = "normal"
     let avatarMouth: String = "smile"
     let avatarAccessory: String = "none"
+    let avatarBodyColor: String = ""
+    let avatarBgColor: String = ""
     let totalXP: Int = 0
     let coins: Int = 50
     let currentStreak: Int = 0
@@ -351,6 +367,7 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
     let ownedMouths: String = "[\"smile\",\"bigSmile\",\"tiny\"]"
     let ownedAccessories: String = "[\"none\"]"
     let professionDonations: Int = 0
+    let clinicalAuraPoints: Int = 0
 
     enum CodingKeys: String, CodingKey {
         case id, username, profession, school
@@ -358,6 +375,8 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
         case avatarEyes = "avatar_eyes"
         case avatarMouth = "avatar_mouth"
         case avatarAccessory = "avatar_accessory"
+        case avatarBodyColor = "avatar_body_color"
+        case avatarBgColor = "avatar_bg_color"
         case totalXP = "total_xp"
         case coins
         case currentStreak = "current_streak"
@@ -375,6 +394,7 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
         case ownedMouths = "owned_mouths"
         case ownedAccessories = "owned_accessories"
         case professionDonations = "profession_donations"
+        case clinicalAuraPoints = "clinical_aura_points"
     }
 }
 
@@ -432,49 +452,22 @@ class SupabaseService {
         isAuthenticated = true
 
         let userId = session.user.id.uuidString.lowercased()
-        let insertData = SignUpProfileData(
-            id: userId,
-            username: username,
-            profession: profession
-        )
 
-        try await client.from("profiles").insert(insertData).execute()
-
-        let profile = UserProfile(
-            id: userId,
-            username: username,
-            profession: profession,
-            school: "",
-            avatarAnimal: "beaver",
-            avatarEyes: "normal",
-            avatarMouth: "smile",
-            avatarAccessory: "none",
-            avatarBodyColor: "",
-            avatarBgColor: "",
-            totalXP: 0,
-            coins: 50,
-            currentStreak: 0,
-            streakSaves: 0,
-            hearts: 5,
-            level: 1,
-            weeklyXP: 0,
-            monthlyXP: 0,
-            completedSubsections: "[]",
-            subsectionStars: "{}",
-            hasSeenLearning: "[]",
-            questionsAnswered: 0,
-            questionsCorrect: 0,
-            lastActiveDate: nil,
-            lastHeartLossDate: nil,
-            ownedAvatars: "[\"beaver\",\"bird\",\"bunny\",\"cat\"]",
-            ownedEyes: "[\"normal\",\"happy\",\"big\"]",
-            ownedMouths: "[\"smile\",\"bigSmile\",\"tiny\"]",
-            ownedAccessories: "[\"none\"]",
-            professionDonations: 0,
-            createdAt: nil,
-            updatedAt: nil
-        )
-        currentProfile = profile
+        do {
+            let profile: UserProfile = try await client.rpc("ensure_profile", params: [
+                "p_username": username,
+                "p_profession": profession,
+            ]).execute().value
+            currentProfile = profile
+        } catch {
+            let insertData = SignUpProfileData(
+                id: userId,
+                username: username,
+                profession: profession
+            )
+            try await client.from("profiles").insert(insertData).execute()
+            await fetchProfile()
+        }
     }
 
     func signIn(email: String, password: String) async throws {
@@ -510,6 +503,9 @@ class SupabaseService {
     }
 
     func updateProfile(_ profile: UserProfile) async {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
         let updateData = ProfileUpdateData(
             username: profile.username,
             profession: profile.profession,
@@ -518,6 +514,8 @@ class SupabaseService {
             avatarEyes: profile.avatarEyes,
             avatarMouth: profile.avatarMouth,
             avatarAccessory: profile.avatarAccessory,
+            avatarBodyColor: profile.avatarBodyColor,
+            avatarBgColor: profile.avatarBgColor,
             totalXP: profile.totalXP,
             coins: profile.coins,
             currentStreak: profile.currentStreak,
@@ -531,11 +529,14 @@ class SupabaseService {
             hasSeenLearning: profile.hasSeenLearning,
             questionsAnswered: profile.questionsAnswered,
             questionsCorrect: profile.questionsCorrect,
+            lastActiveDate: profile.lastActiveDate,
+            lastHeartLossDate: profile.lastHeartLossDate,
             ownedAvatars: profile.ownedAvatars,
             ownedEyes: profile.ownedEyes,
             ownedMouths: profile.ownedMouths,
             ownedAccessories: profile.ownedAccessories,
-            professionDonations: profile.professionDonations
+            professionDonations: profile.professionDonations,
+            clinicalAuraPoints: profile.clinicalAuraPoints
         )
         do {
             try await client.from("profiles")
@@ -557,63 +558,324 @@ class SupabaseService {
         profile.avatarAccessory = accessory
         profile.avatarBodyColor = bodyColor
         profile.avatarBgColor = bgColor
-        currentProfile = profile
-        let avatarData: [String: String] = [
-            "avatar_animal": animal,
-            "avatar_eyes": eyes,
-            "avatar_mouth": mouth,
-            "avatar_accessory": accessory
-        ]
+
         do {
-            try await client.from("profiles")
-                .update(avatarData)
-                .eq("id", value: profile.id)
-                .execute()
-
-            let colorData: [String: String] = [
-                "avatar_body_color": bodyColor,
-                "avatar_bg_color": bgColor
-            ]
-            try? await client.from("profiles")
-                .update(colorData)
-                .eq("id", value: profile.id)
-                .execute()
-
-            await fetchProfile()
+            let result: UserProfile = try await client.rpc("save_avatar_selection", params: [
+                "p_animal": animal,
+                "p_eyes": eyes,
+                "p_mouth": mouth,
+                "p_accessory": accessory,
+                "p_body_color": bodyColor,
+                "p_bg_color": bgColor,
+            ]).execute().value
+            currentProfile = result
             return true
         } catch {
-            print("Failed to save avatar: \(error)")
-            return false
+            let data: [String: String] = [
+                "avatar_animal": animal,
+                "avatar_eyes": eyes,
+                "avatar_mouth": mouth,
+                "avatar_accessory": accessory,
+                "avatar_body_color": bodyColor,
+                "avatar_bg_color": bgColor,
+            ]
+            do {
+                try await client.from("profiles")
+                    .update(data)
+                    .eq("id", value: profile.id)
+                    .execute()
+                currentProfile = profile
+                return true
+            } catch {
+                print("Failed to save avatar: \(error)")
+                return false
+            }
         }
     }
 
     func completeOnboarding(school: String, animal: String, eyes: String, mouth: String, accessory: String, bodyColor: String, bgColor: String) async {
         guard let profile = currentProfile else { return }
-        let data: [String: String] = [
-            "school": school,
-            "avatar_animal": animal,
-            "avatar_eyes": eyes,
-            "avatar_mouth": mouth,
-            "avatar_accessory": accessory
-        ]
         do {
-            try await client.from("profiles")
-                .update(data)
-                .eq("id", value: profile.id)
-                .execute()
-
-            let colorData: [String: String] = [
-                "avatar_body_color": bodyColor,
-                "avatar_bg_color": bgColor
-            ]
-            try? await client.from("profiles")
-                .update(colorData)
-                .eq("id", value: profile.id)
-                .execute()
-
-            await fetchProfile()
+            let result: UserProfile = try await client.rpc("complete_onboarding", params: [
+                "p_school": school,
+                "p_animal": animal,
+                "p_eyes": eyes,
+                "p_mouth": mouth,
+                "p_accessory": accessory,
+                "p_body_color": bodyColor,
+                "p_bg_color": bgColor,
+            ]).execute().value
+            currentProfile = result
         } catch {
-            print("Failed to complete onboarding: \(error)")
+            let data: [String: String] = [
+                "school": school,
+                "avatar_animal": animal,
+                "avatar_eyes": eyes,
+                "avatar_mouth": mouth,
+                "avatar_accessory": accessory,
+                "avatar_body_color": bodyColor,
+                "avatar_bg_color": bgColor,
+            ]
+            do {
+                try await client.from("profiles")
+                    .update(data)
+                    .eq("id", value: profile.id)
+                    .execute()
+                await fetchProfile()
+            } catch {
+                print("Failed to complete onboarding: \(error)")
+            }
+        }
+    }
+
+    func applyQuizCompletion(
+        subsectionId: String,
+        score: Double,
+        correctCount: Int,
+        totalCount: Int,
+        xpEarned: Int,
+        coinsEarned: Int,
+        idempotencyKey: String,
+        markLearningSeen: Bool = false
+    ) async -> UserProfile? {
+        do {
+            let result: UserProfile = try await client.rpc("apply_quiz_completion", params: [
+                "p_subsection_id": AnyEncodableValue.string(subsectionId),
+                "p_score": AnyEncodableValue.double(score),
+                "p_correct_count": AnyEncodableValue.int(correctCount),
+                "p_total_count": AnyEncodableValue.int(totalCount),
+                "p_xp_earned": AnyEncodableValue.int(xpEarned),
+                "p_coins_earned": AnyEncodableValue.int(coinsEarned),
+                "p_idempotency_key": AnyEncodableValue.string(idempotencyKey),
+                "p_mark_learning_seen": AnyEncodableValue.bool(markLearningSeen),
+            ]).execute().value
+            currentProfile = result
+            return result
+        } catch {
+            print("RPC apply_quiz_completion failed: \(error)")
+            return nil
+        }
+    }
+
+    func applyHeartLoss() async -> UserProfile? {
+        do {
+            let result: UserProfile = try await client.rpc("apply_heart_loss", params: EmptyParams()).execute().value
+            currentProfile = result
+            return result
+        } catch {
+            print("RPC apply_heart_loss failed: \(error)")
+            return nil
+        }
+    }
+
+    func applyAddHeart() async -> UserProfile? {
+        do {
+            let result: UserProfile = try await client.rpc("add_heart", params: EmptyParams()).execute().value
+            currentProfile = result
+            return result
+        } catch {
+            print("RPC add_heart failed: \(error)")
+            return nil
+        }
+    }
+
+    func applyRefillHearts(cost: Int) async -> UserProfile? {
+        do {
+            let data: [String: Int] = ["p_cost": cost]
+            let resultData = try await client.rpc("refill_hearts", params: data).execute().data
+            let decoder = JSONDecoder()
+            let result = try decoder.decode(UserProfile.self, from: resultData)
+            currentProfile = result
+            return result
+        } catch {
+            print("RPC refill_hearts failed: \(error)")
+            return nil
+        }
+    }
+
+    func applyClinicalQOTD(questionId: String, isCorrect: Bool, answerDate: String) async -> CQOTDResult? {
+        do {
+            let result: CQOTDResult = try await client.rpc("apply_clinical_qotd", params: [
+                "p_question_id": AnyEncodableValue.string(questionId),
+                "p_is_correct": AnyEncodableValue.bool(isCorrect),
+                "p_answer_date": AnyEncodableValue.string(answerDate),
+            ]).execute().value
+            return result
+        } catch {
+            print("RPC apply_clinical_qotd failed: \(error)")
+            return nil
+        }
+    }
+
+    func fetchCQOTDHistory() async -> [String: Bool] {
+        do {
+            let result: [String: Bool] = try await client.rpc("fetch_cqotd_history", params: EmptyParams()).execute().value
+            return result
+        } catch {
+            print("RPC fetch_cqotd_history failed: \(error)")
+            return [:]
+        }
+    }
+
+    func purchaseAvatarItem(itemType: String, itemName: String, cost: Int) async -> UserProfile? {
+        do {
+            let resultData = try await client.rpc("purchase_avatar_item", params: [
+                "p_item_type": AnyEncodableValue.string(itemType),
+                "p_item_name": AnyEncodableValue.string(itemName),
+                "p_cost": AnyEncodableValue.int(cost),
+            ]).execute().data
+            let decoder = JSONDecoder()
+            let profile = try decoder.decode(UserProfile.self, from: resultData)
+            currentProfile = profile
+            return profile
+        } catch {
+            print("RPC purchase_avatar_item failed: \(error)")
+            return nil
+        }
+    }
+
+    func saveProfileInfo(username: String, profession: String, school: String) async -> UserProfile? {
+        do {
+            let result: UserProfile = try await client.rpc("save_profile_info", params: [
+                "p_username": username,
+                "p_profession": profession,
+                "p_school": school,
+            ]).execute().value
+            currentProfile = result
+            return result
+        } catch {
+            print("RPC save_profile_info failed, using fallback: \(error)")
+            guard let profile = currentProfile else { return nil }
+            let data: [String: String] = [
+                "username": username,
+                "profession": profession,
+                "school": school,
+            ]
+            do {
+                try await client.from("profiles")
+                    .update(data)
+                    .eq("id", value: profile.id)
+                    .execute()
+                await fetchProfile()
+                return currentProfile
+            } catch {
+                print("Fallback update failed: \(error)")
+                return nil
+            }
+        }
+    }
+
+    func purchasePowerup(type: String, cost: Int, maxCapacity: Int) async -> (success: Bool, coins: Int?, inventory: InventoryRecord?) {
+        do {
+            let resultData = try await client.rpc("purchase_powerup", params: [
+                "p_type": AnyEncodableValue.string(type),
+                "p_cost": AnyEncodableValue.int(cost),
+                "p_max_capacity": AnyEncodableValue.int(maxCapacity),
+            ]).execute().data
+
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let success = json?["success"] as? Bool ?? false
+            let coins = json?["coins"] as? Int
+            if success {
+                let inv = try JSONDecoder().decode(InventoryRecord.self, from: resultData)
+                await fetchProfile()
+                return (true, coins, inv)
+            }
+            return (false, nil, nil)
+        } catch {
+            print("RPC purchase_powerup failed: \(error)")
+            return (false, nil, nil)
+        }
+    }
+
+    func consumePowerup(type: String) async -> InventoryRecord? {
+        do {
+            let resultData = try await client.rpc("consume_powerup", params: ["p_type": type]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let success = json?["success"] as? Bool ?? false
+            if success {
+                return try JSONDecoder().decode(InventoryRecord.self, from: resultData)
+            }
+            return nil
+        } catch {
+            print("RPC consume_powerup failed: \(error)")
+            return nil
+        }
+    }
+
+    func enhancePowerup(type: String, cost: Int) async -> (success: Bool, coins: Int?) {
+        do {
+            let resultData = try await client.rpc("enhance_powerup", params: [
+                "p_type": AnyEncodableValue.string(type),
+                "p_cost": AnyEncodableValue.int(cost),
+            ]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let success = json?["success"] as? Bool ?? false
+            let coins = json?["coins"] as? Int
+            return (success, coins)
+        } catch {
+            print("RPC enhance_powerup failed: \(error)")
+            return (false, nil)
+        }
+    }
+
+    func fetchInventory() async -> InventoryRecord? {
+        do {
+            let result: InventoryRecord = try await client.rpc("fetch_inventory", params: EmptyParams()).execute().value
+            return result
+        } catch {
+            print("RPC fetch_inventory failed: \(error)")
+            return nil
+        }
+    }
+
+    func saveDailyState(
+        questProgress: [[String: Any]],
+        brandBlitzCount: Int,
+        quickPracticeCount: Int,
+        spacedReviewCount: Int,
+        doubleXP: Bool,
+        activeBoosts: [[String: Any]],
+        questSetIndex: Int
+    ) async {
+        do {
+            let questJSON = try JSONSerialization.data(withJSONObject: questProgress)
+            let boostJSON = try JSONSerialization.data(withJSONObject: activeBoosts)
+            let questStr = String(data: questJSON, encoding: .utf8) ?? "[]"
+            let boostStr = String(data: boostJSON, encoding: .utf8) ?? "[]"
+
+            try await client.rpc("save_daily_state", params: [
+                "p_quest_progress": AnyEncodableValue.string(questStr),
+                "p_brand_blitz_count": AnyEncodableValue.int(brandBlitzCount),
+                "p_quick_practice_count": AnyEncodableValue.int(quickPracticeCount),
+                "p_spaced_review_count": AnyEncodableValue.int(spacedReviewCount),
+                "p_double_xp": AnyEncodableValue.bool(doubleXP),
+                "p_active_boosts": AnyEncodableValue.string(boostStr),
+                "p_quest_set_index": AnyEncodableValue.int(questSetIndex),
+            ]).execute()
+        } catch {
+            print("RPC save_daily_state failed: \(error)")
+        }
+    }
+
+    func saveMasteryBatch(records: [[String: Any]]) async {
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: records)
+            let jsonStr = String(data: jsonData, encoding: .utf8) ?? "[]"
+            try await client.rpc("save_mastery_batch", params: ["p_records": jsonStr]).execute()
+        } catch {
+            print("RPC save_mastery_batch failed: \(error)")
+        }
+    }
+
+    func fetchMastery() async -> [String: [String: Any]]? {
+        do {
+            let resultData = try await client.rpc("fetch_mastery", params: EmptyParams()).execute().data
+            let result = try JSONSerialization.jsonObject(with: resultData) as? [String: [String: Any]]
+            return result
+        } catch {
+            print("RPC fetch_mastery failed: \(error)")
+            return nil
         }
     }
 
@@ -629,6 +891,9 @@ class SupabaseService {
         let ownedMouthsData = (try? encoder.encode(Array(gameVM.ownedMouths))) ?? Data()
         let ownedAccessoriesData = (try? encoder.encode(Array(gameVM.ownedAccessories))) ?? Data()
 
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
         let updateData = ProfileUpdateData(
             username: gameVM.username,
             profession: gameVM.selectedProfession.rawValue,
@@ -637,24 +902,29 @@ class SupabaseService {
             avatarEyes: gameVM.avatarEyes,
             avatarMouth: gameVM.avatarMouth,
             avatarAccessory: gameVM.avatarAccessory,
+            avatarBodyColor: gameVM.avatarBodyColor,
+            avatarBgColor: gameVM.avatarBgColor,
             totalXP: gameVM.totalXP,
             coins: gameVM.coins,
             currentStreak: gameVM.currentStreak,
             streakSaves: gameVM.streakSaves,
             hearts: gameVM.hearts,
             level: gameVM.level,
-            weeklyXP: gameVM.totalXP,
-            monthlyXP: gameVM.totalXP,
+            weeklyXP: gameVM.weeklyXP,
+            monthlyXP: gameVM.monthlyXP,
             completedSubsections: String(data: completedData, encoding: .utf8) ?? "[]",
             subsectionStars: String(data: starsData, encoding: .utf8) ?? "{}",
             hasSeenLearning: String(data: learningData, encoding: .utf8) ?? "[]",
             questionsAnswered: gameVM.questionsAnswered,
             questionsCorrect: gameVM.questionsCorrect,
+            lastActiveDate: gameVM.lastActiveDate.map { isoFormatter.string(from: $0) },
+            lastHeartLossDate: gameVM.lastHeartLossDate.map { isoFormatter.string(from: $0) },
             ownedAvatars: String(data: ownedAvatarsData, encoding: .utf8) ?? "[]",
             ownedEyes: String(data: ownedEyesData, encoding: .utf8) ?? "[]",
             ownedMouths: String(data: ownedMouthsData, encoding: .utf8) ?? "[]",
             ownedAccessories: String(data: ownedAccessoriesData, encoding: .utf8) ?? "[]",
-            professionDonations: profile.professionDonations
+            professionDonations: profile.professionDonations,
+            clinicalAuraPoints: gameVM.clinicalAuraPoints
         )
 
         do {
@@ -786,48 +1056,66 @@ class SupabaseService {
     func sendFriendRequest(toUsername: String) async throws {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return }
 
-        let targetProfiles: [UserProfile] = try await client.from("profiles")
-            .select()
-            .eq("username", value: toUsername)
-            .limit(1)
-            .execute()
-            .value
-
-        guard let target = targetProfiles.first else {
-            throw NSError(domain: "PharmaQuest", code: 404, userInfo: [NSLocalizedDescriptionKey: "User not found"])
-        }
-
-        guard target.id != userId else {
-            throw NSError(domain: "PharmaQuest", code: 400, userInfo: [NSLocalizedDescriptionKey: "You can't add yourself"])
-        }
-
-        let existing: [FriendRecord] = try await client.from("friends")
-            .select()
-            .or("and(user_id.eq.\(userId),friend_id.eq.\(target.id)),and(user_id.eq.\(target.id),friend_id.eq.\(userId))")
-            .execute()
-            .value
-
-        guard existing.isEmpty else {
-            let status = existing.first?.status ?? "pending"
-            if status == "accepted" {
-                throw NSError(domain: "PharmaQuest", code: 409, userInfo: [NSLocalizedDescriptionKey: "Already friends with this user"])
+        do {
+            let resultData = try await client.rpc("send_friend_request", params: [
+                "p_friend_username": toUsername,
+            ]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let success = json?["success"] as? Bool ?? false
+            if !success {
+                let errorMsg = json?["error"] as? String ?? "Request failed"
+                throw NSError(domain: "PharmaQuest", code: 400, userInfo: [NSLocalizedDescriptionKey: errorMsg])
             }
-            throw NSError(domain: "PharmaQuest", code: 409, userInfo: [NSLocalizedDescriptionKey: "Friend request already pending"])
-        }
+        } catch let error as NSError where error.domain == "PharmaQuest" {
+            throw error
+        } catch {
+            let targetProfiles: [UserProfile] = try await client.from("profiles")
+                .select()
+                .eq("username", value: toUsername)
+                .limit(1)
+                .execute()
+                .value
 
-        let request = FriendRequest(
-            userId: userId,
-            friendId: target.id,
-            status: "pending"
-        )
-        try await client.from("friends").insert(request).execute()
+            guard let target = targetProfiles.first else {
+                throw NSError(domain: "PharmaQuest", code: 404, userInfo: [NSLocalizedDescriptionKey: "User not found"])
+            }
+
+            guard target.id != userId else {
+                throw NSError(domain: "PharmaQuest", code: 400, userInfo: [NSLocalizedDescriptionKey: "You can't add yourself"])
+            }
+
+            let existing: [FriendRecord] = try await client.from("friends")
+                .select()
+                .or("and(user_id.eq.\(userId),friend_id.eq.\(target.id)),and(user_id.eq.\(target.id),friend_id.eq.\(userId))")
+                .execute()
+                .value
+
+            guard existing.isEmpty else {
+                let status = existing.first?.status ?? "pending"
+                if status == "accepted" {
+                    throw NSError(domain: "PharmaQuest", code: 409, userInfo: [NSLocalizedDescriptionKey: "Already friends with this user"])
+                }
+                throw NSError(domain: "PharmaQuest", code: 409, userInfo: [NSLocalizedDescriptionKey: "Friend request already pending"])
+            }
+
+            let request = FriendRequest(
+                userId: userId,
+                friendId: target.id,
+                status: "pending"
+            )
+            try await client.from("friends").insert(request).execute()
+        }
     }
 
     func acceptFriendRequest(requestId: String) async throws {
-        try await client.from("friends")
-            .update(["status": "accepted"])
-            .eq("id", value: requestId)
-            .execute()
+        do {
+            try await client.rpc("accept_friend_request", params: ["p_request_id": requestId]).execute()
+        } catch {
+            try await client.from("friends")
+                .update(["status": "accepted"])
+                .eq("id", value: requestId)
+                .execute()
+        }
     }
 
     func fetchPendingRequests() async -> [PendingFriendInfo] {
@@ -892,10 +1180,14 @@ class SupabaseService {
 
     func removeFriend(friendId: String) async throws {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return }
-        try await client.from("friends")
-            .delete()
-            .or("and(user_id.eq.\(userId),friend_id.eq.\(friendId)),and(user_id.eq.\(friendId),friend_id.eq.\(userId))")
-            .execute()
+        do {
+            try await client.rpc("remove_friend", params: ["p_friend_id": friendId]).execute()
+        } catch {
+            try await client.from("friends")
+                .delete()
+                .or("and(user_id.eq.\(userId),friend_id.eq.\(friendId)),and(user_id.eq.\(friendId),friend_id.eq.\(userId))")
+                .execute()
+        }
     }
 
     func checkFriendshipStatus(userId: String) async -> FriendshipStatus {
@@ -992,20 +1284,72 @@ class SupabaseService {
     }
 
     func donateToProfession(amount: Int, currentCoins: Int) async -> Bool {
-        guard var profile = currentProfile else { return false }
-        guard currentCoins >= amount else { return false }
-        profile.coins = currentCoins - amount
-        profile.professionDonations += amount
         do {
-            try await client.from("profiles")
-                .update(["coins": profile.coins, "profession_donations": profile.professionDonations])
-                .eq("id", value: profile.id)
-                .execute()
-            currentProfile = profile
-            return true
+            let resultData = try await client.rpc("donate_profession", params: [
+                "p_amount": amount,
+            ]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let success = json?["success"] as? Bool ?? false
+            if success {
+                await fetchProfile()
+            }
+            return success
         } catch {
-            print("Failed to donate: \(error)")
-            return false
+            guard var profile = currentProfile else { return false }
+            guard currentCoins >= amount else { return false }
+            profile.coins = currentCoins - amount
+            profile.professionDonations += amount
+            do {
+                try await client.from("profiles")
+                    .update(["coins": profile.coins, "profession_donations": profile.professionDonations])
+                    .eq("id", value: profile.id)
+                    .execute()
+                currentProfile = profile
+                return true
+            } catch {
+                print("Failed to donate: \(error)")
+                return false
+            }
+        }
+    }
+
+    func spendCoins(amount: Int, reason: String) async -> Int? {
+        do {
+            let resultData = try await client.rpc("spend_coins", params: [
+                "p_amount": AnyEncodableValue.int(amount),
+                "p_reason": AnyEncodableValue.string(reason),
+            ]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let success = json?["success"] as? Bool ?? false
+            if success {
+                let coins = json?["coins"] as? Int
+                await fetchProfile()
+                return coins
+            }
+            return nil
+        } catch {
+            print("RPC spend_coins failed: \(error)")
+            return nil
+        }
+    }
+
+    func addCoins(amount: Int, reason: String, idempotencyKey: String? = nil) async -> Int? {
+        do {
+            var params: [String: AnyEncodableValue] = [
+                "p_amount": .int(amount),
+                "p_reason": .string(reason),
+            ]
+            if let key = idempotencyKey {
+                params["p_idempotency_key"] = .string(key)
+            }
+            let resultData = try await client.rpc("add_coins", params: params).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let coins = json?["coins"] as? Int
+            await fetchProfile()
+            return coins
+        } catch {
+            print("RPC add_coins failed: \(error)")
+            return nil
         }
     }
 
@@ -1042,6 +1386,25 @@ class SupabaseService {
         } catch {
             print("Failed to search users: \(error)")
             return []
+        }
+    }
+}
+
+nonisolated struct EmptyParams: Encodable, Sendable {}
+
+nonisolated enum AnyEncodableValue: Encodable, Sendable {
+    case string(String)
+    case int(Int)
+    case double(Double)
+    case bool(Bool)
+
+    nonisolated func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .string(let v): try container.encode(v)
+        case .int(let v): try container.encode(v)
+        case .double(let v): try container.encode(v)
+        case .bool(let v): try container.encode(v)
         }
     }
 }

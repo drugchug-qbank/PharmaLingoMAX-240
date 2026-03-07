@@ -84,7 +84,7 @@ struct RanksView: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "bolt.fill")
                                     .foregroundStyle(AppTheme.warningYellow)
-                                Text("\(gameVM.totalXP)")
+                                Text("\(gameVM.weeklyXP)")
                                     .font(AppTheme.funFont(.title2, weight: .heavy))
                                     .foregroundStyle(.white)
                             }

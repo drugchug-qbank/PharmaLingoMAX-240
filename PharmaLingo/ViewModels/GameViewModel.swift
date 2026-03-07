@@ -7,6 +7,8 @@ class GameViewModel {
     var isProUser: Bool = false
     var coins: Int = 50
     var totalXP: Int = 0
+    var weeklyXP: Int = 0
+    var monthlyXP: Int = 0
     var currentStreak: Int = 0
     var streakSaves: Int = 0
     var activeBoosts: [ActiveBoost] = []
@@ -158,6 +160,7 @@ class GameViewModel {
         case .spacedReview: dailySpacedReviewCount += 1
         }
         save()
+        syncDailyStateToCloud()
     }
 
     func mistakeQuestions() -> [Question] {
@@ -288,24 +291,28 @@ class GameViewModel {
             lastHeartLossDate = Date()
         }
         save()
+        Task {
+            await SupabaseService.shared.applyHeartLoss()
+        }
     }
 
     func addClinicalAuraPoint() {
         clinicalAuraPoints += 1
         save()
-        syncToCloud()
     }
 
     func removeClinicalAuraPoint() {
         clinicalAuraPoints -= 1
         save()
-        syncToCloud()
     }
 
     func addHeart() {
         guard hearts < maxHearts else { return }
         hearts += 1
         save()
+        Task {
+            await SupabaseService.shared.applyAddHeart()
+        }
     }
 
     func refillHearts() {
@@ -316,6 +323,8 @@ class GameViewModel {
     func earnXP(_ amount: Int) {
         let adjusted = Int(Double(amount) * xpMultiplier())
         totalXP += adjusted
+        weeklyXP += adjusted
+        monthlyXP += adjusted
         consumeDoubleXPIfActive()
         save()
     }
@@ -348,23 +357,33 @@ class GameViewModel {
             completedSubsections.insert(subsectionId)
         }
 
+        var finalXP: Int
         if xpEarned > 0 {
-            earnXP(xpEarned)
+            finalXP = Int(Double(xpEarned) * xpMultiplier())
         } else {
             var xp = correctCount * 10
             if score == 1.0 { xp += 50 }
             else if score >= 0.9 { xp += 25 }
-            earnXP(xp)
+            finalXP = Int(Double(xp) * xpMultiplier())
         }
 
+        var finalCoins: Int
         if coinsEarned > 0 {
-            earnCoins(coinsEarned)
+            finalCoins = Int(Double(coinsEarned) * coinMultiplier())
         } else {
             var coinReward = 5
             if score == 1.0 { coinReward += 20 }
             else if score >= 0.9 { coinReward += 10 }
-            earnCoins(coinReward)
+            finalCoins = Int(Double(coinReward) * coinMultiplier())
         }
+
+        totalXP += finalXP
+        weeklyXP += finalXP
+        monthlyXP += finalXP
+        coins += finalCoins
+        consumeDoubleXPIfActive()
+
+        updateStreak()
 
         updateLessonQuests()
         updateAnswerQuests(totalCount)
@@ -372,7 +391,23 @@ class GameViewModel {
         if score >= 1.0 { updatePerfectQuests() }
 
         save()
-        syncToCloud()
+
+        let idempotencyKey = "\(subsectionId)_\(Int(Date().timeIntervalSince1970 * 1000))"
+        Task {
+            if let updatedProfile = await SupabaseService.shared.applyQuizCompletion(
+                subsectionId: subsectionId,
+                score: score,
+                correctCount: correctCount,
+                totalCount: totalCount,
+                xpEarned: finalXP,
+                coinsEarned: finalCoins,
+                idempotencyKey: idempotencyKey
+            ) {
+                hydrateFromProfile(updatedProfile)
+            } else {
+                await SupabaseService.shared.syncGameState(from: self)
+            }
+        }
     }
 
     func recordConsecutiveCorrect(_ count: Int) {
@@ -439,7 +474,7 @@ class GameViewModel {
                 let prev = dailyQuests[idx].current
                 dailyQuests[idx].current = min(dailyQuests[idx].current + 1, dailyQuests[idx].target)
                 if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
-                    earnCoins(dailyQuests[idx].coinReward)
+                    coins += dailyQuests[idx].coinReward
                 }
             }
         }
@@ -452,7 +487,7 @@ class GameViewModel {
                 let prev = dailyQuests[idx].current
                 dailyQuests[idx].current = min(dailyQuests[idx].current + count, dailyQuests[idx].target)
                 if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
-                    earnCoins(dailyQuests[idx].coinReward)
+                    coins += dailyQuests[idx].coinReward
                 }
             }
         }
@@ -465,7 +500,7 @@ class GameViewModel {
                 let prev = dailyQuests[idx].current
                 dailyQuests[idx].current = min(dailyQuests[idx].current + count, dailyQuests[idx].target)
                 if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
-                    earnCoins(dailyQuests[idx].coinReward)
+                    coins += dailyQuests[idx].coinReward
                 }
             }
         }
@@ -478,7 +513,7 @@ class GameViewModel {
                 let prev = dailyQuests[idx].current
                 dailyQuests[idx].current = min(dailyQuests[idx].current + 1, dailyQuests[idx].target)
                 if dailyQuests[idx].isComplete && prev < dailyQuests[idx].target {
-                    earnCoins(dailyQuests[idx].coinReward)
+                    coins += dailyQuests[idx].coinReward
                 }
             }
         }
@@ -537,6 +572,42 @@ class GameViewModel {
     func syncToCloud() {
         Task {
             await SupabaseService.shared.syncGameState(from: self)
+        }
+    }
+
+    func syncDailyStateToCloud() {
+        let questProgress = dailyQuests.map { ["id": $0.id, "current": $0.current] as [String : Any] }
+        let boostData = activeBoosts.filter { $0.isActive }.map { ["type": $0.type.rawValue, "expiresAt": $0.expiresAt.timeIntervalSince1970] as [String : Any] }
+        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
+        let setIndex = dayOfYear % Self.allQuestPool.count
+
+        Task {
+            await SupabaseService.shared.saveDailyState(
+                questProgress: questProgress,
+                brandBlitzCount: dailyBrandBlitzCount,
+                quickPracticeCount: dailyQuickPracticeCount,
+                spacedReviewCount: dailySpacedReviewCount,
+                doubleXP: doubleXPNextAttempt,
+                activeBoosts: boostData,
+                questSetIndex: setIndex
+            )
+        }
+    }
+
+    func syncMasteryToCloud() {
+        let records: [[String: Any]] = masteryMap.map { key, record in
+            [
+                "question_key": key,
+                "level": record.level,
+                "total_attempts": record.totalAttempts,
+                "correct_attempts": record.correctAttempts,
+                "current_streak": record.currentStreak,
+                "last_seen_at": record.lastSeenDate.timeIntervalSince1970,
+                "next_due_at": record.nextDueDate.timeIntervalSince1970,
+            ] as [String: Any]
+        }
+        Task {
+            await SupabaseService.shared.saveMasteryBatch(records: records)
         }
     }
 
@@ -620,6 +691,20 @@ class GameViewModel {
         guard powerUpInventory.add(type, isPro: isProUser) else { return false }
         coins -= type.purchasePrice
         save()
+        Task {
+            let result = await SupabaseService.shared.purchasePowerup(
+                type: type.rawValue,
+                cost: type.purchasePrice,
+                maxCapacity: powerUpMaxCapacity(for: type)
+            )
+            if result.success, let newCoins = result.coins {
+                coins = newCoins
+                if let inv = result.inventory {
+                    powerUpInventory = inv.toInventory()
+                }
+                save()
+            }
+        }
         return true
     }
 
@@ -629,12 +714,25 @@ class GameViewModel {
         coins -= type.enhancementPrice
         powerUpInventory.setEnhanced(type)
         save()
+        Task {
+            let result = await SupabaseService.shared.enhancePowerup(type: type.rawValue, cost: type.enhancementPrice)
+            if result.success, let newCoins = result.coins {
+                coins = newCoins
+                save()
+            }
+        }
         return true
     }
 
     func consumePowerUp(_ type: PowerUpType) -> Bool {
         guard powerUpInventory.consume(type) else { return false }
         save()
+        Task {
+            if let inv = await SupabaseService.shared.consumePowerup(type: type.rawValue) {
+                powerUpInventory = inv.toInventory()
+                save()
+            }
+        }
         return true
     }
 
@@ -657,6 +755,8 @@ class GameViewModel {
         hearts = 5
         coins = 50
         totalXP = 0
+        weeklyXP = 0
+        monthlyXP = 0
         currentStreak = 0
         streakSaves = 0
         subsectionStars = [:]
@@ -728,6 +828,8 @@ class GameViewModel {
             "hearts": hearts,
             "coins": coins,
             "totalXP": totalXP,
+            "weeklyXP": weeklyXP,
+            "monthlyXP": monthlyXP,
             "currentStreak": currentStreak,
             "streakSaves": streakSaves,
             "subsectionStars": subsectionStars,
@@ -769,6 +871,8 @@ class GameViewModel {
         hearts = state["hearts"] as? Int ?? 5
         coins = state["coins"] as? Int ?? 50
         totalXP = state["totalXP"] as? Int ?? 0
+        weeklyXP = state["weeklyXP"] as? Int ?? 0
+        monthlyXP = state["monthlyXP"] as? Int ?? 0
         currentStreak = state["currentStreak"] as? Int ?? 0
         streakSaves = state["streakSaves"] as? Int ?? 0
         subsectionStars = state["subsectionStars"] as? [String: Int] ?? [:]
@@ -825,153 +929,117 @@ class GameViewModel {
         }
     }
 
-    func loadFromProfile(_ profile: UserProfile) {
-        currentUserId = profile.id
-
-        load()
-        loadMastery()
-
+    func hydrateFromProfile(_ profile: UserProfile) {
         username = profile.username
         if let prof = Profession(rawValue: profile.profession) {
             selectedProfession = prof
         }
         schoolName = profile.school
 
-        let cloudHasAvatar = profile.avatarAnimal != "beaver" || profile.avatarEyes != "normal" || profile.avatarMouth != "smile" || profile.avatarAccessory != "none" || !profile.avatarBodyColor.isEmpty || !profile.avatarBgColor.isEmpty
-        let localHasAvatar = avatarAnimal != "beaver" || avatarEyes != "normal" || avatarMouth != "smile" || avatarAccessory != "none" || !avatarBodyColor.isEmpty || !avatarBgColor.isEmpty
+        avatarAnimal = profile.avatarAnimal
+        avatarEyes = profile.avatarEyes
+        avatarMouth = profile.avatarMouth
+        avatarAccessory = profile.avatarAccessory
+        avatarBodyColor = profile.avatarBodyColor
+        avatarBgColor = profile.avatarBgColor
 
-        if cloudHasAvatar {
-            avatarAnimal = profile.avatarAnimal
-            avatarEyes = profile.avatarEyes
-            avatarMouth = profile.avatarMouth
-            avatarAccessory = profile.avatarAccessory
-            avatarBodyColor = profile.avatarBodyColor
-            avatarBgColor = profile.avatarBgColor
-        } else if !localHasAvatar {
-            avatarAnimal = profile.avatarAnimal
-            avatarEyes = profile.avatarEyes
-            avatarMouth = profile.avatarMouth
-            avatarAccessory = profile.avatarAccessory
-            avatarBodyColor = profile.avatarBodyColor
-            avatarBgColor = profile.avatarBgColor
-        }
-
-        let localState = UserDefaults.standard.dictionary(forKey: userDefaultsKey)
-        let localXP = localState?["totalXP"] as? Int ?? 0
-        let localCoins = localState?["coins"] as? Int ?? 0
-        let localStreak = localState?["currentStreak"] as? Int ?? 0
-        let localStreakSaves = localState?["streakSaves"] as? Int ?? 0
-        let localHearts = localState?["hearts"] as? Int ?? 5
-        let localQA = localState?["questionsAnswered"] as? Int ?? 0
-        let localQC = localState?["questionsCorrect"] as? Int ?? 0
-
-        totalXP = max(localXP, profile.totalXP)
-        coins = max(localCoins, profile.coins)
-        currentStreak = max(localStreak, profile.currentStreak)
-        streakSaves = max(localStreakSaves, profile.streakSaves)
-        hearts = max(localHearts, profile.hearts)
-        questionsAnswered = max(localQA, profile.questionsAnswered)
-        questionsCorrect = max(localQC, profile.questionsCorrect)
-
-        let localCompleted = Set(localState?["completedSubsections"] as? [String] ?? [])
-        let localStars = localState?["subsectionStars"] as? [String: Int] ?? [:]
-        let localSeen = Set(localState?["hasSeenLearning"] as? [String] ?? [])
-
-        completedSubsections = localCompleted
-        subsectionStars = localStars
-        hasSeenLearning = localSeen
+        totalXP = profile.totalXP
+        coins = profile.coins
+        currentStreak = profile.currentStreak
+        streakSaves = profile.streakSaves
+        hearts = profile.hearts
+        weeklyXP = profile.weeklyXP
+        monthlyXP = profile.monthlyXP
+        questionsAnswered = profile.questionsAnswered
+        questionsCorrect = profile.questionsCorrect
+        clinicalAuraPoints = profile.clinicalAuraPoints
+        professionDonationsFromProfile = profile.professionDonations
 
         let decoder = JSONDecoder()
         if let data = profile.completedSubsections.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            completedSubsections.formUnion(Set(arr))
+            completedSubsections = Set(arr)
         }
         if let data = profile.subsectionStars.data(using: .utf8),
            let dict = try? decoder.decode([String: Int].self, from: data) {
-            for (key, value) in dict {
-                subsectionStars[key] = max(subsectionStars[key] ?? 0, value)
-            }
+            subsectionStars = dict
         }
         if let data = profile.hasSeenLearning.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            hasSeenLearning.formUnion(Set(arr))
+            hasSeenLearning = Set(arr)
         }
-
-        let localOwnedAvatars = Set(localState?["ownedAvatars"] as? [String] ?? ["beaver", "bird", "bunny", "cat"])
-        let localOwnedEyes = Set(localState?["ownedEyes"] as? [String] ?? ["normal", "happy", "big"])
-        let localOwnedMouths = Set(localState?["ownedMouths"] as? [String] ?? ["smile", "bigSmile", "tiny"])
-        let localOwnedAccessories = Set(localState?["ownedAccessories"] as? [String] ?? ["none"])
-
-        ownedAvatars = localOwnedAvatars
-        ownedEyes = localOwnedEyes
-        ownedMouths = localOwnedMouths
-        ownedAccessories = localOwnedAccessories
-
         if let data = profile.ownedAvatars.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            ownedAvatars.formUnion(Set(arr))
+            ownedAvatars = Set(arr)
         }
         if let data = profile.ownedEyes.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            ownedEyes.formUnion(Set(arr))
+            ownedEyes = Set(arr)
         }
         if let data = profile.ownedMouths.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            ownedMouths.formUnion(Set(arr))
+            ownedMouths = Set(arr)
         }
         if let data = profile.ownedAccessories.data(using: .utf8),
            let arr = try? decoder.decode([String].self, from: data) {
-            ownedAccessories.formUnion(Set(arr))
+            ownedAccessories = Set(arr)
         }
 
         if let dateStr = profile.lastActiveDate, !dateStr.isEmpty {
             let isoFormatter = ISO8601DateFormatter()
             isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
             if let d = isoFormatter.date(from: dateStr) {
-                let localInterval = localState?["lastActiveDate"] as? Double ?? 0
-                let localDate = localInterval > 0 ? Date(timeIntervalSince1970: localInterval) : nil
-                if localDate == nil || d > localDate! {
-                    lastActiveDate = d
-                } else {
-                    lastActiveDate = localDate
-                }
+                lastActiveDate = d
             }
-        } else {
-            let localInterval = localState?["lastActiveDate"] as? Double ?? 0
-            lastActiveDate = localInterval > 0 ? Date(timeIntervalSince1970: localInterval) : nil
         }
         if let dateStr = profile.lastHeartLossDate, !dateStr.isEmpty {
             let isoFormatter = ISO8601DateFormatter()
             isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
             if let d = isoFormatter.date(from: dateStr) {
-                let localInterval = localState?["lastHeartLossDate"] as? Double ?? 0
-                let localDate = localInterval > 0 ? Date(timeIntervalSince1970: localInterval) : nil
-                if localDate == nil || d > localDate! {
-                    lastHeartLossDate = d
-                } else {
-                    lastHeartLossDate = localDate
-                }
+                lastHeartLossDate = d
             }
-        } else {
-            let localInterval = localState?["lastHeartLossDate"] as? Double ?? 0
-            lastHeartLossDate = localInterval > 0 ? Date(timeIntervalSince1970: localInterval) : nil
         }
 
-        dailyBrandBlitzCount = localState?["dailyBrandBlitzCount"] as? Int ?? 0
-        dailyQuickPracticeCount = localState?["dailyQuickPracticeCount"] as? Int ?? 0
-        dailySpacedReviewCount = localState?["dailySpacedReviewCount"] as? Int ?? 0
-        dailyPracticeDate = localState?["dailyPracticeDate"] as? String ?? ""
-        lastQuestDate = localState?["lastQuestDate"] as? String ?? ""
+        save()
+    }
+
+    private var professionDonationsFromProfile: Int = 0
+
+    func loadFromProfile(_ profile: UserProfile) {
+        currentUserId = profile.id
+
+        hydrateFromProfile(profile)
 
         checkStreak()
         regenerateHearts()
         refreshDailyQuests()
         resetDailyPracticeCounts()
+
         save()
 
-        if localHasAvatar && !cloudHasAvatar {
-            Task {
-                _ = await syncAvatarToCloud()
+        Task {
+            if let inv = await SupabaseService.shared.fetchInventory() {
+                powerUpInventory = inv.toInventory()
+                save()
+            }
+
+            if let cloudMastery = await SupabaseService.shared.fetchMastery() {
+                for (key, dict) in cloudMastery {
+                    let record = MasteryRecord.from(dict)
+                    if let existing = masteryMap[key] {
+                        if record.totalAttempts > existing.totalAttempts {
+                            masteryMap[key] = record
+                        }
+                    } else {
+                        masteryMap[key] = record
+                    }
+                }
+                saveMastery()
+            }
+
+            let history = await SupabaseService.shared.fetchCQOTDHistory()
+            if !history.isEmpty {
+                UserDefaults.standard.set(history, forKey: "cqotd_answered_dates")
             }
         }
     }

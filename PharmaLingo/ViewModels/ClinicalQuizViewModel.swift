@@ -44,6 +44,20 @@ class ClinicalQuizViewModel {
         markAnsweredToday(correct: isCorrect)
         hasAlreadyAnsweredToday = true
         todaysResult = isCorrect
+
+        let answerDate = ClinicalQuizService.todayDateString()
+        let questionId = question.id
+        let wasCorrect = isCorrect
+        Task {
+            if let result = await SupabaseService.shared.applyClinicalQOTD(
+                questionId: questionId,
+                isCorrect: wasCorrect,
+                answerDate: answerDate
+            ) {
+                gameVM.clinicalAuraPoints = result.clinicalAuraPoints
+                gameVM.save()
+            }
+        }
     }
 
     func updateCountdown() {
