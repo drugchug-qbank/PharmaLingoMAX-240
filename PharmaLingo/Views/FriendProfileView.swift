@@ -328,7 +328,7 @@ struct FriendProfileView: View {
             Image(Profession.badgeImage(for: profession))
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(height: 38)
+                .frame(height: 44)
             Text(profession)
                 .font(AppTheme.funFont(.caption, weight: .medium))
                 .foregroundStyle(.secondary)
