@@ -84,17 +84,33 @@ struct AvatarRendererView: View {
         }
     }
 
+    private var useBunnyImagePath: Bool {
+        let effectiveEye = isBlinking ? EyeStyle.sleepy : configuration.eyeStyle
+        return BunnyImageAvatarView.canUseImagePath(animalType: configuration.animalType, eyeStyle: effectiveEye)
+    }
+
+    @ViewBuilder
     private var animalLayer: some View {
-        AnimalAvatarView(
-            animalType: configuration.animalType,
-            bodyColor: configuration.bodyColor,
-            backgroundColor: .clear,
-            eyeStyle: isBlinking ? .sleepy : configuration.eyeStyle,
-            mouthStyle: configuration.mouthStyle,
-            accessory: configuration.accessoryType,
-            size: size
-        )
-        .allowsHitTesting(false)
+        if useBunnyImagePath {
+            BunnyImageAvatarView(
+                eyeStyle: .normal,
+                mouthStyle: configuration.mouthStyle,
+                accessory: configuration.accessoryType,
+                size: size
+            )
+            .allowsHitTesting(false)
+        } else {
+            AnimalAvatarView(
+                animalType: configuration.animalType,
+                bodyColor: configuration.bodyColor,
+                backgroundColor: .clear,
+                eyeStyle: isBlinking ? .sleepy : configuration.eyeStyle,
+                mouthStyle: configuration.mouthStyle,
+                accessory: configuration.accessoryType,
+                size: size
+            )
+            .allowsHitTesting(false)
+        }
     }
 
     private var shadingOverlay: some View {
