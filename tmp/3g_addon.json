@@ -1,0 +1,1259 @@
+{
+  "meta": {
+    "project": "PharmaLingo",
+    "module": "3g",
+    "title": "Mastering Endocrine & Diabetes (review-only; across 3a\u20133f with prior-module crossovers)",
+    "count": 45,
+    "generated_on": "2026-03-06",
+    "default_target_subsection_id": "3g",
+    "note": "Mastering subsections are review-only and should be appended after the app auto-builds the mastery pool. This pack is designed to be integrated the same way as prior mastery add-ons."
+  },
+  "questions": [
+    {
+      "id": "q3g_add_001",
+      "questionText": "You are reviewing basal-versus-bolus insulin products before clinic. Which brand/generic pair is correctly matched for a long-acting basal insulin?",
+      "options": [
+        "Lantus - insulin glargine",
+        "Humalog - insulin detemir",
+        "NovoLog - regular insulin",
+        "Levemir - insulin lispro",
+        "Humulin R - insulin aspart"
+      ],
+      "correctAnswer": "Lantus - insulin glargine",
+      "explanation": "Lantus is insulin glargine, a long-acting basal insulin. Humalog is lispro, NovoLog is aspart, Levemir is detemir, and Humulin R is regular insulin.",
+      "objective": "brandGeneric",
+      "relatedDrugIds": [
+        "d46"
+      ],
+      "tags": [
+        "Mastery",
+        "Insulin",
+        "brand-generic",
+        "Basal"
+      ],
+      "difficulty": "easy",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_002",
+      "questionText": "A patient uses NovoLog for mealtime coverage and asks when to inject it. Because insulin aspart is a rapid-acting bolus insulin, when is it generally given?",
+      "options": [
+        "Immediately before a meal, usually within 5 to 10 minutes of eating",
+        "At bedtime only",
+        "Exactly 60 minutes before every meal",
+        "Only after the meal is completely finished",
+        "Once weekly on the same day each week"
+      ],
+      "correctAnswer": "Immediately before a meal, usually within 5 to 10 minutes of eating",
+      "explanation": "Insulin aspart is rapid acting and is generally given within 5 to 10 minutes before a meal for prandial glucose control.",
+      "objective": "dosing",
+      "relatedDrugIds": [
+        "d48"
+      ],
+      "tags": [
+        "Mastery",
+        "Insulin",
+        "timing",
+        "Aspart"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_003",
+      "questionText": "One insulin from this module has a special high-yield pearl: it is the classic insulin used intravenously for emergencies like DKA and shifting potassium in hyperkalemia. Which insulin is it?",
+      "options": [
+        "Regular insulin",
+        "Insulin glargine",
+        "Insulin detemir",
+        "Insulin lispro",
+        "Insulin aspart"
+      ],
+      "correctAnswer": "Regular insulin",
+      "explanation": "Regular insulin is the classic short-acting insulin used intravenously in DKA and in insulin/dextrose protocols for hyperkalemia.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d50"
+      ],
+      "tags": [
+        "Mastery",
+        "Insulin",
+        "DKA",
+        "Hyperkalemia"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_004",
+      "questionText": "A student is drawing up two insulins into the same syringe and asks whether Lantus can be mixed with other insulins. Which answer is most accurate?",
+      "options": [
+        "No \u2014 insulin glargine should not be mixed with other insulins",
+        "Yes \u2014 glargine is routinely mixed with rapid-acting insulins",
+        "Yes \u2014 glargine should always be mixed with regular insulin",
+        "Yes \u2014 but only if the patient has type 1 diabetes",
+        "Yes \u2014 as long as the total dose stays under 10 units"
+      ],
+      "correctAnswer": "No \u2014 insulin glargine should not be mixed with other insulins",
+      "explanation": "Insulin glargine is a long-acting basal insulin and should not be mixed with other insulins in the same syringe.",
+      "objective": "contraindication",
+      "relatedDrugIds": [
+        "d46"
+      ],
+      "tags": [
+        "Mastery",
+        "Insulin",
+        "mixing",
+        "Glargine"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_005",
+      "questionText": "Two patients need basal insulin. One is prescribed insulin detemir and the other insulin glargine. Which pearl best distinguishes detemir from glargine?",
+      "options": [
+        "Detemir may require twice-daily dosing in some patients",
+        "Detemir is the preferred IV insulin in DKA",
+        "Detemir is a rapid-acting mealtime insulin",
+        "Detemir must always be taken with food",
+        "Detemir is contraindicated in type 2 diabetes"
+      ],
+      "correctAnswer": "Detemir may require twice-daily dosing in some patients",
+      "explanation": "Insulin detemir is a long-acting basal insulin, but some patients require twice-daily dosing, unlike glargine which is more often once daily.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d49",
+        "d46"
+      ],
+      "tags": [
+        "Mastery",
+        "Insulin",
+        "Detemir",
+        "Basal"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_006",
+      "questionText": "Humalog is a rapid-acting insulin used for prandial coverage around meals. What is the generic name of Humalog?",
+      "options": [
+        "Insulin lispro",
+        "Insulin glargine",
+        "Insulin detemir",
+        "Regular insulin",
+        "Insulin aspart"
+      ],
+      "correctAnswer": "Insulin lispro",
+      "explanation": "Humalog is the brand name for insulin lispro, a rapid-acting mealtime insulin.",
+      "objective": "genericBrand",
+      "relatedDrugIds": [
+        "d47"
+      ],
+      "tags": [
+        "Mastery",
+        "Insulin",
+        "brand-generic",
+        "Lispro"
+      ],
+      "difficulty": "easy",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_007",
+      "questionText": "Whether the insulin is basal or bolus, the most important adverse effect students must recognize quickly is low blood sugar. Which adverse effect is shared across essentially all insulin products in this module?",
+      "options": [
+        "Hypoglycemia",
+        "Agranulocytosis",
+        "Dry cough",
+        "Ototoxicity",
+        "Thyroid storm"
+      ],
+      "correctAnswer": "Hypoglycemia",
+      "explanation": "Hypoglycemia is the major class-wide adverse effect of insulin therapy and is especially important when meals are missed or doses are excessive.",
+      "objective": "adverseEffect",
+      "relatedDrugIds": [
+        "d46",
+        "d47",
+        "d48",
+        "d49",
+        "d50"
+      ],
+      "tags": [
+        "Mastery",
+        "Insulin",
+        "Hypoglycemia",
+        "Adverse effects"
+      ],
+      "difficulty": "easy",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_008",
+      "questionText": "A patient injects insulin into the exact same abdominal spot every day and starts having erratic absorption. Which counseling point best teaches the prevention strategy?",
+      "options": [
+        "Rotate injection sites to reduce lipodystrophy and absorption problems",
+        "Massage the same site after every injection to improve uptake",
+        "Switch all insulin doses to bedtime",
+        "Take the insulin only with a high-fat meal",
+        "Store the current pen at room temperature for several months"
+      ],
+      "correctAnswer": "Rotate injection sites to reduce lipodystrophy and absorption problems",
+      "explanation": "Repeated injections into the same area can cause lipodystrophy and unpredictable absorption. Rotation of injection sites is an important insulin-counseling pearl.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d47",
+        "d48",
+        "d46",
+        "d49",
+        "d50"
+      ],
+      "tags": [
+        "Mastery",
+        "Insulin",
+        "Counseling",
+        "Lipodystrophy"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_009",
+      "questionText": "A newly diagnosed patient with type 2 diabetes needs a first-line oral drug that lowers hepatic glucose production and usually does not cause hypoglycemia when used alone. Which drug best fits that description?",
+      "options": [
+        "Metformin",
+        "Glipizide",
+        "Insulin lispro",
+        "Pioglitazone",
+        "Regular insulin"
+      ],
+      "correctAnswer": "Metformin",
+      "explanation": "Metformin is the classic first-line oral agent for type 2 diabetes. It decreases hepatic glucose production and generally does not cause hypoglycemia when used alone.",
+      "objective": "indication",
+      "relatedDrugIds": [
+        "d45"
+      ],
+      "tags": [
+        "Mastery",
+        "Metformin",
+        "First-line",
+        "T2DM"
+      ],
+      "difficulty": "easy",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_010",
+      "questionText": "A patient starts Glucophage and develops nausea and loose stools. Which counseling point is most likely to improve tolerability while keeping the patient on this high-yield first-line drug?",
+      "options": [
+        "Take metformin with meals and titrate gradually",
+        "Take it on an empty stomach with calcium",
+        "Stop all food intake for two hours after each dose",
+        "Switch the dose to immediately before bedtime on day one",
+        "Take it only when fasting glucose is above goal"
+      ],
+      "correctAnswer": "Take metformin with meals and titrate gradually",
+      "explanation": "GI upset is common when metformin is started. Taking it with meals and increasing the dose gradually can improve tolerability.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d45"
+      ],
+      "tags": [
+        "Mastery",
+        "Metformin",
+        "GI effects",
+        "Counseling"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_011",
+      "questionText": "Metformin is high yield not just for its mechanism, but also for a long-term deficiency it can cause. Which lab issue becomes important to monitor over time in a patient on chronic metformin therapy?",
+      "options": [
+        "Vitamin B12 deficiency",
+        "Severe neutropenia",
+        "Prolonged INR",
+        "Hyperthyroidism",
+        "QT prolongation"
+      ],
+      "correctAnswer": "Vitamin B12 deficiency",
+      "explanation": "Long-term metformin therapy can lower vitamin B12 levels, so B12 deficiency is an important monitoring pearl in chronic use.",
+      "objective": "monitoring",
+      "relatedDrugIds": [
+        "d45"
+      ],
+      "tags": [
+        "Mastery",
+        "Metformin",
+        "B12",
+        "Monitoring"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_012",
+      "questionText": "A patient on metformin is scheduled for a contrast-enhanced CT scan and has borderline renal function. Which medication is classically held around this scenario because of lactic acidosis concern if kidney function worsens?",
+      "options": [
+        "Metformin",
+        "Pioglitazone",
+        "Sitagliptin",
+        "Glimepiride",
+        "Levothyroxine"
+      ],
+      "correctAnswer": "Metformin",
+      "explanation": "Metformin is commonly held around iodinated contrast exposure in patients at risk for renal injury because reduced clearance can increase lactic acidosis risk.",
+      "objective": "contraindication",
+      "relatedDrugIds": [
+        "d45"
+      ],
+      "tags": [
+        "Mastery",
+        "Metformin",
+        "Contrast",
+        "Renal function"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_013",
+      "questionText": "Actos improves insulin sensitivity rather than directly stimulating pancreatic insulin release. Through which high-yield mechanism does pioglitazone primarily work?",
+      "options": [
+        "PPAR-gamma agonism",
+        "Direct GLP-1 receptor agonism",
+        "DPP-4 inhibition",
+        "SGLT2 blockade in the proximal tubule",
+        "ATP-sensitive potassium channel closure on beta cells"
+      ],
+      "correctAnswer": "PPAR-gamma agonism",
+      "explanation": "Pioglitazone is a thiazolidinedione that improves insulin sensitivity through PPAR-gamma agonism.",
+      "objective": "moa",
+      "relatedDrugIds": [
+        "d58"
+      ],
+      "tags": [
+        "Mastery",
+        "Pioglitazone",
+        "Mechanism",
+        "PPAR-gamma"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_014",
+      "questionText": "A patient with type 2 diabetes starts Actos and soon develops worsening ankle edema and rapid weight gain. Which major caution makes pioglitazone a poor choice in patients with significant heart failure?",
+      "options": [
+        "It can cause fluid retention and worsen heart failure",
+        "It commonly causes severe hypoglycemia even when used alone",
+        "It is directly nephrotoxic and usually causes acute tubular necrosis",
+        "It irreversibly suppresses cortisol production",
+        "It causes agranulocytosis in a dose-dependent fashion"
+      ],
+      "correctAnswer": "It can cause fluid retention and worsen heart failure",
+      "explanation": "Pioglitazone can cause fluid retention, edema, and worsening heart failure, which is why it is high yield to avoid or use very cautiously in patients with significant HF.",
+      "objective": "contraindication",
+      "relatedDrugIds": [
+        "d58"
+      ],
+      "tags": [
+        "Mastery",
+        "Pioglitazone",
+        "Heart failure",
+        "Adverse effects"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_015",
+      "questionText": "Empagliflozin and dapagliflozin help lower glucose by acting in the kidney rather than the pancreas. What do SGLT2 inhibitors primarily block?",
+      "options": [
+        "Renal glucose reabsorption in the proximal tubule",
+        "DPP-4 breakdown of incretins",
+        "Peripheral conversion of T4 to T3",
+        "Aldosterone receptors in the collecting duct",
+        "HMG-CoA reductase in the liver"
+      ],
+      "correctAnswer": "Renal glucose reabsorption in the proximal tubule",
+      "explanation": "SGLT2 inhibitors block glucose reabsorption in the proximal renal tubule, causing glucosuria and lowering plasma glucose.",
+      "objective": "moa",
+      "relatedDrugIds": [
+        "d51",
+        "d52"
+      ],
+      "tags": [
+        "Mastery",
+        "SGLT2",
+        "Mechanism",
+        "Kidney"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_016",
+      "questionText": "A patient has type 2 diabetes plus heart failure and chronic kidney disease. Which drug class from this module is especially high yield because it can help all three problems?",
+      "options": [
+        "SGLT2 inhibitors",
+        "Sulfonylureas",
+        "Short-acting insulins",
+        "Thionamides",
+        "Thiazolidinediones"
+      ],
+      "correctAnswer": "SGLT2 inhibitors",
+      "explanation": "SGLT2 inhibitors are high yield because, beyond glucose lowering, they have important heart failure and kidney-protective roles.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d51",
+        "d52"
+      ],
+      "tags": [
+        "Mastery",
+        "SGLT2",
+        "HF",
+        "CKD"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_017",
+      "questionText": "Jardiance is one of the highest-yield SGLT2 inhibitors because of its diabetes, heart-failure, and kidney benefits. What is the generic name of Jardiance?",
+      "options": [
+        "Empagliflozin",
+        "Dapagliflozin",
+        "Sitagliptin",
+        "Semaglutide",
+        "Pioglitazone"
+      ],
+      "correctAnswer": "Empagliflozin",
+      "explanation": "Jardiance is the brand name for empagliflozin.",
+      "objective": "genericBrand",
+      "relatedDrugIds": [
+        "d51"
+      ],
+      "tags": [
+        "Mastery",
+        "SGLT2",
+        "brand-generic",
+        "Empagliflozin"
+      ],
+      "difficulty": "easy",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_018",
+      "questionText": "A patient taking a -gliflozin is scheduled for surgery. Because this class can contribute to euglycemic ketoacidosis around fasting and procedures, what is the usual high-yield perioperative counseling point?",
+      "options": [
+        "Hold the SGLT2 inhibitor for at least 3 days before surgery when possible",
+        "Double the dose the day before surgery",
+        "Continue it but skip all insulin",
+        "Switch it to bedtime the night before surgery",
+        "Take it with a large carbohydrate load immediately before anesthesia"
+      ],
+      "correctAnswer": "Hold the SGLT2 inhibitor for at least 3 days before surgery when possible",
+      "explanation": "SGLT2 inhibitors are commonly held for at least 3 days before surgery or prolonged fasting because of ketoacidosis risk.",
+      "objective": "dosing",
+      "relatedDrugIds": [
+        "d51",
+        "d52"
+      ],
+      "tags": [
+        "Mastery",
+        "SGLT2",
+        "Perioperative",
+        "DKA"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_019",
+      "questionText": "When counseling a patient starting Farxiga or Jardiance, which common class adverse effect should be discussed up front?",
+      "options": [
+        "Genital mycotic infections",
+        "Dry cough from bradykinin buildup",
+        "Gingival hyperplasia",
+        "Blue-gray skin discoloration",
+        "Ototoxicity"
+      ],
+      "correctAnswer": "Genital mycotic infections",
+      "explanation": "Genital mycotic infections are a classic counseling point for SGLT2 inhibitors because they increase urinary glucose exposure.",
+      "objective": "adverseEffect",
+      "relatedDrugIds": [
+        "d51",
+        "d52"
+      ],
+      "tags": [
+        "Mastery",
+        "SGLT2",
+        "Adverse effects",
+        "Genital infections"
+      ],
+      "difficulty": "easy",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_020",
+      "questionText": "An older adult starts empagliflozin and later reports dizziness, orthostasis, and mild dehydration. Which class effect best explains these symptoms?",
+      "options": [
+        "Osmotic diuresis leading to volume depletion",
+        "Direct bone marrow suppression",
+        "Profound thyroid hormone blockade",
+        "Aldosterone-mediated potassium retention",
+        "Bradykinin accumulation"
+      ],
+      "correctAnswer": "Osmotic diuresis leading to volume depletion",
+      "explanation": "SGLT2 inhibitors increase urinary glucose and water loss, so osmotic diuresis and volume depletion are important counseling points.",
+      "objective": "adverseEffect",
+      "relatedDrugIds": [
+        "d51",
+        "d52"
+      ],
+      "tags": [
+        "Mastery",
+        "SGLT2",
+        "Volume depletion",
+        "Counseling"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_021",
+      "questionText": "Ozempic and Wegovy are two high-yield brand names tied to one very testable generic. What is the generic name of Ozempic/Wegovy?",
+      "options": [
+        "Semaglutide",
+        "Liraglutide",
+        "Sitagliptin",
+        "Glipizide",
+        "Glimepiride"
+      ],
+      "correctAnswer": "Semaglutide",
+      "explanation": "Ozempic and Wegovy are brand names for semaglutide.",
+      "objective": "genericBrand",
+      "relatedDrugIds": [
+        "d53"
+      ],
+      "tags": [
+        "Mastery",
+        "GLP-1",
+        "brand-generic",
+        "Semaglutide"
+      ],
+      "difficulty": "easy",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_022",
+      "questionText": "Two GLP-1 receptor agonists appear in this module. Which one is classically remembered as a once-daily injection rather than a once-weekly product?",
+      "options": [
+        "Liraglutide",
+        "Semaglutide",
+        "Sitagliptin",
+        "Glipizide",
+        "Pioglitazone"
+      ],
+      "correctAnswer": "Liraglutide",
+      "explanation": "Liraglutide is the daily GLP-1 receptor agonist in this module, while semaglutide is the classic once-weekly GLP-1 option.",
+      "objective": "dosing",
+      "relatedDrugIds": [
+        "d54",
+        "d53"
+      ],
+      "tags": [
+        "Mastery",
+        "GLP-1",
+        "Dosing",
+        "Liraglutide"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_023",
+      "questionText": "A patient wants a diabetes medication that often helps with weight loss and slows gastric emptying while increasing glucose-dependent insulin secretion. Which drug class best fits that description?",
+      "options": [
+        "GLP-1 receptor agonists",
+        "Sulfonylureas",
+        "Thiazolidinediones",
+        "Thionamides",
+        "Long-acting insulins"
+      ],
+      "correctAnswer": "GLP-1 receptor agonists",
+      "explanation": "GLP-1 receptor agonists increase glucose-dependent insulin secretion, slow gastric emptying, and often promote weight loss.",
+      "objective": "moa",
+      "relatedDrugIds": [
+        "d53",
+        "d54"
+      ],
+      "tags": [
+        "Mastery",
+        "GLP-1",
+        "Mechanism",
+        "Weight loss"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_024",
+      "questionText": "A patient with a personal or family history of medullary thyroid carcinoma asks whether Ozempic is safe to use. Which answer is most appropriate?",
+      "options": [
+        "No \u2014 semaglutide is contraindicated with a personal or family history of MTC or MEN2",
+        "Yes \u2014 semaglutide is preferred in MEN2 because it lowers weight",
+        "Yes \u2014 but only if taken with metformin",
+        "Yes \u2014 because the warning applies only to sitagliptin",
+        "No \u2014 but only because semaglutide causes severe hypoglycemia when used alone"
+      ],
+      "correctAnswer": "No \u2014 semaglutide is contraindicated with a personal or family history of MTC or MEN2",
+      "explanation": "Semaglutide carries a thyroid C-cell tumor warning and is contraindicated in patients with a personal or family history of MTC or MEN2.",
+      "objective": "contraindication",
+      "relatedDrugIds": [
+        "d53"
+      ],
+      "tags": [
+        "Mastery",
+        "GLP-1",
+        "MEN2",
+        "MTC"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_025",
+      "questionText": "Januvia is a weight-neutral DPP-4 inhibitor that rarely causes hypoglycemia by itself. What additional high-yield dosing pearl should students remember about sitagliptin?",
+      "options": [
+        "It often needs renal dose adjustment",
+        "It must always be injected weekly",
+        "It should never be combined with metformin",
+        "It is mainly used for hyperthyroidism",
+        "It should be held because of bradykinin-mediated cough"
+      ],
+      "correctAnswer": "It often needs renal dose adjustment",
+      "explanation": "Sitagliptin is a DPP-4 inhibitor with low hypoglycemia risk alone, but renal dose adjustment is a key prescribing pearl.",
+      "objective": "monitoring",
+      "relatedDrugIds": [
+        "d55"
+      ],
+      "tags": [
+        "Mastery",
+        "Sitagliptin",
+        "DPP-4",
+        "Renal dosing"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_026",
+      "questionText": "A patient on sitagliptin develops blistering erosions, and the team is concerned about a rare but classic postmarketing warning. Which drug is most closely associated with bullous pemphigoid in this module?",
+      "options": [
+        "Sitagliptin",
+        "Semaglutide",
+        "Liraglutide",
+        "Metformin",
+        "Insulin detemir"
+      ],
+      "correctAnswer": "Sitagliptin",
+      "explanation": "Bullous pemphigoid is a high-yield rare adverse effect associated with DPP-4 inhibitors such as sitagliptin.",
+      "objective": "adverseEffect",
+      "relatedDrugIds": [
+        "d55"
+      ],
+      "tags": [
+        "Mastery",
+        "Sitagliptin",
+        "Bullous pemphigoid",
+        "Adverse effects"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_027",
+      "questionText": "A patient takes glipizide and then skips breakfast, increasing the risk of symptomatic hypoglycemia. What counseling point was most likely missed?",
+      "options": [
+        "Glipizide is typically taken about 30 minutes before a meal",
+        "Glipizide should only be taken once weekly",
+        "Glipizide should be taken at bedtime with no food",
+        "Glipizide is only for type 1 diabetes",
+        "Glipizide must be taken with calcium supplements"
+      ],
+      "correctAnswer": "Glipizide is typically taken about 30 minutes before a meal",
+      "explanation": "Glipizide is commonly taken about 30 minutes before a meal to reduce postprandial glucose, so skipping that meal increases hypoglycemia risk.",
+      "objective": "dosing",
+      "relatedDrugIds": [
+        "d56"
+      ],
+      "tags": [
+        "Mastery",
+        "Sulfonylurea",
+        "Glipizide",
+        "Meal timing"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_028",
+      "questionText": "A student is comparing the two sulfonylureas in this module. Which drug is classically administered with breakfast or the first main meal of the day, often as once-daily therapy?",
+      "options": [
+        "Glimepiride",
+        "Glipizide",
+        "Metformin",
+        "Sitagliptin",
+        "Pioglitazone"
+      ],
+      "correctAnswer": "Glimepiride",
+      "explanation": "Glimepiride is the once-daily sulfonylurea in this module and is administered with breakfast or the first main meal.",
+      "objective": "dosing",
+      "relatedDrugIds": [
+        "d57"
+      ],
+      "tags": [
+        "Mastery",
+        "Sulfonylurea",
+        "Glimepiride",
+        "Meal timing"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_029",
+      "questionText": "A patient newly prescribed Synthroid asks how to take it correctly. Which counseling statement is most accurate and high yield?",
+      "options": [
+        "Take levothyroxine on an empty stomach and separate it from calcium or iron by about 4 hours",
+        "Take levothyroxine only with a large breakfast to improve absorption",
+        "Take levothyroxine together with calcium for better thyroid replacement",
+        "Take levothyroxine only at bedtime with dairy products",
+        "Crush levothyroxine into antacid suspension before use"
+      ],
+      "correctAnswer": "Take levothyroxine on an empty stomach and separate it from calcium or iron by about 4 hours",
+      "explanation": "Levothyroxine is best taken on an empty stomach, and calcium/iron can impair absorption, so they should be separated by about 4 hours.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d59"
+      ],
+      "tags": [
+        "Mastery",
+        "Levothyroxine",
+        "Counseling",
+        "Absorption"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_030",
+      "questionText": "One thyroid hormone product in this module is synthetic T3 rather than T4 and therefore has a shorter half-life and faster onset. Which drug is it?",
+      "options": [
+        "Liothyronine",
+        "Levothyroxine",
+        "Methimazole",
+        "Propylthiouracil",
+        "Hydrocortisone"
+      ],
+      "correctAnswer": "Liothyronine",
+      "explanation": "Liothyronine is synthetic T3. Levothyroxine is synthetic T4 and has a longer half-life.",
+      "objective": "classId",
+      "relatedDrugIds": [
+        "d60",
+        "d59"
+      ],
+      "tags": [
+        "Mastery",
+        "Thyroid",
+        "Liothyronine",
+        "T3"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_031",
+      "questionText": "A nonpregnant adult with Graves disease is starting drug therapy for hyperthyroidism. Which thionamide is usually preferred for most patients because it is generally favored over PTU?",
+      "options": [
+        "Methimazole",
+        "Propylthiouracil",
+        "Levothyroxine",
+        "Liothyronine",
+        "Prednisone"
+      ],
+      "correctAnswer": "Methimazole",
+      "explanation": "Methimazole is generally preferred over PTU for most nonpregnant patients with hyperthyroidism.",
+      "objective": "indication",
+      "relatedDrugIds": [
+        "d61",
+        "d62"
+      ],
+      "tags": [
+        "Mastery",
+        "Hyperthyroidism",
+        "Methimazole",
+        "Preferred therapy"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_032",
+      "questionText": "Which antithyroid drug is classically preferred in the first trimester of pregnancy and is also remembered for blocking peripheral conversion of T4 to T3 in thyroid storm?",
+      "options": [
+        "Propylthiouracil (PTU)",
+        "Methimazole",
+        "Levothyroxine",
+        "Liothyronine",
+        "Sitagliptin"
+      ],
+      "correctAnswer": "Propylthiouracil (PTU)",
+      "explanation": "PTU is high yield for two reasons: it is preferred in the first trimester and it also blocks peripheral conversion of T4 to T3, which is useful in thyroid storm.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d62"
+      ],
+      "tags": [
+        "Mastery",
+        "PTU",
+        "Pregnancy",
+        "Thyroid storm"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_033",
+      "questionText": "A patient taking methimazole calls the clinic reporting fever and a very sore throat. Which serious adverse effect must be considered urgently with thionamide therapy?",
+      "options": [
+        "Agranulocytosis",
+        "Ototoxicity",
+        "Pancreatitis",
+        "Torsades de pointes",
+        "Angioedema"
+      ],
+      "correctAnswer": "Agranulocytosis",
+      "explanation": "Methimazole and PTU can rarely cause agranulocytosis. Fever or sore throat should prompt urgent evaluation.",
+      "objective": "adverseEffect",
+      "relatedDrugIds": [
+        "d61",
+        "d62"
+      ],
+      "tags": [
+        "Mastery",
+        "Thionamides",
+        "Agranulocytosis",
+        "Counseling"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_034",
+      "questionText": "A euthyroid patient asks for thyroid hormone solely to lose weight faster. Which response best reflects a high-yield boxed-warning pearl for levothyroxine?",
+      "options": [
+        "Thyroid hormone should not be used for weight loss in euthyroid patients",
+        "Levothyroxine is ideal for routine cosmetic weight loss",
+        "Levothyroxine should be used whenever BMI is above 30",
+        "Levothyroxine is safer for weight loss than GLP-1 agonists",
+        "Levothyroxine works only if taken with methimazole"
+      ],
+      "correctAnswer": "Thyroid hormone should not be used for weight loss in euthyroid patients",
+      "explanation": "Levothyroxine carries a high-yield boxed-warning pearl: thyroid hormones should not be used for weight loss in euthyroid patients because toxicity can be serious.",
+      "objective": "contraindication",
+      "relatedDrugIds": [
+        "d59"
+      ],
+      "tags": [
+        "Mastery",
+        "Levothyroxine",
+        "Boxed warning",
+        "Weight loss"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_035",
+      "questionText": "A levothyroxine dose was just adjusted today. Because thyroid hormone has a long half-life, when is the peak therapeutic effect of a given dose typically reached rather than judged after only a few days?",
+      "options": [
+        "About 4 to 6 weeks",
+        "12 hours",
+        "24 hours",
+        "2 to 3 days",
+        "Within one meal"
+      ],
+      "correctAnswer": "About 4 to 6 weeks",
+      "explanation": "Levothyroxine has a long half-life, so the peak therapeutic effect at a given dose is reached over weeks rather than days.",
+      "objective": "monitoring",
+      "relatedDrugIds": [
+        "d59"
+      ],
+      "tags": [
+        "Mastery",
+        "Levothyroxine",
+        "TSH",
+        "Monitoring"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_036",
+      "questionText": "A patient with adrenal insufficiency needs physiologic steroid replacement rather than simply an anti-inflammatory steroid burst. Which corticosteroid in this module is the classic replacement choice because it also has meaningful mineralocorticoid activity?",
+      "options": [
+        "Hydrocortisone",
+        "Dexamethasone",
+        "Prednisone",
+        "Methylprednisolone",
+        "Methimazole"
+      ],
+      "correctAnswer": "Hydrocortisone",
+      "explanation": "Hydrocortisone is the classic corticosteroid used for physiologic adrenal replacement and has more salt-retaining (mineralocorticoid) activity than the others in this module.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d166",
+        "d163",
+        "d165"
+      ],
+      "tags": [
+        "Mastery",
+        "Steroids",
+        "Hydrocortisone",
+        "Replacement"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_037",
+      "questionText": "Which corticosteroid in this module is most classically remembered as very potent and having little to no significant mineralocorticoid activity?",
+      "options": [
+        "Dexamethasone",
+        "Hydrocortisone",
+        "Prednisone",
+        "Methylprednisolone",
+        "Pioglitazone"
+      ],
+      "correctAnswer": "Dexamethasone",
+      "explanation": "Dexamethasone is the most potent steroid in this module and has minimal clinically significant mineralocorticoid activity.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d165"
+      ],
+      "tags": [
+        "Mastery",
+        "Steroids",
+        "Dexamethasone",
+        "Potency"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_038",
+      "questionText": "Which corticosteroid is the classic oral outpatient \"workhorse\" in this module, often taken in the morning and associated with hyperglycemia, osteoporosis, and adrenal suppression with longer courses?",
+      "options": [
+        "Prednisone",
+        "Hydrocortisone",
+        "Methimazole",
+        "Levothyroxine",
+        "Insulin aspart"
+      ],
+      "correctAnswer": "Prednisone",
+      "explanation": "Prednisone is the common oral outpatient corticosteroid associated with classic steroid adverse effects such as hyperglycemia, osteoporosis, and adrenal suppression.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d163"
+      ],
+      "tags": [
+        "Mastery",
+        "Steroids",
+        "Prednisone",
+        "Counseling"
+      ],
+      "difficulty": "medium",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_039",
+      "questionText": "You are reviewing IV steroid names for acute inflammatory flares. Medrol and Solu-Medrol correspond to which generic corticosteroid?",
+      "options": [
+        "Methylprednisolone",
+        "Prednisone",
+        "Hydrocortisone",
+        "Dexamethasone",
+        "Liothyronine"
+      ],
+      "correctAnswer": "Methylprednisolone",
+      "explanation": "Medrol and Solu-Medrol are brand names for methylprednisolone.",
+      "objective": "genericBrand",
+      "relatedDrugIds": [
+        "d164"
+      ],
+      "tags": [
+        "Mastery",
+        "Steroids",
+        "brand-generic",
+        "Methylprednisolone"
+      ],
+      "difficulty": "easy",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_040",
+      "questionText": "A patient has been taking systemic corticosteroids for several weeks. Why is tapering often necessary instead of abruptly stopping the drug?",
+      "options": [
+        "To reduce the risk of HPA-axis suppression and secondary adrenal insufficiency after withdrawal",
+        "To prevent permanent diabetes insipidus",
+        "To avoid irreversible thyroid failure",
+        "To increase mineralocorticoid potency",
+        "To prevent drug-induced neutropenia"
+      ],
+      "correctAnswer": "To reduce the risk of HPA-axis suppression and secondary adrenal insufficiency after withdrawal",
+      "explanation": "Longer courses of systemic corticosteroids can suppress the HPA axis. Gradual tapering helps reduce the risk of steroid-withdrawal adrenal insufficiency.",
+      "objective": "pearl",
+      "relatedDrugIds": [
+        "d163",
+        "d164",
+        "d165",
+        "d166"
+      ],
+      "tags": [
+        "Mastery",
+        "Steroids",
+        "Taper",
+        "HPA axis"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_041",
+      "questionText": "A patient is receiving immunosuppressive doses of prednisone and asks about live vaccines. Which teaching point is most accurate?",
+      "options": [
+        "Live or live-attenuated vaccines are generally contraindicated at immunosuppressive steroid doses",
+        "Live vaccines are preferred because steroids improve vaccine response",
+        "All vaccines are ineffective once any steroid is started",
+        "Vaccines are only an issue with hydrocortisone, not prednisone",
+        "Prednisone must be stopped for one full year before any vaccine"
+      ],
+      "correctAnswer": "Live or live-attenuated vaccines are generally contraindicated at immunosuppressive steroid doses",
+      "explanation": "At immunosuppressive corticosteroid doses, live or live-attenuated vaccines are generally contraindicated. Inactivated vaccines may be used, but response can be blunted.",
+      "objective": "contraindication",
+      "relatedDrugIds": [
+        "d163",
+        "d164",
+        "d165",
+        "d166"
+      ],
+      "tags": [
+        "Mastery",
+        "Steroids",
+        "Vaccines",
+        "Immunosuppression"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_042",
+      "questionText": "A patient stable on warfarin starts levothyroxine for hypothyroidism. Which monitoring test deserves closer follow-up because thyroid replacement can alter anticoagulant response?",
+      "options": [
+        "INR",
+        "TSH only",
+        "Serum digoxin level",
+        "QT interval",
+        "Anti-Xa level"
+      ],
+      "correctAnswer": "INR",
+      "explanation": "Levothyroxine can alter warfarin response, so INR monitoring is a high-yield cross-module interaction pearl.",
+      "objective": "interaction",
+      "relatedDrugIds": [
+        "d59",
+        "d41"
+      ],
+      "tags": [
+        "Mastery",
+        "Cross-module",
+        "Levothyroxine",
+        "Warfarin"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_043",
+      "questionText": "A patient uses insulin lispro for meals and propranolol for migraine prevention. Which counseling point is most important about this cross-module combination?",
+      "options": [
+        "Propranolol can mask adrenergic warning signs of hypoglycemia",
+        "Propranolol prevents all insulin-related hypoglycemia",
+        "Lispro should never be used in patients with migraine",
+        "The combination causes hyperthyroidism",
+        "Propranolol converts lispro into a long-acting insulin"
+      ],
+      "correctAnswer": "Propranolol can mask adrenergic warning signs of hypoglycemia",
+      "explanation": "Nonselective beta blockers such as propranolol can blunt adrenergic warning symptoms of hypoglycemia, making insulin therapy riskier to recognize early.",
+      "objective": "interaction",
+      "relatedDrugIds": [
+        "d47",
+        "d18"
+      ],
+      "tags": [
+        "Mastery",
+        "Cross-module",
+        "Insulin",
+        "Propranolol"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_044",
+      "questionText": "A patient with heart failure is already taking furosemide and then starts empagliflozin for diabetes plus cardiorenal benefit. Which adverse-effect risk becomes especially important because both therapies can promote fluid loss?",
+      "options": [
+        "Volume depletion and hypotension",
+        "Bradykinin-mediated cough",
+        "Agranulocytosis",
+        "Severe constipation",
+        "Hyperthyroidism"
+      ],
+      "correctAnswer": "Volume depletion and hypotension",
+      "explanation": "Furosemide and SGLT2 inhibitors can both contribute to fluid loss, so dizziness, orthostasis, and volume depletion are important cross-module counseling points.",
+      "objective": "interaction",
+      "relatedDrugIds": [
+        "d51",
+        "d11"
+      ],
+      "tags": [
+        "Mastery",
+        "Cross-module",
+        "SGLT2",
+        "Furosemide"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q3g_add_045",
+      "questionText": "A patient takes low-dose aspirin for secondary cardiovascular prevention and then receives a longer course of prednisone. Which complication deserves extra counseling because this combination can increase risk?",
+      "options": [
+        "GI irritation and bleeding",
+        "Thyroid storm",
+        "Profound bradycardia",
+        "Angioedema",
+        "Blue-gray skin discoloration"
+      ],
+      "correctAnswer": "GI irritation and bleeding",
+      "explanation": "Aspirin plus systemic corticosteroids can increase GI irritation and bleeding risk, so patients should be counseled to report melena, hematemesis, or persistent epigastric pain.",
+      "objective": "interaction",
+      "relatedDrugIds": [
+        "d163",
+        "d38"
+      ],
+      "tags": [
+        "Mastery",
+        "Cross-module",
+        "Prednisone",
+        "Aspirin"
+      ],
+      "difficulty": "hard",
+      "subsectionId": "3g",
+      "type": "multipleChoice",
+      "source": "curated"
+    }
+  ]
+}

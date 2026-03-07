@@ -31,6 +31,9 @@ struct DrugDataService {
                 if sub.id == Self.masteringCv2SubsectionId {
                     bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_2gMastery)
                 }
+                if sub.id == Self.masteringEndocrineDiabetesSubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_3gMastery)
+                }
             }
         }
         self.questionBank = bank
