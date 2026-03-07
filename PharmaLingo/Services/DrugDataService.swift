@@ -34,6 +34,9 @@ struct DrugDataService {
                 if sub.id == Self.masteringEndocrineDiabetesSubsectionId {
                     bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_3gMastery)
                 }
+                if sub.id == Self.masteringCnsPsychSubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_4fMastery)
+                }
             }
         }
         self.questionBank = bank
