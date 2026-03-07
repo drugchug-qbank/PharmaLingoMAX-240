@@ -27,7 +27,7 @@ WHERE weekly_xp_reset_week IS NULL OR weekly_xp = total_xp;
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS user_mastery (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     question_key TEXT NOT NULL,
     level INT DEFAULT 0,
     total_attempts INT DEFAULT 0,
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS user_mastery (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS user_daily_state (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     state_date DATE NOT NULL DEFAULT CURRENT_DATE,
     quest_set_index INT DEFAULT 0,
     daily_quest_progress JSONB DEFAULT '[]'::jsonb,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS user_daily_state (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS user_inventory (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE UNIQUE,
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE UNIQUE,
     fifty_fifty_count INT DEFAULT 1,
     shield_heart_count INT DEFAULT 1,
     pharma_vision_count INT DEFAULT 1,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS user_inventory (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS clinical_qotd_answers (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     answer_date DATE NOT NULL,
     question_id TEXT NOT NULL,
     is_correct BOOLEAN NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS clinical_qotd_answers (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS xp_events (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     idempotency_key TEXT NOT NULL,
     xp_awarded INT NOT NULL DEFAULT 0,
     coins_awarded INT NOT NULL DEFAULT 0,
@@ -165,7 +165,7 @@ CREATE OR REPLACE FUNCTION ensure_profile(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_profile JSONB;
 BEGIN
     INSERT INTO profiles (id, username, profession, school,
@@ -210,7 +210,7 @@ CREATE OR REPLACE FUNCTION apply_quiz_completion(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_row profiles%ROWTYPE;
     v_completed JSONB;
     v_stars JSONB;
@@ -339,7 +339,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     UPDATE profiles SET
         hearts = GREATEST(hearts - 1, 0),
@@ -361,7 +361,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     UPDATE profiles SET
         hearts = LEAST(p_new_hearts, 5),
@@ -383,7 +383,7 @@ CREATE OR REPLACE FUNCTION apply_clinical_qotd(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_already BOOLEAN;
     v_points INT;
 BEGIN
@@ -419,7 +419,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     RETURN COALESCE(
         (SELECT jsonb_object_agg(answer_date::TEXT, is_correct)
@@ -440,7 +440,7 @@ CREATE OR REPLACE FUNCTION purchase_avatar_item(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_coins INT;
     v_owned JSONB;
     v_col TEXT;
@@ -489,7 +489,7 @@ CREATE OR REPLACE FUNCTION save_avatar_selection(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     UPDATE profiles SET
         avatar_animal = p_animal,
@@ -519,7 +519,7 @@ CREATE OR REPLACE FUNCTION complete_onboarding(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     UPDATE profiles SET
         school = p_school,
@@ -546,7 +546,7 @@ CREATE OR REPLACE FUNCTION save_profile_info(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     UPDATE profiles SET
         username = p_username,
@@ -569,7 +569,7 @@ CREATE OR REPLACE FUNCTION purchase_powerup(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_coins INT;
     v_inv user_inventory%ROWTYPE;
     v_count INT;
@@ -614,7 +614,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_count INT;
     v_col TEXT;
 BEGIN
@@ -647,7 +647,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_coins INT;
 BEGIN
     SELECT coins INTO v_coins FROM profiles WHERE id = v_uid FOR UPDATE;
@@ -673,8 +673,8 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
-    v_target_id TEXT;
+    v_uid UUID := auth.uid();
+    v_target_id UUID;
     v_existing RECORD;
 BEGIN
     SELECT id INTO v_target_id FROM profiles WHERE username = p_friend_username LIMIT 1;
@@ -713,7 +713,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_req RECORD;
 BEGIN
     SELECT * INTO v_req FROM friends WHERE id = p_request_id;
@@ -738,7 +738,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     DELETE FROM friends
     WHERE (user_id = v_uid AND friend_id = p_friend_id)
@@ -763,7 +763,7 @@ CREATE OR REPLACE FUNCTION save_daily_state(
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_today DATE := CURRENT_DATE;
 BEGIN
     INSERT INTO user_daily_state (user_id, state_date, quest_set_index, daily_quest_progress,
@@ -791,7 +791,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_today DATE := CURRENT_DATE;
     v_result JSONB;
 BEGIN
@@ -811,7 +811,7 @@ RETURNS VOID
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_rec JSONB;
 BEGIN
     FOR v_rec IN SELECT * FROM jsonb_array_elements(p_records) LOOP
@@ -846,7 +846,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     RETURN COALESCE(
         (SELECT jsonb_object_agg(
@@ -873,7 +873,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_result JSONB;
 BEGIN
     SELECT to_jsonb(i) INTO v_result FROM user_inventory i WHERE i.user_id = v_uid;
@@ -893,7 +893,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_coins INT;
 BEGIN
     SELECT coins INTO v_coins FROM profiles WHERE id = v_uid FOR UPDATE;
@@ -915,7 +915,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     IF p_idempotency_key IS NOT NULL THEN
         IF EXISTS(SELECT 1 FROM xp_events WHERE user_id = v_uid AND idempotency_key = p_idempotency_key) THEN
@@ -938,7 +938,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_coins INT;
 BEGIN
     SELECT coins INTO v_coins FROM profiles WHERE id = v_uid FOR UPDATE;
@@ -964,7 +964,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
 BEGIN
     UPDATE profiles SET hearts = LEAST(hearts + 1, 5) WHERE id = v_uid;
     RETURN (SELECT to_jsonb(p) FROM profiles p WHERE p.id = v_uid);
@@ -979,7 +979,7 @@ RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 DECLARE
-    v_uid TEXT := auth.uid()::TEXT;
+    v_uid UUID := auth.uid();
     v_coins INT;
     v_col TEXT;
     v_already BOOLEAN;
@@ -1044,15 +1044,15 @@ ALTER TABLE clinical_qotd_answers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE xp_events ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can read own mastery" ON user_mastery
-    FOR SELECT USING (user_id = auth.uid()::TEXT);
+    FOR SELECT USING (user_id = auth.uid());
 CREATE POLICY "Users can read own daily state" ON user_daily_state
-    FOR SELECT USING (user_id = auth.uid()::TEXT);
+    FOR SELECT USING (user_id = auth.uid());
 CREATE POLICY "Users can read own inventory" ON user_inventory
-    FOR SELECT USING (user_id = auth.uid()::TEXT);
+    FOR SELECT USING (user_id = auth.uid());
 CREATE POLICY "Users can read own qotd answers" ON clinical_qotd_answers
-    FOR SELECT USING (user_id = auth.uid()::TEXT);
+    FOR SELECT USING (user_id = auth.uid());
 CREATE POLICY "Users can read own xp events" ON xp_events
-    FOR SELECT USING (user_id = auth.uid()::TEXT);
+    FOR SELECT USING (user_id = auth.uid());
 
 -- Profiles: users can read all (for leaderboard) but only update own non-economy fields
 CREATE POLICY "Anyone can read profiles" ON profiles
