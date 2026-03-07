@@ -52,6 +52,8 @@ class GameViewModel {
     var dailySpacedReviewCount: Int = 0
     private var dailyPracticeDate: String = ""
 
+    private var hasLoadedFromCloud: Bool = false
+
     private static let allQuestPool: [[DailyQuest]] = [
         [
             DailyQuest(id: "dq_lesson1", title: "Complete 1 Lesson", description: "Finish any lesson", iconName: "book.fill", target: 1, current: 0, coinReward: 20),
@@ -404,7 +406,7 @@ class GameViewModel {
                 idempotencyKey: idempotencyKey
             ) {
                 hydrateFromProfile(updatedProfile)
-            } else {
+            } else if hasLoadedFromCloud {
                 await SupabaseService.shared.syncGameState(from: self)
             }
         }
@@ -570,12 +572,14 @@ class GameViewModel {
     }
 
     func syncToCloud() {
+        guard hasLoadedFromCloud else { return }
         Task {
             await SupabaseService.shared.syncGameState(from: self)
         }
     }
 
     func syncDailyStateToCloud() {
+        guard hasLoadedFromCloud else { return }
         let questProgress = dailyQuests.map { ["id": $0.id, "current": $0.current] as [String : Any] }
         let boostData = activeBoosts.filter { $0.isActive }.map { ["type": $0.type.rawValue, "expiresAt": $0.expiresAt.timeIntervalSince1970] as [String : Any] }
         let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
@@ -595,6 +599,7 @@ class GameViewModel {
     }
 
     func syncMasteryToCloud() {
+        guard hasLoadedFromCloud else { return }
         let records: [[String: Any]] = masteryMap.map { key, record in
             [
                 "question_key": key,
@@ -751,6 +756,8 @@ class GameViewModel {
     }
 
     func resetToDefaults() {
+        let oldUserId = currentUserId
+        hasLoadedFromCloud = false
         currentUserId = nil
         hearts = 5
         coins = 50
@@ -791,6 +798,10 @@ class GameViewModel {
         powerUpInventory = .defaultInventory
         UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state")
         UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map")
+        if let uid = oldUserId {
+            UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state_\(uid)")
+            UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map_\(uid)")
+        }
     }
 
     func recordQuestionAttempt(question: Question, isCorrect: Bool) {
@@ -1009,6 +1020,7 @@ class GameViewModel {
         currentUserId = profile.id
 
         hydrateFromProfile(profile)
+        hasLoadedFromCloud = true
 
         checkStreak()
         regenerateHearts()
