@@ -40,6 +40,9 @@ struct DrugDataService {
                 if sub.id == Self.systemicSteroidsInRheumSubsectionId {
                     bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_5eMastery)
                 }
+                if sub.id == Self.masteringPainRheumSubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_5fMastery)
+                }
             }
         }
         self.questionBank = bank
