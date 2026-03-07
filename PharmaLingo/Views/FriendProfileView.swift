@@ -44,17 +44,6 @@ struct FriendProfileView: View {
                                     .clipShape(Capsule())
                             }
 
-                            if !friend.profession.isEmpty {
-                                HStack(spacing: 6) {
-                                    Image(Profession.badgeImage(for: friend.profession))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 24, height: 24)
-                                    Text(friend.profession)
-                                        .font(AppTheme.funFont(.subheadline, weight: .medium))
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
                             if !friend.school.isEmpty {
                                 Text(friend.school)
                                     .font(AppTheme.funFont(.caption, weight: .medium))
@@ -68,6 +57,9 @@ struct FriendProfileView: View {
                         statItem(icon: "bolt.fill", value: "\(friend.totalXP)", label: "Total XP", color: AppTheme.xpPurple)
                         statItem(icon: "flame.fill", value: "\(friend.currentStreak)", label: "Streak", color: AppTheme.accentOrange)
                         statItem(icon: "target", value: "\(Int(friend.accuracy * 100))%", label: "Accuracy", color: AppTheme.primaryBlue)
+                        if !friend.profession.isEmpty {
+                            professionStatItem(profession: friend.profession)
+                        }
                     }
                     .padding(16)
                     .cardStyle()
@@ -327,6 +319,21 @@ struct FriendProfileView: View {
             Text(label)
                 .font(AppTheme.funFont(.caption, weight: .medium))
                 .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func professionStatItem(profession: String) -> some View {
+        VStack(spacing: 6) {
+            Image(Profession.badgeImage(for: profession))
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 38)
+            Text(profession)
+                .font(AppTheme.funFont(.caption, weight: .medium))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity)
     }

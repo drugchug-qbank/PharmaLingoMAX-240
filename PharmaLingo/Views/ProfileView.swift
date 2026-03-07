@@ -184,7 +184,7 @@ struct ProfileView: View {
                                     Image(gameVM.selectedProfession.badgeImageName)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 36, height: 36)
+                                        .frame(width: 54, height: 54)
 
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(gameVM.selectedProfession.rawValue)
