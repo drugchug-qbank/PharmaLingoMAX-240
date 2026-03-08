@@ -15,7 +15,7 @@ struct BunnyImageAvatarView: View {
 
     static func eyeAssetName(for style: EyeStyle) -> String {
         switch style {
-        case .normal: return "avatar_bunny_eyes_neutral_v3_fixed"
+        case .normal: return "avatar_bunny_eyes_neutral_v4_close"
         default: return ""
         }
     }
