@@ -51,7 +51,7 @@
   {
     "id": "CQOTD-0002",
     "day_of_year": 2,
-    "title": "Optimizing HFrEF therapy with ARNI",
+    "title": "Optimizing HFrEF therapy",
     "stem": "A 63-year-old woman has chronic HFrEF (EF 30%) with NYHA class II symptoms despite guideline-directed therapy.\nMeds: lisinopril 20 mg daily, carvedilol 25 mg twice daily, spironolactone 25 mg daily, furosemide 20 mg daily.\nLabs: K 4.6 mEq/L, SCr 1.0 mg/dL.\nVitals: BP 118/70 mmHg, HR 64 bpm.",
     "question": "Which medication change provides additional mortality benefit for symptomatic HFrEF in this stable patient?",
     "answer_choices": [
@@ -249,7 +249,7 @@
   {
     "id": "CQOTD-0006",
     "day_of_year": 6,
-    "title": "Rate control in AF with HFrEF—avoid non-DHP CCBs",
+    "title": "Rate control in AF with HFrEF",
     "stem": "A 71-year-old woman with chronic HFrEF (EF 30%) and persistent atrial fibrillation presents with palpitations.\nVitals: BP 110/72 mmHg, HR 142 bpm (irregularly irregular).\nShe is not volume overloaded.",
     "question": "Which medication should be avoided for rate control because it can worsen systolic heart failure?",
     "answer_choices": [
@@ -301,7 +301,7 @@
   {
     "id": "CQOTD-0007",
     "day_of_year": 7,
-    "title": "Simvastatin + clarithromycin interaction",
+    "title": "Statin + macrolide interaction",
     "stem": "A 57-year-old man takes simvastatin 40 mg nightly for hyperlipidemia. He is prescribed clarithromycin for acute bacterial sinusitis.\nHe asks if he can take both medications together.",
     "question": "What is the best recommendation to reduce the risk of severe statin-associated myopathy/rhabdomyolysis?",
     "answer_choices": [
@@ -351,7 +351,7 @@
   {
     "id": "CQOTD-0008",
     "day_of_year": 8,
-    "title": "Severe hypertriglyceridemia—prevent pancreatitis",
+    "title": "Severe hypertriglyceridemia",
     "stem": "A 46-year-old woman has fasting triglycerides of 1,200 mg/dL on repeat testing.\nPMH: Type 2 diabetes, obesity.\nMeds: metformin 1,000 mg twice daily, atorvastatin 20 mg nightly.\nShe denies alcohol use. No history of pancreatitis.",
     "question": "Which medication is most appropriate to add primarily to reduce triglycerides and prevent pancreatitis?",
     "answer_choices": [
@@ -400,7 +400,7 @@
   {
     "id": "CQOTD-0009",
     "day_of_year": 9,
-    "title": "Ticagrelor adverse effect → switch P2Y12 inhibitor",
+    "title": "P2Y12 inhibitor adverse effect",
     "stem": "A 60-year-old man had an NSTEMI and drug-eluting stent placed 2 weeks ago.\nMeds: aspirin 81 mg daily + ticagrelor 90 mg twice daily, atorvastatin 80 mg nightly.\nHe reports new bothersome shortness of breath that started after ticagrelor initiation. Workup shows no heart failure or pulmonary cause.",
     "question": "Which medication is the best alternative to maintain dual antiplatelet therapy while addressing the suspected ticagrelor side effect?",
     "answer_choices": [
@@ -448,7 +448,7 @@
   {
     "id": "CQOTD-0010",
     "day_of_year": 10,
-    "title": "Mechanical heart valve → warfarin only",
+    "title": "Mechanical heart valve anticoagulation",
     "stem": "A 66-year-old woman has atrial fibrillation and a mechanical mitral valve replacement.\nShe asks about “newer blood thinners” because she is tired of INR checks.",
     "question": "Which anticoagulant is indicated for stroke/systemic embolism prevention in this patient?",
     "answer_choices": [
@@ -498,7 +498,7 @@
   {
     "id": "CQOTD-0011",
     "day_of_year": 11,
-    "title": "Warfarin + antibiotic—choose minimal interaction for cystitis",
+    "title": "Warfarin + antibiotic",
     "stem": "A 76-year-old woman with a history of DVT takes warfarin with a stable INR around 2.4.\nShe has dysuria and urinary frequency. UA suggests uncomplicated cystitis. She has a documented sulfonamide allergy (hives).\nRenal function: eGFR 65 mL/min/1.73m².",
     "question": "Which antibiotic is the best choice for uncomplicated cystitis while minimizing warfarin interaction and avoiding sulfa?",
     "answer_choices": [
@@ -549,7 +549,7 @@
   {
     "id": "CQOTD-0012",
     "day_of_year": 12,
-    "title": "Metformin and acute kidney injury—hold to reduce lactic acidosis risk",
+    "title": "Diabetes medication and acute kidney injury",
     "stem": "A 64-year-old man with type 2 diabetes presents with fever and hypotension and is diagnosed with sepsis.\nHome meds include metformin 1,000 mg twice daily.\nLabs: SCr 2.4 mg/dL (baseline 1.0), eGFR ~28 mL/min/1.73m², lactate 3.8 mmol/L.",
     "question": "Which medication should be held due to increased risk of lactic acidosis in this setting?",
     "answer_choices": [
@@ -601,7 +601,7 @@
   {
     "id": "CQOTD-0013",
     "day_of_year": 13,
-    "title": "T2DM + HFrEF—choose SGLT2 inhibitor for HF benefit",
+    "title": "T2DM + HFrEF",
     "stem": "A 59-year-old man has type 2 diabetes and chronic HFrEF (EF 35%). He is currently on metformin.\nA1c is 7.8%. eGFR is 55 mL/min/1.73m². He has mild lower-extremity edema but no acute decompensation.",
     "question": "Which medication is best to add for glycemic control with proven heart failure benefit?",
     "answer_choices": [
@@ -650,7 +650,7 @@
   {
     "id": "CQOTD-0014",
     "day_of_year": 14,
-    "title": "GLP-1 RA for weight loss and A1c reduction",
+    "title": "T2DM with obesity and suboptimal A1c",
     "stem": "A 41-year-old woman with type 2 diabetes (A1c 8.2%) and obesity (BMI 36) is on metformin and wants a medication that helps with weight loss.\nShe has no history of pancreatitis and no personal/family history of medullary thyroid carcinoma.",
     "question": "Which medication is the best next option to improve glycemic control and promote weight loss?",
     "answer_choices": [
@@ -747,7 +747,7 @@
   {
     "id": "CQOTD-0016",
     "day_of_year": 16,
-    "title": "Graves disease in first trimester—PTU preferred",
+    "title": "Graves disease in first trimester",
     "stem": "A 28-year-old woman (10 weeks pregnant) is diagnosed with Graves disease.\nShe has tachycardia, weight loss, and a suppressed TSH with elevated free T4.",
     "question": "Which antithyroid medication is preferred during the first trimester of pregnancy?",
     "answer_choices": [
@@ -794,7 +794,7 @@
   {
     "id": "CQOTD-0017",
     "day_of_year": 17,
-    "title": "Hypothyroidism in CAD—levothyroxine preferred",
+    "title": "Hypothyroidism in CAD",
     "stem": "A 67-year-old man with coronary artery disease presents with fatigue and weight gain.\nLabs: TSH 18 mIU/L (high), free T4 low.",
     "question": "Which medication is preferred for long-term thyroid hormone replacement in this patient?",
     "answer_choices": [
@@ -841,7 +841,7 @@
   {
     "id": "CQOTD-0018",
     "day_of_year": 18,
-    "title": "COPD exacerbation—short course oral steroid",
+    "title": "COPD exacerbation",
     "stem": "A 63-year-old man with COPD presents with increased dyspnea and sputum production.\nO2 sat 91% on room air. He has no signs of pneumonia on chest X-ray.",
     "question": "Which medication is most appropriate to reduce airway inflammation during this acute COPD exacerbation?",
     "answer_choices": [
@@ -890,7 +890,7 @@
   {
     "id": "CQOTD-0019",
     "day_of_year": 19,
-    "title": "MRSA pneumonia in a patient on an SSRI—avoid linezolid",
+    "title": "MRSA pneumonia in a patient on an SSRI",
     "stem": "A 55-year-old woman is hospitalized with severe community-acquired pneumonia. Sputum Gram stain and risk factors raise concern for MRSA.\nPMH: depression.\nMeds: sertraline 100 mg daily.",
     "question": "Which antibiotic is preferred for suspected MRSA pneumonia while minimizing the risk of serotonin syndrome?",
     "answer_choices": [
@@ -939,7 +939,7 @@
   {
     "id": "CQOTD-0020",
     "day_of_year": 20,
-    "title": "SVT termination—adenosine",
+    "title": "SVT termination",
     "stem": "A 24-year-old woman presents with sudden palpitations and lightheadedness.\nECG shows a regular narrow-complex tachycardia at 190 bpm consistent with AVNRT.\nShe is stable (BP 112/70) and vagal maneuvers are unsuccessful.",
     "question": "Which medication is most appropriate for rapid termination of this arrhythmia?",
     "answer_choices": [
@@ -985,7 +985,7 @@
   {
     "id": "CQOTD-0021",
     "day_of_year": 21,
-    "title": "Digoxin toxicity risk—hypokalemia from loop diuretic",
+    "title": "Digoxin toxicity risk",
     "stem": "A 79-year-old man with atrial fibrillation and HFrEF takes digoxin and furosemide.\nHe presents with nausea, weakness, and “yellow-green” vision changes.\nLabs: K 3.1 mEq/L (low).",
     "question": "Which medication should be administered to help reduce the risk of digoxin-related ventricular arrhythmias in this patient?",
     "answer_choices": [
@@ -1035,7 +1035,7 @@
   {
     "id": "CQOTD-0022",
     "day_of_year": 22,
-    "title": "Bupropion—avoid in seizure disorder",
+    "title": "Antidepressant to avoid in seizure disorder",
     "stem": "A 32-year-old woman with a history of epilepsy (well-controlled on levetiracetam) presents with depressive symptoms.\nShe asks about starting bupropion because a friend said it “helps with energy.”",
     "question": "Which antidepressant option should generally be avoided because it can lower the seizure threshold?",
     "answer_choices": [
@@ -1085,7 +1085,7 @@
   {
     "id": "CQOTD-0023",
     "day_of_year": 23,
-    "title": "Procedural sedation reversal—flumazenil",
+    "title": "Procedural sedation reversal",
     "stem": "A 40-year-old man receives midazolam for a brief endoscopy. After the procedure, he remains excessively sedated with shallow breathing.\nHe has no history of chronic benzodiazepine use and no seizure disorder.",
     "question": "Which medication is most appropriate to reverse the sedative effects?",
     "answer_choices": [
@@ -1134,7 +1134,7 @@
   {
     "id": "CQOTD-0024",
     "day_of_year": 24,
-    "title": "Opioid overdose—naloxone",
+    "title": "Opioid overdose",
     "stem": "A 29-year-old man is brought to the ED after being found unresponsive. He has pinpoint pupils and a respiratory rate of 6/min.\nFriends report he took “pain pills.”",
     "question": "Which medication should be given immediately to reverse the life-threatening effect?",
     "answer_choices": [
@@ -1180,7 +1180,7 @@
   {
     "id": "CQOTD-0025",
     "day_of_year": 25,
-    "title": "Chronic pain in CKD/HF—avoid NSAIDs",
+    "title": "Chronic pain in CKD/HF",
     "stem": "A 74-year-old woman with CKD stage 3 and heart failure has chronic osteoarthritis knee pain.\nMeds: lisinopril, furosemide, carvedilol.\nShe asks what she can take over-the-counter for pain.",
     "question": "Which analgesic is the safest first-line option to recommend?",
     "answer_choices": [
@@ -1230,7 +1230,7 @@
   {
     "id": "CQOTD-0026",
     "day_of_year": 26,
-    "title": "Acute gout flare with CKD + drug interaction—use prednisone",
+    "title": "Acute gout flare with CKD + drug interaction",
     "stem": "A 72-year-old man presents with acute podagra (hot, swollen, very painful first MTP joint).\nPMH: CKD stage 4, atrial fibrillation.\nMeds: apixaban and clarithromycin (started yesterday for bronchitis).\nRenal function: eGFR 20 mL/min/1.73m².",
     "question": "Which medication is most appropriate to treat this acute gout flare?",
     "answer_choices": [
@@ -1283,7 +1283,7 @@
   {
     "id": "CQOTD-0027",
     "day_of_year": 27,
-    "title": "Chronic gout with CAD—prefer allopurinol over febuxostat",
+    "title": "Chronic gout with CAD",
     "stem": "A 64-year-old man has recurrent gout attacks and now has tophi.\nPMH: myocardial infarction 2 years ago.\nUric acid: 9.8 mg/dL.\nHe is starting long-term urate-lowering therapy.",
     "question": "Which medication is preferred given his established coronary artery disease?",
     "answer_choices": [
@@ -1331,7 +1331,7 @@
   {
     "id": "CQOTD-0028",
     "day_of_year": 28,
-    "title": "Methotrexate is teratogenic—stop before conception",
+    "title": "DMARD teratogenicity",
     "stem": "A 29-year-old woman with rheumatoid arthritis is well-controlled on methotrexate.\nShe plans to try to conceive in the next few months and asks which of her medications is unsafe in pregnancy.",
     "question": "Which medication should be discontinued before conception due to high teratogenic risk?",
     "answer_choices": [
@@ -1382,7 +1382,7 @@
   {
     "id": "CQOTD-0029",
     "day_of_year": 29,
-    "title": "Tacrolimus toxicity from azole interaction",
+    "title": "Transplant drug toxicity from azole interaction",
     "stem": "A 50-year-old kidney transplant recipient takes tacrolimus.\nHe develops oral/esophageal candidiasis and is started on fluconazole.\nWithin a week he reports tremor and his creatinine rises. Tacrolimus trough level is markedly elevated.",
     "question": "Which medication most likely precipitated tacrolimus toxicity via a drug–drug interaction?",
     "answer_choices": [
@@ -1430,7 +1430,7 @@
   {
     "id": "CQOTD-0030",
     "day_of_year": 30,
-    "title": "C. difficile colitis—oral vancomycin",
+    "title": "C. difficile colitis",
     "stem": "A 64-year-old woman develops profuse watery diarrhea 5 days after finishing clindamycin for a dental infection.\nStool testing is positive for C. difficile toxin.\nShe is hemodynamically stable.",
     "question": "Which medication is most appropriate first-line therapy from the options below?",
     "answer_choices": [
@@ -1479,7 +1479,7 @@
   {
     "id": "CQOTD-0031",
     "day_of_year": 31,
-    "title": "Asthma controller—start inhaled corticosteroid",
+    "title": "Asthma controller",
     "stem": "A 19-year-old college student has asthma symptoms 4–5 days per week and uses her albuterol inhaler daily.\nShe has nighttime symptoms once weekly.\nShe has no history of COPD and no smoking history.",
     "question": "Which medication is the best next step as a daily controller to reduce symptoms and exacerbations?",
     "answer_choices": [
@@ -1528,7 +1528,7 @@
   {
     "id": "CQOTD-0032",
     "day_of_year": 32,
-    "title": "GERD in a patient on clopidogrel—choose pantoprazole",
+    "title": "GERD in a patient on clopidogrel",
     "stem": "A 62-year-old man with coronary stent is taking aspirin and clopidogrel.\nHe has daily GERD symptoms despite lifestyle measures. Endoscopy shows erosive esophagitis requiring a proton pump inhibitor.",
     "question": "Which acid-suppressing medication is preferred because it has less potential to reduce clopidogrel activation?",
     "answer_choices": [
@@ -1577,7 +1577,7 @@
   {
     "id": "CQOTD-0033",
     "day_of_year": 33,
-    "title": "Motion sickness prevention—scopolamine patch",
+    "title": "Motion sickness prevention",
     "stem": "A 36-year-old woman is going on a 7-day cruise and has a strong history of motion sickness.\nShe asks for a medication that can prevent nausea before it starts.",
     "question": "Which medication is most appropriate for motion sickness prevention?",
     "answer_choices": [
@@ -1625,7 +1625,7 @@
   {
     "id": "CQOTD-0034",
     "day_of_year": 34,
-    "title": "Migraine in CAD/anticoagulated patient—choose CGRP antagonist",
+    "title": "Migraine in CAD/anticoagulated patient",
     "stem": "A 60-year-old man has migraine headaches.\nPMH: prior myocardial infarction; atrial fibrillation on apixaban.\nHe needs an acute migraine medication that will not cause coronary vasoconstriction and avoids NSAID bleeding risk.",
     "question": "Which medication is the best choice for acute migraine treatment in this patient?",
     "answer_choices": [
@@ -1675,7 +1675,7 @@
   {
     "id": "CQOTD-0035",
     "day_of_year": 35,
-    "title": "Epilepsy in pregnancy—avoid valproate, prefer lamotrigine",
+    "title": "Epilepsy in pregnancy",
     "stem": "A 27-year-old woman with generalized epilepsy becomes pregnant (6 weeks gestation).\nShe is currently controlled on valproic acid and wants to minimize fetal risk.",
     "question": "Which antiepileptic is a preferred alternative from the options below due to a more favorable pregnancy safety profile?",
     "answer_choices": [
@@ -1726,7 +1726,7 @@
   {
     "id": "CQOTD-0036",
     "day_of_year": 36,
-    "title": "Mild Alzheimer disease—start donepezil",
+    "title": "Mild Alzheimer disease",
     "stem": "A 74-year-old man has progressive short-term memory loss over 18 months.\nNeurocognitive testing is consistent with mild Alzheimer disease.\nHe is independent in basic activities of daily living.",
     "question": "Which medication is most appropriate to start to help with cognitive symptoms?",
     "answer_choices": [
@@ -1774,7 +1774,7 @@
   {
     "id": "CQOTD-0037",
     "day_of_year": 37,
-    "title": "BPH—rapid symptom relief with alpha-1 blocker",
+    "title": "BPH",
     "stem": "A 62-year-old man has BPH with bothersome nocturia, weak stream, and hesitancy for 6 months.\nDigital rectal exam suggests mildly enlarged prostate. PSA is normal.\nHe wants a medication that improves urinary symptoms quickly.",
     "question": "Which medication is most appropriate to start for faster symptom relief?",
     "answer_choices": [
@@ -1822,7 +1822,7 @@
   {
     "id": "CQOTD-0038",
     "day_of_year": 38,
-    "title": "Overactive bladder in a patient with cognitive concerns—choose mirabegron",
+    "title": "Overactive bladder in a patient with cognitive concerns",
     "stem": "A 76-year-old woman has overactive bladder with urgency and urge incontinence.\nPMH: mild cognitive impairment; she is on donepezil.\nVitals: BP 126/74 mmHg.\nShe reports constipation and dry mouth easily with medications.",
     "question": "Which medication is the best choice to treat her overactive bladder while minimizing anticholinergic cognitive burden?",
     "answer_choices": [
@@ -1872,7 +1872,7 @@
   {
     "id": "CQOTD-0039",
     "day_of_year": 39,
-    "title": "Osteoporosis—bisphosphonate administration counseling",
+    "title": "Osteoporosis",
     "stem": "A 68-year-old woman is diagnosed with osteoporosis on DEXA scan.\nShe is started on a weekly oral bisphosphonate.\nShe has no esophageal motility disorders and can sit/stand upright.",
     "question": "Which medication below is the oral bisphosphonate that must be taken with plain water and the patient must remain upright afterward to reduce esophagitis risk?",
     "answer_choices": [
@@ -1921,7 +1921,7 @@
   {
     "id": "CQOTD-0040",
     "day_of_year": 40,
-    "title": "Open-angle glaucoma in asthma—choose prostaglandin analog",
+    "title": "Open-angle glaucoma in asthma",
     "stem": "A 58-year-old woman is diagnosed with primary open-angle glaucoma.\nPMH: asthma requiring albuterol inhaler use several times per week.",
     "question": "Which medication is the best choice to lower intraocular pressure while avoiding bronchospasm risk?",
     "answer_choices": [
@@ -1970,7 +1970,7 @@
   {
     "id": "CQOTD-0041",
     "day_of_year": 41,
-    "title": "Localized impetigo—topical mupirocin",
+    "title": "Localized impetigo",
     "stem": "A 7-year-old child has several small honey-crusted lesions around the nose.\nHe is afebrile and otherwise well. The lesions are localized.",
     "question": "Which medication is the most appropriate first-line treatment?",
     "answer_choices": [
@@ -2018,7 +2018,7 @@
   {
     "id": "CQOTD-0042",
     "day_of_year": 42,
-    "title": "Anaphylaxis—epinephrine auto-injector",
+    "title": "Anaphylaxis",
     "stem": "A 23-year-old woman with a peanut allergy accidentally eats a cookie containing peanuts.\nWithin minutes she develops wheezing, hives, and throat tightness.",
     "question": "Which medication should be administered immediately as first-line treatment?",
     "answer_choices": [
@@ -2069,7 +2069,7 @@
   {
     "id": "CQOTD-0043",
     "day_of_year": 43,
-    "title": "SSRI discontinuation symptoms—short half-life agent",
+    "title": "SSRI discontinuation symptoms",
     "stem": "A 35-year-old woman stopped her antidepressant abruptly and now has dizziness, “brain zaps,” irritability, and flu-like symptoms.\nThe symptoms started 2 days after stopping the medication.",
     "question": "Which antidepressant is most associated with discontinuation symptoms due to a short half-life?",
     "answer_choices": [
@@ -2118,7 +2118,7 @@
   {
     "id": "CQOTD-0044",
     "day_of_year": 44,
-    "title": "QT prolongation risk—choose safer antiemetic",
+    "title": "QT prolongation risk",
     "stem": "A 48-year-old woman with a history of congenital long QT syndrome presents with nausea from viral gastroenteritis.\nShe requests an antiemetic.",
     "question": "Which antiemetic should be avoided because it can prolong the QT interval?",
     "answer_choices": [
@@ -2164,7 +2164,7 @@
   {
     "id": "CQOTD-0045",
     "day_of_year": 45,
-    "title": "Anticoagulation bridge around surgery—LMWH",
+    "title": "Anticoagulation bridge around surgery",
     "stem": "A 58-year-old man with a history of DVT is on chronic warfarin therapy.\nHe is scheduled for an elective surgery and will need temporary interruption of warfarin.\nThe team plans perioperative bridging for high thrombosis risk.",
     "question": "Which medication is commonly used for bridging anticoagulation when warfarin is held?",
     "answer_choices": [
@@ -2211,7 +2211,7 @@
   {
     "id": "CQOTD-0046",
     "day_of_year": 46,
-    "title": "Resistant hypertension—choose longer-acting thiazide-like diuretic",
+    "title": "Resistant hypertension",
     "stem": "A 55-year-old man has hypertension despite adherence to:\n- Lisinopril 20 mg daily\n- Amlodipine 10 mg daily\nHome BPs average 152/92 mmHg.\nLabs: Na 139 mEq/L, K 4.2 mEq/L, SCr 0.9 mg/dL (eGFR 95).",
     "question": "Which medication is the best next add-on agent from the options below?",
     "answer_choices": [
@@ -2261,7 +2261,7 @@
   {
     "id": "CQOTD-0047",
     "day_of_year": 47,
-    "title": "Recurrent calcium kidney stones—thiazide to lower urinary calcium",
+    "title": "Recurrent calcium kidney stones",
     "stem": "A 44-year-old woman has recurrent calcium oxalate kidney stones despite increased hydration and dietary changes.\n24-hour urine shows hypercalciuria.\nPMH: hypertension.\nLabs: SCr 0.8 mg/dL, K 4.0 mEq/L.",
     "question": "Which medication can help prevent recurrent calcium stones by reducing urinary calcium excretion?",
     "answer_choices": [
@@ -2309,7 +2309,7 @@
   {
     "id": "CQOTD-0048",
     "day_of_year": 48,
-    "title": "HFrEF—select an evidence-based beta-blocker",
+    "title": "HFrEF",
     "stem": "A 61-year-old man has chronic HFrEF (EF 30%) and is stable without volume overload.\nHe is taking lisinopril and furosemide.\nThe cardiology team wants to start a beta-blocker with proven mortality benefit in HFrEF.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -2358,7 +2358,7 @@
   {
     "id": "CQOTD-0049",
     "day_of_year": 49,
-    "title": "Asthma + beta-blockers—avoid nonselective agents",
+    "title": "Asthma + beta-blockers",
     "stem": "A 26-year-old woman with asthma needs medication for performance anxiety before public speaking.\nShe uses albuterol as needed and has had prior wheezing with certain medications.",
     "question": "Which medication is most likely to trigger bronchospasm due to nonselective beta-blockade?",
     "answer_choices": [
@@ -2409,7 +2409,7 @@
   {
     "id": "CQOTD-0050",
     "day_of_year": 50,
-    "title": "AF rate control when beta-blockers are not ideal—use diltiazem",
+    "title": "AF rate control when beta-blockers are not ideal",
     "stem": "A 68-year-old man with persistent atrial fibrillation needs rate control.\nPMH: COPD with frequent albuterol use.\nEchocardiogram: EF 60% (no HFrEF).\nVitals: BP 128/76 mmHg, HR 132 bpm (irregular).",
     "question": "Which medication is an appropriate rate-control option in this patient?",
     "answer_choices": [
@@ -2457,7 +2457,7 @@
   {
     "id": "CQOTD-0051",
     "day_of_year": 51,
-    "title": "Prinzmetal (vasospastic) angina—use a dihydropyridine CCB",
+    "title": "Prinzmetal (vasospastic) angina",
     "stem": "A 47-year-old woman has episodic chest pain at rest, often in the early morning.\nECG during pain shows transient ST-segment elevation that resolves when symptoms stop.\nCoronary angiography shows no significant fixed stenosis.",
     "question": "Which medication is most appropriate for prevention of these episodes?",
     "answer_choices": [
@@ -2504,7 +2504,7 @@
   {
     "id": "CQOTD-0052",
     "day_of_year": 52,
-    "title": "Chronic stable angina prophylaxis—long-acting nitrate",
+    "title": "Chronic stable angina prophylaxis",
     "stem": "A 62-year-old man has chronic stable angina with predictable exertional chest discomfort.\nHe already carries sublingual nitroglycerin for acute episodes but needs a medication to reduce attack frequency.",
     "question": "Which medication is most appropriate for long-term angina prophylaxis?",
     "answer_choices": [
@@ -2552,7 +2552,7 @@
   {
     "id": "CQOTD-0053",
     "day_of_year": 53,
-    "title": "Hypertensive pulmonary edema with ischemic chest pain—IV nitroglycerin",
+    "title": "Hypertensive pulmonary edema with ischemic chest pain",
     "stem": "A 71-year-old man presents with severe dyspnea and chest pressure.\nExam: diffuse crackles, accessory muscle use.\nVitals: BP 198/110 mmHg, HR 104 bpm, O2 sat 86% RA.\nECG shows ischemic changes.",
     "question": "Which medication can rapidly reduce preload/afterload and improve pulmonary edema and ischemic chest pain?",
     "answer_choices": [
@@ -2602,7 +2602,7 @@
   {
     "id": "CQOTD-0054",
     "day_of_year": 54,
-    "title": "Very high LDL despite statin + ezetimibe—PCSK9 inhibitor",
+    "title": "Very high LDL despite statin + ezetimibe",
     "stem": "A 49-year-old man with heterozygous familial hypercholesterolemia has ASCVD.\nHe is taking rosuvastatin 40 mg nightly and ezetimibe 10 mg daily.\nDespite adherence, LDL-C remains 168 mg/dL.",
     "question": "Which medication is most appropriate to add next to achieve further LDL reduction?",
     "answer_choices": [
@@ -2651,7 +2651,7 @@
   {
     "id": "CQOTD-0055",
     "day_of_year": 55,
-    "title": "ASCVD + persistent triglycerides—icosapent ethyl",
+    "title": "ASCVD + persistent triglycerides",
     "stem": "A 67-year-old man with coronary artery disease is on atorvastatin 80 mg nightly.\nRecent labs: LDL-C 58 mg/dL, triglycerides 240 mg/dL (fasting), A1c 7.3%.\nHe is already following diet and exercise recommendations.",
     "question": "Which medication can be added to reduce cardiovascular risk in an ASCVD patient with persistently elevated triglycerides?",
     "answer_choices": [
@@ -2699,7 +2699,7 @@
   {
     "id": "CQOTD-0056",
     "day_of_year": 56,
-    "title": "Fibrate choice with statin—prefer fenofibrate over gemfibrozil",
+    "title": "Fibrate choice with statin",
     "stem": "A 58-year-old woman with type 2 diabetes and mixed dyslipidemia is taking atorvastatin 40 mg nightly.\nTriglycerides remain 520 mg/dL despite lifestyle changes.\nThe clinician wants to add a fibrate while minimizing statin-associated myopathy risk.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -2748,7 +2748,7 @@
   {
     "id": "CQOTD-0057",
     "day_of_year": 57,
-    "title": "Warfarin interaction—metronidazole increases INR",
+    "title": "Warfarin interaction",
     "stem": "A 73-year-old man on warfarin for atrial fibrillation has stable INRs around 2.3.\nHe is started on an antibiotic for suspected diverticulitis with anaerobic coverage.\nThree days later his INR is 5.1.",
     "question": "Which medication most likely caused the INR increase?",
     "answer_choices": [
@@ -2796,7 +2796,7 @@
   {
     "id": "CQOTD-0058",
     "day_of_year": 58,
-    "title": "QT prolongation & torsades risk—sotalol",
+    "title": "QT prolongation & torsades risk",
     "stem": "A 62-year-old woman with atrial fibrillation is being considered for antiarrhythmic therapy.\nBaseline ECG shows QTc 520 ms.\nK is 4.1 mEq/L, Mg is 2.0 mg/dL.",
     "question": "Which medication is most likely to worsen QT prolongation and precipitate torsades de pointes?",
     "answer_choices": [
@@ -2845,7 +2845,7 @@
   {
     "id": "CQOTD-0059",
     "day_of_year": 59,
-    "title": "Structural heart disease—avoid flecainide",
+    "title": "Structural heart disease",
     "stem": "A 69-year-old man has symptomatic paroxysmal atrial fibrillation and wants rhythm control.\nPMH: prior myocardial infarction with coronary stent.\nEcho: EF 50%.",
     "question": "Which medication should be avoided due to increased proarrhythmic risk in patients with coronary artery disease/structural heart disease?",
     "answer_choices": [
@@ -2894,7 +2894,7 @@
   {
     "id": "CQOTD-0060",
     "day_of_year": 60,
-    "title": "Dronedarone contraindication—symptomatic heart failure",
+    "title": "Antiarrhythmic contraindication in heart failure",
     "stem": "A 72-year-old woman with persistent atrial fibrillation is being evaluated for rhythm control.\nPMH: HFrEF (EF 25%) with a hospitalization for decompensated HF 3 weeks ago.",
     "question": "Which medication is contraindicated in this patient?",
     "answer_choices": [
@@ -2946,7 +2946,7 @@
   {
     "id": "CQOTD-0061",
     "day_of_year": 61,
-    "title": "Mealtime insulin—rapid-acting analog",
+    "title": "Mealtime glucose coverage",
     "stem": "A 33-year-old woman with type 1 diabetes uses basal-bolus insulin.\nShe wants a mealtime insulin that starts working quickly to cover carbohydrates eaten at meals.",
     "question": "Which insulin is the best choice for rapid prandial coverage?",
     "answer_choices": [
@@ -2996,7 +2996,7 @@
   {
     "id": "CQOTD-0062",
     "day_of_year": 62,
-    "title": "Basal insulin—once-daily long-acting option",
+    "title": "Basal glucose control",
     "stem": "A 52-year-old man with type 2 diabetes is starting basal insulin to improve fasting blood glucose.\nHe prefers an insulin with a relatively flat 24-hour profile.",
     "question": "Which medication is the best basal insulin choice from the options below?",
     "answer_choices": [
@@ -3047,7 +3047,7 @@
   {
     "id": "CQOTD-0063",
     "day_of_year": 63,
-    "title": "DKA—IV regular insulin",
+    "title": "DKA",
     "stem": "A 21-year-old man with type 1 diabetes presents with abdominal pain, vomiting, and Kussmaul respirations.\nLabs: glucose 520 mg/dL, anion gap 28, serum ketones positive, pH 7.12.",
     "question": "Which insulin is used as a continuous IV infusion for treatment of diabetic ketoacidosis?",
     "answer_choices": [
@@ -3095,7 +3095,7 @@
   {
     "id": "CQOTD-0064",
     "day_of_year": 64,
-    "title": "Pioglitazone—fluid retention risk in heart failure",
+    "title": "Thiazolidinedione fluid retention risk",
     "stem": "A 65-year-old man with type 2 diabetes (A1c 7.9%) is being considered for an additional oral agent.\nPMH: heart failure with reduced ejection fraction (EF 30%) and chronic lower extremity edema.",
     "question": "Which medication should generally be avoided because it can cause fluid retention and worsen heart failure?",
     "answer_choices": [
@@ -3146,7 +3146,7 @@
   {
     "id": "CQOTD-0065",
     "day_of_year": 65,
-    "title": "Adrenal crisis—stress-dose hydrocortisone",
+    "title": "Adrenal crisis",
     "stem": "A 38-year-old woman with known primary adrenal insufficiency presents with vomiting, severe weakness, and hypotension.\nVitals: BP 82/50 mmHg, HR 118 bpm.\nLabs: Na 126 mEq/L, K 5.8 mEq/L, glucose 58 mg/dL.",
     "question": "Which medication should be administered urgently?",
     "answer_choices": [
@@ -3194,7 +3194,7 @@
   {
     "id": "CQOTD-0066",
     "day_of_year": 66,
-    "title": "Croup—single-dose dexamethasone",
+    "title": "Croup",
     "stem": "A 3-year-old child presents with barking cough, hoarseness, and inspiratory stridor consistent with viral croup.\nOxygen saturation is 96% on room air.",
     "question": "Which medication is most appropriate to reduce upper-airway inflammation and improve symptoms?",
     "answer_choices": [
@@ -3246,7 +3246,7 @@
   {
     "id": "CQOTD-0067",
     "day_of_year": 67,
-    "title": "Depression with neuropathic pain—duloxetine",
+    "title": "Depression with neuropathic pain",
     "stem": "A 50-year-old woman has major depressive disorder and painful diabetic peripheral neuropathy.\nShe wants one medication that can help both mood and neuropathic pain.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -3295,7 +3295,7 @@
   {
     "id": "CQOTD-0068",
     "day_of_year": 68,
-    "title": "Antidepressant discontinuation—venlafaxine",
+    "title": "Antidepressant discontinuation",
     "stem": "A 29-year-old man abruptly stops his antidepressant and develops dizziness, nausea, “brain zaps,” and irritability within 24–48 hours.\nThe medication has a short half-life and is known for prominent discontinuation symptoms.",
     "question": "Which medication is most likely responsible?",
     "answer_choices": [
@@ -3344,7 +3344,7 @@
   {
     "id": "CQOTD-0069",
     "day_of_year": 69,
-    "title": "Most anticholinergic/cardiotoxic antidepressants—TCAs",
+    "title": "Most anticholinergic/cardiotoxic antidepressants",
     "stem": "A 22-year-old is brought to the ED after a suspected medication overdose.\nHe is tachycardic with dry mucous membranes and has a widened QRS on ECG.\nThe clinician suspects a tricyclic antidepressant (TCA) overdose.",
     "question": "Which medication is most consistent with this toxidrome?",
     "answer_choices": [
@@ -3392,7 +3392,7 @@
   {
     "id": "CQOTD-0070",
     "day_of_year": 70,
-    "title": "Lithium toxicity precipitated by thiazide diuretic",
+    "title": "Lithium toxicity precipitated by diuretic",
     "stem": "A 46-year-old woman with bipolar disorder is stable on lithium.\nHer PCP starts a new blood pressure medication.\nOne week later she develops coarse tremor, vomiting, and confusion.\nLithium level is elevated.",
     "question": "Which new medication most likely caused the lithium level to rise?",
     "answer_choices": [
@@ -3440,7 +3440,7 @@
   {
     "id": "CQOTD-0071",
     "day_of_year": 71,
-    "title": "Generalized anxiety—non-sedating, non-addictive option",
+    "title": "Generalized anxiety",
     "stem": "A 30-year-old woman has generalized anxiety disorder.\nShe wants a medication that is not habit-forming and does not cause immediate sedation.",
     "question": "Which medication is the best option from the choices below?",
     "answer_choices": [
@@ -3490,7 +3490,7 @@
   {
     "id": "CQOTD-0072",
     "day_of_year": 72,
-    "title": "Alcohol withdrawal—long-acting benzodiazepine",
+    "title": "Alcohol withdrawal",
     "stem": "A 52-year-old man with heavy daily alcohol use is admitted with tremor, agitation, diaphoresis, and tachycardia.\nHe is at risk for alcohol withdrawal seizures.",
     "question": "Which medication is most appropriate to treat alcohol withdrawal symptoms and prevent seizures?",
     "answer_choices": [
@@ -3537,7 +3537,7 @@
   {
     "id": "CQOTD-0073",
     "day_of_year": 73,
-    "title": "Convulsive status epilepticus—first-line IV benzodiazepine",
+    "title": "Convulsive status epilepticus",
     "stem": "A 27-year-old man has continuous generalized tonic-clonic seizure activity for >5 minutes.\nIV access is obtained in the ED.",
     "question": "Which medication is first-line to stop the seizure acutely?",
     "answer_choices": [
@@ -3588,7 +3588,7 @@
   {
     "id": "CQOTD-0074",
     "day_of_year": 74,
-    "title": "Suvorexant contraindication—narcolepsy",
+    "title": "Orexin antagonist contraindication",
     "stem": "A 34-year-old man with narcolepsy also struggles with insomnia and asks about a newer sleep medication he saw advertised.",
     "question": "Which medication should be avoided because it is an orexin receptor antagonist and is contraindicated in narcolepsy?",
     "answer_choices": [
@@ -3639,7 +3639,7 @@
   {
     "id": "CQOTD-0075",
     "day_of_year": 75,
-    "title": "ADHD with tics—guanfacine ER",
+    "title": "ADHD with tics",
     "stem": "An 11-year-old boy has ADHD with significant hyperactivity and impulsivity.\nHe also has a chronic motor tic disorder. Family prefers to avoid medications that worsen tics or cause appetite suppression.",
     "question": "Which medication is a reasonable non-stimulant option that can help ADHD symptoms and may help with tics?",
     "answer_choices": [
@@ -3687,7 +3687,7 @@
   {
     "id": "CQOTD-0076",
     "day_of_year": 76,
-    "title": "Adult ADHD with substance use history—atomoxetine",
+    "title": "Adult ADHD with substance use history",
     "stem": "A 24-year-old man has ADHD and a history of stimulant misuse.\nHe wants an ADHD medication with no stimulant properties.",
     "question": "Which medication is most appropriate?",
     "answer_choices": [
@@ -3736,7 +3736,7 @@
   {
     "id": "CQOTD-0077",
     "day_of_year": 77,
-    "title": "Stimulant prodrug—lisdexamfetamine",
+    "title": "Stimulant prodrug",
     "stem": "A clinician is comparing stimulant options for ADHD.\nThey want a medication that is a prodrug (activated after ingestion), which can reduce misuse potential via snorting or injection.",
     "question": "Which medication fits this description?",
     "answer_choices": [
@@ -3785,7 +3785,7 @@
   {
     "id": "CQOTD-0078",
     "day_of_year": 78,
-    "title": "Treatment-resistant schizophrenia—clozapine",
+    "title": "Treatment-resistant schizophrenia",
     "stem": "A 38-year-old man with schizophrenia has persistent hallucinations and delusions despite adequate trials of risperidone and olanzapine.\nHe also has recurrent suicidal behavior.",
     "question": "Which medication is most appropriate next?",
     "answer_choices": [
@@ -3834,7 +3834,7 @@
   {
     "id": "CQOTD-0079",
     "day_of_year": 79,
-    "title": "Antipsychotic adverse effect—hyperprolactinemia",
+    "title": "Antipsychotic adverse effect",
     "stem": "A 27-year-old woman started an antipsychotic 2 months ago and now reports galactorrhea and amenorrhea.\nA pregnancy test is negative. Prolactin level is elevated.",
     "question": "Which medication is most likely responsible?",
     "answer_choices": [
@@ -3884,7 +3884,7 @@
   {
     "id": "CQOTD-0080",
     "day_of_year": 80,
-    "title": "Antipsychotic with lower metabolic risk—aripiprazole",
+    "title": "Antipsychotic with lower metabolic risk",
     "stem": "A 42-year-old man with schizophrenia has obesity and prediabetes.\nThe team wants an antipsychotic option with lower risk of weight gain and metabolic syndrome.",
     "question": "Which medication best fits this goal from the options below?",
     "answer_choices": [
@@ -3934,7 +3934,7 @@
   {
     "id": "CQOTD-0081",
     "day_of_year": 81,
-    "title": "Antipsychotic most linked to weight gain—olanzapine",
+    "title": "Antipsychotic most linked to weight gain",
     "stem": "A 31-year-old woman starts an antipsychotic and gains 18 pounds over 3 months.\nHer fasting glucose and triglycerides increase significantly.",
     "question": "Which medication is most likely responsible?",
     "answer_choices": [
@@ -3983,7 +3983,7 @@
   {
     "id": "CQOTD-0082",
     "day_of_year": 82,
-    "title": "Acute agitation in delirium—haloperidol",
+    "title": "Acute agitation in delirium",
     "stem": "A 79-year-old hospitalized man becomes acutely agitated and is pulling at IV lines.\nWorkup suggests delirium due to a UTI; he is threatening staff and is unsafe.\nNonpharmacologic interventions fail.",
     "question": "Which medication is commonly used for short-term control of severe agitation in delirium?",
     "answer_choices": [
@@ -4033,7 +4033,7 @@
   {
     "id": "CQOTD-0083",
     "day_of_year": 83,
-    "title": "Bipolar depression—quetiapine option",
+    "title": "Bipolar depression",
     "stem": "A 36-year-old woman with bipolar disorder presents with a depressive episode and significant insomnia.\nShe asks about an antipsychotic that can help mood symptoms and sleep.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -4082,7 +4082,7 @@
   {
     "id": "CQOTD-0084",
     "day_of_year": 84,
-    "title": "Fentanyl patch—only for opioid-tolerant patients",
+    "title": "Transdermal opioid safety",
     "stem": "A 58-year-old man with chronic back pain requests a fentanyl transdermal patch because he heard it lasts several days.\nHe is opioid-naïve and has only used acetaminophen intermittently.",
     "question": "Which medication should NOT be started due to high risk of fatal respiratory depression in opioid-naïve patients?",
     "answer_choices": [
@@ -4133,7 +4133,7 @@
   {
     "id": "CQOTD-0085",
     "day_of_year": 85,
-    "title": "Tramadol—seizure & serotonin syndrome risk",
+    "title": "Weak opioid seizure and serotonin risk",
     "stem": "A 40-year-old woman with chronic pain asks for tramadol because she wants to avoid “strong opioids.”\nPMH: epilepsy (controlled) and depression treated with sertraline.",
     "question": "Which medication should be avoided because it can lower seizure threshold and increase serotonin syndrome risk with sertraline?",
     "answer_choices": [
@@ -4182,7 +4182,7 @@
   {
     "id": "CQOTD-0086",
     "day_of_year": 86,
-    "title": "High GI-risk osteoarthritis—choose celecoxib",
+    "title": "High GI-risk osteoarthritis",
     "stem": "A 66-year-old woman with knee osteoarthritis needs an NSAID for pain and inflammation.\nPMH: prior peptic ulcer bleed 3 years ago (now healed). No CKD and no heart failure.\nShe is not on anticoagulation.",
     "question": "Which NSAID option below has a lower GI ulcer risk compared with nonselective NSAIDs?",
     "answer_choices": [
@@ -4232,7 +4232,7 @@
   {
     "id": "CQOTD-0087",
     "day_of_year": 87,
-    "title": "Renal colic—ketorolac for acute pain",
+    "title": "Renal colic",
     "stem": "A 33-year-old man presents with flank pain radiating to the groin. CT confirms a ureteral stone.\nHe has normal kidney function and no history of peptic ulcer disease.",
     "question": "Which medication is an appropriate first-line analgesic option for acute renal colic?",
     "answer_choices": [
@@ -4280,7 +4280,7 @@
   {
     "id": "CQOTD-0088",
     "day_of_year": 88,
-    "title": "Neuropathic pain—gabapentin",
+    "title": "Neuropathic pain",
     "stem": "A 62-year-old man has postherpetic neuralgia with burning neuropathic pain along a thoracic dermatome.\nHe wants a non-opioid medication for nerve pain.",
     "question": "Which medication is most appropriate to start?",
     "answer_choices": [
@@ -4327,7 +4327,7 @@
   {
     "id": "CQOTD-0089",
     "day_of_year": 89,
-    "title": "Fibromyalgia—pregabalin option",
+    "title": "Fibromyalgia",
     "stem": "A 45-year-old woman has fibromyalgia with widespread pain and sleep disruption.\nShe wants a medication option with evidence for fibromyalgia pain.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -4373,7 +4373,7 @@
   {
     "id": "CQOTD-0090",
     "day_of_year": 90,
-    "title": "Paxlovid interaction—hold simvastatin",
+    "title": "Paxlovid interaction",
     "stem": "A 64-year-old man with CAD and hyperlipidemia tests positive for COVID-19 and is prescribed nirmatrelvir/ritonavir.\nHome meds include simvastatin 40 mg nightly.",
     "question": "Which medication should be temporarily held to avoid a dangerous drug interaction?",
     "answer_choices": [
@@ -4421,7 +4421,7 @@
   {
     "id": "CQOTD-0091",
     "day_of_year": 91,
-    "title": "Ventilator-associated pneumonia—antipseudomonal beta-lactam",
+    "title": "Ventilator-associated pneumonia",
     "stem": "A 70-year-old man has been mechanically ventilated in the ICU for 6 days after a stroke.\nHe develops fever (39.1°C), leukocytosis, and increasing purulent secretions.\nCXR: new right lower-lobe infiltrate.\nThe team is starting empiric antibiotics with concern for Pseudomonas aeruginosa.",
     "question": "Which antibiotic provides antipseudomonal beta-lactam coverage from the options below?",
     "answer_choices": [
@@ -4469,7 +4469,7 @@
   {
     "id": "CQOTD-0092",
     "day_of_year": 92,
-    "title": "Perforated appendicitis—broad gram-negative + anaerobe coverage",
+    "title": "Perforated appendicitis",
     "stem": "A 33-year-old woman presents with diffuse abdominal pain, fever, and guarding.\nCT abdomen shows a perforated appendix with localized abscess.\nShe is being started on empiric IV antibiotics covering gram-negatives and anaerobes.",
     "question": "Which single agent below provides appropriate broad coverage for this intra-abdominal infection?",
     "answer_choices": [
@@ -4518,7 +4518,7 @@
   {
     "id": "CQOTD-0093",
     "day_of_year": 93,
-    "title": "MRSA skin infection in pregnancy with sulfa allergy—clindamycin",
+    "title": "MRSA skin infection in pregnancy with sulfa allergy",
     "stem": "A 28-year-old woman who is 24 weeks pregnant presents with a painful skin abscess on her thigh.\nIncision and drainage is performed. She needs an oral antibiotic due to surrounding cellulitis.\nAllergies: trimethoprim/sulfamethoxazole causes hives.\nLocal epidemiology suggests community-acquired MRSA is common.",
     "question": "Which antibiotic is the best oral option from the choices below?",
     "answer_choices": [
@@ -4568,7 +4568,7 @@
   {
     "id": "CQOTD-0094",
     "day_of_year": 94,
-    "title": "Strep pharyngitis—first-line narrow therapy",
+    "title": "Strep pharyngitis",
     "stem": "A 16-year-old girl has fever, sore throat, tender anterior cervical nodes, and tonsillar exudates.\nRapid antigen test for group A streptococcus is positive.\nNo medication allergies.",
     "question": "Which antibiotic is the best first-line treatment from the options below?",
     "answer_choices": [
@@ -4616,7 +4616,7 @@
   {
     "id": "CQOTD-0095",
     "day_of_year": 95,
-    "title": "Acute otitis media—first-line amoxicillin",
+    "title": "Acute otitis media",
     "stem": "A 3-year-old boy has fever and ear pain. Otoscopy shows a bulging, erythematous tympanic membrane.\nHe has no medication allergies and has not received antibiotics in the past 30 days.",
     "question": "Which antibiotic is the best first-line treatment?",
     "answer_choices": [
@@ -4666,7 +4666,7 @@
   {
     "id": "CQOTD-0096",
     "day_of_year": 96,
-    "title": "Bacterial sinusitis after recent amoxicillin—use Augmentin",
+    "title": "Bacterial sinusitis after recent amoxicillin",
     "stem": "A 45-year-old man has 12 days of purulent nasal discharge, facial pain, and fever consistent with acute bacterial sinusitis.\nHe took amoxicillin for a dental infection 2 weeks ago.\nNo drug allergies.",
     "question": "Which antibiotic is most appropriate now?",
     "answer_choices": [
@@ -4714,7 +4714,7 @@
   {
     "id": "CQOTD-0097",
     "day_of_year": 97,
-    "title": "Outpatient pyelonephritis—ciprofloxacin",
+    "title": "Outpatient pyelonephritis",
     "stem": "A 29-year-old woman has fever (38.5°C), flank pain, and dysuria.\nUrinalysis: positive nitrites and leukocyte esterase.\nShe is stable for outpatient management and is not pregnant.\nNo allergies. eGFR 90 mL/min/1.73m².",
     "question": "Which oral antibiotic is an appropriate choice for outpatient pyelonephritis from the options below?",
     "answer_choices": [
@@ -4762,7 +4762,7 @@
   {
     "id": "CQOTD-0098",
     "day_of_year": 98,
-    "title": "Chlamydia in pregnancy—azithromycin",
+    "title": "Chlamydia in pregnancy",
     "stem": "A 22-year-old woman who is 14 weeks pregnant is diagnosed with Chlamydia trachomatis cervicitis.\nShe wants treatment that is safe in pregnancy.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -4809,7 +4809,7 @@
   {
     "id": "CQOTD-0099",
     "day_of_year": 99,
-    "title": "Tick bite prophylaxis—single-dose doxycycline",
+    "title": "Tick bite prophylaxis",
     "stem": "A 34-year-old man removes an engorged Ixodes tick from his leg.\nThe tick was likely attached for >36 hours, and he presents within 48 hours of removal.\nHe lives in an area where Lyme disease is common. He is not allergic to tetracyclines.",
     "question": "Which medication is used for prophylaxis in this scenario?",
     "answer_choices": [
@@ -4856,7 +4856,7 @@
   {
     "id": "CQOTD-0100",
     "day_of_year": 100,
-    "title": "Influenza within 48 hours—oseltamivir",
+    "title": "Influenza within 48 hours",
     "stem": "A 68-year-old man with COPD develops fever, myalgias, and cough for 24 hours.\nInfluenza A PCR is positive.",
     "question": "Which medication is most appropriate to start?",
     "answer_choices": [
@@ -4903,7 +4903,7 @@
   {
     "id": "CQOTD-0101",
     "day_of_year": 101,
-    "title": "High-risk outpatient COVID—nirmatrelvir/ritonavir",
+    "title": "High-risk outpatient COVID",
     "stem": "A 72-year-old woman tests positive for COVID-19 and has symptoms for 2 days (fever, cough, fatigue).\nPMH: hypertension and diabetes.\nShe is stable for outpatient treatment.",
     "question": "Which medication is an appropriate oral antiviral option to reduce progression to severe disease (when started early)?",
     "answer_choices": [
@@ -4949,7 +4949,7 @@
   {
     "id": "CQOTD-0102",
     "day_of_year": 102,
-    "title": "Recurrent genital herpes suppression—valacyclovir",
+    "title": "Recurrent genital herpes suppression",
     "stem": "A 30-year-old man has frequent recurrent genital herpes outbreaks (8 per year).\nHe wants daily suppressive therapy to reduce outbreak frequency and transmission risk.",
     "question": "Which medication is the best choice from the options below for daily suppression with convenient dosing?",
     "answer_choices": [
@@ -4996,7 +4996,7 @@
   {
     "id": "CQOTD-0103",
     "day_of_year": 103,
-    "title": "HSV encephalitis—acyclovir",
+    "title": "HSV encephalitis",
     "stem": "A 56-year-old man presents with fever, confusion, and new-onset focal seizures.\nMRI suggests temporal lobe involvement, and CSF PCR is pending for HSV.\nHe is hospitalized and requires immediate empiric therapy.",
     "question": "Which medication should be started urgently from the options below?",
     "answer_choices": [
@@ -5043,7 +5043,7 @@
   {
     "id": "CQOTD-0104",
     "day_of_year": 104,
-    "title": "Uncomplicated vulvovaginal candidiasis—fluconazole",
+    "title": "Uncomplicated vulvovaginal candidiasis",
     "stem": "A 26-year-old woman has vulvar itching and thick white “cottage cheese” discharge.\nWet mount shows budding yeast.\nShe is not pregnant and has no liver disease.",
     "question": "Which medication is the best single-dose oral treatment from the options below?",
     "answer_choices": [
@@ -5089,7 +5089,7 @@
   {
     "id": "CQOTD-0105",
     "day_of_year": 105,
-    "title": "Oral thrush—nystatin swish and swallow",
+    "title": "Oral thrush",
     "stem": "A 6-month-old infant has white plaques on the tongue and inner cheeks that scrape off with mild erythema underneath.\nDiagnosis: oral candidiasis (thrush).",
     "question": "Which medication is the best first-line treatment from the options below?",
     "answer_choices": [
@@ -5136,7 +5136,7 @@
   {
     "id": "CQOTD-0106",
     "day_of_year": 106,
-    "title": "Onychomycosis—oral terbinafine",
+    "title": "Onychomycosis",
     "stem": "A 52-year-old man has thickened, yellow, brittle toenails for 1 year.\nKOH prep confirms dermatophyte onychomycosis.\nTopical therapies have failed and he wants the most effective oral option.",
     "question": "Which medication is most appropriate?",
     "answer_choices": [
@@ -5183,7 +5183,7 @@
   {
     "id": "CQOTD-0107",
     "day_of_year": 107,
-    "title": "Bacterial vaginosis—metronidazole",
+    "title": "Bacterial vaginosis",
     "stem": "A 29-year-old woman has thin gray vaginal discharge and a fishy odor.\nWet mount shows clue cells; pH is elevated.",
     "question": "Which medication is most appropriate treatment from the options below?",
     "answer_choices": [
@@ -5229,7 +5229,7 @@
   {
     "id": "CQOTD-0108",
     "day_of_year": 108,
-    "title": "Severe penicillin allergy + CAP—respiratory fluoroquinolone",
+    "title": "Severe penicillin allergy + CAP",
     "stem": "A 58-year-old man presents with community-acquired pneumonia (CAP).\nCXR: left lower-lobe infiltrate. He is stable for outpatient treatment.\nAllergy: anaphylaxis to penicillin.",
     "question": "Which medication is an appropriate single-agent outpatient option from the choices below?",
     "answer_choices": [
@@ -5277,7 +5277,7 @@
   {
     "id": "CQOTD-0109",
     "day_of_year": 109,
-    "title": "MRSA pneumonia—vancomycin IV",
+    "title": "MRSA pneumonia",
     "stem": "A 61-year-old man is hospitalized with severe pneumonia and is intubated.\nSputum Gram stain shows gram-positive cocci in clusters and MRSA is strongly suspected.\nHe is on sertraline for depression.",
     "question": "Which medication is an appropriate choice for MRSA pneumonia from the options below?",
     "answer_choices": [
@@ -5326,7 +5326,7 @@
   {
     "id": "CQOTD-0110",
     "day_of_year": 110,
-    "title": "MRSA bacteremia with vancomycin nephrotoxicity—daptomycin",
+    "title": "MRSA bacteremia with vancomycin nephrotoxicity",
     "stem": "A 66-year-old man has MRSA bacteremia from an infected dialysis catheter.\nHe was started on IV vancomycin, but his creatinine has increased and vancomycin levels are difficult to manage.\nBlood cultures remain positive at 48 hours.",
     "question": "Which medication is a reasonable alternative for MRSA bacteremia from the options below?",
     "answer_choices": [
@@ -5373,7 +5373,7 @@
   {
     "id": "CQOTD-0111",
     "day_of_year": 111,
-    "title": "COPD maintenance—start a LAMA",
+    "title": "COPD maintenance",
     "stem": "A 64-year-old man with COPD has chronic dyspnea and uses his albuterol inhaler most days.\nHe has had 1 mild exacerbation in the past year but is currently stable.\nHe wants a daily maintenance inhaler to improve symptoms.",
     "question": "Which medication is the best daily maintenance option from the choices below?",
     "answer_choices": [
@@ -5421,7 +5421,7 @@
   {
     "id": "CQOTD-0112",
     "day_of_year": 112,
-    "title": "Acute COPD exacerbation—add a short-acting anticholinergic",
+    "title": "Acute COPD exacerbation",
     "stem": "A 69-year-old man with COPD presents with increased dyspnea and wheezing consistent with an acute exacerbation.\nHe has already used albuterol with partial relief.\nHe is hemodynamically stable and is not in respiratory failure.",
     "question": "Which inhaled medication is commonly added for short-term bronchodilation during a COPD exacerbation?",
     "answer_choices": [
@@ -5469,7 +5469,7 @@
   {
     "id": "CQOTD-0113",
     "day_of_year": 113,
-    "title": "Asthma step-up—ICS/LABA combination",
+    "title": "Asthma step-up",
     "stem": "A 20-year-old woman has asthma and is on budesonide (inhaled) daily.\nDespite adherence, she has symptoms 4 days/week and uses albuterol most days.\nShe has no history of COPD and does not smoke.",
     "question": "Which medication is the best next step to improve control from the options below?",
     "answer_choices": [
@@ -5568,7 +5568,7 @@
   {
     "id": "CQOTD-0115",
     "day_of_year": 115,
-    "title": "Severe allergic asthma—anti-IgE biologic",
+    "title": "Severe allergic asthma",
     "stem": "A 35-year-old woman has severe persistent asthma despite high-dose inhaled corticosteroid/LABA therapy.\nShe has positive allergy testing to dust mites and elevated IgE.\nShe has frequent exacerbations requiring oral steroids.",
     "question": "Which medication is an anti-IgE biologic option for allergic asthma from the choices below?",
     "answer_choices": [
@@ -5616,7 +5616,7 @@
   {
     "id": "CQOTD-0116",
     "day_of_year": 116,
-    "title": "Asthma with atopic dermatitis—dupilumab",
+    "title": "Asthma with atopic dermatitis",
     "stem": "A 28-year-old man has moderate-to-severe asthma and severe atopic dermatitis.\nHe has elevated eosinophils and continues to have asthma symptoms despite inhaled controller therapy.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -5663,7 +5663,7 @@
   {
     "id": "CQOTD-0117",
     "day_of_year": 117,
-    "title": "COPD chronic bronchitis with frequent exacerbations—roflumilast",
+    "title": "COPD chronic bronchitis with frequent exacerbations",
     "stem": "A 60-year-old man with COPD (FEV1 38% predicted) has chronic bronchitis and 3 exacerbations in the past year despite inhaled maintenance therapy.\nHe is not currently having an acute exacerbation.",
     "question": "Which medication can be added to reduce COPD exacerbations in this setting?",
     "answer_choices": [
@@ -5712,7 +5712,7 @@
   {
     "id": "CQOTD-0118",
     "day_of_year": 118,
-    "title": "Theophylline toxicity—interaction with ciprofloxacin",
+    "title": "Theophylline toxicity",
     "stem": "A 55-year-old man with COPD takes theophylline.\nHe is prescribed an antibiotic for pyelonephritis.\nTwo days later he develops nausea, tremor, insomnia, and tachycardia.",
     "question": "Which antibiotic is most likely to have increased theophylline levels via a drug interaction?",
     "answer_choices": [
@@ -5760,7 +5760,7 @@
   {
     "id": "CQOTD-0119",
     "day_of_year": 119,
-    "title": "Allergic rhinitis—daily intranasal corticosteroid",
+    "title": "Allergic rhinitis",
     "stem": "A 32-year-old woman has year-round allergic rhinitis with congestion, sneezing, and itchy nose.\nShe wants the most effective daily medication for nasal congestion and inflammation.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -5808,7 +5808,7 @@
   {
     "id": "CQOTD-0120",
     "day_of_year": 120,
-    "title": "Least sedating antihistamine—fexofenadine",
+    "title": "Least sedating antihistamine",
     "stem": "A 40-year-old airline pilot has seasonal allergic rhinitis and wants a daytime antihistamine with minimal sedation.\nHe must avoid impaired alertness at work.",
     "question": "Which medication best fits his goal?",
     "answer_choices": [
@@ -5858,7 +5858,7 @@
   {
     "id": "CQOTD-0121",
     "day_of_year": 121,
-    "title": "Quick-onset heartburn relief—H2 blocker",
+    "title": "Quick-onset heartburn relief",
     "stem": "A 48-year-old man has mild GERD symptoms (burning epigastric discomfort) 2–3 times per week after spicy foods.\nHe wants an as-needed medication that works faster than a PPI for occasional symptoms.",
     "question": "Which medication is an H2 receptor antagonist option from the choices below?",
     "answer_choices": [
@@ -5908,7 +5908,7 @@
   {
     "id": "CQOTD-0122",
     "day_of_year": 122,
-    "title": "Ulcer coating agent—separate from other meds",
+    "title": "Ulcer coating agent",
     "stem": "A 60-year-old woman has a duodenal ulcer and asks for a medication that works by coating the ulcer and protecting it from acid.\nShe takes several morning medications and wants to know which one can bind other drugs and should be spaced out.",
     "question": "Which medication best fits this description?",
     "answer_choices": [
@@ -5956,7 +5956,7 @@
   {
     "id": "CQOTD-0123",
     "day_of_year": 123,
-    "title": "Chemo-induced nausea prophylaxis—NK1 antagonist",
+    "title": "Chemo-induced nausea prophylaxis",
     "stem": "A 52-year-old woman is starting highly emetogenic chemotherapy.\nThe oncology team wants to add an NK1 receptor antagonist to prevent delayed chemotherapy-induced nausea and vomiting.",
     "question": "Which medication is an NK1 receptor antagonist option from the choices below?",
     "answer_choices": [
@@ -6006,7 +6006,7 @@
   {
     "id": "CQOTD-0124",
     "day_of_year": 124,
-    "title": "Diabetic gastroparesis—metoclopramide",
+    "title": "Diabetic gastroparesis",
     "stem": "A 59-year-old man with long-standing diabetes has early satiety, postprandial fullness, and nausea.\nGastric emptying study confirms gastroparesis.",
     "question": "Which medication can improve symptoms by increasing gastric motility?",
     "answer_choices": [
@@ -6055,7 +6055,7 @@
   {
     "id": "CQOTD-0125",
     "day_of_year": 125,
-    "title": "Chronic constipation—polyethylene glycol",
+    "title": "Chronic constipation",
     "stem": "A 41-year-old woman has chronic functional constipation.\nNo red flags (no weight loss, anemia, or blood in stool).\nShe wants a gentle daily medication that increases stool water content.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -6105,7 +6105,7 @@
   {
     "id": "CQOTD-0126",
     "day_of_year": 126,
-    "title": "IBS-C—linaclotide",
+    "title": "IBS-C",
     "stem": "A 35-year-old woman meets criteria for irritable bowel syndrome with constipation (IBS-C).\nShe has abdominal pain that improves after bowel movements and constipation despite fiber and polyethylene glycol.",
     "question": "Which medication is an appropriate next option from the choices below?",
     "answer_choices": [
@@ -6154,7 +6154,7 @@
   {
     "id": "CQOTD-0127",
     "day_of_year": 127,
-    "title": "Hepatic encephalopathy—lactulose",
+    "title": "Hepatic encephalopathy",
     "stem": "A 58-year-old man with cirrhosis is brought in for confusion and asterixis.\nAmmonia level is elevated. He is diagnosed with hepatic encephalopathy.",
     "question": "Which medication is a standard first-line therapy to reduce ammonia levels?",
     "answer_choices": [
@@ -6200,7 +6200,7 @@
   {
     "id": "CQOTD-0128",
     "day_of_year": 128,
-    "title": "Acute non-bloody diarrhea—loperamide",
+    "title": "Acute non-bloody diarrhea",
     "stem": "A 27-year-old man returns from travel with watery diarrhea for 1 day.\nHe has no fever, no blood in stool, and is tolerating oral fluids.\nHe wants symptomatic treatment to decrease stool frequency.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -6248,7 +6248,7 @@
   {
     "id": "CQOTD-0129",
     "day_of_year": 129,
-    "title": "Diphenoxylate/atropine—antidiarrheal with atropine to deter abuse",
+    "title": "Antidiarrheal with anticholinergic component",
     "stem": "A 44-year-old woman has chronic noninfectious diarrhea.\nHer clinician considers an antidiarrheal that is an opioid analog and is combined with atropine to discourage misuse.",
     "question": "Which medication fits this description?",
     "answer_choices": [
@@ -6295,7 +6295,7 @@
   {
     "id": "CQOTD-0130",
     "day_of_year": 130,
-    "title": "Ulcerative colitis maintenance—mesalamine",
+    "title": "Ulcerative colitis maintenance",
     "stem": "A 25-year-old woman has mild-to-moderate ulcerative colitis with intermittent bloody diarrhea and urgency.\nShe is stable as an outpatient and needs a medication to reduce colonic inflammation and maintain remission.",
     "question": "Which medication is most appropriate from the choices below?",
     "answer_choices": [
@@ -6343,7 +6343,7 @@
   {
     "id": "CQOTD-0131",
     "day_of_year": 131,
-    "title": "Essential tremor with asthma—primidone",
+    "title": "Essential tremor with asthma",
     "stem": "A 58-year-old woman has essential tremor that interferes with writing.\nPMH: asthma with intermittent wheezing.\nShe wants medication therapy and would like to avoid a drug that could worsen bronchospasm.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -6391,7 +6391,7 @@
   {
     "id": "CQOTD-0132",
     "day_of_year": 132,
-    "title": "Moderate Alzheimer disease—add memantine",
+    "title": "Moderate Alzheimer disease",
     "stem": "A 74-year-old man with Alzheimer disease is taking donepezil.\nHis symptoms have progressed to moderate disease with worsening function.\nThe clinician wants to add an NMDA receptor antagonist to slow symptom progression.",
     "question": "Which medication is most appropriate to add?",
     "answer_choices": [
@@ -6440,7 +6440,7 @@
   {
     "id": "CQOTD-0133",
     "day_of_year": 133,
-    "title": "Oxcarbazepine—carbamazepine cousin with hyponatremia risk",
+    "title": "Antiepileptic hyponatremia risk",
     "stem": "A 38-year-old man with focal seizures needs an antiseizure medication.\nThe neurologist suggests a 'keto-analog' of carbamazepine that generally has fewer drug interactions,\nbut warns about hyponatremia.",
     "question": "Which medication best matches this description?",
     "answer_choices": [
@@ -6489,7 +6489,7 @@
   {
     "id": "CQOTD-0134",
     "day_of_year": 134,
-    "title": "Migraine prevention—topiramate",
+    "title": "Migraine prevention",
     "stem": "A 29-year-old woman has 6 migraine days per month despite appropriate acute therapy.\nShe wants a daily preventive medication.\nPMH: obesity; she would prefer a medication that is not associated with weight gain.",
     "question": "Which medication is an appropriate migraine preventive option from the choices below?",
     "answer_choices": [
@@ -6538,7 +6538,7 @@
   {
     "id": "CQOTD-0135",
     "day_of_year": 135,
-    "title": "Breastfeeding contraception—progestin-only pill",
+    "title": "Breastfeeding contraception",
     "stem": "A 28-year-old woman is 4 weeks postpartum and breastfeeding.\nShe wants an oral contraceptive that will not decrease milk production and avoids estrogen-related clot risk early postpartum.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -6588,7 +6588,7 @@
   {
     "id": "CQOTD-0136",
     "day_of_year": 136,
-    "title": "Spironolactone gynecomastia—switch to eplerenone",
+    "title": "MRA-induced gynecomastia",
     "stem": "A 57-year-old man with HFrEF (EF 30%) is on guideline-directed therapy including:\n- Sacubitril/valsartan\n- Metoprolol succinate\n- Spironolactone\nHe reports new breast tenderness and enlargement over the last 2 months.\nK 4.6 mEq/L, SCr 1.0 mg/dL.",
     "question": "Which medication change best addresses his adverse effect while maintaining MRA benefit?",
     "answer_choices": [
@@ -6638,7 +6638,7 @@
   {
     "id": "CQOTD-0137",
     "day_of_year": 137,
-    "title": "Pregnancy + ACE inhibitor—stop immediately",
+    "title": "Pregnancy + ACE inhibitor",
     "stem": "A 30-year-old woman is 8 weeks pregnant.\nShe has chronic hypertension and has been taking lisinopril 20 mg daily for several years.\nBP today is 142/88 mmHg.",
     "question": "Which medication should be discontinued due to fetal toxicity risk?",
     "answer_choices": [
@@ -6687,7 +6687,7 @@
   {
     "id": "CQOTD-0138",
     "day_of_year": 138,
-    "title": "Hypertension in pregnancy—use nifedipine option",
+    "title": "Hypertension in pregnancy",
     "stem": "A 27-year-old woman is 24 weeks pregnant and has persistent blood pressures around 150/95 mmHg.\nPMH: asthma with frequent albuterol use.\nShe needs an oral antihypertensive option.",
     "question": "Which medication is an appropriate option from the choices below?",
     "answer_choices": [
@@ -6739,7 +6739,7 @@
   {
     "id": "CQOTD-0139",
     "day_of_year": 139,
-    "title": "Chronic angina with low BP—ranolazine",
+    "title": "Chronic angina with low BP",
     "stem": "A 63-year-old man has chronic stable angina despite:\n- Metoprolol succinate 100 mg daily\n- Nitroglycerin (sublingual) as needed\nHe cannot tolerate higher doses of beta-blocker because of fatigue and has borderline blood pressure (100/62 mmHg).\nHe wants an additional medication to reduce angina frequency without significantly lowering BP or HR.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -6789,7 +6789,7 @@
   {
     "id": "CQOTD-0140",
     "day_of_year": 140,
-    "title": "Severe CKD + AF anticoagulation—warfarin",
+    "title": "Severe CKD + AF anticoagulation",
     "stem": "A 79-year-old man has nonvalvular atrial fibrillation and stage 5 CKD (eGFR 12 mL/min/1.73m²), not yet on dialysis.\nHe needs long-term stroke prevention anticoagulation.",
     "question": "Which anticoagulant is the best choice from the options below based on the most established use in severe CKD?",
     "answer_choices": [
@@ -6840,7 +6840,7 @@
   {
     "id": "CQOTD-0141",
     "day_of_year": 141,
-    "title": "Once-daily DOAC maintenance option—rivaroxaban",
+    "title": "Once-daily DOAC maintenance option",
     "stem": "A 54-year-old woman is started on anticoagulation for acute DVT and will continue long-term.\nShe struggles with twice-daily medication adherence and prefers a once-daily oral anticoagulant regimen (after initial therapy as appropriate).",
     "question": "Which DOAC offers a once-daily maintenance dosing option for VTE treatment (after the initial dosing phase), potentially helping adherence?",
     "answer_choices": [
@@ -6889,7 +6889,7 @@
   {
     "id": "CQOTD-0142",
     "day_of_year": 142,
-    "title": "Contact lens conjunctivitis—cover Pseudomonas with fluoroquinolone drops",
+    "title": "Contact lens conjunctivitis",
     "stem": "A 19-year-old contact lens wearer presents with acute unilateral eye redness, pain, and purulent discharge.\nVision is intact but he has significant irritation.\nBacterial conjunctivitis is suspected and Pseudomonas coverage is desired due to contact lens use.",
     "question": "Which medication provides a fluoroquinolone ophthalmic option appropriate for a contact lens wearer (Pseudomonas risk)?",
     "answer_choices": [
@@ -6938,7 +6938,7 @@
   {
     "id": "CQOTD-0143",
     "day_of_year": 143,
-    "title": "Allergic conjunctivitis—olopatadine",
+    "title": "Allergic conjunctivitis",
     "stem": "A 24-year-old woman has bilateral itchy, watery eyes every spring.\nShe has no purulent discharge and no vision changes.\nExam shows conjunctival injection and clear tearing—consistent with allergic conjunctivitis.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -6986,7 +6986,7 @@
   {
     "id": "CQOTD-0144",
     "day_of_year": 144,
-    "title": "Allergic conjunctivitis OTC option—ketotifen",
+    "title": "Allergic conjunctivitis OTC option",
     "stem": "A 30-year-old man has seasonal allergic conjunctivitis and wants an over-the-counter eye drop\nthat can relieve itching and redness.",
     "question": "Which medication best fits this request?",
     "answer_choices": [
@@ -7033,7 +7033,7 @@
   {
     "id": "CQOTD-0145",
     "day_of_year": 145,
-    "title": "Otitis externa—ciprofloxacin/dexamethasone otic drops",
+    "title": "Otitis externa",
     "stem": "A 17-year-old swimmer has ear pain and tenderness when the tragus is pressed.\nOtoscopy shows an edematous, erythematous external ear canal with debris.\nDiagnosis: acute otitis externa.",
     "question": "Which medication is an appropriate treatment option from the choices below?",
     "answer_choices": [
@@ -7081,7 +7081,7 @@
   {
     "id": "CQOTD-0146",
     "day_of_year": 146,
-    "title": "Otitis externa with concern for perforation—ofloxacin otic",
+    "title": "Otitis externa with concern for perforation",
     "stem": "A 10-year-old boy has otitis externa after swimming.\nHis parents report he had a tympanic membrane perforation as a toddler, and they are worried about ear drops.\nThe clinician chooses an otic antibiotic with good safety for middle ear exposure.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -7131,7 +7131,7 @@
   {
     "id": "CQOTD-0147",
     "day_of_year": 147,
-    "title": "Glaucoma add-on—topical carbonic anhydrase inhibitor",
+    "title": "Glaucoma add-on",
     "stem": "A 67-year-old woman has primary open-angle glaucoma.\nDespite latanoprost at night, her intraocular pressure remains above goal.\nThe ophthalmologist wants to add a topical carbonic anhydrase inhibitor.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -7181,7 +7181,7 @@
   {
     "id": "CQOTD-0148",
     "day_of_year": 148,
-    "title": "Glaucoma + asthma—avoid timolol drops",
+    "title": "Glaucoma + asthma",
     "stem": "A 62-year-old man has open-angle glaucoma and moderate asthma requiring albuterol most days.\nThe ophthalmologist is considering add-on eye drops to lower intraocular pressure.",
     "question": "Which medication should be avoided due to risk of bronchospasm from systemic beta-blockade?",
     "answer_choices": [
@@ -7232,7 +7232,7 @@
   {
     "id": "CQOTD-0149",
     "day_of_year": 149,
-    "title": "Pre-op skin antisepsis—chlorhexidine",
+    "title": "Pre-op skin antisepsis",
     "stem": "A 45-year-old woman is preparing for elective surgery.\nShe is asked to use a topical antiseptic wash the night before and the morning of surgery to reduce skin bacteria.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -7279,7 +7279,7 @@
   {
     "id": "CQOTD-0150",
     "day_of_year": 150,
-    "title": "Actinic keratoses field therapy—topical fluorouracil",
+    "title": "Actinic keratoses field therapy",
     "stem": "A 71-year-old man has multiple rough, scaly lesions on his forehead diagnosed as actinic keratoses.\nDermatology recommends 'field therapy' to treat visible and subclinical lesions across the sun-damaged area.",
     "question": "Which medication is an appropriate topical field therapy option from the choices below?",
     "answer_choices": [
@@ -7326,7 +7326,7 @@
   {
     "id": "CQOTD-0151",
     "day_of_year": 151,
-    "title": "Melasma/post-inflammatory hyperpigmentation—hydroquinone",
+    "title": "Melasma/post-inflammatory hyperpigmentation",
     "stem": "A 34-year-old woman has symmetric hyperpigmented patches on her cheeks that worsened after pregnancy.\nDiagnosis: melasma.\nShe requests a topical depigmenting agent.",
     "question": "Which medication is most appropriate from the choices below?",
     "answer_choices": [
@@ -7372,7 +7372,7 @@
   {
     "id": "CQOTD-0152",
     "day_of_year": 152,
-    "title": "Comedonal acne—tretinoin and expectation setting",
+    "title": "Comedonal acne",
     "stem": "A 17-year-old with comedonal acne is prescribed a topical retinoid.\nAfter 1 week, he complains of dryness and mild peeling and asks if he should stop the medication.",
     "question": "Which medication is most appropriate for comedonal acne and commonly causes early dryness/peeling that improves with continued use and proper counseling?",
     "answer_choices": [
@@ -7418,7 +7418,7 @@
   {
     "id": "CQOTD-0153",
     "day_of_year": 153,
-    "title": "Atopic dermatitis on body—medium potency steroid",
+    "title": "Atopic dermatitis on body",
     "stem": "A 9-year-old has atopic dermatitis with itchy, erythematous plaques on the arms and legs.\nSymptoms persist despite emollients. Lesions are not on the face or groin.",
     "question": "Which topical corticosteroid is most appropriate from the options below?",
     "answer_choices": [
@@ -7466,7 +7466,7 @@
   {
     "id": "CQOTD-0154",
     "day_of_year": 154,
-    "title": "Plaque psoriasis—high-potency topical steroid",
+    "title": "Plaque psoriasis",
     "stem": "A 46-year-old man has chronic plaque psoriasis with thick, well-demarcated scaly plaques on the elbows and knees.\nHe needs a short course of a very high-potency topical corticosteroid for thick plaques.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -7513,7 +7513,7 @@
   {
     "id": "CQOTD-0155",
     "day_of_year": 155,
-    "title": "Mild nail fungus—topical ciclopirox lacquer",
+    "title": "Mild nail fungus",
     "stem": "A 40-year-old woman has mild distal toenail onychomycosis involving one nail.\nShe prefers to avoid oral therapy and wants a topical option.",
     "question": "Which medication is the best topical option from the choices below?",
     "answer_choices": [
@@ -7561,7 +7561,7 @@
   {
     "id": "CQOTD-0156",
     "day_of_year": 156,
-    "title": "Iron deficiency anemia—ferrous sulfate counseling",
+    "title": "Iron deficiency anemia",
     "stem": "A 27-year-old woman has fatigue and pica.\nLabs: Hgb 9.8 g/dL, MCV 72 fL, ferritin 7 ng/mL.\nShe is started on oral iron therapy.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -7609,7 +7609,7 @@
   {
     "id": "CQOTD-0157",
     "day_of_year": 157,
-    "title": "Vitamin D deficiency—cholecalciferol",
+    "title": "Bone health deficiency in elderly",
     "stem": "A 69-year-old woman has osteoporosis risk factors and reports limited sun exposure.\n25-hydroxyvitamin D is 12 ng/mL (low).",
     "question": "Which medication is most appropriate to treat vitamin D deficiency from the options below?",
     "answer_choices": [
@@ -7658,7 +7658,7 @@
   {
     "id": "CQOTD-0158",
     "day_of_year": 158,
-    "title": "Uncomplicated bacterial conjunctivitis—polymyxin B/trimethoprim",
+    "title": "Uncomplicated bacterial conjunctivitis",
     "stem": "A 6-year-old child has red eyes with purulent discharge and eyelids stuck shut in the morning.\nNo contact lens use. No vision changes.\nDiagnosis: uncomplicated bacterial conjunctivitis.",
     "question": "Which medication is an appropriate first-line option from the choices below?",
     "answer_choices": [
@@ -7707,7 +7707,7 @@
   {
     "id": "CQOTD-0159",
     "day_of_year": 159,
-    "title": "Bacterial conjunctivitis alternative—tobramycin drops",
+    "title": "Bacterial conjunctivitis alternative",
     "stem": "A 45-year-old man has bacterial conjunctivitis with purulent discharge.\nHe needs an antibiotic eye drop.",
     "question": "Which medication is an ophthalmic antibiotic option from the choices below?",
     "answer_choices": [
@@ -7757,7 +7757,7 @@
   {
     "id": "CQOTD-0160",
     "day_of_year": 160,
-    "title": "Cataract surgery risk—tamsulosin floppy iris syndrome",
+    "title": "Cataract surgery risk",
     "stem": "A 72-year-old man with BPH is scheduled for cataract surgery next month.\nHis urologist recently started a medication for urinary hesitancy and weak stream.\nThe ophthalmologist warns that one BPH medication is associated with intraoperative floppy iris syndrome.",
     "question": "Which medication is most associated with this complication?",
     "answer_choices": [
@@ -7807,7 +7807,7 @@
   {
     "id": "CQOTD-0161",
     "day_of_year": 161,
-    "title": "BPH with enlarged prostate—5-alpha reductase inhibitor",
+    "title": "BPH with enlarged prostate",
     "stem": "A 66-year-old man has BPH symptoms and a markedly enlarged prostate on exam.\nHe prefers a medication that can shrink the prostate over time and reduce risk of urinary retention.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -7856,7 +7856,7 @@
   {
     "id": "CQOTD-0162",
     "day_of_year": 162,
-    "title": "OAB with cognitive concerns—prefer mirabegron over anticholinergics",
+    "title": "OAB with cognitive concerns",
     "stem": "A 78-year-old woman has overactive bladder with urgency and urge incontinence.\nPMH: mild cognitive impairment.\nShe wants medication but wants to avoid worsening memory or confusion.",
     "question": "Which medication is the best option from the choices below?",
     "answer_choices": [
@@ -7908,7 +7908,7 @@
   {
     "id": "CQOTD-0163",
     "day_of_year": 163,
-    "title": "Dysuria symptom relief—phenazopyridine",
+    "title": "Dysuria symptom relief",
     "stem": "A 23-year-old woman is diagnosed with uncomplicated cystitis and is started on nitrofurantoin.\nShe asks if there is a medication she can take for the next 1–2 days to relieve burning with urination while the antibiotic starts working.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -7956,7 +7956,7 @@
   {
     "id": "CQOTD-0164",
     "day_of_year": 164,
-    "title": "PDE5 inhibitor + nitrates—dangerous hypotension",
+    "title": "PDE5 inhibitor + nitrates",
     "stem": "A 60-year-old man with erectile dysfunction asks for a medication to improve erections.\nPMH: chronic stable angina treated with isosorbide mononitrate daily.",
     "question": "Which medication is contraindicated due to risk of severe hypotension?",
     "answer_choices": [
@@ -8005,7 +8005,7 @@
   {
     "id": "CQOTD-0165",
     "day_of_year": 165,
-    "title": "Estrogen therapy with uterus—add progesterone",
+    "title": "Estrogen therapy with uterus",
     "stem": "A 52-year-old woman with bothersome hot flashes wants hormone therapy.\nShe has an intact uterus and no history of breast cancer or VTE.\nThe clinician plans to prescribe estradiol.",
     "question": "Which additional medication should be added to reduce the risk of endometrial hyperplasia/cancer?",
     "answer_choices": [
@@ -8053,7 +8053,7 @@
   {
     "id": "CQOTD-0166",
     "day_of_year": 166,
-    "title": "Postmenopausal osteoporosis + breast cancer risk—raloxifene",
+    "title": "Postmenopausal osteoporosis + breast cancer risk",
     "stem": "A 59-year-old postmenopausal woman has low bone density (T-score -2.6).\nShe has a strong family history of estrogen-receptor–positive breast cancer.\nShe does not have hot flashes and wants an osteoporosis medication that can also reduce breast cancer risk.\nNo history of DVT/PE.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -8102,7 +8102,7 @@
   {
     "id": "CQOTD-0167",
     "day_of_year": 167,
-    "title": "Cannot tolerate oral bisphosphonate—zoledronic acid infusion",
+    "title": "Cannot tolerate oral bisphosphonate",
     "stem": "A 72-year-old woman with osteoporosis is prescribed alendronate.\nAfter 2 doses, she develops severe esophageal irritation despite proper administration technique.\nShe wants a non-oral option with infrequent dosing.\nRenal function: eGFR 60.",
     "question": "Which medication is the best alternative from the options below?",
     "answer_choices": [
@@ -8151,7 +8151,7 @@
   {
     "id": "CQOTD-0168",
     "day_of_year": 168,
-    "title": "Osteoporosis with severe CKD—denosumab",
+    "title": "Osteoporosis with severe CKD",
     "stem": "A 76-year-old woman has osteoporosis with a prior fragility fracture.\nRenal function: eGFR 18 mL/min/1.73m².\nThe clinician wants an osteoporosis therapy that can be used in advanced CKD (with careful monitoring for hypocalcemia).",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -8200,7 +8200,7 @@
   {
     "id": "CQOTD-0169",
     "day_of_year": 169,
-    "title": "Before denosumab—ensure vitamin D repletion",
+    "title": "Before denosumab",
     "stem": "A 68-year-old woman is starting denosumab for osteoporosis.\nBaseline labs show low 25-hydroxyvitamin D at 14 ng/mL.\nThe clinician wants to reduce her risk of denosumab-associated hypocalcemia.",
     "question": "Which medication should be started to correct her deficiency?",
     "answer_choices": [
@@ -8248,7 +8248,7 @@
   {
     "id": "CQOTD-0170",
     "day_of_year": 170,
-    "title": "Parkinson disease—dopamine agonist option",
+    "title": "Parkinson disease",
     "stem": "A 61-year-old man has early Parkinson disease with resting tremor and bradykinesia.\nHe has mild symptoms and wants a medication option that directly stimulates dopamine receptors.",
     "question": "Which medication best fits this description from the options below?",
     "answer_choices": [
@@ -8299,7 +8299,7 @@
   {
     "id": "CQOTD-0171",
     "day_of_year": 171,
-    "title": "Restless legs syndrome—ropinirole",
+    "title": "Restless legs syndrome",
     "stem": "A 52-year-old woman has an uncomfortable urge to move her legs at night that improves with movement.\nSymptoms disrupt sleep and meet criteria for restless legs syndrome.\nShe wants a medication option that acts as a dopamine agonist.",
     "question": "Which medication is most appropriate from the choices below?",
     "answer_choices": [
@@ -8348,7 +8348,7 @@
   {
     "id": "CQOTD-0172",
     "day_of_year": 172,
-    "title": "Enzyme induction—carbamazepine can reduce oral contraceptive efficacy",
+    "title": "Enzyme induction",
     "stem": "A 26-year-old woman with focal seizures is stable on carbamazepine.\nShe wants to start a combined oral contraceptive pill for birth control.\nThe clinician warns that one seizure medication can reduce oral contraceptive effectiveness by inducing hepatic enzymes.",
     "question": "Which medication is the interacting seizure medication?",
     "answer_choices": [
@@ -8399,7 +8399,7 @@
   {
     "id": "CQOTD-0173",
     "day_of_year": 173,
-    "title": "Phenytoin adverse effect—gingival hyperplasia",
+    "title": "Antiepileptic gingival hyperplasia",
     "stem": "A 19-year-old man with epilepsy has been taking phenytoin for 8 months.\nHe reports swollen, overgrown gums and bleeding when brushing his teeth.",
     "question": "Which medication is most likely responsible?",
     "answer_choices": [
@@ -8445,7 +8445,7 @@
   {
     "id": "CQOTD-0174",
     "day_of_year": 174,
-    "title": "Valproic acid in pregnancy—avoid due to teratogenicity",
+    "title": "Antiepileptic teratogenicity in pregnancy",
     "stem": "A 28-year-old woman with epilepsy is 6 weeks pregnant.\nHer seizures have been well controlled on valproic acid.\nShe asks which antiseizure medication carries the highest teratogenic risk and is generally avoided in pregnancy if possible.",
     "question": "Which medication is the best answer from the options below?",
     "answer_choices": [
@@ -8495,7 +8495,7 @@
   {
     "id": "CQOTD-0175",
     "day_of_year": 175,
-    "title": "Lamotrigine rash—stop if severe/SJS concern",
+    "title": "Antiepileptic rash risk with rapid titration",
     "stem": "A 23-year-old woman recently started lamotrigine for bipolar disorder.\nAfter 2 weeks, she develops a widespread rash with fever and mucosal involvement.",
     "question": "Which medication is most likely causing this high-risk reaction?",
     "answer_choices": [
@@ -8545,7 +8545,7 @@
   {
     "id": "CQOTD-0176",
     "day_of_year": 176,
-    "title": "Levetiracetam behavioral adverse effect",
+    "title": "Antiepileptic behavioral adverse effect",
     "stem": "A 16-year-old boy with seizures starts levetiracetam.\nOver the next month, his parents report new irritability, mood swings, and aggression.\nNo fever or rash. Labs are normal.",
     "question": "Which medication is most likely causing these behavioral symptoms?",
     "answer_choices": [
@@ -8593,7 +8593,7 @@
   {
     "id": "CQOTD-0177",
     "day_of_year": 177,
-    "title": "TNF inhibitor safety—screen for latent TB before etanercept",
+    "title": "TNF inhibitor safety",
     "stem": "A 49-year-old woman with rheumatoid arthritis is starting a TNF inhibitor for better disease control.\nShe has no prior biologic therapy.\nThe clinician orders screening tests before initiating treatment because one class can reactivate latent tuberculosis.",
     "question": "Which medication is the TNF inhibitor in the options below?",
     "answer_choices": [
@@ -8643,7 +8643,7 @@
   {
     "id": "CQOTD-0178",
     "day_of_year": 178,
-    "title": "Cyclosporine adverse effects—nephrotoxicity and hypertension",
+    "title": "Calcineurin inhibitor adverse effects",
     "stem": "A 55-year-old kidney transplant recipient is taking immunosuppression.\nHe develops rising serum creatinine and worsening hypertension over several weeks.\nThe team suspects a calcineurin inhibitor adverse effect.",
     "question": "Which medication is most likely responsible from the options below?",
     "answer_choices": [
@@ -8691,7 +8691,7 @@
   {
     "id": "CQOTD-0179",
     "day_of_year": 179,
-    "title": "Teratogenic immunosuppressant—mycophenolate",
+    "title": "Teratogenic immunosuppressant",
     "stem": "A 29-year-old woman with lupus nephritis is taking immunosuppression and wants to become pregnant.\nThe rheumatologist reviews her medications and identifies one with strong teratogenicity that should be avoided in pregnancy.",
     "question": "Which medication is most concerning from the options below?",
     "answer_choices": [
@@ -8741,7 +8741,7 @@
   {
     "id": "CQOTD-0180",
     "day_of_year": 180,
-    "title": "Spasticity—baclofen (GABA-B agonist)",
+    "title": "Spasticity",
     "stem": "A 48-year-old man with multiple sclerosis has painful muscle spasticity affecting gait.\nHe wants an oral muscle relaxant commonly used for spasticity (not just acute back strain).",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -8789,7 +8789,7 @@
   {
     "id": "CQOTD-0181",
     "day_of_year": 181,
-    "title": "Anaphylaxis—first-line epinephrine (IM)",
+    "title": "Anaphylaxis",
     "stem": "A 19-year-old woman with a known peanut allergy accidentally eats a cookie containing peanuts.\nWithin minutes she develops diffuse hives, lip swelling, wheezing, and dizziness.\nVitals: BP 86/54 mmHg, HR 128 bpm, RR 26/min, SpO2 92% on room air.\nShe is speaking in short sentences.",
     "question": "Which medication should be administered immediately as first-line treatment?",
     "answer_choices": [
@@ -8842,7 +8842,7 @@
   {
     "id": "CQOTD-0182",
     "day_of_year": 182,
-    "title": "Benzodiazepine oversedation—flumazenil reversal",
+    "title": "Benzodiazepine oversedation",
     "stem": "A 44-year-old man receives midazolam for a short endoscopy procedure.\nAfter the procedure, he is difficult to arouse and has shallow respirations.\nVitals: BP 128/76 mmHg, HR 70 bpm, RR 8/min, SpO2 90% on room air.\nThere is no suspicion of opioid use and he has no seizure history.",
     "question": "Which medication can reverse benzodiazepine effects?",
     "answer_choices": [
@@ -8892,7 +8892,7 @@
   {
     "id": "CQOTD-0183",
     "day_of_year": 183,
-    "title": "Narrow-complex SVT—adenosine",
+    "title": "Narrow-complex SVT",
     "stem": "A 26-year-old woman presents with sudden-onset palpitations and lightheadedness.\nECG shows a regular narrow-complex tachycardia at 190 bpm.\nShe is stable: BP 122/74 mmHg, no chest pain, no heart failure signs.\nVagal maneuvers are attempted without success.",
     "question": "Which medication is the best next step to acutely terminate this rhythm?",
     "answer_choices": [
@@ -8941,7 +8941,7 @@
   {
     "id": "CQOTD-0184",
     "day_of_year": 184,
-    "title": "Ventricular arrhythmia/rhythm control in structural heart disease—amiodarone",
+    "title": "Ventricular arrhythmia/rhythm control in structural heart disease",
     "stem": "A 68-year-old man with ischemic cardiomyopathy (EF 25%) presents with recurrent episodes of symptomatic ventricular tachycardia.\nHe has an ICD but continues to receive shocks.\nThe electrophysiologist wants to start an antiarrhythmic that is effective in structural heart disease.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -8990,7 +8990,7 @@
   {
     "id": "CQOTD-0185",
     "day_of_year": 185,
-    "title": "AF with HFrEF and borderline BP—digoxin for rate control",
+    "title": "AF with HFrEF and borderline BP",
     "stem": "A 76-year-old man with HFrEF (EF 28%) presents with atrial fibrillation with rapid ventricular response.\nVitals: BP 92/60 mmHg, HR 148 bpm, SpO2 96%.\nHe is not in cardiogenic shock but is borderline hypotensive.\nThe team wants rate control without significantly lowering blood pressure.",
     "question": "Which medication is the best option from the choices below?",
     "answer_choices": [
@@ -9039,7 +9039,7 @@
   {
     "id": "CQOTD-0186",
     "day_of_year": 186,
-    "title": "ACS with PCI—choose ticagrelor as P2Y12 inhibitor",
+    "title": "ACS with PCI",
     "stem": "A 58-year-old man presents with NSTEMI and undergoes coronary stent placement.\nHe is being discharged on dual antiplatelet therapy (DAPT).\nPMH: hypertension, hyperlipidemia. No history of intracranial hemorrhage.",
     "question": "Which P2Y12 inhibitor is an appropriate component of DAPT after ACS with PCI from the options below?",
     "answer_choices": [
@@ -9088,7 +9088,7 @@
   {
     "id": "CQOTD-0187",
     "day_of_year": 187,
-    "title": "Secondary stroke prevention with aspirin intolerance—clopidogrel",
+    "title": "Secondary stroke prevention with aspirin intolerance",
     "stem": "A 67-year-old woman had an ischemic stroke 3 months ago.\nShe was started on aspirin but developed true hypersensitivity (urticaria and angioedema).\nShe needs an alternative antiplatelet for secondary stroke prevention.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -9137,7 +9137,7 @@
   {
     "id": "CQOTD-0188",
     "day_of_year": 188,
-    "title": "Acute DVT in pregnancy—use enoxaparin",
+    "title": "Acute DVT in pregnancy",
     "stem": "A 32-year-old woman who is 18 weeks pregnant presents with unilateral leg swelling and pain.\nUltrasound confirms proximal DVT.\nShe has no history of heparin-induced thrombocytopenia.",
     "question": "Which anticoagulant is most appropriate for treatment during pregnancy from the options below?",
     "answer_choices": [
@@ -9187,7 +9187,7 @@
   {
     "id": "CQOTD-0189",
     "day_of_year": 189,
-    "title": "HF volume overload with poor oral absorption—switch to torsemide",
+    "title": "HF volume overload with poor oral absorption",
     "stem": "A 71-year-old man with chronic HFrEF reports worsening edema and shortness of breath.\nHe is taking furosemide 80 mg twice daily, but has minimal diuresis.\nHe also has gut edema and inconsistent oral absorption is suspected.\nCreatinine is stable.",
     "question": "Which loop diuretic is a reasonable switch for more reliable oral bioavailability from the options below?",
     "answer_choices": [
@@ -9236,7 +9236,7 @@
   {
     "id": "CQOTD-0190",
     "day_of_year": 190,
-    "title": "Severe edema needing potent loop diuresis—bumetanide",
+    "title": "Severe edema needing potent loop diuresis",
     "stem": "A 64-year-old woman with decompensated heart failure has marked lower-extremity edema and pulmonary congestion.\nShe has chronic kidney disease and requires a potent loop diuretic.\nThe clinician selects a loop diuretic with high potency per mg.",
     "question": "Which medication best fits this role from the options below?",
     "answer_choices": [
@@ -9284,7 +9284,7 @@
   {
     "id": "CQOTD-0191",
     "day_of_year": 191,
-    "title": "HFrEF beta-blocker selection—carvedilol",
+    "title": "HFrEF beta-blocker selection",
     "stem": "A 59-year-old man has chronic HFrEF (EF 32%) and hypertension.\nHe is clinically stable and euvolemic on sacubitril/valsartan and a loop diuretic.\nThe clinician wants to add an evidence-based beta-blocker that also provides alpha-1 blockade to lower blood pressure.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -9334,7 +9334,7 @@
   {
     "id": "CQOTD-0192",
     "day_of_year": 192,
-    "title": "HFrEF + hypertension—avoid verapamil",
+    "title": "HFrEF + hypertension",
     "stem": "A 63-year-old woman with HFrEF (EF 30%) and chronic hypertension asks about adding a calcium channel blocker for blood pressure control.\nShe is already on sacubitril/valsartan and a beta-blocker.",
     "question": "Which calcium channel blocker should be avoided because it can worsen systolic heart failure?",
     "answer_choices": [
@@ -9383,7 +9383,7 @@
   {
     "id": "CQOTD-0193",
     "day_of_year": 193,
-    "title": "ACE inhibitor cough—switch to an ARB (irbesartan)",
+    "title": "ACE inhibitor cough",
     "stem": "A 55-year-old man with type 2 diabetes and hypertension is started on lisinopril for renal protection.\nAfter 3 weeks, he develops a persistent dry cough.\nHe has no angioedema and wants to continue kidney-protective therapy.",
     "question": "Which medication is the best alternative from the options below?",
     "answer_choices": [
@@ -9431,7 +9431,7 @@
   {
     "id": "CQOTD-0194",
     "day_of_year": 194,
-    "title": "Post-MI with reduced EF—start ACE inhibitor (ramipril)",
+    "title": "Post-MI with reduced EF",
     "stem": "A 62-year-old man is 1 week post-myocardial infarction.\nEcho shows EF 38%.\nHe is on aspirin, a high-intensity statin, and a beta-blocker.\nBP is 128/76 mmHg, creatinine 1.0 mg/dL, potassium 4.3 mEq/L.",
     "question": "Which medication should be added to improve long-term outcomes from the options below?",
     "answer_choices": [
@@ -9482,7 +9482,7 @@
   {
     "id": "CQOTD-0195",
     "day_of_year": 195,
-    "title": "Statin myopathy trigger—clarithromycin increases simvastatin levels",
+    "title": "Statin myopathy trigger",
     "stem": "A 63-year-old man takes simvastatin 40 mg nightly for hyperlipidemia.\nHe is prescribed an antibiotic for community-acquired pneumonia.\nThree days later, he develops diffuse muscle pain and weakness.\nLabs: CK 2,800 U/L (elevated), creatinine 1.3 mg/dL (baseline 0.9).",
     "question": "Which newly started medication most likely precipitated this interaction?",
     "answer_choices": [
@@ -9531,7 +9531,7 @@
   {
     "id": "CQOTD-0196",
     "day_of_year": 196,
-    "title": "Statin choice with many drug interactions—pravastatin",
+    "title": "Statin choice with many drug interactions",
     "stem": "A 70-year-old man with ASCVD needs statin therapy but takes multiple interacting medications.\nHis clinician wants a statin with fewer CYP3A4 interactions to reduce risk of myopathy when other medications change.",
     "question": "Which statin is the best choice from the options below?",
     "answer_choices": [
@@ -9580,7 +9580,7 @@
   {
     "id": "CQOTD-0197",
     "day_of_year": 197,
-    "title": "Statin administration counseling—lovastatin with evening meal",
+    "title": "Statin administration counseling",
     "stem": "A 52-year-old man is started on a statin for hyperlipidemia.\nAt follow-up, LDL reduction is less than expected.\nHe admits he takes the medication every morning on an empty stomach.\nThe clinician suspects he is taking a statin whose absorption is improved with food and that is typically taken with the evening meal.",
     "question": "Which statin best fits this description?",
     "answer_choices": [
@@ -9629,7 +9629,7 @@
   {
     "id": "CQOTD-0198",
     "day_of_year": 198,
-    "title": "Very high LDL despite maximal therapy—add alirocumab",
+    "title": "Very high LDL despite maximal therapy",
     "stem": "A 48-year-old man with familial hypercholesterolemia has LDL 190 mg/dL despite:\n- Maximally tolerated high-intensity statin\n- Ezetimibe\nHe has established ASCVD.\nThe clinician wants to add an injectable PCSK9 inhibitor to further lower LDL and CV risk.",
     "question": "Which medication is an appropriate choice from the options below?",
     "answer_choices": [
@@ -9678,7 +9678,7 @@
   {
     "id": "CQOTD-0199",
     "day_of_year": 199,
-    "title": "Metformin in advanced CKD—discontinue due to lactic acidosis risk",
+    "title": "Diabetes medication in advanced CKD",
     "stem": "A 72-year-old man with type 2 diabetes is taking metformin 1,000 mg twice daily.\nHis kidney function has declined.\nLabs: eGFR 24 mL/min/1.73m².\nHe asks which diabetes medication needs to be stopped because of increased risk of lactic acidosis in advanced CKD.",
     "question": "Which medication should be discontinued?",
     "answer_choices": [
@@ -9729,7 +9729,7 @@
   {
     "id": "CQOTD-0200",
     "day_of_year": 200,
-    "title": "T2DM + HFrEF—add dapagliflozin",
+    "title": "T2DM + HFrEF",
     "stem": "A 60-year-old man has type 2 diabetes (A1c 8.1%) and HFrEF (EF 35%).\nHe is on metformin and guideline-directed HF therapy.\nRenal function: eGFR 58.\nThe clinician wants a diabetes medication that also provides heart failure benefit.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -9779,7 +9779,7 @@
   {
     "id": "CQOTD-0201",
     "day_of_year": 201,
-    "title": "T2DM with ASCVD and obesity—liraglutide option",
+    "title": "T2DM with ASCVD and obesity",
     "stem": "A 54-year-old woman has type 2 diabetes (A1c 8.4%) and obesity (BMI 36).\nShe also has established ASCVD (prior MI).\nShe wants a medication that can improve glycemic control and support weight loss while reducing cardiovascular risk.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -9828,7 +9828,7 @@
   {
     "id": "CQOTD-0202",
     "day_of_year": 202,
-    "title": "Clopidogrel + GERD—choose pantoprazole to minimize interaction",
+    "title": "Clopidogrel + GERD",
     "stem": "A 65-year-old man had a coronary stent placed 2 months ago and is taking clopidogrel.\nHe has symptomatic GERD and needs a proton pump inhibitor.\nThe clinician wants to minimize reduction of clopidogrel activation by avoiding strong CYP2C19 inhibition.",
     "question": "Which acid-suppressing medication is preferred from the options below?",
     "answer_choices": [
@@ -9879,7 +9879,7 @@
   {
     "id": "CQOTD-0203",
     "day_of_year": 203,
-    "title": "Hyperthyroidism in 1st trimester—propylthiouracil",
+    "title": "Hyperthyroidism in 1st trimester",
     "stem": "A 29-year-old woman is 9 weeks pregnant and is diagnosed with Graves disease.\nSymptoms: weight loss, tremor, palpitations.\nLabs: suppressed TSH, elevated free T4.\nThe clinician wants an antithyroid drug preferred in the first trimester.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -9927,7 +9927,7 @@
   {
     "id": "CQOTD-0204",
     "day_of_year": 204,
-    "title": "Primary hypothyroidism—levothyroxine replacement",
+    "title": "Primary hypothyroidism",
     "stem": "A 46-year-old woman has fatigue, weight gain, constipation, and cold intolerance.\nLabs: TSH 18 mIU/L (high), free T4 low.\nDiagnosis: primary hypothyroidism.",
     "question": "Which medication is the most appropriate long-term therapy from the options below?",
     "answer_choices": [
@@ -9976,7 +9976,7 @@
   {
     "id": "CQOTD-0205",
     "day_of_year": 205,
-    "title": "Graves disease (not pregnant)—methimazole",
+    "title": "Graves disease (not pregnant)",
     "stem": "A 33-year-old woman is diagnosed with Graves disease.\nShe is not pregnant and has no plans for pregnancy in the next year.\nLabs: TSH suppressed, free T4 elevated.\nThe clinician plans antithyroid therapy as first-line pharmacologic treatment.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -10025,7 +10025,7 @@
   {
     "id": "CQOTD-0206",
     "day_of_year": 206,
-    "title": "Acute MS relapse—IV methylprednisolone",
+    "title": "Acute MS relapse",
     "stem": "A 37-year-old woman with multiple sclerosis presents with new vision changes and weakness for 3 days.\nMRI suggests an acute inflammatory relapse.\nThe neurologist wants short-term high-dose corticosteroids to hasten recovery.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10074,7 +10074,7 @@
   {
     "id": "CQOTD-0207",
     "day_of_year": 207,
-    "title": "Smoking cessation + depression—bupropion",
+    "title": "Smoking cessation + depression",
     "stem": "A 41-year-old man smokes 1 pack per day and wants to quit.\nHe also has depressive symptoms and prefers a non-nicotine oral medication that can help with cravings.\nHe has no seizure history and does not have an eating disorder.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10122,7 +10122,7 @@
   {
     "id": "CQOTD-0208",
     "day_of_year": 208,
-    "title": "SSRI discontinuation symptoms—paroxetine",
+    "title": "SSRI discontinuation symptoms",
     "stem": "A 29-year-old woman has been taking paroxetine for generalized anxiety disorder.\nShe stops it abruptly because she feels better.\nTwo days later she develops dizziness, nausea, “electric shock” sensations, and irritability.",
     "question": "Which medication is most associated with prominent discontinuation syndrome due to a short half-life?",
     "answer_choices": [
@@ -10171,7 +10171,7 @@
   {
     "id": "CQOTD-0209",
     "day_of_year": 209,
-    "title": "Depression with insomnia and low appetite—mirtazapine",
+    "title": "Depression with insomnia and low appetite",
     "stem": "A 38-year-old woman has major depressive disorder with prominent insomnia and poor appetite with weight loss.\nShe prefers a medication that can help sleep and appetite.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10220,7 +10220,7 @@
   {
     "id": "CQOTD-0210",
     "day_of_year": 210,
-    "title": "Sleep maintenance insomnia—low-dose doxepin",
+    "title": "Sleep maintenance insomnia",
     "stem": "A 52-year-old man has chronic insomnia characterized by frequent nighttime awakenings.\nHe wants a non-benzodiazepine option and prefers to avoid medications with high dependence risk.",
     "question": "Which medication is an appropriate option from the choices below?",
     "answer_choices": [
@@ -10269,7 +10269,7 @@
   {
     "id": "CQOTD-0211",
     "day_of_year": 211,
-    "title": "Active seizure in the field—IM midazolam",
+    "title": "Active seizure in the field",
     "stem": "EMS arrives to find a 35-year-old man actively seizing for 6 minutes.\nIV access is not yet established.\nThe paramedic needs a fast-acting benzodiazepine that can be given intramuscularly to stop the seizure.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10318,7 +10318,7 @@
   {
     "id": "CQOTD-0212",
     "day_of_year": 212,
-    "title": "Panic disorder short-term adjunct—clonazepam",
+    "title": "Panic disorder short-term adjunct",
     "stem": "A 28-year-old woman has panic disorder and is starting an SSRI.\nShe has frequent panic attacks and needs a short-term adjunct medication while the SSRI takes effect.\nHer clinician chooses a longer-acting benzodiazepine.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10368,7 +10368,7 @@
   {
     "id": "CQOTD-0213",
     "day_of_year": 213,
-    "title": "Migraine with CAD—choose rimegepant over triptans",
+    "title": "Migraine with CAD",
     "stem": "A 57-year-old man has episodic migraines with severe unilateral throbbing headache and photophobia.\nPMH: coronary artery disease with prior stent.\nHe needs an acute migraine treatment option that avoids vasoconstriction.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10417,7 +10417,7 @@
   {
     "id": "CQOTD-0214",
     "day_of_year": 214,
-    "title": "Opioid overdose—naloxone",
+    "title": "Opioid overdose",
     "stem": "A 33-year-old man is found unresponsive with shallow breathing.\nVitals: RR 6/min, SpO2 86% on room air, pinpoint pupils.\nFriends report he took oxycodone for back pain and may have taken extra doses.",
     "question": "Which medication should be administered immediately?",
     "answer_choices": [
@@ -10467,7 +10467,7 @@
   {
     "id": "CQOTD-0215",
     "day_of_year": 215,
-    "title": "Acute moderate-to-severe pain—acetaminophen/oxycodone combo",
+    "title": "Acute moderate-to-severe pain",
     "stem": "A 45-year-old man is discharged after an outpatient orthopedic procedure.\nHe has acute moderate-to-severe pain despite scheduled ibuprofen and acetaminophen.\nHe needs a short course of an opioid combination product for breakthrough pain.",
     "question": "Which medication is the best option from the choices below?",
     "answer_choices": [
@@ -10517,7 +10517,7 @@
   {
     "id": "CQOTD-0216",
     "day_of_year": 216,
-    "title": "Allergic rhinitis with congestion—loratadine/pseudoephedrine",
+    "title": "Allergic rhinitis with congestion",
     "stem": "A 34-year-old man has seasonal allergic rhinitis with prominent nasal congestion, sneezing, and itchy eyes.\nHe wants a non-sedating option and asks about a combination product that includes a decongestant.\nPMH: no hypertension or arrhythmia.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10567,7 +10567,7 @@
   {
     "id": "CQOTD-0217",
     "day_of_year": 217,
-    "title": "Acute gout flare—colchicine",
+    "title": "Acute gout flare",
     "stem": "A 56-year-old man presents with sudden onset of severe pain, redness, and swelling in the first MTP joint.\nDiagnosis: acute gout flare.\nHe has a history of peptic ulcer disease and wants to avoid NSAIDs.",
     "question": "Which medication is an appropriate treatment option from the choices below?",
     "answer_choices": [
@@ -10617,7 +10617,7 @@
   {
     "id": "CQOTD-0218",
     "day_of_year": 218,
-    "title": "Chronic gout with high uric acid—start allopurinol",
+    "title": "Chronic gout with high uric acid",
     "stem": "A 60-year-old man has recurrent gout attacks (4 flares in the last year) and uric acid 9.8 mg/dL.\nHe is currently not in an acute flare.\nThe clinician plans long-term urate-lowering therapy to reduce future attacks and prevent tophi.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10665,7 +10665,7 @@
   {
     "id": "CQOTD-0219",
     "day_of_year": 219,
-    "title": "Allopurinol intolerance—consider febuxostat",
+    "title": "Allopurinol intolerance",
     "stem": "A 58-year-old man with chronic gout was started on allopurinol.\nWithin 1 week he developed a diffuse pruritic rash and facial swelling, and the medication was stopped.\nHe needs an alternative long-term urate-lowering medication.",
     "question": "Which medication is the best alternative from the options below?",
     "answer_choices": [
@@ -10713,7 +10713,7 @@
   {
     "id": "CQOTD-0220",
     "day_of_year": 220,
-    "title": "Rheumatoid arthritis first-line DMARD—methotrexate",
+    "title": "Rheumatoid arthritis first-line DMARD",
     "stem": "A 44-year-old woman has newly diagnosed rheumatoid arthritis with symmetric MCP and wrist swelling,\nmorning stiffness >1 hour, and elevated inflammatory markers.\nShe needs a first-line disease-modifying therapy to slow joint damage.\nShe is not pregnant and uses reliable contraception.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10764,7 +10764,7 @@
   {
     "id": "CQOTD-0221",
     "day_of_year": 221,
-    "title": "Retinal toxicity risk—hydroxychloroquine",
+    "title": "Retinal toxicity risk",
     "stem": "A 36-year-old woman with systemic lupus erythematosus is starting long-term disease-modifying therapy.\nHer clinician chooses a medication that is often continued long-term and requires baseline and periodic ophthalmologic monitoring due to retinal toxicity risk.",
     "question": "Which medication is associated with this retinal toxicity risk?",
     "answer_choices": [
@@ -10814,7 +10814,7 @@
   {
     "id": "CQOTD-0222",
     "day_of_year": 222,
-    "title": "C. difficile colitis—use oral vancomycin",
+    "title": "C. difficile colitis",
     "stem": "A 66-year-old woman recently completed clindamycin for a dental infection.\nNow she has 8 watery stools/day, abdominal cramping, and a low-grade fever.\nStool toxin test is positive for Clostridioides difficile.",
     "question": "Which medication is most appropriate from the options below?",
     "answer_choices": [
@@ -10864,7 +10864,7 @@
   {
     "id": "CQOTD-0223",
     "day_of_year": 223,
-    "title": "MRSA pneumonia option—linezolid (watch serotonin risk)",
+    "title": "MRSA pneumonia option",
     "stem": "A 58-year-old man is hospitalized with pneumonia.\nSputum culture grows MRSA.\nHe is taking sertraline for depression.\nThe team wants an MRSA-active antibiotic option that has excellent lung penetration but requires awareness of serotonin syndrome risk with SSRIs.",
     "question": "Which medication best fits this description from the options below?",
     "answer_choices": [
@@ -10913,7 +10913,7 @@
   {
     "id": "CQOTD-0224",
     "day_of_year": 224,
-    "title": "PCP prophylaxis in HIV—TMP/SMX",
+    "title": "PCP prophylaxis in HIV",
     "stem": "A 39-year-old man with HIV is newly established in care.\nLabs: CD4 count 140 cells/mm³.\nHe is started on antiretroviral therapy and needs prophylaxis against Pneumocystis jirovecii pneumonia (PCP).",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -10960,7 +10960,7 @@
   {
     "id": "CQOTD-0225",
     "day_of_year": 225,
-    "title": "COPD maintenance—LAMA/LABA combo umeclidinium/vilanterol",
+    "title": "COPD maintenance",
     "stem": "A 66-year-old man with COPD has persistent dyspnea on exertion despite as-needed albuterol.\nHe has no history of asthma.\nHe needs a once-daily maintenance inhaler that combines a LAMA and a LABA.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11011,7 +11011,7 @@
   {
     "id": "CQOTD-0226",
     "day_of_year": 226,
-    "title": "AF rhythm control warning—dronedarone is contraindicated in symptomatic HF/permanent AF",
+    "title": "AF rhythm control warning",
     "stem": "A 70-year-old man has atrial fibrillation and NYHA class III heart failure (EF 25%).\nHe asks about medications to maintain normal rhythm so he “doesn’t feel the irregular heartbeat.”",
     "question": "Which antiarrhythmic should be avoided because it increases risk of harm in symptomatic heart failure and is contraindicated in certain AF populations?",
     "answer_choices": [
@@ -11062,7 +11062,7 @@
   {
     "id": "CQOTD-0227",
     "day_of_year": 227,
-    "title": "Antiarrhythmic with beta-blockade + QT prolongation—sotalol",
+    "title": "Antiarrhythmic with beta-blockade + QT prolongation",
     "stem": "A 62-year-old woman with recurrent symptomatic atrial arrhythmias is being evaluated for rhythm-control therapy.\nThe cardiologist mentions a medication that is both a nonselective beta-blocker and a class III antiarrhythmic,\nso it can prolong the QT interval and cause torsades de pointes.",
     "question": "Which medication best matches this description?",
     "answer_choices": [
@@ -11111,7 +11111,7 @@
   {
     "id": "CQOTD-0228",
     "day_of_year": 228,
-    "title": "Paroxysmal AF without structural heart disease—flecainide option",
+    "title": "Paroxysmal AF without structural heart disease",
     "stem": "A 41-year-old man has symptomatic paroxysmal atrial fibrillation about once per month.\nEchocardiogram shows normal structure and EF 60%.\nHe is interested in a “pill-in-the-pocket” approach to terminate episodes when they occur.",
     "question": "Which medication is an appropriate option for this patient from the choices below?",
     "answer_choices": [
@@ -11160,7 +11160,7 @@
   {
     "id": "CQOTD-0229",
     "day_of_year": 229,
-    "title": "Hypertensive acute pulmonary edema—IV nitroglycerin",
+    "title": "Hypertensive acute pulmonary edema",
     "stem": "A 68-year-old man presents with acute severe shortness of breath and frothy sputum.\nVitals: BP 210/110 mmHg, HR 118 bpm, SpO2 86% on room air.\nExam: diffuse crackles; he is in distress.\nThe team diagnoses hypertensive acute pulmonary edema and wants rapid preload/afterload reduction.",
     "question": "Which medication is the best choice from the options below for rapid IV vasodilation?",
     "answer_choices": [
@@ -11210,7 +11210,7 @@
   {
     "id": "CQOTD-0230",
     "day_of_year": 230,
-    "title": "Chronic stable angina prophylaxis—isosorbide mononitrate",
+    "title": "Chronic stable angina prophylaxis",
     "stem": "A 61-year-old woman has chronic stable angina.\nShe uses sublingual nitroglycerin several times per week despite beta-blocker therapy.\nBlood pressure is 118/70 mmHg.\nShe wants a long-acting nitrate taken once daily to reduce angina frequency.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11258,7 +11258,7 @@
   {
     "id": "CQOTD-0231",
     "day_of_year": 231,
-    "title": "Add-on LDL lowering—ezetimibe",
+    "title": "Add-on LDL lowering",
     "stem": "A 57-year-old woman with ASCVD is taking high-intensity atorvastatin.\nDespite adherence, LDL remains 92 mg/dL.\nShe wants an oral add-on medication that lowers LDL by reducing intestinal cholesterol absorption.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11307,7 +11307,7 @@
   {
     "id": "CQOTD-0232",
     "day_of_year": 232,
-    "title": "PCSK9 inhibitor option—evolocumab",
+    "title": "PCSK9 inhibitor option",
     "stem": "A 52-year-old man with familial hypercholesterolemia and prior MI has LDL 130 mg/dL despite:\n- High-intensity statin\n- Ezetimibe\nHe is willing to use an injectable medication for additional LDL lowering.",
     "question": "Which medication is an appropriate PCSK9 inhibitor choice from the options below?",
     "answer_choices": [
@@ -11355,7 +11355,7 @@
   {
     "id": "CQOTD-0233",
     "day_of_year": 233,
-    "title": "Severe hypertriglyceridemia on statin—prefer fenofibrate over gemfibrozil",
+    "title": "Severe hypertriglyceridemia on statin",
     "stem": "A 60-year-old man with type 2 diabetes and ASCVD is taking rosuvastatin.\nFasting triglycerides are 780 mg/dL.\nThe clinician wants to reduce pancreatitis risk and also wants to minimize statin–fibrate myopathy risk.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11404,7 +11404,7 @@
   {
     "id": "CQOTD-0234",
     "day_of_year": 234,
-    "title": "ASCVD + triglycerides 150–499 on statin—icosapent ethyl",
+    "title": "ASCVD + triglycerides 150–499 on statin",
     "stem": "A 64-year-old woman with established ASCVD is taking high-intensity statin therapy.\nFasting triglycerides are 220 mg/dL, LDL is at goal.\nShe asks if there is a medication that can further reduce cardiovascular risk in patients like her with elevated triglycerides despite statin therapy.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11452,7 +11452,7 @@
   {
     "id": "CQOTD-0235",
     "day_of_year": 235,
-    "title": "Diabetic ketoacidosis—use IV regular insulin",
+    "title": "Diabetic ketoacidosis",
     "stem": "A 23-year-old man with type 1 diabetes presents with abdominal pain and vomiting.\nLabs: glucose 520 mg/dL, anion gap 26, bicarbonate 12 mEq/L, positive serum ketones.\nDiagnosis: diabetic ketoacidosis (DKA).\nAfter initial fluids and potassium assessment, the team starts an insulin infusion.",
     "question": "Which insulin is most commonly used for continuous IV infusion in DKA from the options below?",
     "answer_choices": [
@@ -11502,7 +11502,7 @@
   {
     "id": "CQOTD-0236",
     "day_of_year": 236,
-    "title": "Basal insulin for fasting control—insulin glargine",
+    "title": "Basal glucose control in T2DM",
     "stem": "A 49-year-old man with type 2 diabetes has elevated fasting glucose readings (180–220 mg/dL)\ndespite metformin and lifestyle changes.\nHis clinician plans to add a once-daily long-acting basal insulin to target fasting hyperglycemia.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11553,7 +11553,7 @@
   {
     "id": "CQOTD-0237",
     "day_of_year": 237,
-    "title": "Rapid-acting mealtime insulin—insulin aspart",
+    "title": "Rapid-acting mealtime glucose coverage",
     "stem": "A 17-year-old with type 1 diabetes uses basal insulin and needs prandial coverage.\nHe wants a rapid-acting insulin he can inject right before meals to control postprandial glucose spikes.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11601,7 +11601,7 @@
   {
     "id": "CQOTD-0238",
     "day_of_year": 238,
-    "title": "Basal insulin alternative—insulin detemir",
+    "title": "Alternative basal glucose control",
     "stem": "A 36-year-old woman with type 1 diabetes uses rapid-acting insulin for meals and needs a basal insulin.\nHer clinician prescribes a long-acting basal insulin option that can be dosed once or twice daily depending on patient needs.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11649,7 +11649,7 @@
   {
     "id": "CQOTD-0239",
     "day_of_year": 239,
-    "title": "Weekly GLP-1 option for T2DM + obesity—semaglutide",
+    "title": "Weekly GLP-1 option for T2DM + obesity",
     "stem": "A 52-year-old woman with type 2 diabetes (A1c 8.7%) and obesity (BMI 38) wants to lose weight.\nShe prefers a once-weekly injectable medication that improves glycemic control and supports weight loss.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11698,7 +11698,7 @@
   {
     "id": "CQOTD-0240",
     "day_of_year": 240,
-    "title": "Sulfonylurea choice in CKD—glipizide",
+    "title": "Sulfonylurea choice in CKD",
     "stem": "A 74-year-old man with type 2 diabetes needs additional oral therapy.\nRenal function: eGFR 28 mL/min/1.73m².\nThe clinician wants a sulfonylurea option with relatively lower risk of prolonged hypoglycemia in CKD compared with other sulfonylureas.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11749,7 +11749,7 @@
   {
     "id": "CQOTD-0241",
     "day_of_year": 241,
-    "title": "Diabetes medication that can worsen heart failure—pioglitazone",
+    "title": "Diabetes medication that can worsen heart failure",
     "stem": "A 66-year-old woman with type 2 diabetes and chronic heart failure (EF 30%) needs additional glycemic control.\nShe recently started a new diabetes medication.\nTwo weeks later, she develops weight gain, ankle edema, and worsening shortness of breath.",
     "question": "Which medication is most likely responsible from the options below?",
     "answer_choices": [
@@ -11799,7 +11799,7 @@
   {
     "id": "CQOTD-0242",
     "day_of_year": 242,
-    "title": "Depression + diabetic neuropathic pain—duloxetine",
+    "title": "Depression + diabetic neuropathic pain",
     "stem": "A 58-year-old man with type 2 diabetes has burning, tingling pain in both feet consistent with diabetic peripheral neuropathy.\nHe also has major depressive disorder.\nHe wants one medication that can help both mood and neuropathic pain.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -11849,7 +11849,7 @@
   {
     "id": "CQOTD-0243",
     "day_of_year": 243,
-    "title": "SNRI with dose-dependent hypertension—venlafaxine",
+    "title": "SNRI with dose-dependent hypertension",
     "stem": "A 39-year-old woman is started on an SNRI for major depressive disorder.\nAt follow-up, her blood pressure has risen from 118/74 to 146/92 mmHg without other changes.\nThe clinician notes this effect is dose-related and more common with one SNRI.",
     "question": "Which medication is the most likely cause from the options below?",
     "answer_choices": [
@@ -11898,7 +11898,7 @@
   {
     "id": "CQOTD-0244",
     "day_of_year": 244,
-    "title": "Active metabolite of venlafaxine—desvenlafaxine",
+    "title": "Active metabolite of venlafaxine",
     "stem": "A 42-year-old man is being treated for major depressive disorder.\nHis clinician considers switching him to an SNRI that is the active metabolite of venlafaxine.",
     "question": "Which medication best fits this description from the options below?",
     "answer_choices": [
@@ -11947,7 +11947,7 @@
   {
     "id": "CQOTD-0245",
     "day_of_year": 245,
-    "title": "SSRI with QT prolongation risk—citalopram",
+    "title": "SSRI with QT prolongation risk",
     "stem": "A 68-year-old man with depression is started on an SSRI.\nTwo weeks later, ECG shows a prolonged QTc.\nHe also takes no other QT-prolonging medications and electrolytes are normal.\nThe clinician recalls that one SSRI has a higher dose-dependent QT prolongation concern and has stricter max-dose guidance in older adults.",
     "question": "Which medication is the most likely cause from the options below?",
     "answer_choices": [
@@ -11997,7 +11997,7 @@
   {
     "id": "CQOTD-0246",
     "day_of_year": 246,
-    "title": "Neuropathic pain/migraine prevention—amitriptyline (TCA)",
+    "title": "Neuropathic pain/migraine prevention",
     "stem": "A 33-year-old woman has frequent migraines (6/month) and also has chronic neuropathic pain symptoms.\nShe prefers a single medication option used off-label for migraine prevention that can also help neuropathic pain.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12047,7 +12047,7 @@
   {
     "id": "CQOTD-0247",
     "day_of_year": 247,
-    "title": "TCA with less anticholinergic burden—nortriptyline",
+    "title": "TCA with less anticholinergic burden",
     "stem": "A 72-year-old man has chronic neuropathic pain.\nHe previously tried amitriptyline but stopped due to severe dry mouth, constipation, and daytime sedation.\nThe clinician wants a tricyclic antidepressant option that is generally less anticholinergic/sedating than amitriptyline.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12098,7 +12098,7 @@
   {
     "id": "CQOTD-0248",
     "day_of_year": 248,
-    "title": "Insomnia adjunct with rare priapism risk—trazodone",
+    "title": "Insomnia adjunct with rare priapism risk",
     "stem": "A 40-year-old man with depression is taking sertraline but still has significant insomnia.\nHis clinician adds a low-dose medication at bedtime for sleep.\nTwo weeks later, he presents to the ED with a painful erection lasting 5 hours.",
     "question": "Which medication is most likely responsible from the options below?",
     "answer_choices": [
@@ -12150,7 +12150,7 @@
   {
     "id": "CQOTD-0249",
     "day_of_year": 249,
-    "title": "Adjunct for treatment-resistant depression—aripiprazole",
+    "title": "Adjunct for treatment-resistant depression",
     "stem": "A 35-year-old woman has major depressive disorder.\nShe has partial response to sertraline after 10 weeks at an adequate dose.\nHer psychiatrist plans augmentation with an atypical antipsychotic that is a partial dopamine agonist.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12200,7 +12200,7 @@
   {
     "id": "CQOTD-0250",
     "day_of_year": 250,
-    "title": "Treatment-resistant schizophrenia—clozapine with ANC monitoring",
+    "title": "Treatment-resistant schizophrenia",
     "stem": "A 29-year-old man with schizophrenia has persistent hallucinations and delusions despite adequate trials of two antipsychotics.\nHis psychiatrist recommends a medication reserved for treatment-resistant schizophrenia that requires regular absolute neutrophil count (ANC) monitoring due to risk of agranulocytosis.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12249,7 +12249,7 @@
   {
     "id": "CQOTD-0251",
     "day_of_year": 251,
-    "title": "Acute agitation in delirium—haloperidol",
+    "title": "Acute agitation in delirium",
     "stem": "A 73-year-old man is hospitalized with pneumonia and develops acute delirium with severe agitation.\nHe is attempting to climb out of bed and pull out IV lines.\nNonpharmacologic interventions are attempted, but he remains a danger to himself.\nThe team selects a high-potency typical antipsychotic commonly used for acute agitation in the hospital.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12297,7 +12297,7 @@
   {
     "id": "CQOTD-0252",
     "day_of_year": 252,
-    "title": "Atypical antipsychotic with high metabolic risk—olanzapine",
+    "title": "Atypical antipsychotic with high metabolic risk",
     "stem": "A 27-year-old man with schizophrenia is started on an atypical antipsychotic.\nOver 3 months, he gains 25 pounds and develops increased fasting glucose and triglycerides.",
     "question": "Which medication is most likely responsible from the options below?",
     "answer_choices": [
@@ -12347,7 +12347,7 @@
   {
     "id": "CQOTD-0253",
     "day_of_year": 253,
-    "title": "Bipolar depression with insomnia—quetiapine",
+    "title": "Bipolar depression with insomnia",
     "stem": "A 31-year-old woman with bipolar disorder presents with a depressive episode and severe insomnia.\nShe wants a medication that can treat bipolar depression and is known to be sedating at bedtime.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12398,7 +12398,7 @@
   {
     "id": "CQOTD-0254",
     "day_of_year": 254,
-    "title": "Galactorrhea/amenorrhea from antipsychotic—risperidone",
+    "title": "Galactorrhea/amenorrhea from antipsychotic",
     "stem": "A 24-year-old woman is treated for psychosis with an antipsychotic.\nTwo months later, she reports missed periods and milky nipple discharge.\nPregnancy test is negative.\nProlactin level is elevated.",
     "question": "Which medication is most likely responsible from the options below?",
     "answer_choices": [
@@ -12447,7 +12447,7 @@
   {
     "id": "CQOTD-0255",
     "day_of_year": 255,
-    "title": "First-line stimulant for ADHD—methylphenidate",
+    "title": "First-line stimulant for ADHD",
     "stem": "A 9-year-old boy has ADHD with significant inattention and hyperactivity at school and home.\nHe has no cardiac history, normal BP/HR, and no substance use risk.\nHis parents want a first-line stimulant option commonly used in children.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12495,7 +12495,7 @@
   {
     "id": "CQOTD-0256",
     "day_of_year": 256,
-    "title": "ADHD + binge eating disorder—lisdexamfetamine (prodrug)",
+    "title": "ADHD + binge eating disorder",
     "stem": "A 28-year-old woman has ADHD and also meets criteria for binge eating disorder.\nShe wants a stimulant option that is a prodrug of dextroamphetamine and has an FDA indication for binge eating disorder.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12543,7 +12543,7 @@
   {
     "id": "CQOTD-0257",
     "day_of_year": 257,
-    "title": "d-isomer of methylphenidate—dexmethylphenidate",
+    "title": "d-isomer of methylphenidate",
     "stem": "A 13-year-old with ADHD is switching medications due to side effects.\nThe clinician selects an agent that is the d-enantiomer (more active isomer) of methylphenidate.",
     "question": "Which medication matches this description from the options below?",
     "answer_choices": [
@@ -12590,7 +12590,7 @@
   {
     "id": "CQOTD-0258",
     "day_of_year": 258,
-    "title": "Nonstimulant ADHD medication—atomoxetine (NE reuptake inhibitor)",
+    "title": "Nonstimulant ADHD medication",
     "stem": "A 22-year-old college student has ADHD but has a history of stimulant misuse.\nHe wants a nonstimulant option that is not a controlled substance.\nThe clinician chooses a selective norepinephrine reuptake inhibitor used for ADHD.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12639,7 +12639,7 @@
   {
     "id": "CQOTD-0259",
     "day_of_year": 259,
-    "title": "ADHD with tics/impulsivity—guanfacine ER (alpha-2A agonist)",
+    "title": "ADHD with tics/impulsivity",
     "stem": "A 10-year-old girl has ADHD and a comorbid tic disorder.\nHer parents want to avoid stimulant worsening of tics.\nThe clinician selects a nonstimulant alpha-2A agonist that can cause sedation and low blood pressure.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12687,7 +12687,7 @@
   {
     "id": "CQOTD-0260",
     "day_of_year": 260,
-    "title": "Mixed amphetamine salts for ADHD—amphetamine/dextroamphetamine",
+    "title": "Mixed salt stimulant for ADHD",
     "stem": "A 30-year-old man with ADHD wants a stimulant medication.\nThe clinician prescribes a product containing mixed amphetamine salts.",
     "question": "Which medication is the best match from the options below?",
     "answer_choices": [
@@ -12737,7 +12737,7 @@
   {
     "id": "CQOTD-0261",
     "day_of_year": 261,
-    "title": "OA pain with GI ulcer history—celecoxib (COX-2 selective)",
+    "title": "OA pain with GI ulcer history",
     "stem": "A 67-year-old woman has knee osteoarthritis with daily pain.\nPMH: prior NSAID-associated peptic ulcer bleed 2 years ago.\nShe needs an anti-inflammatory option and wants to minimize GI ulcer risk compared with nonselective NSAIDs.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12786,7 +12786,7 @@
   {
     "id": "CQOTD-0262",
     "day_of_year": 262,
-    "title": "Short-term severe acute pain—ketorolac (max duration)",
+    "title": "Short-term severe acute pain",
     "stem": "A 38-year-old man presents to the ED with severe renal colic pain from a kidney stone.\nHe needs a potent NSAID for short-term pain control.\nThe clinician chooses an NSAID that should not be used for more than about 5 days due to high GI and renal toxicity risk.",
     "question": "Which medication best fits this description from the options below?",
     "answer_choices": [
@@ -12834,7 +12834,7 @@
   {
     "id": "CQOTD-0263",
     "day_of_year": 263,
-    "title": "Acute gout flare when colchicine not tolerated—indomethacin",
+    "title": "Acute gout flare when colchicine not tolerated",
     "stem": "A 59-year-old man has an acute gout flare in the first MTP joint.\nHe tried colchicine in the past but developed severe diarrhea and refuses it today.\nHe has no history of GI bleed or advanced kidney disease.",
     "question": "Which medication is the best treatment choice from the options below?",
     "answer_choices": [
@@ -12884,7 +12884,7 @@
   {
     "id": "CQOTD-0264",
     "day_of_year": 264,
-    "title": "Chronic osteoarthritis pain—meloxicam (once daily)",
+    "title": "Chronic osteoarthritis pain",
     "stem": "A 62-year-old man has chronic osteoarthritis pain.\nHe wants an NSAID option that is commonly taken once daily for chronic inflammatory pain control.\nHe has no history of GI bleed and normal renal function.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12934,7 +12934,7 @@
   {
     "id": "CQOTD-0265",
     "day_of_year": 265,
-    "title": "Topical NSAID for localized OA pain—diclofenac",
+    "title": "Topical NSAID for localized OA pain",
     "stem": "A 70-year-old woman has localized knee osteoarthritis pain.\nShe has chronic kidney disease stage 3 and wants to avoid systemic NSAIDs if possible.\nHer clinician recommends a topical NSAID gel for localized pain relief with lower systemic exposure.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -12982,7 +12982,7 @@
   {
     "id": "CQOTD-0266",
     "day_of_year": 266,
-    "title": "NSAID prodrug option—nabumetone",
+    "title": "NSAID prodrug option",
     "stem": "A 64-year-old man with chronic osteoarthritis needs an NSAID.\nHe reports dyspepsia with several NSAIDs.\nHis clinician considers an NSAID that is a nonacidic prodrug and may be somewhat better tolerated in the stomach for some patients.",
     "question": "Which medication best fits this description from the options below?",
     "answer_choices": [
@@ -13032,7 +13032,7 @@
   {
     "id": "CQOTD-0267",
     "day_of_year": 267,
-    "title": "Localized neuropathic pain—lidocaine patch",
+    "title": "Localized neuropathic pain",
     "stem": "A 71-year-old woman had shingles 4 months ago.\nShe now has persistent burning pain and allodynia in the same dermatomal distribution (postherpetic neuralgia).\nThe pain is localized to a small area on her torso.",
     "question": "Which medication is an appropriate localized treatment option from the choices below?",
     "answer_choices": [
@@ -13082,7 +13082,7 @@
   {
     "id": "CQOTD-0268",
     "day_of_year": 268,
-    "title": "Fibromyalgia—pregabalin",
+    "title": "Fibromyalgia",
     "stem": "A 46-year-old woman has widespread musculoskeletal pain for >6 months, fatigue, and nonrestorative sleep.\nWorkup is negative for inflammatory arthritis.\nDiagnosis: fibromyalgia.\nThe clinician recommends a gabapentinoid that can improve pain and sleep.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -13131,7 +13131,7 @@
   {
     "id": "CQOTD-0269",
     "day_of_year": 269,
-    "title": "Opioid-tolerant chronic cancer pain—fentanyl patch",
+    "title": "Opioid-tolerant chronic cancer pain",
     "stem": "A 63-year-old man with metastatic cancer is opioid-tolerant and has stable chronic pain.\nHe has difficulty swallowing pills due to esophageal compression and wants a long-acting option that provides continuous analgesia.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -13181,7 +13181,7 @@
   {
     "id": "CQOTD-0270",
     "day_of_year": 270,
-    "title": "Severe cancer pain—morphine",
+    "title": "Severe cancer pain",
     "stem": "A 58-year-old woman with metastatic cancer has severe ongoing pain requiring a strong opioid.\nShe can swallow tablets and has no history of opioid use disorder.\nThe clinician wants a classic strong opioid option for severe pain control.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -13231,7 +13231,7 @@
   {
     "id": "CQOTD-0271",
     "day_of_year": 271,
-    "title": "Knee osteoarthritis—Lodine is etodolac",
+    "title": "Knee osteoarthritis",
     "stem": "A 66-year-old woman has chronic knee osteoarthritis pain that limits walking.\nShe has tried scheduled acetaminophen with only partial relief.\nHer clinician prescribes **Lodine** to reduce inflammation and pain.",
     "question": "Which medication was prescribed?",
     "answer_choices": [
@@ -13278,7 +13278,7 @@
   {
     "id": "CQOTD-0272",
     "day_of_year": 272,
-    "title": "COPD rescue bronchodilator option—ipratropium",
+    "title": "COPD rescue bronchodilator option",
     "stem": "A 72-year-old man with COPD presents with wheezing and increased shortness of breath.\nHe reports that albuterol makes him feel “shaky” with palpitations.\nThe clinician wants a **short-acting inhaled anticholinergic** bronchodilator for symptom relief.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -13326,7 +13326,7 @@
   {
     "id": "CQOTD-0273",
     "day_of_year": 273,
-    "title": "SABA with less tremor/palpitations—levalbuterol",
+    "title": "SABA with less tremor/palpitations",
     "stem": "A 46-year-old woman with intermittent asthma uses albuterol as needed.\nShe reports bothersome tremor and palpitations after each dose but still needs a quick-relief inhaler.\nHer clinician chooses the **R-enantiomer** of albuterol, which may cause fewer beta-agonist side effects in some patients.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -13373,7 +13373,7 @@
   {
     "id": "CQOTD-0274",
     "day_of_year": 274,
-    "title": "COPD maintenance—tiotropium (LAMA)",
+    "title": "COPD maintenance",
     "stem": "A 69-year-old man with COPD has persistent dyspnea despite using albuterol several times per day.\nHe has no history of asthma.\nThe clinician wants a **once-daily long-acting muscarinic antagonist (LAMA)** for maintenance bronchodilation.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -13421,7 +13421,7 @@
   {
     "id": "CQOTD-0275",
     "day_of_year": 275,
-    "title": "Persistent asthma in a young child—nebulized budesonide",
+    "title": "Persistent asthma in a young child",
     "stem": "A 4-year-old boy has persistent asthma symptoms (wheezing >2 days/week and nighttime symptoms twice/month).\nHis parents have trouble using a metered-dose inhaler even with a spacer.\nThe clinician wants an **inhaled corticosteroid available as a nebulized solution** for maintenance control.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -13470,7 +13470,7 @@
   {
     "id": "CQOTD-0276",
     "day_of_year": 276,
-    "title": "Which inhaler is Symbicort—budesonide/formoterol",
+    "title": "Identify the budesonide/formoterol combination inhaler",
     "stem": "A 38-year-old woman with moderate persistent asthma remains symptomatic on an inhaled corticosteroid alone.\nHer clinician prescribes **Symbicort** as step-up therapy to add a long-acting beta-agonist.",
     "question": "Which medication combination is Symbicort?",
     "answer_choices": [
@@ -13518,7 +13518,7 @@
   {
     "id": "CQOTD-0277",
     "day_of_year": 277,
-    "title": "Which inhaler is Advair—fluticasone/salmeterol",
+    "title": "Identify the fluticasone/salmeterol combination inhaler",
     "stem": "A 63-year-old man with asthma/COPD overlap has persistent symptoms despite inhaled corticosteroid therapy.\nHis pulmonologist prescribes **Advair** to provide combination ICS/LABA therapy.",
     "question": "Which medication combination is Advair?",
     "answer_choices": [
@@ -13567,7 +13567,7 @@
   {
     "id": "CQOTD-0278",
     "day_of_year": 278,
-    "title": "Which inhaler is Dulera—mometasone/formoterol",
+    "title": "Identify the mometasone/formoterol combination inhaler",
     "stem": "A 29-year-old man with moderate persistent asthma needs step-up therapy from inhaled corticosteroid monotherapy.\nHis clinician prescribes **Dulera**.",
     "question": "Which medication combination is Dulera?",
     "answer_choices": [
@@ -13615,7 +13615,7 @@
   {
     "id": "CQOTD-0279",
     "day_of_year": 279,
-    "title": "Allergic rhinitis—Nasonex is mometasone nasal",
+    "title": "Allergic rhinitis",
     "stem": "A 25-year-old woman has seasonal allergic rhinitis with daily congestion and sneezing.\nHer clinician recommends a daily intranasal corticosteroid and prescribes **Nasonex**.",
     "question": "Which medication was prescribed?",
     "answer_choices": [
@@ -13663,7 +13663,7 @@
   {
     "id": "CQOTD-0280",
     "day_of_year": 280,
-    "title": "Allergic rhinitis med reduced by fruit juice—fexofenadine",
+    "title": "Allergic rhinitis med reduced by fruit juice",
     "stem": "A 19-year-old woman takes an OTC allergy medication every morning.\nShe usually takes it with orange juice.\nShe reports it “stopped working” after she started drinking a large glass of orange juice with breakfast daily.\nHer pharmacist explains that certain fruit juices can reduce absorption of one second-generation antihistamine.",
     "question": "Which medication is most likely affected?",
     "answer_choices": [
@@ -13711,7 +13711,7 @@
   {
     "id": "CQOTD-0281",
     "day_of_year": 281,
-    "title": "Active enantiomer of cetirizine—levocetirizine",
+    "title": "Active enantiomer of cetirizine",
     "stem": "A 32-year-old man with allergic rhinitis is switching medications.\nHis clinician recommends a second-generation antihistamine that is the **active levo-enantiomer** of cetirizine.",
     "question": "Which medication best matches this description from the options below?",
     "answer_choices": [
@@ -13758,7 +13758,7 @@
   {
     "id": "CQOTD-0282",
     "day_of_year": 282,
-    "title": "Nasal congestion with uncontrolled HTN/BPH—avoid pseudoephedrine",
+    "title": "Nasal congestion with uncontrolled HTN/BPH",
     "stem": "A 68-year-old man has a bad cold with nasal congestion.\nPMH: uncontrolled hypertension (BP 172/98) and benign prostatic hyperplasia (BPH) with urinary hesitancy.\nMeds: amlodipine, tamsulosin.\nHe asks which OTC medication could worsen his blood pressure and urinary retention.",
     "question": "Which medication should he avoid?",
     "answer_choices": [
@@ -13808,7 +13808,7 @@
   {
     "id": "CQOTD-0283",
     "day_of_year": 283,
-    "title": "Intranasal antihistamine with bitter taste—azelastine",
+    "title": "Intranasal antihistamine with bitter taste",
     "stem": "A 27-year-old woman has allergic rhinitis with sneezing and itchy, runny nose.\nShe wants a medication that works quickly and can be used as a nasal spray.\nAfter starting therapy, she complains of a strong **bitter taste** in her mouth after each dose.",
     "question": "Which medication is most likely responsible from the options below?",
     "answer_choices": [
@@ -13856,7 +13856,7 @@
   {
     "id": "CQOTD-0284",
     "day_of_year": 284,
-    "title": "Nightmares and mood changes after asthma med—montelukast",
+    "title": "Nightmares and mood changes after asthma med",
     "stem": "A 15-year-old boy with asthma and allergic rhinitis is started on a nightly oral controller medication.\nWithin 2 weeks, his parents report new irritability, anxiety, and vivid nightmares.\nNo other medications were changed.",
     "question": "Which medication is most likely responsible?",
     "answer_choices": [
@@ -13905,7 +13905,7 @@
   {
     "id": "CQOTD-0285",
     "day_of_year": 285,
-    "title": "COPD med with narrow therapeutic index—theophylline",
+    "title": "COPD med with narrow therapeutic index",
     "stem": "A 60-year-old man with COPD is taking a chronic oral medication for bronchodilation.\nHe is started on ciprofloxacin for a urinary tract infection.\nThree days later he develops nausea, vomiting, tremor, and a new tachyarrhythmia.\nA drug level is found to be markedly elevated.",
     "question": "Which medication level is most likely elevated?",
     "answer_choices": [
@@ -13953,7 +13953,7 @@
   {
     "id": "CQOTD-0286",
     "day_of_year": 286,
-    "title": "COPD chronic bronchitis with frequent exacerbations—roflumilast",
+    "title": "COPD chronic bronchitis with frequent exacerbations",
     "stem": "A 67-year-old man with severe COPD and **chronic bronchitis** has 3 exacerbations in the last year despite optimized inhaler therapy (LAMA/LABA).\nHe is not a current smoker.\nBMI is 20 and he reports decreased appetite.\nThe pulmonologist considers adding an oral medication that can reduce COPD exacerbations but may cause weight loss and psychiatric side effects.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14002,7 +14002,7 @@
   {
     "id": "CQOTD-0287",
     "day_of_year": 287,
-    "title": "Severe allergic asthma with high IgE—omalizumab",
+    "title": "Severe allergic asthma with high IgE",
     "stem": "A 24-year-old woman has severe persistent asthma despite high-dose inhaled corticosteroid/LABA therapy.\nShe has a history of allergic rhinitis and multiple positive skin tests to perennial allergens.\nLabs show elevated IgE.\nThe clinician plans to start a subcutaneous biologic that targets IgE.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14051,7 +14051,7 @@
   {
     "id": "CQOTD-0288",
     "day_of_year": 288,
-    "title": "Eosinophilic asthma + atopic dermatitis—dupilumab",
+    "title": "Eosinophilic asthma + atopic dermatitis",
     "stem": "A 30-year-old man has severe asthma and long-standing atopic dermatitis (eczema).\nHe has frequent exacerbations despite inhaled corticosteroid/LABA therapy.\nCBC shows eosinophils 720 cells/µL.\nThe clinician plans a subcutaneous biologic that targets IL-4/IL-13 signaling and can also improve atopic dermatitis.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14099,7 +14099,7 @@
   {
     "id": "CQOTD-0289",
     "day_of_year": 289,
-    "title": "Duodenal ulcer barrier therapy—sucralfate",
+    "title": "Duodenal ulcer barrier therapy",
     "stem": "A 54-year-old man has epigastric pain relieved by food and is diagnosed with a duodenal ulcer.\nHe is prescribed a medication that **coats the ulcer base** and forms a protective barrier.\nThe pharmacist counsels him to take it on an **empty stomach** and separate it from other oral medications.",
     "question": "Which medication is the best match from the options below?",
     "answer_choices": [
@@ -14147,7 +14147,7 @@
   {
     "id": "CQOTD-0290",
     "day_of_year": 290,
-    "title": "Post-op nausea/vomiting—ondansetron (QT risk)",
+    "title": "Post-op nausea/vomiting",
     "stem": "A 45-year-old woman develops significant nausea after surgery.\nShe needs an antiemetic that blocks 5-HT3 receptors and is commonly used for postoperative and chemotherapy-related nausea.\nHer clinician also reviews her ECG risk factors because this medication can prolong QT.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14196,7 +14196,7 @@
   {
     "id": "CQOTD-0291",
     "day_of_year": 291,
-    "title": "Diabetic gastroparesis—metoclopramide (tardive dyskinesia risk)",
+    "title": "Diabetic gastroparesis",
     "stem": "A 59-year-old man with long-standing type 2 diabetes has early satiety, bloating, and nausea after meals.\nA gastric emptying study supports diabetic gastroparesis.\nHe is prescribed a medication that increases GI motility via dopamine antagonism.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14245,7 +14245,7 @@
   {
     "id": "CQOTD-0292",
     "day_of_year": 292,
-    "title": "Sedating antiemetic/antihistamine—promethazine",
+    "title": "Sedating antiemetic/antihistamine",
     "stem": "A 33-year-old woman presents to urgent care with severe nausea from a migraine.\nShe receives an antiemetic that is also a first-generation antihistamine.\nAfter the dose, she becomes very drowsy and asks if that is expected.",
     "question": "Which medication was most likely given?",
     "answer_choices": [
@@ -14294,7 +14294,7 @@
   {
     "id": "CQOTD-0293",
     "day_of_year": 293,
-    "title": "Motion sickness prevention—scopolamine patch",
+    "title": "Motion sickness prevention",
     "stem": "A 26-year-old man is going on a 3-day cruise and has a history of severe motion sickness.\nHe wants a preventive medication and prefers a transdermal patch applied before travel.\nPMH: no glaucoma.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14341,7 +14341,7 @@
   {
     "id": "CQOTD-0294",
     "day_of_year": 294,
-    "title": "Chronic constipation—polyethylene glycol (MiraLAX)",
+    "title": "Chronic constipation",
     "stem": "A 58-year-old woman has chronic constipation (hard stools, straining) despite increased fiber and water.\nShe wants an OTC option that can be mixed into a beverage and taken daily as needed.\nHer clinician recommends an osmotic laxative powder commonly sold as MiraLAX.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14390,7 +14390,7 @@
   {
     "id": "CQOTD-0295",
     "day_of_year": 295,
-    "title": "Colonoscopy bowel prep—PEG with electrolytes",
+    "title": "Colonoscopy bowel prep",
     "stem": "A 62-year-old man is scheduled for a screening colonoscopy tomorrow morning.\nHe is prescribed a large-volume bowel preparation solution to cleanse the colon.\nThe label states it contains polyethylene glycol with electrolytes.",
     "question": "Which medication is the best match from the options below?",
     "answer_choices": [
@@ -14438,7 +14438,7 @@
   {
     "id": "CQOTD-0296",
     "day_of_year": 296,
-    "title": "Stimulant laxative—bisacodyl",
+    "title": "Stimulant laxative",
     "stem": "A 47-year-old woman has constipation and wants an OTC medication that works by stimulating colonic motility.\nAfter taking it, she develops abdominal cramping and has a bowel movement within hours.",
     "question": "Which medication is the best match from the options below?",
     "answer_choices": [
@@ -14486,7 +14486,7 @@
   {
     "id": "CQOTD-0297",
     "day_of_year": 297,
-    "title": "Stool softener to reduce straining—docusate",
+    "title": "Stool softener to reduce straining",
     "stem": "A 30-year-old woman is 2 days postpartum and has painful hemorrhoids.\nShe wants to avoid straining with bowel movements while her symptoms improve.\nThe clinician recommends a stool softener.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14533,7 +14533,7 @@
   {
     "id": "CQOTD-0298",
     "day_of_year": 298,
-    "title": "Opioid constipation prevention—senna/docusate",
+    "title": "Opioid constipation prevention",
     "stem": "A 55-year-old man starts morphine for cancer pain.\nTwo days later he reports no bowel movement and significant straining.\nThe clinician adds a combination product that includes a **stimulant laxative plus stool softener** for opioid-induced constipation prevention.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14581,7 +14581,7 @@
   {
     "id": "CQOTD-0299",
     "day_of_year": 299,
-    "title": "IBS with constipation—linaclotide",
+    "title": "IBS with constipation",
     "stem": "A 34-year-old woman has IBS with constipation (IBS-C): abdominal pain improves after bowel movements and she has infrequent hard stools.\nLifestyle changes and OTC polyethylene glycol provided incomplete relief.\nHer clinician prescribes a medication that increases intestinal fluid secretion and can cause diarrhea.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14628,7 +14628,7 @@
   {
     "id": "CQOTD-0300",
     "day_of_year": 300,
-    "title": "Acute non-bloody diarrhea—loperamide",
+    "title": "Acute non-bloody diarrhea",
     "stem": "A 28-year-old man develops 6 episodes of watery diarrhea after traveling.\nHe has no fever, no blood in stool, and no severe abdominal pain.\nHe asks for an OTC medication that decreases intestinal motility and can reduce the number of stools.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14675,7 +14675,7 @@
   {
     "id": "CQOTD-0301",
     "day_of_year": 301,
-    "title": "Antidiarrheal with atropine added to deter misuse—diphenoxylate/atropine",
+    "title": "Antidiarrheal with atropine added to deter misuse",
     "stem": "A 40-year-old man has diarrhea and is prescribed an antidiarrheal agent.\nThe label lists two ingredients: an opioid-related antidiarrheal plus a small amount of atropine to discourage abuse.",
     "question": "Which medication best matches this description from the options below?",
     "answer_choices": [
@@ -14722,7 +14722,7 @@
   {
     "id": "CQOTD-0302",
     "day_of_year": 302,
-    "title": "Mild-to-moderate ulcerative colitis—mesalamine (5-ASA)",
+    "title": "Mild-to-moderate ulcerative colitis",
     "stem": "A 26-year-old woman has 6 weeks of intermittent bloody diarrhea and urgency.\nColonoscopy shows continuous inflammation starting at the rectum, consistent with ulcerative colitis.\nSymptoms are mild-to-moderate and she is hemodynamically stable.",
     "question": "Which medication is a high-yield first-line option for mild-to-moderate ulcerative colitis from the choices below?",
     "answer_choices": [
@@ -14774,7 +14774,7 @@
   {
     "id": "CQOTD-0303",
     "day_of_year": 303,
-    "title": "Moderate-to-severe Crohn’s/UC—IV infliximab (screen TB/HBV)",
+    "title": "Moderate-to-severe Crohn’s/UC",
     "stem": "A 34-year-old man with Crohn’s disease has persistent symptoms despite mesalamine and a steroid taper.\nHe has weight loss, elevated CRP, and moderate-to-severe endoscopic disease.\nThe gastroenterologist plans to start an **IV infusion** biologic that targets TNF-alpha and requires screening for latent TB and hepatitis B prior to initiation.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14824,7 +14824,7 @@
   {
     "id": "CQOTD-0304",
     "day_of_year": 304,
-    "title": "Bacterial vaginosis—metronidazole (avoid alcohol)",
+    "title": "Bacterial vaginosis",
     "stem": "A 29-year-old woman presents with thin gray vaginal discharge and a “fishy” odor, worse after sex.\nVaginal pH is elevated and clue cells are seen on wet mount.\nDiagnosis: bacterial vaginosis.\nShe asks if she can drink alcohol while on the medication.",
     "question": "Which medication is the best treatment choice from the options below?",
     "answer_choices": [
@@ -14872,7 +14872,7 @@
   {
     "id": "CQOTD-0305",
     "day_of_year": 305,
-    "title": "Vulvovaginal candidiasis—single-dose fluconazole",
+    "title": "Vulvovaginal candidiasis",
     "stem": "A 27-year-old woman has intense vulvovaginal itching and thick white “cottage cheese” discharge.\nVaginal pH is normal and wet mount shows budding yeast.\nShe prefers a single-dose **oral** treatment option.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14920,7 +14920,7 @@
   {
     "id": "CQOTD-0306",
     "day_of_year": 306,
-    "title": "Oral candidiasis (thrush)—nystatin swish and swallow",
+    "title": "Oral candidiasis (thrush)",
     "stem": "A 48-year-old man with inhaled corticosteroid use presents with white plaques on the tongue and buccal mucosa\nthat scrape off and leave an erythematous base.\nHe has mild symptoms and prefers a topical therapy with minimal systemic absorption.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -14969,7 +14969,7 @@
   {
     "id": "CQOTD-0307",
     "day_of_year": 307,
-    "title": "Onychomycosis—oral terbinafine (check LFTs)",
+    "title": "Onychomycosis",
     "stem": "A 52-year-old man has thickened, yellow, brittle toenails consistent with onychomycosis.\nTopical therapies have failed.\nThe clinician prescribes an **oral antifungal** that is first-line for dermatophyte nail infections and recommends baseline liver function testing.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15017,7 +15017,7 @@
   {
     "id": "CQOTD-0308",
     "day_of_year": 308,
-    "title": "Suspected HSV encephalitis—start IV acyclovir",
+    "title": "Suspected HSV encephalitis",
     "stem": "A 57-year-old man presents with fever, confusion, and new-onset seizures.\nMRI suggests temporal lobe involvement.\nCSF shows lymphocytic pleocytosis and elevated protein.\nThe team suspects HSV encephalitis and wants to start empiric antiviral therapy immediately.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15065,7 +15065,7 @@
   {
     "id": "CQOTD-0309",
     "day_of_year": 309,
-    "title": "Herpes zoster (shingles) with convenient dosing—valacyclovir",
+    "title": "Herpes zoster (shingles) with convenient dosing",
     "stem": "A 68-year-old woman has a painful vesicular rash in a dermatomal distribution on her left chest.\nSymptoms started 36 hours ago.\nShe wants an oral antiviral with **better bioavailability and less frequent dosing** than acyclovir.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15112,7 +15112,7 @@
   {
     "id": "CQOTD-0310",
     "day_of_year": 310,
-    "title": "Influenza treatment in high-risk patient—oseltamivir",
+    "title": "Influenza treatment in high-risk patient",
     "stem": "A 76-year-old man presents with 24 hours of fever, myalgias, sore throat, and cough.\nRapid test is positive for influenza A.\nHe has COPD and is at higher risk for complications.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15160,7 +15160,7 @@
   {
     "id": "CQOTD-0311",
     "day_of_year": 311,
-    "title": "Early outpatient COVID-19 (high risk)—nirmatrelvir/ritonavir (drug interactions)",
+    "title": "Early outpatient COVID-19 (high risk)",
     "stem": "A 67-year-old woman tests positive for COVID-19 with mild symptoms that started 2 days ago.\nPMH: CAD and diabetes.\nMeds: simvastatin, metformin, lisinopril.\nShe qualifies for an oral antiviral that must be started within 5 days of symptom onset, but it has important CYP3A drug interaction considerations due to ritonavir.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15210,7 +15210,7 @@
   {
     "id": "CQOTD-0312",
     "day_of_year": 312,
-    "title": "Strep pharyngitis—penicillin V",
+    "title": "Strep pharyngitis",
     "stem": "A 16-year-old girl has sore throat, fever, tonsillar exudates, and tender anterior cervical lymph nodes.\nRapid strep test is positive.\nShe has no medication allergies.",
     "question": "Which antibiotic is a high-yield first-line option from the choices below?",
     "answer_choices": [
@@ -15258,7 +15258,7 @@
   {
     "id": "CQOTD-0313",
     "day_of_year": 313,
-    "title": "Dog bite wound prophylaxis—amoxicillin/clavulanate",
+    "title": "Dog bite wound prophylaxis",
     "stem": "A 37-year-old man is bitten on the hand by a dog.\nThe wound is deep and requires irrigation and closure.\nHe has no drug allergies.\nThe clinician wants oral antibiotic coverage for common bite pathogens, including Pasteurella and anaerobes.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15307,7 +15307,7 @@
   {
     "id": "CQOTD-0314",
     "day_of_year": 314,
-    "title": "Gonorrhea—treat with ceftriaxone (IM)",
+    "title": "Gonorrhea",
     "stem": "A 22-year-old man presents with dysuria and purulent urethral discharge.\nNAAT is positive for Neisseria gonorrhoeae.\nChlamydia testing is pending.",
     "question": "Which medication is the best treatment choice from the options below?",
     "answer_choices": [
@@ -15355,7 +15355,7 @@
   {
     "id": "CQOTD-0315",
     "day_of_year": 315,
-    "title": "Severe intra-abdominal sepsis—piperacillin/tazobactam",
+    "title": "Severe intra-abdominal sepsis",
     "stem": "A 58-year-old man presents with fever, hypotension, and diffuse abdominal pain.\nCT suggests perforated diverticulitis with intra-abdominal abscess.\nBlood cultures are pending.\nThe team wants empiric broad-spectrum IV coverage including **anaerobes and Pseudomonas**.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15405,7 +15405,7 @@
   {
     "id": "CQOTD-0316",
     "day_of_year": 316,
-    "title": "COPD exacerbation adjunct—ipratropium (SAMA)",
+    "title": "COPD exacerbation adjunct",
     "stem": "A 67-year-old man with COPD (FEV1 42% predicted) presents with increased dyspnea and wheezing for 2 days.\nHe is using his rescue albuterol inhaler every 2–3 hours with only partial relief.\nVitals: HR 102, BP 138/82, RR 24, SpO2 91% on room air.\nThe ED team wants to add a short-acting antimuscarinic bronchodilator to improve airflow during the exacerbation.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15453,7 +15453,7 @@
   {
     "id": "CQOTD-0317",
     "day_of_year": 317,
-    "title": "Rescue inhaler alternative—levalbuterol (less tremor/palpitations)",
+    "title": "Rescue inhaler alternative",
     "stem": "A 45-year-old woman with asthma needs a rescue inhaler for intermittent symptoms.\nShe previously used albuterol but experienced significant tremor and palpitations after each dose.\nShe asks if there is an alternative short-acting beta-agonist that may cause fewer beta-agonist side effects in some patients.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15501,7 +15501,7 @@
   {
     "id": "CQOTD-0318",
     "day_of_year": 318,
-    "title": "COPD maintenance LAMA—tiotropium",
+    "title": "COPD maintenance LAMA",
     "stem": "A 69-year-old man with COPD has chronic dyspnea on exertion and uses albuterol several times per day.\nHe has no history of asthma.\nHe needs a once-daily maintenance inhaler that improves symptoms and reduces exacerbations through long-acting antimuscarinic bronchodilation.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15549,7 +15549,7 @@
   {
     "id": "CQOTD-0319",
     "day_of_year": 319,
-    "title": "Persistent asthma controller—budesonide inhaled (ICS)",
+    "title": "Persistent asthma controller",
     "stem": "A 22-year-old woman has asthma symptoms 3–4 days per week and wakes up at night once per week.\nShe uses albuterol frequently and has no current controller medication.\nLung exam is clear today; peak flow is 80% of personal best.\nThe clinician recommends starting a daily inhaled corticosteroid to reduce airway inflammation and prevent exacerbations.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15598,7 +15598,7 @@
   {
     "id": "CQOTD-0320",
     "day_of_year": 320,
-    "title": "SMART therapy—budesonide/formoterol",
+    "title": "SMART therapy",
     "stem": "A 30-year-old man has moderate persistent asthma with frequent symptoms and uses albuterol daily.\nHe has had 2 steroid-requiring exacerbations in the last year.\nThe clinician recommends a single inhaler strategy used for both maintenance and reliever therapy (SMART),\nwhich requires an ICS/LABA combination containing formoterol because of its rapid onset.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15646,7 +15646,7 @@
   {
     "id": "CQOTD-0321",
     "day_of_year": 321,
-    "title": "Asthma controller identification—fluticasone inhaled",
+    "title": "Asthma controller identification",
     "stem": "A 26-year-old woman with asthma is prescribed a daily controller inhaler.\nShe asks which medication on her list is the inhaled corticosteroid intended to reduce airway inflammation long term.\nCurrent meds: albuterol as needed, no other inhalers.",
     "question": "Which medication is an inhaled corticosteroid controller from the options below?",
     "answer_choices": [
@@ -15695,7 +15695,7 @@
   {
     "id": "CQOTD-0322",
     "day_of_year": 322,
-    "title": "Step-up asthma therapy—fluticasone/salmeterol (ICS/LABA)",
+    "title": "Step-up asthma therapy",
     "stem": "A 35-year-old woman with asthma has persistent daytime symptoms despite consistent use of low-dose inhaled fluticasone.\nShe needs step-up therapy with an inhaled corticosteroid plus long-acting beta-agonist (ICS/LABA) combination for better control.\nShe is counseled that this inhaler is NOT for immediate rescue relief.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15743,7 +15743,7 @@
   {
     "id": "CQOTD-0323",
     "day_of_year": 323,
-    "title": "Which inhaler contains mometasone + formoterol?",
+    "title": "Identify the mometasone + formoterol combination",
     "stem": "A 29-year-old man with asthma is prescribed an ICS/LABA combination inhaler.\nHe is allergic to lactose-containing dry powder inhalers and prefers an HFA inhaler.\nHis clinician chooses the product that combines mometasone (ICS) with formoterol (LABA).",
     "question": "Which medication matches this inhaler combination from the options below?",
     "answer_choices": [
@@ -15791,7 +15791,7 @@
   {
     "id": "CQOTD-0324",
     "day_of_year": 324,
-    "title": "Asthma + allergic rhinitis add-on—montelukast",
+    "title": "Asthma + allergic rhinitis add-on",
     "stem": "A 16-year-old boy has mild persistent asthma and significant seasonal allergic rhinitis.\nDespite a low-dose inhaled corticosteroid, he still has nighttime cough during allergy season.\nHis clinician adds an oral leukotriene receptor antagonist that can help both asthma and allergic rhinitis symptoms.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15840,7 +15840,7 @@
   {
     "id": "CQOTD-0325",
     "day_of_year": 325,
-    "title": "Severe eosinophilic asthma + eczema—dupilumab",
+    "title": "Severe eosinophilic asthma + eczema",
     "stem": "A 38-year-old woman has severe asthma despite high-dose inhaled corticosteroid/LABA therapy.\nLabs: eosinophils 620 cells/µL.\nShe also has moderate-to-severe atopic dermatitis requiring frequent topical steroid use.\nHer IgE level is not elevated and allergy testing is negative.\nThe pulmonologist recommends a biologic targeting IL-4/IL-13 signaling.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15888,7 +15888,7 @@
   {
     "id": "CQOTD-0326",
     "day_of_year": 326,
-    "title": "Allergic asthma biologic—omalizumab (anti-IgE)",
+    "title": "Allergic asthma biologic",
     "stem": "A 46-year-old man has moderate-to-severe asthma with frequent exacerbations despite medium-high dose ICS/LABA therapy.\nAllergy testing is positive to dust mites and cat dander.\nTotal IgE is elevated.\nThe allergist recommends an injectable biologic that binds IgE to reduce allergic inflammation.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15936,7 +15936,7 @@
   {
     "id": "CQOTD-0327",
     "day_of_year": 327,
-    "title": "Severe COPD with chronic bronchitis + frequent exacerbations—roflumilast",
+    "title": "Severe COPD with chronic bronchitis + frequent exacerbations",
     "stem": "A 64-year-old man has COPD with chronic bronchitis (daily productive cough).\nDespite LAMA/LABA therapy, he has had 3 COPD exacerbations requiring steroids/antibiotics in the last year.\nFEV1 is 38% predicted.\nThe clinician considers adding an oral medication to reduce future exacerbations.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -15985,7 +15985,7 @@
   {
     "id": "CQOTD-0328",
     "day_of_year": 328,
-    "title": "Narrow therapeutic index bronchodilator—theophylline",
+    "title": "Narrow therapeutic index bronchodilator",
     "stem": "A 58-year-old man with COPD is taking a bronchodilator that requires serum level monitoring.\nAfter starting clarithromycin for pneumonia, he develops nausea, vomiting, tremor, and palpitations.\nHis serum medication level returns elevated.",
     "question": "Which medication is most likely responsible from the options below?",
     "answer_choices": [
@@ -16034,7 +16034,7 @@
   {
     "id": "CQOTD-0329",
     "day_of_year": 329,
-    "title": "Non-sedating allergy relief—fexofenadine",
+    "title": "Non-sedating allergy relief",
     "stem": "A 34-year-old commercial truck driver has seasonal allergic rhinitis with sneezing, itchy eyes, and runny nose.\nHe must avoid sedation while driving.\nHe previously tried diphenhydramine and felt very drowsy.",
     "question": "Which medication is the best choice from the options below to minimize sedation?",
     "answer_choices": [
@@ -16084,7 +16084,7 @@
   {
     "id": "CQOTD-0330",
     "day_of_year": 330,
-    "title": "Onychomycosis—oral terbinafine",
+    "title": "Onychomycosis",
     "stem": "A 52-year-old man has thickened, yellow, brittle toenails with subungual debris.\nKOH prep is positive for dermatophytes.\nHe requests the most effective oral medication for toenail onychomycosis.\nBaseline liver enzymes are normal.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16133,7 +16133,7 @@
   {
     "id": "CQOTD-0331",
     "day_of_year": 331,
-    "title": "Allergic rhinitis best for congestion—mometasone nasal",
+    "title": "Allergic rhinitis best for congestion",
     "stem": "A 28-year-old woman has allergic rhinitis with prominent nasal congestion, rhinorrhea, and sneezing.\nShe wants the most effective medication class for nasal symptoms and congestion with minimal systemic effects.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16182,7 +16182,7 @@
   {
     "id": "CQOTD-0332",
     "day_of_year": 332,
-    "title": "Oral decongestant—pseudoephedrine",
+    "title": "Oral decongestant",
     "stem": "A 31-year-old man has a viral upper respiratory infection with bothersome nasal congestion.\nPMH: no hypertension, no arrhythmia, no glaucoma.\nHe wants an oral medication that shrinks nasal mucosal swelling and improves congestion.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16230,7 +16230,7 @@
   {
     "id": "CQOTD-0333",
     "day_of_year": 333,
-    "title": "Peptic ulcer mucosal protection—sucralfate",
+    "title": "Peptic ulcer mucosal protection",
     "stem": "A 59-year-old man has epigastric burning and is diagnosed with a duodenal ulcer on endoscopy.\nHe asks for a medication that works by coating the ulcer base and providing a protective barrier (rather than primarily suppressing acid).\nHe takes levothyroxine each morning and wants to avoid drug-binding interactions as much as possible.",
     "question": "Which medication best matches this ‘ulcer coating’ mechanism from the options below?",
     "answer_choices": [
@@ -16278,7 +16278,7 @@
   {
     "id": "CQOTD-0334",
     "day_of_year": 334,
-    "title": "Delayed chemotherapy-induced nausea—aprepitant (NK1 antagonist)",
+    "title": "Delayed chemotherapy-induced nausea",
     "stem": "A 55-year-old woman is starting highly emetogenic chemotherapy.\nHer oncologist prescribes a multi-drug antiemetic regimen to prevent both acute and delayed nausea/vomiting.\nOne of the medications blocks neurokinin-1 (NK1) receptors and is particularly helpful for delayed chemotherapy-induced nausea and vomiting.",
     "question": "Which medication is the NK1 antagonist from the options below?",
     "answer_choices": [
@@ -16327,7 +16327,7 @@
   {
     "id": "CQOTD-0335",
     "day_of_year": 335,
-    "title": "Post-op nausea/vomiting—ondansetron (5-HT3 antagonist)",
+    "title": "Post-op nausea/vomiting",
     "stem": "A 41-year-old woman develops nausea and vomiting after outpatient surgery with general anesthesia.\nVitals are stable; abdominal exam is benign.\nThe clinician chooses an antiemetic that blocks 5-HT3 receptors and is commonly used for postoperative nausea and vomiting.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16375,7 +16375,7 @@
   {
     "id": "CQOTD-0336",
     "day_of_year": 336,
-    "title": "Diabetic gastroparesis—metoclopramide",
+    "title": "Diabetic gastroparesis",
     "stem": "A 57-year-old man with long-standing type 2 diabetes has early satiety, bloating, and nausea after meals.\nA gastric emptying study confirms gastroparesis.\nThe clinician prescribes a dopamine antagonist that increases GI motility and can relieve nausea.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16423,7 +16423,7 @@
   {
     "id": "CQOTD-0337",
     "day_of_year": 337,
-    "title": "Antiemetic with strong sedation—promethazine",
+    "title": "Antiemetic with strong sedation",
     "stem": "A 26-year-old woman presents with acute nausea and vomiting from viral gastroenteritis.\nShe is given an antiemetic that is very sedating and has strong anticholinergic properties (dry mouth, urinary retention).",
     "question": "Which medication best matches this description from the options below?",
     "answer_choices": [
@@ -16472,7 +16472,7 @@
   {
     "id": "CQOTD-0338",
     "day_of_year": 338,
-    "title": "Motion sickness prevention—scopolamine patch",
+    "title": "Motion sickness prevention",
     "stem": "A 29-year-old woman gets severe motion sickness on cruises.\nShe wants a medication that can be applied as a transdermal patch before travel to prevent nausea.\nShe has no history of glaucoma.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16521,7 +16521,7 @@
   {
     "id": "CQOTD-0339",
     "day_of_year": 339,
-    "title": "First-line osmotic laxative—polyethylene glycol",
+    "title": "First-line osmotic laxative",
     "stem": "A 44-year-old woman has chronic constipation with hard stools 2–3 times per week.\nShe has tried increasing fiber and water intake with limited benefit.\nShe wants a medication that draws water into the colon to soften stool and improve bowel frequency,\nand can be used as an over-the-counter osmotic laxative.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16570,7 +16570,7 @@
   {
     "id": "CQOTD-0340",
     "day_of_year": 340,
-    "title": "Colonoscopy bowel prep—PEG with electrolytes",
+    "title": "Colonoscopy bowel prep",
     "stem": "A 60-year-old man is scheduled for a screening colonoscopy tomorrow morning.\nHe needs an effective bowel cleansing regimen that includes a large-volume osmotic solution with electrolytes to prevent significant fluid/electrolyte shifts.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16618,7 +16618,7 @@
   {
     "id": "CQOTD-0341",
     "day_of_year": 341,
-    "title": "Stimulant laxative for short-term constipation—bisacodyl",
+    "title": "Stimulant laxative for short-term constipation",
     "stem": "A 51-year-old woman has not had a bowel movement in 4 days and feels bloated.\nShe wants a medication that directly stimulates colonic peristalsis for short-term relief.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16665,7 +16665,7 @@
   {
     "id": "CQOTD-0342",
     "day_of_year": 342,
-    "title": "Oral thrush after inhaled steroids—nystatin",
+    "title": "Oral thrush after inhaled steroids",
     "stem": "A 63-year-old man with COPD/asthma overlap uses an inhaled corticosteroid daily.\nHe now has white, curd-like plaques on the tongue and buccal mucosa that scrape off with mild bleeding underneath.\nHe is otherwise well and immunocompetent.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16714,7 +16714,7 @@
   {
     "id": "CQOTD-0343",
     "day_of_year": 343,
-    "title": "Opioid-induced constipation prevention—senna/docusate",
+    "title": "Opioid-induced constipation prevention",
     "stem": "A 56-year-old man is started on oxycodone for severe chronic back pain.\nHe has a history of constipation and wants to prevent opioid-induced constipation from the start.\nThe clinician prescribes a combination product containing a stimulant laxative plus stool softener.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16763,7 +16763,7 @@
   {
     "id": "CQOTD-0344",
     "day_of_year": 344,
-    "title": "Hepatic encephalopathy—lactulose",
+    "title": "Hepatic encephalopathy",
     "stem": "A 63-year-old man with cirrhosis is brought in for confusion and asterixis.\nLabs: ammonia elevated; electrolytes normal.\nThe team starts a medication that acidifies the colon and traps ammonia as ammonium, promoting excretion via increased stool frequency.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16811,7 +16811,7 @@
   {
     "id": "CQOTD-0345",
     "day_of_year": 345,
-    "title": "IBS-C with abdominal pain—linaclotide",
+    "title": "IBS-C with abdominal pain",
     "stem": "A 37-year-old woman has irritable bowel syndrome with constipation (IBS-C).\nShe reports chronic abdominal pain that improves after bowel movements and has hard stools with straining.\nFiber and polyethylene glycol have helped stool frequency only partially, but pain persists.\nThe clinician prescribes a medication that increases intestinal fluid secretion and can improve both constipation and abdominal pain.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16860,7 +16860,7 @@
   {
     "id": "CQOTD-0346",
     "day_of_year": 346,
-    "title": "Acute non-bloody diarrhea—loperamide",
+    "title": "Acute non-bloody diarrhea",
     "stem": "A 29-year-old man returns from travel with 2 days of watery diarrhea (6 episodes/day).\nHe has no fever, no blood in stool, and is well hydrated.\nHe wants symptomatic relief to reduce stool frequency while he continues oral rehydration.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16907,7 +16907,7 @@
   {
     "id": "CQOTD-0347",
     "day_of_year": 347,
-    "title": "Prescription antidiarrheal with atropine—diphenoxylate/atropine",
+    "title": "Prescription antidiarrheal with atropine",
     "stem": "A 40-year-old woman has chronic functional diarrhea and wants a prescription antidiarrheal.\nHer clinician chooses a medication that is an opioid derivative combined with atropine to discourage misuse/overdose.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -16956,7 +16956,7 @@
   {
     "id": "CQOTD-0348",
     "day_of_year": 348,
-    "title": "IBS abdominal cramping—dicyclomine",
+    "title": "IBS abdominal cramping",
     "stem": "A 33-year-old man has irritable bowel syndrome with episodic abdominal cramping and urgency.\nStool studies and colonoscopy are normal.\nHe requests a PRN medication that reduces intestinal smooth muscle spasm.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17005,7 +17005,7 @@
   {
     "id": "CQOTD-0349",
     "day_of_year": 349,
-    "title": "Mild-to-moderate ulcerative colitis—mesalamine (5-ASA)",
+    "title": "Mild-to-moderate ulcerative colitis",
     "stem": "A 24-year-old man has 6 weeks of bloody diarrhea, urgency, and crampy abdominal pain.\nColonoscopy shows continuous colonic mucosal inflammation starting at the rectum, consistent with ulcerative colitis.\nHe has mild-to-moderate disease without systemic toxicity.",
     "question": "Which medication is the best first-line choice from the options below?",
     "answer_choices": [
@@ -17052,7 +17052,7 @@
   {
     "id": "CQOTD-0350",
     "day_of_year": 350,
-    "title": "Moderate-to-severe IBD escalation—Infliximab (anti-TNF)",
+    "title": "Moderate-to-severe IBD escalation",
     "stem": "A 29-year-old woman has Crohn disease with persistent abdominal pain and diarrhea despite corticosteroid induction therapy.\nShe has had 2 hospitalizations for flares in the past year.\nHer gastroenterologist recommends starting an anti-TNF biologic and orders TB screening before the first infusion.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17101,7 +17101,7 @@
   {
     "id": "CQOTD-0351",
     "day_of_year": 351,
-    "title": "Nonpurulent cellulitis—cephalexin",
+    "title": "Nonpurulent cellulitis",
     "stem": "A 48-year-old man develops redness, warmth, and tenderness on his lower leg after a minor abrasion.\nThere is no abscess or purulent drainage.\nHe has no history of MRSA, no injection drug use, and no recent hospitalization.\nVitals are normal.",
     "question": "Which oral antibiotic is the best choice from the options below?",
     "answer_choices": [
@@ -17150,7 +17150,7 @@
   {
     "id": "CQOTD-0352",
     "day_of_year": 352,
-    "title": "Neutropenic fever—cefepime (antipseudomonal 4th-gen cephalosporin)",
+    "title": "Neutropenic fever",
     "stem": "A 62-year-old woman receiving chemotherapy presents with fever (39.1°C) and chills.\nLabs: ANC 280 cells/µL.\nShe is hemodynamically stable but meets criteria for neutropenic fever.\nThe team wants an IV antipseudomonal beta-lactam; the attending asks specifically for the 4th-generation cephalosporin option.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17198,7 +17198,7 @@
   {
     "id": "CQOTD-0353",
     "day_of_year": 353,
-    "title": "Broad intra-abdominal coverage—piperacillin/tazobactam",
+    "title": "Broad intra-abdominal coverage",
     "stem": "A 54-year-old man presents with severe abdominal pain and fever.\nCT suggests perforated appendicitis with peritonitis.\nThe surgeon requests empiric IV antibiotics that cover gram-negatives, anaerobes, and Pseudomonas while awaiting surgery.",
     "question": "Which medication is the best single-agent choice from the options below?",
     "answer_choices": [
@@ -17246,7 +17246,7 @@
   {
     "id": "CQOTD-0354",
     "day_of_year": 354,
-    "title": "Strep pharyngitis—penicillin V (narrow therapy)",
+    "title": "Strep pharyngitis",
     "stem": "A 19-year-old college student has sore throat, fever, tender anterior cervical nodes, and tonsillar exudates.\nRapid strep test is positive.\nHe has no drug allergies.\nThe clinician chooses the narrowest effective oral antibiotic.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17295,7 +17295,7 @@
   {
     "id": "CQOTD-0355",
     "day_of_year": 355,
-    "title": "Bacterial vaginosis—metronidazole",
+    "title": "Bacterial vaginosis",
     "stem": "A 27-year-old woman reports thin gray vaginal discharge with a fishy odor.\nVaginal pH is 5.5 and wet mount shows clue cells.\nPregnancy test is negative.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17344,7 +17344,7 @@
   {
     "id": "CQOTD-0356",
     "day_of_year": 356,
-    "title": "Influenza treatment—oseltamivir",
+    "title": "Influenza treatment",
     "stem": "A 72-year-old woman with COPD develops abrupt fever, myalgias, headache, and cough.\nRapid influenza testing is positive.\nSymptoms began 24 hours ago.",
     "question": "Which medication is the best choice from the options below to treat influenza?",
     "answer_choices": [
@@ -17392,7 +17392,7 @@
   {
     "id": "CQOTD-0357",
     "day_of_year": 357,
-    "title": "Early COVID-19 outpatient therapy—nirmatrelvir/ritonavir",
+    "title": "Early COVID-19 outpatient therapy",
     "stem": "A 68-year-old man with diabetes and coronary artery disease tests positive for COVID-19.\nSymptoms started 2 days ago (mild cough, sore throat, fatigue) and he is not hypoxic.\nHis clinician wants an oral antiviral for high-risk outpatients that must be started within a few days of symptom onset.\nMedication list includes simvastatin and apixaban.",
     "question": "Which medication is the best choice from the options below (noting that drug–drug interactions must be reviewed/managed)?",
     "answer_choices": [
@@ -17442,7 +17442,7 @@
   {
     "id": "CQOTD-0358",
     "day_of_year": 358,
-    "title": "HSV encephalitis—acyclovir",
+    "title": "HSV encephalitis",
     "stem": "A 57-year-old man presents with fever, headache, confusion, and new focal seizures.\nMRI suggests temporal lobe involvement.\nCSF shows lymphocytic pleocytosis and elevated protein.\nThe team suspects HSV encephalitis and wants immediate antiviral therapy.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17490,7 +17490,7 @@
   {
     "id": "CQOTD-0359",
     "day_of_year": 359,
-    "title": "Herpes zoster outpatient therapy—valacyclovir",
+    "title": "Herpes zoster outpatient therapy",
     "stem": "A 61-year-old woman develops a painful vesicular rash in a dermatomal distribution on her right torso.\nThe rash began yesterday.\nShe is immunocompetent and has normal renal function.\nThe clinician prescribes an oral antiviral with improved bioavailability compared with acyclovir.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17537,7 +17537,7 @@
   {
     "id": "CQOTD-0360",
     "day_of_year": 360,
-    "title": "Vulvovaginal candidiasis—fluconazole",
+    "title": "Vulvovaginal candidiasis",
     "stem": "A 30-year-old woman has intense vulvar itching and thick, white “cottage cheese” vaginal discharge.\nVaginal pH is 4.0.\nWet mount shows budding yeast.\nShe is not pregnant.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17585,7 +17585,7 @@
   {
     "id": "CQOTD-0361",
     "day_of_year": 361,
-    "title": "OA pain with sulfonamide allergy—etodolac (NSAID option)",
+    "title": "OA pain with sulfonamide allergy",
     "stem": "A 63-year-old woman has knee osteoarthritis with daily pain and morning stiffness <30 minutes.\nPMH: anaphylaxis to trimethoprim/sulfamethoxazole (sulfonamide antibiotic).\nShe previously had dyspepsia with high-dose ibuprofen and wants an NSAID option for chronic OA pain.\nThe clinician wants to avoid celecoxib due to concern about sulfonamide-related allergy history.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17634,7 +17634,7 @@
   {
     "id": "CQOTD-0362",
     "day_of_year": 362,
-    "title": "Nitrate paired with hydralazine in HFrEF—isosorbide dinitrate",
+    "title": "Nitrate paired with hydralazine in HFrEF",
     "stem": "A 57-year-old man with HFrEF (EF 25%) remains symptomatic despite guideline-directed therapy.\nHe is started on hydralazine for afterload reduction.\nThe cardiologist adds the nitrate that is classically paired with hydralazine to improve outcomes in select HFrEF patients.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17684,7 +17684,7 @@
   {
     "id": "CQOTD-0363",
     "day_of_year": 363,
-    "title": "Overactive bladder with trouble swallowing pills—oxybutynin patch",
+    "title": "Overactive bladder with trouble swallowing pills",
     "stem": "A 66-year-old woman has overactive bladder with urgency, frequency, and urge incontinence.\nShe has difficulty swallowing pills due to esophageal strictures.\nShe wants a medication available as a transdermal system that reduces bladder detrusor overactivity via antimuscarinic effects.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17732,7 +17732,7 @@
   {
     "id": "CQOTD-0364",
     "day_of_year": 364,
-    "title": "Once-daily bladder-selective antimuscarinic—solifenacin",
+    "title": "Once-daily bladder-selective antimuscarinic",
     "stem": "A 70-year-old woman has overactive bladder with urgency and urge incontinence.\nShe previously tried immediate-release oxybutynin but stopped due to severe dry mouth and confusion.\nShe prefers a once-daily antimuscarinic that is considered more bladder-selective (M3) and may be better tolerated.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
@@ -17781,7 +17781,7 @@
   {
     "id": "CQOTD-0365",
     "day_of_year": 365,
-    "title": "One medication for BPH + erectile dysfunction—tadalafil",
+    "title": "One medication for BPH + erectile dysfunction",
     "stem": "A 58-year-old man has lower urinary tract symptoms from BPH (weak stream, nocturia, hesitancy) and erectile dysfunction.\nHe is not taking nitrates.\nHe wants a single daily medication that can improve both BPH symptoms and erectile function.",
     "question": "Which medication is the best choice from the options below?",
     "answer_choices": [
