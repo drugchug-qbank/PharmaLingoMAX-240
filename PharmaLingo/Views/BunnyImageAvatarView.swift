@@ -5,6 +5,7 @@ struct BunnyImageAvatarView: View {
     let mouthStyle: MouthStyle
     let accessory: AccessoryType
     let size: CGFloat
+    var contentScale: CGFloat = 1.0
 
     static func canUseImagePath(animalType: AnimalType, eyeStyle: EyeStyle) -> Bool {
         guard animalType == .bunny, eyeStyle == .normal else { return false }
@@ -50,5 +51,8 @@ struct BunnyImageAvatarView: View {
                 .tag("eyes")
         }
         .frame(width: size, height: size)
+        .scaleEffect(contentScale)
+        .frame(width: size, height: size)
+        .clipped()
     }
 }

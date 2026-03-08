@@ -89,6 +89,10 @@ struct AvatarRendererView: View {
         return BunnyImageAvatarView.canUseImagePath(animalType: configuration.animalType, eyeStyle: effectiveEye)
     }
 
+    private var bunnyContentScale: CGFloat {
+        size > 100 ? 1.25 : 1.0
+    }
+
     @ViewBuilder
     private var animalLayer: some View {
         if useBunnyImagePath {
@@ -96,7 +100,8 @@ struct AvatarRendererView: View {
                 eyeStyle: .normal,
                 mouthStyle: configuration.mouthStyle,
                 accessory: configuration.accessoryType,
-                size: size
+                size: size,
+                contentScale: bunnyContentScale
             )
             .allowsHitTesting(false)
         } else {
