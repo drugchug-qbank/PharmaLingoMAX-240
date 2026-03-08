@@ -28,14 +28,22 @@ struct BunnyImageAvatarView: View {
         }
     }
 
+    private var hasMouthAsset: Bool {
+        let name = Self.mouthAssetName(for: mouthStyle)
+        return !name.isEmpty && UIImage(named: name) != nil
+    }
+
     var body: some View {
         Canvas { context, canvasSize in
+            let rect = CGRect(origin: .zero, size: canvasSize)
             if let baseImage = context.resolveSymbol(id: "base") {
-                context.draw(baseImage, in: CGRect(origin: .zero, size: canvasSize))
+                context.draw(baseImage, in: rect)
             }
-
             if let eyesImage = context.resolveSymbol(id: "eyes") {
-                context.draw(eyesImage, in: CGRect(origin: .zero, size: canvasSize))
+                context.draw(eyesImage, in: rect)
+            }
+            if let mouthImage = context.resolveSymbol(id: "mouth") {
+                context.draw(mouthImage, in: rect)
             }
         } symbols: {
             Image(Self.bunnyBaseAsset)
@@ -49,6 +57,14 @@ struct BunnyImageAvatarView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size, height: size)
                 .tag("eyes")
+
+            if hasMouthAsset {
+                Image(Self.mouthAssetName(for: mouthStyle))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: size, height: size)
+                    .tag("mouth")
+            }
         }
         .frame(width: size, height: size)
         .scaleEffect(contentScale)
