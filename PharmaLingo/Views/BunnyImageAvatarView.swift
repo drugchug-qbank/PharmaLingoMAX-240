@@ -20,6 +20,18 @@ struct BunnyImageAvatarView: View {
         }
     }
 
+    static func mouthAssetName(for style: MouthStyle) -> String {
+        switch style {
+        case .smile: return "avatar_bunny_mouth_smile_v1"
+        default: return ""
+        }
+    }
+
+    private var hasMouthImage: Bool {
+        let name = Self.mouthAssetName(for: mouthStyle)
+        return !name.isEmpty && UIImage(named: name) != nil
+    }
+
     var body: some View {
         Canvas { context, canvasSize in
             let s = canvasSize.width
@@ -32,7 +44,12 @@ struct BunnyImageAvatarView: View {
                 context.draw(eyesImage, in: CGRect(origin: .zero, size: canvasSize))
             }
 
-            AvatarOverlayHelpers.drawMouth(context: &context, style: mouthStyle, size: s)
+            if let mouthImage = context.resolveSymbol(id: "mouth") {
+                context.draw(mouthImage, in: CGRect(origin: .zero, size: canvasSize))
+            } else {
+                AvatarOverlayHelpers.drawMouth(context: &context, style: mouthStyle, size: s)
+            }
+
             AvatarOverlayHelpers.drawAccessory(context: &context, type: accessory, size: s)
         } symbols: {
             Image(Self.bunnyBaseAsset)
@@ -46,6 +63,14 @@ struct BunnyImageAvatarView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size, height: size)
                 .tag("eyes")
+
+            if hasMouthImage {
+                Image(Self.mouthAssetName(for: mouthStyle))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: size, height: size)
+                    .tag("mouth")
+            }
         }
         .frame(width: size, height: size)
     }
