@@ -46,6 +46,9 @@ struct DrugDataService {
                 if sub.id == Self.antibioticStrategySubsectionId {
                     bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_6aStrategy)
                 }
+                if sub.id == Self.masteringInfectiousDiseaseSubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_6fMastery)
+                }
             }
         }
         self.questionBank = bank
