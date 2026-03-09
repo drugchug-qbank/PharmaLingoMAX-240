@@ -52,6 +52,9 @@ struct DrugDataService {
                 if sub.id == Self.asthmaCopdOverviewSubsectionId {
                     bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_7aOverview)
                 }
+                if sub.id == Self.masteringRespiratoryAllergySubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_7fMastery)
+                }
             }
         }
         self.questionBank = bank
