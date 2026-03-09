@@ -23,7 +23,7 @@ struct BunnyImageAvatarView: View {
 
     static func mouthAssetName(for style: MouthStyle) -> String {
         switch style {
-        case .smile: return "avatar_bunny_mouth_smile_v3_lower"
+        case .smile: return "avatar_bunny_mouth_smile_v4_even_lower"
         default: return ""
         }
     }
