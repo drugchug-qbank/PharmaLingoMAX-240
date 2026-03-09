@@ -487,49 +487,131 @@ struct StatsDetailView: View {
 
 struct StreakCalendarView: View {
     let gameVM: GameViewModel
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
+    @State private var displayedMonth: Date = Date()
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
+
+    private var calendar: Calendar { Calendar.current }
+
+    private var monthTitle: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        return formatter.string(from: displayedMonth)
+    }
+
+    private var canGoBack: Bool {
+        guard let earliest = earliestMonth else { return false }
+        let displayedComps = calendar.dateComponents([.year, .month], from: displayedMonth)
+        let earliestComps = calendar.dateComponents([.year, .month], from: earliest)
+        if let dy = displayedComps.year, let dm = displayedComps.month,
+           let ey = earliestComps.year, let em = earliestComps.month {
+            return dy > ey || (dy == ey && dm > em)
+        }
+        return false
+    }
+
+    private var canGoForward: Bool {
+        let nowComps = calendar.dateComponents([.year, .month], from: Date())
+        let displayedComps = calendar.dateComponents([.year, .month], from: displayedMonth)
+        if let ny = nowComps.year, let nm = nowComps.month,
+           let dy = displayedComps.year, let dm = displayedComps.month {
+            return dy < ny || (dy == ny && dm < nm)
+        }
+        return false
+    }
+
+    private var earliestMonth: Date? {
+        if let created = gameVM.accountCreatedDate {
+            return created
+        }
+        if let lastActive = gameVM.lastActiveDate, gameVM.currentStreak > 0 {
+            return calendar.date(byAdding: .day, value: -(gameVM.currentStreak - 1), to: lastActive)
+        }
+        return calendar.date(byAdding: .month, value: -1, to: Date())
+    }
 
     private var calendarDays: [CalendarDay] {
-        let calendar = Calendar.current
+        let comps = calendar.dateComponents([.year, .month], from: displayedMonth)
+        guard let firstOfMonth = calendar.date(from: comps),
+              let range = calendar.range(of: .day, in: .month, for: firstOfMonth) else { return [] }
+
         let today = calendar.startOfDay(for: Date())
-        let answered = UserDefaults.standard.dictionary(forKey: "cqotd_answered_dates") as? [String: Bool] ?? [:]
+        let firstWeekday = calendar.component(.weekday, from: firstOfMonth)
+        let leadingBlanks = firstWeekday - 1
+
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
 
-        return (0..<35).reversed().map { daysAgo in
-            let date = calendar.date(byAdding: .day, value: -daysAgo, to: today) ?? today
-            let dateStr = formatter.string(from: date)
-            let isToday = daysAgo == 0
-            let hasActivity: Bool
-            let wasStreakSave = false
+        var days: [CalendarDay] = []
 
-            if let lastActive = gameVM.lastActiveDate {
-                let lastActiveDay = calendar.startOfDay(for: lastActive)
-                let diff = calendar.dateComponents([.day], from: date, to: lastActiveDay).day ?? 0
-                if diff >= 0 && diff < gameVM.currentStreak {
-                    hasActivity = true
-                } else {
-                    hasActivity = answered[dateStr] != nil
-                }
-            } else {
-                hasActivity = answered[dateStr] != nil
-            }
-
-            return CalendarDay(
-                date: date,
-                dayNumber: calendar.component(.day, from: date),
-                weekday: calendar.component(.weekday, from: date),
-                hasActivity: hasActivity,
-                isToday: isToday,
-                wasStreakSave: wasStreakSave
-            )
+        for _ in 0..<leadingBlanks {
+            days.append(CalendarDay(date: nil, dayNumber: 0, hasActivity: false, isToday: false, wasStreakSave: false, isPlaceholder: true))
         }
+
+        let accountStart: Date? = gameVM.accountCreatedDate.map { calendar.startOfDay(for: $0) }
+
+        for day in range {
+            var dateComps = comps
+            dateComps.day = day
+            guard let date = calendar.date(from: dateComps) else { continue }
+            let dateStart = calendar.startOfDay(for: date)
+            let dateStr = formatter.string(from: dateStart)
+            let isToday = calendar.isDate(dateStart, inSameDayAs: today)
+            let hasActivity = gameVM.activityDates.contains(dateStr)
+            let wasStreakSave = gameVM.streakSaveDates.contains(dateStr)
+            let isFuture = dateStart > today
+            let isBeforeAccount = accountStart.map { dateStart < $0 } ?? false
+
+            days.append(CalendarDay(
+                date: dateStart,
+                dayNumber: day,
+                hasActivity: isFuture ? false : hasActivity,
+                isToday: isToday,
+                wasStreakSave: isFuture ? false : wasStreakSave,
+                isPlaceholder: false,
+                isFuture: isFuture,
+                isBeforeAccount: isBeforeAccount
+            ))
+        }
+
+        return days
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             HStack {
-                ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        displayedMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth) ?? displayedMonth
+                    }
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(canGoBack ? AppTheme.primaryBlue : Color(.quaternaryLabel))
+                }
+                .disabled(!canGoBack)
+
+                Spacer()
+
+                Text(monthTitle)
+                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    .foregroundStyle(.primary)
+
+                Spacer()
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        displayedMonth = calendar.date(byAdding: .month, value: 1, to: displayedMonth) ?? displayedMonth
+                    }
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(canGoForward ? AppTheme.primaryBlue : Color(.quaternaryLabel))
+                }
+                .disabled(!canGoForward)
+            }
+
+            HStack(spacing: 0) {
+                ForEach(Array(["S", "M", "T", "W", "T", "F", "S"].enumerated()), id: \.offset) { _, day in
                     Text(day)
                         .font(AppTheme.funFont(.caption2, weight: .bold))
                         .foregroundStyle(.secondary)
@@ -537,77 +619,96 @@ struct StreakCalendarView: View {
                 }
             }
 
-            LazyVGrid(columns: columns, spacing: 4) {
+            LazyVGrid(columns: columns, spacing: 6) {
                 ForEach(Array(calendarDays.enumerated()), id: \.offset) { _, day in
                     CalendarDayCell(day: day)
                 }
             }
 
-            HStack(spacing: 16) {
-                HStack(spacing: 6) {
-                    Circle().fill(AppTheme.successGreen).frame(width: 10, height: 10)
+            HStack(spacing: 12) {
+                HStack(spacing: 5) {
+                    Circle().fill(AppTheme.successGreen).frame(width: 8, height: 8)
                     Text("Active")
                         .font(AppTheme.funFont(.caption2, weight: .bold))
                         .foregroundStyle(.secondary)
                 }
-                HStack(spacing: 6) {
-                    Circle().fill(Color(.tertiarySystemFill)).frame(width: 10, height: 10)
+                HStack(spacing: 5) {
+                    Circle().fill(AppTheme.xpPurple).frame(width: 8, height: 8)
+                    Text("Saved")
+                        .font(AppTheme.funFont(.caption2, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+                HStack(spacing: 5) {
+                    Circle().fill(AppTheme.heartRed.opacity(0.4)).frame(width: 8, height: 8)
                     Text("Missed")
                         .font(AppTheme.funFont(.caption2, weight: .bold))
                         .foregroundStyle(.secondary)
                 }
-                HStack(spacing: 6) {
+                HStack(spacing: 5) {
                     Circle()
-                        .strokeBorder(AppTheme.primaryBlue, lineWidth: 2)
-                        .frame(width: 10, height: 10)
+                        .strokeBorder(AppTheme.primaryBlue, lineWidth: 1.5)
+                        .frame(width: 8, height: 8)
                     Text("Today")
                         .font(AppTheme.funFont(.caption2, weight: .bold))
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
             }
-            .padding(.top, 4)
+            .padding(.top, 2)
         }
     }
 }
 
 struct CalendarDay {
-    let date: Date
+    let date: Date?
     let dayNumber: Int
-    let weekday: Int
     let hasActivity: Bool
     let isToday: Bool
     let wasStreakSave: Bool
+    var isPlaceholder: Bool = false
+    var isFuture: Bool = false
+    var isBeforeAccount: Bool = false
 }
 
 struct CalendarDayCell: View {
     let day: CalendarDay
 
     var body: some View {
-        ZStack {
-            if day.hasActivity {
-                Circle()
-                    .fill(AppTheme.successGreen.opacity(0.2))
-                Circle()
-                    .fill(AppTheme.successGreen)
-                    .frame(width: 8, height: 8)
+        Group {
+            if day.isPlaceholder {
+                Color.clear
+                    .frame(width: 36, height: 36)
             } else {
-                Circle()
-                    .fill(Color(.tertiarySystemFill))
-            }
+                ZStack {
+                    if day.wasStreakSave {
+                        Circle()
+                            .fill(AppTheme.xpPurple.opacity(0.18))
+                    } else if day.hasActivity {
+                        Circle()
+                            .fill(AppTheme.successGreen.opacity(0.18))
+                    } else if !day.isFuture && !day.isBeforeAccount {
+                        Circle()
+                            .fill(AppTheme.heartRed.opacity(0.1))
+                    } else {
+                        Circle()
+                            .fill(Color(.tertiarySystemFill).opacity(0.5))
+                    }
 
-            if day.isToday {
-                Circle()
-                    .strokeBorder(AppTheme.primaryBlue, lineWidth: 2)
-            }
-        }
-        .frame(width: 32, height: 32)
-        .overlay(alignment: .bottom) {
-            if day.dayNumber == 1 || day.isToday {
-                Text("\(day.dayNumber)")
-                    .font(.system(size: 8, weight: .bold, design: .rounded))
-                    .foregroundStyle(.secondary)
-                    .offset(y: 12)
+                    if day.isToday {
+                        Circle()
+                            .strokeBorder(AppTheme.primaryBlue, lineWidth: 2)
+                    }
+
+                    Text("\(day.dayNumber)")
+                        .font(.system(size: 11, weight: day.isToday ? .bold : .medium, design: .rounded))
+                        .foregroundStyle(
+                            day.wasStreakSave ? AppTheme.xpPurple :
+                            day.hasActivity ? AppTheme.successGreen :
+                            (day.isFuture || day.isBeforeAccount) ? Color(.quaternaryLabel) :
+                            Color(.tertiaryLabel)
+                        )
+                }
+                .frame(width: 36, height: 36)
             }
         }
     }

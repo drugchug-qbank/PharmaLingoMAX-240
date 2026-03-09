@@ -52,6 +52,10 @@ class GameViewModel {
     var dailySpacedReviewCount: Int = 0
     private var dailyPracticeDate: String = ""
 
+    var activityDates: Set<String> = []
+    var streakSaveDates: Set<String> = []
+    var accountCreatedDate: Date?
+
     private var hasLoadedFromCloud: Bool = false
 
     private static let allQuestPool: [[DailyQuest]] = [
@@ -558,6 +562,10 @@ class GameViewModel {
                 if streakSaves > 0 && daysDiff == 2 {
                     streakSaves -= 1
                     currentStreak += 1
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd"
+                    let yesterdayDate = calendar.date(byAdding: .day, value: -1, to: today) ?? today
+                    streakSaveDates.insert(formatter.string(from: yesterdayDate))
                 } else {
                     currentStreak = 1
                 }
@@ -568,7 +576,23 @@ class GameViewModel {
             streakExtended = true
         }
         lastActiveDate = Date()
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        activityDates.insert(fmt.string(from: today))
         save()
+    }
+
+    private func backfillActivityDatesFromStreak() {
+        guard activityDates.isEmpty, let lastActive = lastActiveDate, currentStreak > 0 else { return }
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let lastDay = calendar.startOfDay(for: lastActive)
+        for i in 0..<currentStreak {
+            if let date = calendar.date(byAdding: .day, value: -i, to: lastDay) {
+                activityDates.insert(formatter.string(from: date))
+            }
+        }
     }
 
     func syncToCloud() {
@@ -642,6 +666,10 @@ class GameViewModel {
 
         if streakSaves > 0 && daysDiff == 2 {
             streakSaves -= 1
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let yesterdayDate = calendar.date(byAdding: .day, value: -1, to: today) ?? today
+            streakSaveDates.insert(formatter.string(from: yesterdayDate))
         } else {
             currentStreak = 0
         }
@@ -796,6 +824,9 @@ class GameViewModel {
         streakExtended = false
         previousStreak = 0
         powerUpInventory = .defaultInventory
+        activityDates = []
+        streakSaveDates = []
+        accountCreatedDate = nil
         UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state")
         UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map")
         if let uid = oldUserId {
@@ -873,6 +904,9 @@ class GameViewModel {
             "doubleXPNextAttempt": doubleXPNextAttempt,
             "powerUpInventory": powerUpInventory.toDictionary(),
             "clinicalAuraPoints": clinicalAuraPoints,
+            "activityDates": Array(activityDates),
+            "streakSaveDates": Array(streakSaveDates),
+            "accountCreatedDate": accountCreatedDate?.timeIntervalSince1970 ?? 0,
         ]
         UserDefaults.standard.set(state, forKey: userDefaultsKey)
     }
@@ -916,6 +950,10 @@ class GameViewModel {
         dailySpacedReviewCount = state["dailySpacedReviewCount"] as? Int ?? 0
         dailyPracticeDate = state["dailyPracticeDate"] as? String ?? ""
         clinicalAuraPoints = state["clinicalAuraPoints"] as? Int ?? 0
+        activityDates = Set(state["activityDates"] as? [String] ?? [])
+        streakSaveDates = Set(state["streakSaveDates"] as? [String] ?? [])
+        let acctCreatedInterval = state["accountCreatedDate"] as? Double ?? 0
+        accountCreatedDate = acctCreatedInterval > 0 ? Date(timeIntervalSince1970: acctCreatedInterval) : nil
         doubleXPNextAttempt = state["doubleXPNextAttempt"] as? Bool ?? false
         if let puData = state["powerUpInventory"] as? [String: Any] {
             powerUpInventory = PowerUpInventory.from(puData)
@@ -1010,6 +1048,20 @@ class GameViewModel {
                 lastHeartLossDate = d
             }
         }
+
+        if let dateStr = profile.createdAt, !dateStr.isEmpty {
+            let isoFormatter = ISO8601DateFormatter()
+            isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let d = isoFormatter.date(from: dateStr) {
+                accountCreatedDate = d
+            } else {
+                let isoBasic = ISO8601DateFormatter()
+                isoBasic.formatOptions = [.withInternetDateTime]
+                accountCreatedDate = isoBasic.date(from: dateStr)
+            }
+        }
+
+        backfillActivityDatesFromStreak()
 
         save()
     }
