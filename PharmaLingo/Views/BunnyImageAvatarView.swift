@@ -8,29 +8,11 @@ struct BunnyImageAvatarView: View {
     var contentScale: CGFloat = 1.0
 
     static func canUseImagePath(animalType: AnimalType, eyeStyle: EyeStyle) -> Bool {
-        guard animalType == .bunny, eyeStyle == .normal else { return false }
-        return UIImage(named: bunnyBaseAsset) != nil && UIImage(named: eyeAssetName(for: .normal)) != nil
+        BunnyAssetMap.canRender(animal: animalType, eye: eyeStyle)
     }
 
-    private static let bunnyBaseAsset = "avatar_bunny_base_v2"
-
-    static func eyeAssetName(for style: EyeStyle) -> String {
-        switch style {
-        case .normal: return "avatar_bunny_eyes_neutral_v4_close"
-        default: return ""
-        }
-    }
-
-    static func mouthAssetName(for style: MouthStyle) -> String {
-        switch style {
-        case .smile: return "avatar_bunny_mouth_smile_v5_lower_again"
-        default: return ""
-        }
-    }
-
-    private var hasMouthAsset: Bool {
-        let name = Self.mouthAssetName(for: mouthStyle)
-        return !name.isEmpty && UIImage(named: name) != nil
+    private var mouthAsset: String? {
+        BunnyAssetMap.mouthAssetName(for: mouthStyle)
     }
 
     var body: some View {
@@ -46,20 +28,22 @@ struct BunnyImageAvatarView: View {
                 context.draw(mouthImage, in: rect)
             }
         } symbols: {
-            Image(Self.bunnyBaseAsset)
+            Image(BunnyAssetMap.base)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size, height: size)
                 .tag("base")
 
-            Image(Self.eyeAssetName(for: eyeStyle))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: size, height: size)
-                .tag("eyes")
+            if let eyeName = BunnyAssetMap.eyeAssetName(for: eyeStyle) {
+                Image(eyeName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: size, height: size)
+                    .tag("eyes")
+            }
 
-            if hasMouthAsset {
-                Image(Self.mouthAssetName(for: mouthStyle))
+            if let mouthName = mouthAsset {
+                Image(mouthName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: size, height: size)
