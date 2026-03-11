@@ -12,15 +12,25 @@ struct AvatarRendererView: View {
         AnimalAvatarView.tileCornerRadius(for: size)
     }
 
+    private var useRiveBunny: Bool {
+        configuration.animalType == .bunny
+    }
+
     var body: some View {
         ZStack {
             backgroundLayer
 
-            animalLayer
+            if useRiveBunny {
+                RiveBunnyAvatarView(size: size)
+                    .allowsHitTesting(false)
+            } else {
+                animalLayer
+            }
 
-            shadingOverlay
-
-            highlightOverlay
+            if !useRiveBunny {
+                shadingOverlay
+                highlightOverlay
+            }
         }
         .frame(width: size, height: size)
         .clipShape(.rect(cornerRadius: cornerRadius))
@@ -42,7 +52,7 @@ struct AvatarRendererView: View {
         .shadow(color: .black.opacity(0.15), radius: size * 0.06, x: 0, y: size * 0.025)
         .scaleEffect(breathScale)
         .task {
-            guard showIdleAnimation else { return }
+            guard showIdleAnimation, !useRiveBunny else { return }
             await withTaskGroup(of: Void.self) { group in
                 group.addTask { @MainActor in
                     while !Task.isCancelled {

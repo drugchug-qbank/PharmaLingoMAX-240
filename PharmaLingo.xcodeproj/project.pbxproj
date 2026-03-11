@@ -10,6 +10,7 @@
 		XX298127CFBB2CF3FA631BXX /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = XXDCC169DE7B2F3C1C8B10XX /* RevenueCat */; };
 		XX50D61ED0BAE05FA2F8E9XX /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = XX1C9FF110ABBCE8BF456CXX /* Supabase */; };
 		XXDB1E089E7A6A563E00DBXX /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = XXEAC818FB99284308FEDEXX /* RevenueCatUI */; };
+		XXA1B2C3D4E5F6A7B8C9D0XX /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = XXA1B2C3D4E5F6A7B8C9D1XX /* RiveRuntime */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 				XX50D61ED0BAE05FA2F8E9XX /* Supabase in Frameworks */,
 				XX298127CFBB2CF3FA631BXX /* RevenueCat in Frameworks */,
 				XXDB1E089E7A6A563E00DBXX /* RevenueCatUI in Frameworks */,
+				XXA1B2C3D4E5F6A7B8C9D0XX /* RiveRuntime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +126,7 @@
 				XX1C9FF110ABBCE8BF456CXX /* Supabase */,
 				XXDCC169DE7B2F3C1C8B10XX /* RevenueCat */,
 				XXEAC818FB99284308FEDEXX /* RevenueCatUI */,
+				XXA1B2C3D4E5F6A7B8C9D1XX /* RiveRuntime */,
 			);
 			productName = PharmaLingo;
 			productReference = 105FC57A2E9EAD3100EA8BCF /* PharmaLingo.app */;
@@ -219,6 +222,7 @@
 			packageReferences = (
 				XX20EB7F6EA71E9F2E096CXX /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				XX4AC81916604C4344ADC0XX /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+				XXA1B2C3D4E5F6A7B8C9D2XX /* XCRemoteSwiftPackageReference "rive-ios" */,
 			);
 		};
 /* End PBXProject section */
@@ -623,6 +627,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		XXA1B2C3D4E5F6A7B8C9D2XX /* XCRemoteSwiftPackageReference "rive-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rive-app/rive-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -640,6 +652,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = XX4AC81916604C4344ADC0XX /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCatUI;
+		};
+		XXA1B2C3D4E5F6A7B8C9D1XX /* RiveRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = XXA1B2C3D4E5F6A7B8C9D2XX /* XCRemoteSwiftPackageReference "rive-ios" */;
+			productName = RiveRuntime;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
