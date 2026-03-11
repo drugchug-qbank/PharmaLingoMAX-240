@@ -21,7 +21,7 @@ struct AvatarRendererView: View {
             backgroundLayer
 
             if useRiveBunny {
-                RiveBunnyAvatarView(size: size)
+                RiveBunnyAvatarView(size: size, eyeStyle: configuration.eyeStyle)
                     .allowsHitTesting(false)
             } else {
                 animalLayer
