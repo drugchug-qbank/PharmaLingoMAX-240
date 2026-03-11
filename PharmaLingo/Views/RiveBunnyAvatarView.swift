@@ -8,6 +8,10 @@ struct RiveBunnyAvatarView: View {
 
     @State private var riveViewModel = RiveViewModel(fileName: "bunny_test", autoPlay: true)
 
+    static let supportedEyes: [EyeStyle] = [
+        .normal, .heart, .angry, .determined, .happy, .stars, .dizzy
+    ]
+
     private var riveEyeValue: Double {
         switch eyeStyle {
         case .normal: 0

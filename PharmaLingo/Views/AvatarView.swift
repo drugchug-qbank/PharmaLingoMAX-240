@@ -177,6 +177,11 @@ struct AvatarCustomizationView: View {
             } message: {
                 Text(purchaseMessage)
             }
+            .onChange(of: selectedAnimal) { _, newAnimal in
+                if newAnimal == .bunny && !RiveBunnyAvatarView.supportedEyes.contains(selectedEyes) {
+                    selectedEyes = .normal
+                }
+            }
         }
     }
 
@@ -368,9 +373,16 @@ struct AvatarCustomizationView: View {
         }
     }
 
+    private var availableEyes: [EyeStyle] {
+        if selectedAnimal == .bunny {
+            return RiveBunnyAvatarView.supportedEyes
+        }
+        return EyeStyle.allCases.map { $0 }
+    }
+
     private var eyeGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 10) {
-            ForEach(EyeStyle.allCases, id: \.self) { eye in
+            ForEach(availableEyes, id: \.self) { eye in
                 let isOwned = gameVM.ownedEyes.contains(eye.rawValue)
                 let isSelected = selectedEyes == eye
                 Button {
