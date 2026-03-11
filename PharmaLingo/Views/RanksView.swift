@@ -280,7 +280,7 @@ struct RanksView: View {
                                 avatarBodyColor: gameVM.avatarBodyColor,
                                 avatarBgColor: gameVM.avatarBgColor,
                                 xpThisWeek: entry.weeklyXP,
-                                streak: entry.currentStreak,
+                                streak: gameVM.currentStreak,
                                 rank: index + 1
                             ),
                             isCurrentUser: true

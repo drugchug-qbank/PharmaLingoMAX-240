@@ -1097,6 +1097,10 @@ class GameViewModel {
         hydrateFromProfile(profile)
         hasLoadedFromCloud = true
 
+        let preStreak = currentStreak
+        let preSaves = streakSaves
+        let preLastActive = lastActiveDate
+
         checkStreak()
         regenerateHearts()
         refreshDailyQuests()
@@ -1104,7 +1108,12 @@ class GameViewModel {
 
         save()
 
+        let streakStateChanged = currentStreak != preStreak || streakSaves != preSaves || lastActiveDate != preLastActive
+
         Task {
+            if streakStateChanged {
+                await SupabaseService.shared.syncGameState(from: self)
+            }
             if let inv = await SupabaseService.shared.fetchInventory() {
                 powerUpInventory = inv.toInventory()
                 save()
