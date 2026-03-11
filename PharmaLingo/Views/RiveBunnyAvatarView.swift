@@ -40,22 +40,24 @@ struct RiveBunnyAvatarView: View {
         }
     }
 
+    private func applyInputs() {
+        let eye: Float = Float(riveEyeValue)
+        let mouth: Float = Float(riveMouthValue)
+        riveViewModel.setInput("eyeStyle", value: eye)
+        riveViewModel.setInput("mouthStyle", value: mouth)
+    }
+
     var body: some View {
         riveViewModel.view()
             .frame(width: size, height: size)
             .onChange(of: eyeStyle) { _, _ in
-                riveViewModel.setInput("eyeStyle", value: riveEyeValue)
+                applyInputs()
             }
             .onChange(of: mouthStyle) { _, _ in
-                riveViewModel.setInput("mouthStyle", value: riveMouthValue)
+                applyInputs()
             }
             .onAppear {
-                riveViewModel.setInput("eyeStyle", value: -1)
-                riveViewModel.setInput("mouthStyle", value: -1)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    riveViewModel.setInput("eyeStyle", value: riveEyeValue)
-                    riveViewModel.setInput("mouthStyle", value: riveMouthValue)
-                }
+                applyInputs()
             }
     }
 }
