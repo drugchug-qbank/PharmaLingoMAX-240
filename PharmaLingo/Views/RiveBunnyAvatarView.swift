@@ -50,8 +50,12 @@ struct RiveBunnyAvatarView: View {
                 riveViewModel.setInput("mouthStyle", value: riveMouthValue)
             }
             .onAppear {
-                riveViewModel.setInput("eyeStyle", value: riveEyeValue)
-                riveViewModel.setInput("mouthStyle", value: riveMouthValue)
+                riveViewModel.setInput("eyeStyle", value: -1)
+                riveViewModel.setInput("mouthStyle", value: -1)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    riveViewModel.setInput("eyeStyle", value: riveEyeValue)
+                    riveViewModel.setInput("mouthStyle", value: riveMouthValue)
+                }
             }
     }
 }
