@@ -686,7 +686,7 @@ struct CalendarDayCell: View {
                     } else if day.hasActivity {
                         Circle()
                             .fill(AppTheme.successGreen.opacity(0.18))
-                    } else if !day.isFuture && !day.isBeforeAccount {
+                    } else if !day.isFuture && !day.isBeforeAccount && !day.isToday {
                         Circle()
                             .fill(AppTheme.heartRed.opacity(0.1))
                     } else {

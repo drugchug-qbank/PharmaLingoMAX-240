@@ -559,13 +559,22 @@ class GameViewModel {
                 currentStreak += 1
                 streakExtended = true
             } else {
-                if streakSaves > 0 && daysDiff == 2 {
-                    streakSaves -= 1
-                    currentStreak += 1
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd"
-                    let yesterdayDate = calendar.date(byAdding: .day, value: -1, to: today) ?? today
-                    streakSaveDates.insert(formatter.string(from: yesterdayDate))
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                let missedDays = daysDiff - 1
+                if streakSaves > 0 && missedDays > 0 {
+                    let savesToUse = min(missedDays, streakSaves)
+                    streakSaves -= savesToUse
+                    for i in 1...missedDays {
+                        if i <= savesToUse, let missedDate = calendar.date(byAdding: .day, value: -i, to: today) {
+                            streakSaveDates.insert(formatter.string(from: missedDate))
+                        }
+                    }
+                    if savesToUse == missedDays {
+                        currentStreak += 1
+                    } else {
+                        currentStreak = 1
+                    }
                 } else {
                     currentStreak = 1
                 }
@@ -664,12 +673,26 @@ class GameViewModel {
             return
         }
 
-        if streakSaves > 0 && daysDiff == 2 {
-            streakSaves -= 1
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd"
-            let yesterdayDate = calendar.date(byAdding: .day, value: -1, to: today) ?? today
-            streakSaveDates.insert(formatter.string(from: yesterdayDate))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+
+        if daysDiff >= 2 && streakSaves > 0 {
+            let missedDays = daysDiff - 1
+            let savesToUse = min(missedDays, streakSaves)
+            streakSaves -= savesToUse
+
+            for i in 1...savesToUse {
+                if let missedDate = calendar.date(byAdding: .day, value: -i, to: today) {
+                    streakSaveDates.insert(formatter.string(from: missedDate))
+                }
+            }
+
+            if savesToUse == missedDays {
+                let bridgeDate = calendar.date(byAdding: .day, value: -1, to: today) ?? today
+                lastActiveDate = bridgeDate
+            } else {
+                currentStreak = 0
+            }
         } else {
             currentStreak = 0
         }
