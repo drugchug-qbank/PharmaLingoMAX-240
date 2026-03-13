@@ -235,22 +235,12 @@ struct ProfileView: View {
                         .padding(16)
                         .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
 
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("ACHIEVEMENTS")
-                                .font(AppTheme.funFont(.caption, weight: .heavy))
-                                .foregroundStyle(AppTheme.heartRed)
-
-                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                                AchievementBadge(icon: "flame.fill", title: "On Fire", subtitle: "7-day streak", isUnlocked: gameVM.currentStreak >= 7)
-                                AchievementBadge(icon: "star.fill", title: "First Star", subtitle: "Earn 1 star", isUnlocked: !gameVM.subsectionStars.isEmpty)
-                                AchievementBadge(icon: "target", title: "Sharpshooter", subtitle: "90% accuracy", isUnlocked: gameVM.accuracy >= 0.9)
-                                AchievementBadge(icon: "bolt.fill", title: "XP Hunter", subtitle: "500 XP", isUnlocked: gameVM.totalXP >= 500)
-                                AchievementBadge(icon: "book.closed.fill", title: "Scholar", subtitle: "5 lessons", isUnlocked: gameVM.lessonsCompleted >= 5)
-                                AchievementBadge(icon: "crown.fill", title: "Master", subtitle: "All 5 stars", isUnlocked: gameVM.subsectionStars.values.contains(5))
-                            }
+                        NavigationLink {
+                            AchievementsView(gameVM: gameVM)
+                        } label: {
+                            AchievementsPreviewCard(gameVM: gameVM)
                         }
-                        .padding(16)
-                        .cardStyle(borderColor: AppTheme.heartRed.opacity(0.5))
+                        .buttonStyle(.plain)
 
                         VStack(alignment: .leading, spacing: 12) {
                             Text("DEVELOPER")
@@ -365,6 +355,133 @@ struct AchievementBadge: View {
                 .font(AppTheme.funFont(.caption2, weight: .medium))
                 .foregroundStyle(.secondary)
         }
+    }
+}
+
+struct AchievementsPreviewCard: View {
+    let gameVM: GameViewModel
+
+    private var totalStars: Int {
+        gameVM.subsectionStars.values.reduce(0, +)
+    }
+
+    private var previewAchievements: [(String, AchievementTier?, String)] {
+        let catalog = AchievementCatalog.tieredAchievements
+        return catalog.prefix(6).map { a in
+            let value: Int
+            switch a.id {
+            case "streak_master": value = gameVM.currentStreak
+            case "scholar": value = gameVM.lessonsCompleted
+            case "xp_collector": value = gameVM.totalXP
+            case "question_warrior": value = gameVM.questionsAnswered
+            case "accuracy_ace": value = gameVM.questionsCorrect
+            case "aura_sage": value = gameVM.clinicalAuraPoints
+            default: value = 0
+            }
+            let tier = a.currentTier(value: value)
+            let icon = a.icons(for: tier ?? .bronze)
+            return (icon, tier, a.title)
+        }
+    }
+
+    private var unlockedCount: Int {
+        var count = 0
+        for a in AchievementCatalog.tieredAchievements {
+            let value: Int
+            switch a.id {
+            case "streak_master": value = gameVM.currentStreak
+            case "scholar": value = gameVM.lessonsCompleted
+            case "xp_collector": value = gameVM.totalXP
+            case "question_warrior": value = gameVM.questionsAnswered
+            case "accuracy_ace": value = gameVM.questionsCorrect
+            case "aura_sage": value = gameVM.clinicalAuraPoints
+            case "star_hunter": value = totalStars
+            case "combo_king": value = gameVM.consecutiveCorrect
+            case "coin_tycoon": value = gameVM.coins
+            case "module_conqueror": value = gameVM.modules.filter { mod in mod.subsections.allSatisfy { gameVM.completedSubsections.contains($0.id) } }.count
+            default: value = 0
+            }
+            for level in a.levels where value >= level.threshold {
+                count += 1
+            }
+        }
+        return count
+    }
+
+    private var totalCount: Int {
+        AchievementCatalog.tieredAchievements.reduce(0) { $0 + $1.levels.count } + AchievementCatalog.specialAchievements.count
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("ACHIEVEMENTS")
+                    .font(AppTheme.funFont(.caption, weight: .heavy))
+                    .foregroundStyle(AppTheme.warningYellow)
+
+                Spacer()
+
+                HStack(spacing: 4) {
+                    Text("\(unlockedCount)/\(totalCount)")
+                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                        .foregroundStyle(AppTheme.warningYellow)
+                    Image(systemName: "chevron.right")
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.warningYellow)
+                }
+            }
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(Array(previewAchievements.enumerated()), id: \.offset) { _, item in
+                    let (icon, tier, title) = item
+                    let isUnlocked = tier != nil
+                    let color = tier?.color ?? Color(.tertiaryLabel)
+
+                    VStack(spacing: 6) {
+                        ZStack {
+                            Circle()
+                                .fill(isUnlocked ? color.opacity(0.15) : Color(.tertiarySystemFill))
+                                .frame(width: 50, height: 50)
+                            if isUnlocked {
+                                Circle()
+                                    .stroke(color.opacity(0.4), lineWidth: 1.5)
+                                    .frame(width: 50, height: 50)
+                            }
+                            Image(systemName: icon)
+                                .font(.title3)
+                                .foregroundStyle(isUnlocked ? color : Color(.tertiaryLabel))
+                        }
+                        Text(title)
+                            .font(AppTheme.funFont(.caption2, weight: .heavy))
+                            .foregroundStyle(isUnlocked ? .primary : .secondary)
+                            .lineLimit(1)
+                        if let t = tier {
+                            Text(t.label)
+                                .font(AppTheme.funFont(.caption2, weight: .bold))
+                                .foregroundStyle(t.color)
+                        } else {
+                            Text("Locked")
+                                .font(AppTheme.funFont(.caption2, weight: .bold))
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                }
+            }
+
+            HStack {
+                Spacer()
+                Text("View All Achievements")
+                    .font(AppTheme.funFont(.caption, weight: .heavy))
+                    .foregroundStyle(AppTheme.warningYellow)
+                Image(systemName: "arrow.right")
+                    .font(.caption2)
+                    .foregroundStyle(AppTheme.warningYellow)
+                Spacer()
+            }
+            .padding(.top, 4)
+        }
+        .padding(16)
+        .cardStyle(borderColor: AppTheme.warningYellow.opacity(0.4))
     }
 }
 
