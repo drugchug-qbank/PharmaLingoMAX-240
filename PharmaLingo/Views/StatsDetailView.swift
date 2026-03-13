@@ -549,6 +549,12 @@ struct StreakCalendarView: View {
 
         let accountStart: Date? = gameVM.accountCreatedDate.map { calendar.startOfDay(for: $0) }
 
+        let firstActivityDate: Date? = {
+            let allDates = gameVM.activityDates.union(gameVM.streakSaveDates)
+            guard !allDates.isEmpty else { return nil }
+            return allDates.compactMap { formatter.date(from: $0) }.min().map { calendar.startOfDay(for: $0) }
+        }()
+
         for day in range {
             var dateComps = comps
             dateComps.day = day
@@ -560,6 +566,7 @@ struct StreakCalendarView: View {
             let wasStreakSave = gameVM.streakSaveDates.contains(dateStr)
             let isFuture = dateStart > today
             let isBeforeAccount = accountStart.map { dateStart < $0 } ?? false
+            let isBeforeFirstActivity = firstActivityDate.map { dateStart < $0 } ?? true
 
             days.append(CalendarDay(
                 date: dateStart,
@@ -569,7 +576,8 @@ struct StreakCalendarView: View {
                 wasStreakSave: isFuture ? false : wasStreakSave,
                 isPlaceholder: false,
                 isFuture: isFuture,
-                isBeforeAccount: isBeforeAccount
+                isBeforeAccount: isBeforeAccount,
+                isBeforeFirstActivity: isBeforeFirstActivity
             ))
         }
 
@@ -668,6 +676,7 @@ struct CalendarDay {
     var isPlaceholder: Bool = false
     var isFuture: Bool = false
     var isBeforeAccount: Bool = false
+    var isBeforeFirstActivity: Bool = false
 }
 
 struct CalendarDayCell: View {
@@ -686,7 +695,7 @@ struct CalendarDayCell: View {
                     } else if day.hasActivity {
                         Circle()
                             .fill(AppTheme.successGreen.opacity(0.18))
-                    } else if !day.isFuture && !day.isBeforeAccount && !day.isToday {
+                    } else if !day.isFuture && !day.isBeforeAccount && !day.isBeforeFirstActivity && !day.isToday {
                         Circle()
                             .fill(AppTheme.heartRed.opacity(0.1))
                     } else {
@@ -704,7 +713,7 @@ struct CalendarDayCell: View {
                         .foregroundStyle(
                             day.wasStreakSave ? AppTheme.xpPurple :
                             day.hasActivity ? AppTheme.successGreen :
-                            (day.isFuture || day.isBeforeAccount) ? Color(.quaternaryLabel) :
+                            (day.isFuture || day.isBeforeAccount || day.isBeforeFirstActivity) ? Color(.quaternaryLabel) :
                             Color(.tertiaryLabel)
                         )
                 }

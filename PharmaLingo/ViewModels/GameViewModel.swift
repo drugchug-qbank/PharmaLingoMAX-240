@@ -591,13 +591,15 @@ class GameViewModel {
         save()
     }
 
-    private func backfillActivityDatesFromStreak() {
-        guard activityDates.isEmpty, let lastActive = lastActiveDate, currentStreak > 0 else { return }
+    private func backfillActivityDatesFromStreak(streakOverride: Int? = nil) {
+        guard activityDates.isEmpty, let lastActive = lastActiveDate else { return }
+        let streak = streakOverride ?? currentStreak
+        guard streak > 0 else { return }
         let calendar = Calendar.current
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         let lastDay = calendar.startOfDay(for: lastActive)
-        for i in 0..<currentStreak {
+        for i in 0..<streak {
             if let date = calendar.date(byAdding: .day, value: -i, to: lastDay) {
                 activityDates.insert(formatter.string(from: date))
             }
@@ -1084,7 +1086,7 @@ class GameViewModel {
             }
         }
 
-        backfillActivityDatesFromStreak()
+        backfillActivityDatesFromStreak(streakOverride: profile.currentStreak)
 
         save()
     }
