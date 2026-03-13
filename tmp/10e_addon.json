@@ -1,0 +1,1243 @@
+{
+  "meta": {
+    "project": "PharmaLingo",
+    "module": "10e",
+    "title": "Mastering GU, Bone, Hormones & Prevention",
+    "count": 45,
+    "generated_on": "2026-03-13"
+  },
+  "questions": [
+    {
+      "id": "q10e_add_001",
+      "difficulty": "easy",
+      "objective": "brandGeneric",
+      "questionText": "Flomax is one of the highest-yield BPH drugs because it improves urinary flow faster than prostate-shrinking agents. What is the generic name of Flomax?",
+      "options": [
+        "Tamsulosin",
+        "Finasteride",
+        "Dutasteride",
+        "Tadalafil",
+        "Mirabegron"
+      ],
+      "correctAnswer": "Tamsulosin",
+      "explanation": "Flomax is the brand name for tamsulosin, a uroselective alpha-1 blocker used for symptomatic relief of BPH.",
+      "relatedDrugIds": [
+        "d188"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "tamsulosin",
+        "brand-generic"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_002",
+      "difficulty": "medium",
+      "objective": "mixedReview",
+      "questionText": "A man with bothersome BPH wants the medicine most likely to improve hesitancy and weak stream within days to weeks rather than slowly shrinking prostate tissue over months. Which drug best fits that goal?",
+      "options": [
+        "Tamsulosin",
+        "Finasteride",
+        "Dutasteride",
+        "Mirabegron",
+        "Phenazopyridine"
+      ],
+      "correctAnswer": "Tamsulosin",
+      "explanation": "Tamsulosin relaxes smooth muscle in the prostate and bladder neck, so it improves urinary symptoms faster than 5-alpha reductase inhibitors, which work gradually by shrinking the prostate.",
+      "relatedDrugIds": [
+        "d188",
+        "d189",
+        "d190"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "bph",
+        "fast-relief"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_003",
+      "difficulty": "medium",
+      "objective": "dosing",
+      "questionText": "A patient taking tamsulosin is told to take it about 30 minutes after the same meal each day. What is the main reason this counseling point is high yield?",
+      "options": [
+        "It helps keep absorption and blood levels more consistent",
+        "It completely prevents orthostatic hypotension",
+        "It is required because the capsule must be taken with dairy products",
+        "It allows the drug to shrink the prostate faster",
+        "It turns tamsulosin into an extended-release product"
+      ],
+      "correctAnswer": "It helps keep absorption and blood levels more consistent",
+      "explanation": "Tamsulosin is taken about 30 minutes after the same meal each day to keep exposure more consistent and reduce avoidable variability.",
+      "relatedDrugIds": [
+        "d188"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "tamsulosin",
+        "same-meal"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_004",
+      "difficulty": "hard",
+      "objective": "monitoring",
+      "questionText": "A man has been taking finasteride for more than 6 months. How should a single PSA value generally be interpreted compared with a man not taking finasteride?",
+      "options": [
+        "It should generally be doubled for comparison with typical reference expectations",
+        "It should be cut in half again because finasteride raises PSA",
+        "It becomes useless and should never be checked",
+        "It should be interpreted exactly the same as in untreated men",
+        "It should only be interpreted if testosterone is also elevated"
+      ],
+      "correctAnswer": "It should generally be doubled for comparison with typical reference expectations",
+      "explanation": "Finasteride lowers PSA, so isolated PSA values in men taking finasteride for six months or more are generally doubled for comparison with usual reference expectations.",
+      "relatedDrugIds": [
+        "d189"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "finasteride",
+        "psa"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_005",
+      "difficulty": "medium",
+      "objective": "pearl",
+      "questionText": "Which counseling pearl is especially associated with dutasteride because of how long the drug persists in the body?",
+      "options": [
+        "Do not donate blood until at least 6 months after the last dose",
+        "Avoid plain water with each dose",
+        "Always stop the medication 24 hours before intercourse",
+        "Take it only at bedtime because of vivid dreams",
+        "Use two forms of contraception for 24 hours after each dose"
+      ],
+      "correctAnswer": "Do not donate blood until at least 6 months after the last dose",
+      "explanation": "Men taking dutasteride should not donate blood until at least six months after the last dose to avoid exposing a pregnant transfusion recipient to the drug.",
+      "relatedDrugIds": [
+        "d190"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "dutasteride",
+        "blood-donation"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_006",
+      "difficulty": "medium",
+      "objective": "classId",
+      "questionText": "A patient with overactive bladder wants the non-anticholinergic option that relaxes the detrusor during storage by stimulating beta-3 receptors. Which drug best matches that description?",
+      "options": [
+        "Mirabegron",
+        "Oxybutynin",
+        "Solifenacin",
+        "Tamsulosin",
+        "Phenazopyridine"
+      ],
+      "correctAnswer": "Mirabegron",
+      "explanation": "Mirabegron is a beta-3 agonist used for overactive bladder and is the non-anticholinergic option in this section.",
+      "relatedDrugIds": [
+        "d192"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "mirabegron",
+        "class"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_007",
+      "difficulty": "medium",
+      "objective": "adverseEffect",
+      "questionText": "A patient with overactive bladder already has dry mouth and constipation and wants to avoid making those worse. Which module 10 drug class is most likely to cause those anticholinergic effects?",
+      "options": [
+        "Oxybutynin and solifenacin",
+        "Mirabegron",
+        "Nicotine patch",
+        "Alendronate",
+        "Teriparatide"
+      ],
+      "correctAnswer": "Oxybutynin and solifenacin",
+      "explanation": "Oxybutynin and solifenacin are antimuscarinic bladder medications and commonly cause dry mouth and constipation.",
+      "relatedDrugIds": [
+        "d191",
+        "d275"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "anticholinergic",
+        "oab"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_008",
+      "difficulty": "medium",
+      "objective": "monitoring",
+      "questionText": "Which overactive bladder medication is especially high yield for blood pressure monitoring because it can increase blood pressure?",
+      "options": [
+        "Mirabegron",
+        "Oxybutynin",
+        "Solifenacin",
+        "Phenazopyridine",
+        "Nicotine gum"
+      ],
+      "correctAnswer": "Mirabegron",
+      "explanation": "Mirabegron can raise blood pressure, so blood pressure monitoring is a key counseling and safety point.",
+      "relatedDrugIds": [
+        "d192"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "mirabegron",
+        "blood-pressure"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_009",
+      "difficulty": "medium",
+      "objective": "indication",
+      "questionText": "A patient starts an antibiotic for cystitis but still has bothersome burning with urination. Which drug from module 10 can help urinary discomfort while not treating the infection itself?",
+      "options": [
+        "Phenazopyridine",
+        "Tamsulosin",
+        "Mirabegron",
+        "Finasteride",
+        "Nicotine lozenge"
+      ],
+      "correctAnswer": "Phenazopyridine",
+      "explanation": "Phenazopyridine is a urinary tract analgesic that can reduce dysuria symptoms, but it is not an antibacterial agent.",
+      "relatedDrugIds": [
+        "d274"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "phenazopyridine",
+        "indication"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_010",
+      "difficulty": "medium",
+      "objective": "pearl",
+      "questionText": "Which counseling statement about phenazopyridine is most appropriate?",
+      "options": [
+        "It may turn urine orange-red and is usually only used briefly with an antibacterial",
+        "It should be continued long term to prevent recurrent UTIs",
+        "It is the preferred monotherapy for pyelonephritis",
+        "It must be taken on an empty stomach with plain water only",
+        "It should be doubled if dysuria persists after 24 hours"
+      ],
+      "correctAnswer": "It may turn urine orange-red and is usually only used briefly with an antibacterial",
+      "explanation": "Phenazopyridine commonly discolors urine orange-red and is generally used only briefly for symptom relief rather than as a long-term therapy.",
+      "relatedDrugIds": [
+        "d274"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "phenazopyridine",
+        "counseling"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_011",
+      "difficulty": "medium",
+      "objective": "mixedReview",
+      "questionText": "Which module 10 medicine has the high-yield overlap of treating both erectile dysfunction and lower urinary tract symptoms from BPH?",
+      "options": [
+        "Tadalafil",
+        "Sildenafil",
+        "Tamsulosin",
+        "Phenazopyridine",
+        "Mirabegron"
+      ],
+      "correctAnswer": "Tadalafil",
+      "explanation": "Tadalafil is approved for erectile dysfunction and also for lower urinary tract symptoms associated with BPH.",
+      "relatedDrugIds": [
+        "d194"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "tadalafil",
+        "bph-ed"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_012",
+      "difficulty": "hard",
+      "objective": "contraindication",
+      "questionText": "A man uses sublingual nitroglycerin for angina and asks for a drug from module 10 to help erectile dysfunction. Which option is most clearly contraindicated because of a dangerous nitrate interaction?",
+      "options": [
+        "Sildenafil",
+        "Phenazopyridine",
+        "Finasteride",
+        "Mirabegron",
+        "Nicotine patch"
+      ],
+      "correctAnswer": "Sildenafil",
+      "explanation": "Sildenafil and other PDE-5 inhibitors are contraindicated with nitrates because the combination can cause profound hypotension.",
+      "relatedDrugIds": [
+        "d193"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "sildenafil",
+        "nitrates"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_013",
+      "difficulty": "easy",
+      "objective": "brandGeneric",
+      "questionText": "Prolia is a non-bisphosphonate osteoporosis medicine given every 6 months. What is the generic name of Prolia?",
+      "options": [
+        "Denosumab",
+        "Teriparatide",
+        "Zoledronic acid",
+        "Alendronate",
+        "Risedronate"
+      ],
+      "correctAnswer": "Denosumab",
+      "explanation": "Prolia is the brand name for denosumab, a RANKL inhibitor used in osteoporosis.",
+      "relatedDrugIds": [
+        "d174"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "denosumab",
+        "brand-generic"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_014",
+      "difficulty": "medium",
+      "objective": "dosing",
+      "questionText": "A patient dislikes weekly pills and asks which osteoporosis medication in this module is typically administered once every 6 months by subcutaneous injection. Which answer is best?",
+      "options": [
+        "Denosumab",
+        "Alendronate",
+        "Risedronate",
+        "Teriparatide",
+        "Phenazopyridine"
+      ],
+      "correctAnswer": "Denosumab",
+      "explanation": "Denosumab is given as a subcutaneous injection every 6 months for osteoporosis.",
+      "relatedDrugIds": [
+        "d174"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "denosumab",
+        "every-6-months"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_015",
+      "difficulty": "hard",
+      "objective": "blackBoxWarning",
+      "questionText": "Which osteoporosis drug now carries a boxed warning for severe hypocalcemia in patients with advanced kidney disease?",
+      "options": [
+        "Denosumab",
+        "Alendronate",
+        "Risedronate",
+        "Teriparatide",
+        "Raloxifene"
+      ],
+      "correctAnswer": "Denosumab",
+      "explanation": "Denosumab carries a boxed warning for severe hypocalcemia in patients with advanced kidney disease, so calcium status and kidney disease risk matter greatly.",
+      "relatedDrugIds": [
+        "d174"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "denosumab",
+        "boxed-warning"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_016",
+      "difficulty": "medium",
+      "objective": "moa",
+      "questionText": "A patient at very high fracture risk is started on the daily injectable osteoporosis medicine that works as an anabolic PTH analog rather than a classic antiresorptive. Which drug best matches that mechanism?",
+      "options": [
+        "Teriparatide",
+        "Denosumab",
+        "Alendronate",
+        "Zoledronic acid",
+        "Raloxifene"
+      ],
+      "correctAnswer": "Teriparatide",
+      "explanation": "Teriparatide is an anabolic parathyroid hormone analog used in selected patients at high fracture risk.",
+      "relatedDrugIds": [
+        "d175"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "teriparatide",
+        "anabolic"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_017",
+      "difficulty": "medium",
+      "objective": "dosing",
+      "questionText": "Which osteoporosis drug from this module is the classic once-yearly intravenous bisphosphonate that must be infused over at least 15 minutes?",
+      "options": [
+        "Zoledronic acid",
+        "Teriparatide",
+        "Denosumab",
+        "Alendronate",
+        "Risedronate"
+      ],
+      "correctAnswer": "Zoledronic acid",
+      "explanation": "Zoledronic acid is the annual IV bisphosphonate used for osteoporosis and is infused over at least 15 minutes.",
+      "relatedDrugIds": [
+        "d173"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "zoledronic-acid",
+        "annual-iv"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_018",
+      "difficulty": "hard",
+      "objective": "contraindication",
+      "questionText": "A patient with osteoporosis has achalasia and cannot reliably stay upright after taking oral medicines. Which module 10 bone medication is the poorest fit because of its esophageal administration precautions?",
+      "options": [
+        "Alendronate",
+        "Denosumab",
+        "Teriparatide",
+        "Zoledronic acid",
+        "Raloxifene"
+      ],
+      "correctAnswer": "Alendronate",
+      "explanation": "Alendronate is contraindicated in patients with certain esophageal disorders or inability to remain upright after dosing because of esophageal injury risk.",
+      "relatedDrugIds": [
+        "d171"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "alendronate",
+        "esophagus"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_019",
+      "difficulty": "medium",
+      "objective": "moa",
+      "questionText": "A postmenopausal woman with a uterus is taking systemic estrogen for hot flashes. Which additional hormone is commonly used to lower the risk of estrogen-induced endometrial hyperplasia?",
+      "options": [
+        "Progesterone",
+        "Testosterone",
+        "Raloxifene",
+        "Mirabegron",
+        "Nicotine patch"
+      ],
+      "correctAnswer": "Progesterone",
+      "explanation": "A progestin or progesterone is commonly paired with systemic estrogen in patients with a uterus to reduce endometrial hyperplasia risk.",
+      "relatedDrugIds": [
+        "d176",
+        "d178",
+        "d185"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "estrogen",
+        "progesterone"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_020",
+      "difficulty": "hard",
+      "objective": "blackBoxWarning",
+      "questionText": "Which high-yield risk is especially associated with unopposed systemic estrogen therapy in a patient who still has a uterus?",
+      "options": [
+        "Endometrial cancer risk",
+        "Tendon rupture",
+        "Severe hypocalcemia in advanced CKD",
+        "Aplastic anemia",
+        "Nicotine withdrawal seizures"
+      ],
+      "correctAnswer": "Endometrial cancer risk",
+      "explanation": "Unopposed systemic estrogen increases the risk of endometrial hyperplasia and endometrial cancer in patients with a uterus.",
+      "relatedDrugIds": [
+        "d176",
+        "d178"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "estrogen",
+        "endometrial-cancer"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_021",
+      "difficulty": "hard",
+      "objective": "contraindication",
+      "questionText": "A 39-year-old patient who smokes heavily asks about starting a combined estrogen-containing oral contraceptive. Which high-yield safety principle matters most?",
+      "options": [
+        "Combined hormonal contraceptives are generally avoided because smoking markedly raises cardiovascular and thrombotic risk",
+        "Smoking improves contraceptive efficacy, so no counseling is needed",
+        "Smoking only matters if the patient is also taking nicotine gum",
+        "The main issue is only orange urine from the contraceptive",
+        "Combined hormonal contraceptives are preferred in heavy smokers because they lower blood pressure"
+      ],
+      "correctAnswer": "Combined hormonal contraceptives are generally avoided because smoking markedly raises cardiovascular and thrombotic risk",
+      "explanation": "Smoking, especially in older reproductive-age patients, substantially increases cardiovascular and thrombotic risk with estrogen-containing contraceptives.",
+      "relatedDrugIds": [
+        "d177",
+        "d180",
+        "d181",
+        "d179"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "contraceptives",
+        "smoking"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_022",
+      "difficulty": "medium",
+      "objective": "interaction",
+      "questionText": "Which combined hormonal contraceptive in this module is especially remembered for the drospirenone component and its high-yield hyperkalemia counseling pearl?",
+      "options": [
+        "Drospirenone / ethinyl estradiol",
+        "Ethinyl estradiol / levonorgestrel",
+        "Ethinyl estradiol / norgestimate",
+        "Norethindrone",
+        "Levonorgestrel IUD"
+      ],
+      "correctAnswer": "Drospirenone / ethinyl estradiol",
+      "explanation": "Drospirenone has antimineralocorticoid activity, so hyperkalemia is a classic counseling and interaction pearl.",
+      "relatedDrugIds": [
+        "d177"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "drospirenone",
+        "hyperkalemia"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_023",
+      "difficulty": "medium",
+      "objective": "dosing",
+      "questionText": "A patient choosing the ethinyl estradiol/etonogestrel vaginal ring wants to confirm the usual cycle. Which schedule is correct for the standard ring regimen?",
+      "options": [
+        "Leave it in for 3 weeks, then remove it for 1 week",
+        "Leave it in for 1 week, then remove it for 3 weeks",
+        "Replace it every day",
+        "Insert it only during intercourse",
+        "Use it for 8 years before replacement"
+      ],
+      "correctAnswer": "Leave it in for 3 weeks, then remove it for 1 week",
+      "explanation": "The classic vaginal ring regimen is 3 weeks in place followed by 1 ring-free week.",
+      "relatedDrugIds": [
+        "d179"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "nuvaring",
+        "schedule"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_024",
+      "difficulty": "hard",
+      "objective": "mixedReview",
+      "questionText": "Which long-acting contraceptive in this module is approved for prevention of pregnancy for up to 8 years but for treatment of heavy menstrual bleeding for up to 5 years?",
+      "options": [
+        "Levonorgestrel IUD (Mirena)",
+        "Depot medroxyprogesterone",
+        "Norethindrone",
+        "NuvaRing",
+        "Conjugated estrogens"
+      ],
+      "correctAnswer": "Levonorgestrel IUD (Mirena)",
+      "explanation": "Mirena is approved for contraception for up to 8 years and for heavy menstrual bleeding for up to 5 years.",
+      "relatedDrugIds": [
+        "d182"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "mirena",
+        "duration"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_025",
+      "difficulty": "medium",
+      "objective": "blackBoxWarning",
+      "questionText": "Which module 10 contraceptive is especially high yield for a boxed warning about loss of bone mineral density with prolonged use?",
+      "options": [
+        "Depot medroxyprogesterone (Depo-Provera)",
+        "Levonorgestrel IUD",
+        "Norethindrone",
+        "NuvaRing",
+        "Progesterone"
+      ],
+      "correctAnswer": "Depot medroxyprogesterone (Depo-Provera)",
+      "explanation": "Depot medroxyprogesterone carries a boxed warning about bone mineral density loss, which becomes more concerning with longer use.",
+      "relatedDrugIds": [
+        "d183"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "depo-provera",
+        "boxed-warning"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_026",
+      "difficulty": "medium",
+      "objective": "dosing",
+      "questionText": "A patient chooses a progestin-only pill because estrogen is not a good fit. Which counseling point is especially high yield for norethindrone mini-pills?",
+      "options": [
+        "Take it at the same time every day because timing matters more than with many combined pills",
+        "Take it only on days when intercourse is planned",
+        "Skip doses during placebo weeks",
+        "Always take two tablets together if one dose is late by one hour",
+        "Take it only at bedtime with food to prevent orthostasis"
+      ],
+      "correctAnswer": "Take it at the same time every day because timing matters more than with many combined pills",
+      "explanation": "Progestin-only pills such as norethindrone are time-sensitive and should be taken at the same time every day.",
+      "relatedDrugIds": [
+        "d184"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "norethindrone",
+        "same-time"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_027",
+      "difficulty": "medium",
+      "objective": "pearl",
+      "questionText": "A patient is prescribed oral micronized progesterone for menopausal hormone therapy support. Which counseling pearl is most accurate?",
+      "options": [
+        "It is often taken at bedtime because it can cause drowsiness or dizziness",
+        "It is used only as emergency contraception",
+        "It should be chewed and parked like nicotine gum",
+        "It is the best option for acute dysuria relief",
+        "It is the preferred treatment for smoking cessation"
+      ],
+      "correctAnswer": "It is often taken at bedtime because it can cause drowsiness or dizziness",
+      "explanation": "Oral micronized progesterone can cause dizziness or drowsiness, so bedtime administration is a common counseling point.",
+      "relatedDrugIds": [
+        "d185"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "progesterone",
+        "bedtime"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_028",
+      "difficulty": "hard",
+      "objective": "contraindication",
+      "questionText": "A postmenopausal patient with osteoporosis and a prior deep-vein thrombosis asks about raloxifene. Why is this drug often a poor choice in that situation?",
+      "options": [
+        "Raloxifene increases venous thromboembolism risk",
+        "Raloxifene causes severe hypocalcemia in advanced CKD",
+        "Raloxifene is contraindicated with all calcium supplements",
+        "Raloxifene is only approved for smoking cessation",
+        "Raloxifene permanently suppresses ovulation after one dose"
+      ],
+      "correctAnswer": "Raloxifene increases venous thromboembolism risk",
+      "explanation": "Raloxifene is a selective estrogen receptor modulator associated with an increased risk of venous thromboembolism.",
+      "relatedDrugIds": [
+        "d186"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "raloxifene",
+        "vte"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_029",
+      "difficulty": "medium",
+      "objective": "pearl",
+      "questionText": "Which counseling point is especially important for testosterone gel products?",
+      "options": [
+        "Avoid skin-to-skin transfer to others by following careful application and covering instructions",
+        "Take it with plain water and remain upright for 30 minutes",
+        "Use backup contraception for only 24 hours after each dose",
+        "Chew and park it between the cheek and gum",
+        "Stop nicotine patches while using it"
+      ],
+      "correctAnswer": "Avoid skin-to-skin transfer to others by following careful application and covering instructions",
+      "explanation": "Secondary exposure from testosterone gel is a major counseling point, so application-site precautions and handwashing matter.",
+      "relatedDrugIds": [
+        "d187"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "testosterone",
+        "transference"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_030",
+      "difficulty": "medium",
+      "objective": "mixedReview",
+      "questionText": "A smoker wants steady all-day nicotine coverage plus something faster for breakthrough cravings. Which strategy best fits the most evidence-based approach in this module?",
+      "options": [
+        "Nicotine patch plus nicotine gum or lozenge as needed",
+        "Nicotine gum only once weekly",
+        "Varenicline plus a nitrate",
+        "Phenazopyridine plus a nicotine patch",
+        "Alendronate plus nicotine gum"
+      ],
+      "correctAnswer": "Nicotine patch plus nicotine gum or lozenge as needed",
+      "explanation": "A long-acting nicotine patch paired with short-acting nicotine gum or lozenge is a common and effective combination strategy for smoking cessation.",
+      "relatedDrugIds": [
+        "d276",
+        "d277",
+        "d278"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "smoking-cessation",
+        "combination"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_031",
+      "difficulty": "medium",
+      "objective": "pearl",
+      "questionText": "A patient asks how nicotine gum should be used correctly. Which counseling statement is best?",
+      "options": [
+        "Chew it until it tingles, then park it between the cheek and gum",
+        "Swallow it whole with water like a tablet",
+        "Use it only right before bed",
+        "Apply it to the skin and rotate sites daily",
+        "Take it with acidic drinks to increase absorption"
+      ],
+      "correctAnswer": "Chew it until it tingles, then park it between the cheek and gum",
+      "explanation": "Nicotine gum is used with the classic chew-and-park technique to allow nicotine absorption through the oral mucosa.",
+      "relatedDrugIds": [
+        "d277"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "nicotine-gum",
+        "chew-and-park"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_032",
+      "difficulty": "medium",
+      "objective": "pearl",
+      "questionText": "Which instruction is most appropriate for nicotine lozenges used during a quit attempt?",
+      "options": [
+        "Allow the lozenge to dissolve slowly in the mouth rather than chewing or swallowing it whole",
+        "Apply the lozenge to a hair-free skin site each morning",
+        "Take it only after meals with milk",
+        "Break it in half and swallow each piece with water",
+        "Use it only once daily regardless of cravings"
+      ],
+      "correctAnswer": "Allow the lozenge to dissolve slowly in the mouth rather than chewing or swallowing it whole",
+      "explanation": "Nicotine lozenges are meant to dissolve slowly in the mouth so nicotine can be absorbed through the oral mucosa.",
+      "relatedDrugIds": [
+        "d278"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "nicotine-lozenge",
+        "dissolve"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_033",
+      "difficulty": "hard",
+      "objective": "contraindication",
+      "questionText": "Which smoking-cessation medicine from module 10 should generally be avoided in a patient with a seizure disorder or a history of bulimia or anorexia nervosa?",
+      "options": [
+        "Bupropion SR",
+        "Varenicline",
+        "Nicotine patch",
+        "Nicotine gum",
+        "Nicotine lozenge"
+      ],
+      "correctAnswer": "Bupropion SR",
+      "explanation": "Bupropion lowers seizure threshold and is contraindicated in patients with seizure disorders and in patients with current or prior bulimia or anorexia nervosa.",
+      "relatedDrugIds": [
+        "d279"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "bupropion",
+        "contraindication"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_034",
+      "difficulty": "medium",
+      "objective": "dosing",
+      "questionText": "A patient picks bupropion SR for smoking cessation and asks when to start it relative to the quit date. Which answer is best?",
+      "options": [
+        "Start it before the quit date so the medication is already on board when quitting begins",
+        "Start it only after nicotine withdrawal becomes severe",
+        "Use it only as needed for cravings",
+        "Wait until 6 months after the quit date",
+        "Start it only after a nicotine patch has completely failed"
+      ],
+      "correctAnswer": "Start it before the quit date so the medication is already on board when quitting begins",
+      "explanation": "Bupropion SR is typically started before the planned quit date so its therapeutic effect is present when the quit attempt begins.",
+      "relatedDrugIds": [
+        "d279"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "bupropion",
+        "quit-date"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_035",
+      "difficulty": "medium",
+      "objective": "moa",
+      "questionText": "Which smoking-cessation medicine in this module works as a partial agonist at nicotinic receptors rather than as a nicotine replacement product?",
+      "options": [
+        "Varenicline",
+        "Nicotine patch",
+        "Nicotine gum",
+        "Nicotine lozenge",
+        "Phenazopyridine"
+      ],
+      "correctAnswer": "Varenicline",
+      "explanation": "Varenicline is a nicotinic receptor partial agonist that reduces cravings and blunts the rewarding effects of smoking.",
+      "relatedDrugIds": [
+        "d280"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "varenicline",
+        "mechanism"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_036",
+      "difficulty": "medium",
+      "objective": "adverseEffect",
+      "questionText": "A patient taking varenicline reports the most common dose-related adverse effect discussed during counseling. Which answer best fits?",
+      "options": [
+        "Nausea",
+        "Orange-red urine",
+        "Severe hypocalcemia",
+        "Esophageal ulceration",
+        "Hyperprolactinemia"
+      ],
+      "correctAnswer": "Nausea",
+      "explanation": "Nausea is the most common adverse effect reported with varenicline and is often improved by proper titration and administration strategies.",
+      "relatedDrugIds": [
+        "d280"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "varenicline",
+        "nausea"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_037",
+      "difficulty": "hard",
+      "objective": "monitoring",
+      "questionText": "Which smoking-cessation medication is especially high yield for dose adjustment in severe renal impairment?",
+      "options": [
+        "Varenicline",
+        "Bupropion SR",
+        "Nicotine gum",
+        "Nicotine lozenge",
+        "Nicotine patch"
+      ],
+      "correctAnswer": "Varenicline",
+      "explanation": "Varenicline requires dose reduction in severe renal impairment, making renal function an important consideration.",
+      "relatedDrugIds": [
+        "d280"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "varenicline",
+        "renal"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_038",
+      "difficulty": "hard",
+      "objective": "interaction",
+      "questionText": "A patient uses nitroglycerin for angina and asks whether sildenafil or tadalafil is safer to combine with it. Which answer is most accurate?",
+      "options": [
+        "Neither should be combined with nitrates because both can cause dangerous hypotension",
+        "Sildenafil is unsafe, but tadalafil is safe",
+        "Tadalafil is unsafe, but sildenafil is safe",
+        "Both are safe if taken with food",
+        "Both are safe if the nitrate dose is low"
+      ],
+      "correctAnswer": "Neither should be combined with nitrates because both can cause dangerous hypotension",
+      "explanation": "Both sildenafil and tadalafil are PDE-5 inhibitors and both are contraindicated with nitrates because of hypotension risk.",
+      "relatedDrugIds": [
+        "d193",
+        "d194"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "pde5",
+        "nitrates"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_039",
+      "difficulty": "medium",
+      "objective": "pearl",
+      "questionText": "A man taking tamsulosin is scheduled for cataract surgery. Which counseling point is most important?",
+      "options": [
+        "Tell the eye surgeon about current or prior tamsulosin use because of floppy iris risk",
+        "Stop all medications in module 10 immediately without asking anyone",
+        "Double the tamsulosin dose the night before surgery",
+        "Switch to phenazopyridine on the day of surgery",
+        "Take tamsulosin with grapefruit juice for better vision"
+      ],
+      "correctAnswer": "Tell the eye surgeon about current or prior tamsulosin use because of floppy iris risk",
+      "explanation": "Intraoperative floppy iris syndrome is a key counseling pearl with tamsulosin, so eye surgeons should be informed about current or prior use.",
+      "relatedDrugIds": [
+        "d188"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "tamsulosin",
+        "cataract"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_040",
+      "difficulty": "hard",
+      "objective": "mixedReview",
+      "questionText": "A patient with overactive bladder also has chronic constipation, dry mouth, and narrow-angle glaucoma concerns. Which option from module 10 is often more attractive than antimuscarinic bladder drugs for those reasons?",
+      "options": [
+        "Mirabegron",
+        "Oxybutynin",
+        "Solifenacin",
+        "Phenazopyridine",
+        "Tamsulosin"
+      ],
+      "correctAnswer": "Mirabegron",
+      "explanation": "Mirabegron is the non-anticholinergic option for overactive bladder and may be preferred when antimuscarinic adverse effects or cautions are problematic.",
+      "relatedDrugIds": [
+        "d192",
+        "d191",
+        "d275"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "mirabegron",
+        "compare"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_041",
+      "difficulty": "medium",
+      "objective": "mixedReview",
+      "questionText": "A patient with enlarged prostate wants the drug most associated with gradually shrinking prostate tissue rather than rapidly relaxing smooth muscle. Which answer best fits?",
+      "options": [
+        "Finasteride or dutasteride",
+        "Tamsulosin",
+        "Phenazopyridine",
+        "Mirabegron",
+        "Sildenafil"
+      ],
+      "correctAnswer": "Finasteride or dutasteride",
+      "explanation": "Finasteride and dutasteride are 5-alpha reductase inhibitors that gradually reduce prostate size, unlike tamsulosin, which mainly provides symptomatic smooth-muscle relaxation.",
+      "relatedDrugIds": [
+        "d189",
+        "d190",
+        "d188"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "5ari",
+        "prostate-size"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_042",
+      "difficulty": "hard",
+      "objective": "contraindication",
+      "questionText": "A postmenopausal patient primarily wants relief of bothersome hot flashes but also has osteoporosis risk. Which drug from module 10 is a poor choice if the main symptom is vasomotor because it can worsen hot flashes and raises VTE risk?",
+      "options": [
+        "Raloxifene",
+        "Conjugated estrogens",
+        "Estradiol",
+        "Progesterone",
+        "Mirena"
+      ],
+      "correctAnswer": "Raloxifene",
+      "explanation": "Raloxifene is not used to treat vasomotor symptoms and can worsen hot flashes while also increasing VTE risk.",
+      "relatedDrugIds": [
+        "d186"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "raloxifene",
+        "hot-flashes"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_043",
+      "difficulty": "medium",
+      "objective": "mixedReview",
+      "questionText": "A patient starting an antibiotic for UTI asks which module 10 medication may help burning and urgency over the next day or two while the antibiotic begins working. Which answer is best?",
+      "options": [
+        "Phenazopyridine",
+        "Finasteride",
+        "Oxybutynin",
+        "Alendronate",
+        "Varenicline"
+      ],
+      "correctAnswer": "Phenazopyridine",
+      "explanation": "Phenazopyridine is used for short-term urinary symptom relief while definitive treatment addresses the underlying infection.",
+      "relatedDrugIds": [
+        "d274"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "phenazopyridine",
+        "uti-symptoms"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_044",
+      "difficulty": "medium",
+      "objective": "mixedReview",
+      "questionText": "A smoker wants one medicine that does not contain nicotine, can be started before the quit date, and is not used only when a craving suddenly appears. Which option best matches that description?",
+      "options": [
+        "Bupropion SR",
+        "Nicotine gum",
+        "Nicotine lozenge",
+        "Phenazopyridine",
+        "Nicotine patch used only during a craving"
+      ],
+      "correctAnswer": "Bupropion SR",
+      "explanation": "Bupropion SR is a non-nicotine smoking-cessation medication that is started before the quit date rather than used as an on-demand product.",
+      "relatedDrugIds": [
+        "d279"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "bupropion",
+        "non-nicotine"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    },
+    {
+      "id": "q10e_add_045",
+      "difficulty": "hard",
+      "objective": "mixedReview",
+      "questionText": "Which module 10 pairing represents two different boxed-warning themes from the same overall module: one drug for contraception with bone mineral density loss, and one smoking-cessation drug with seizure-disorder and eating-disorder contraindications?",
+      "options": [
+        "Depot medroxyprogesterone and bupropion SR",
+        "Mirena and nicotine gum",
+        "Conjugated estrogens and tamsulosin",
+        "Alendronate and varenicline",
+        "Phenazopyridine and tadalafil"
+      ],
+      "correctAnswer": "Depot medroxyprogesterone and bupropion SR",
+      "explanation": "Depot medroxyprogesterone is the contraceptive with the boxed warning about bone mineral density loss, while bupropion SR is the smoking-cessation medication avoided in seizure disorders and eating disorders.",
+      "relatedDrugIds": [
+        "d183",
+        "d279"
+      ],
+      "tags": [
+        "Mastery",
+        "10e",
+        "cross-topic",
+        "module-10"
+      ],
+      "subsectionId": "10e",
+      "type": "multipleChoice",
+      "source": "curated"
+    }
+  ]
+}

@@ -64,6 +64,9 @@ struct DrugDataService {
                 if sub.id == Self.masteringNeuroSeizureSubsectionId {
                     bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_9fMastery)
                 }
+                if sub.id == Self.masteringGUBoneHormonesPreventionSubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_10eMastery)
+                }
             }
         }
         self.questionBank = bank
