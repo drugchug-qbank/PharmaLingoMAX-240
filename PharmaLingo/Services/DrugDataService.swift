@@ -55,6 +55,9 @@ struct DrugDataService {
                 if sub.id == Self.masteringRespiratoryAllergySubsectionId {
                     bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_7fMastery)
                 }
+                if sub.id == Self.masteringGiHepaticSubsectionId {
+                    bank[sub.id]?.append(contentsOf: Self.curatedAddOnQuestions_8fMastery)
+                }
             }
         }
         self.questionBank = bank
