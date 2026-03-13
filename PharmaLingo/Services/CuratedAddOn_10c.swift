@@ -67,7 +67,7 @@ extension DrugDataService {
             options: ["It increases the risk of endometrial cancer, so abnormal vaginal bleeding should be evaluated", "It causes permanent infertility after one dose", "It is the preferred long-term method for preventing dementia", "It must always be taken with grapefruit juice", "It is indicated to prevent heart attacks and stroke"],
             answer: "It increases the risk of endometrial cancer, so abnormal vaginal bleeding should be evaluated",
             explanation: "Systemic estrogen-alone therapy in a woman with a uterus increases endometrial cancer risk; any abnormal vaginal bleeding warrants evaluation.",
-            objective: .blackBoxWarning,
+            objective: .pearl,
             relatedDrugIds: ["d176", "d178"],
             tags: ["10c", "estrogen", "boxed-warning", "endometrial-cancer"],
             source: .curated
@@ -106,7 +106,7 @@ extension DrugDataService {
             options: ["Combination oral contraceptives should not be used in women over 35 who smoke because cigarette smoking raises serious cardiovascular risk", "Smoking only matters if the pill is progestin-only", "Smoking lowers clot risk when estrogen is present", "The only concern is tooth discoloration", "The main issue is that the pill stops working after age 35"],
             answer: "Combination oral contraceptives should not be used in women over 35 who smoke because cigarette smoking raises serious cardiovascular risk",
             explanation: "Combined hormonal contraceptives carry a boxed warning that cigarette smoking increases the risk of serious cardiovascular events, especially in women over 35.",
-            objective: .blackBoxWarning,
+            objective: .pearl,
             relatedDrugIds: ["d177", "d180", "d181"],
             tags: ["10c", "coc", "smoking", "boxed-warning"],
             source: .curated
@@ -184,7 +184,7 @@ extension DrugDataService {
             options: ["No—systemic estrogen should not be used to prevent cardiovascular disease or dementia", "Yes—it is first-line prevention for both", "Yes—but only if taken with nicotine replacement", "No—because estradiol has no hormone activity after menopause", "Yes—but only in smokers over 35"],
             answer: "No—systemic estrogen should not be used to prevent cardiovascular disease or dementia",
             explanation: "Systemic estrogen therapy is not indicated for prevention of cardiovascular disease or dementia.",
-            objective: .blackBoxWarning,
+            objective: .pearl,
             relatedDrugIds: ["d178", "d176"],
             tags: ["10c", "estradiol", "boxed-warning", "cvd", "dementia"],
             source: .curated
@@ -340,7 +340,7 @@ extension DrugDataService {
             options: ["No—like other combined oral contraceptives, it carries serious cardiovascular risk in smokers over 35", "Yes—norgestimate removes the smoking warning entirely", "Yes—it becomes safer as cigarette use increases", "No—because it contains only progesterone", "Yes—but only if paired with raloxifene"],
             answer: "No—like other combined oral contraceptives, it carries serious cardiovascular risk in smokers over 35",
             explanation: "Norgestimate/ethinyl estradiol is a combined oral contraceptive and shares the boxed smoking-related cardiovascular risk with other estrogen-containing COCs.",
-            objective: .blackBoxWarning,
+            objective: .pearl,
             relatedDrugIds: ["d181", "d177", "d180"],
             tags: ["10c", "ortho-tri-cyclen", "smoking", "boxed-warning"],
             source: .curated
@@ -431,7 +431,7 @@ extension DrugDataService {
             options: ["It can cause significant bone mineral density loss, which increases with duration of use", "It is boxed for irreversible infertility after one injection", "It must always be taken with calcium carbonate at the same moment as the injection", "It is contraindicated because it contains estrogen", "It permanently raises testosterone in all users"],
             answer: "It can cause significant bone mineral density loss, which increases with duration of use",
             explanation: "Depo-Provera carries a boxed warning for loss of bone mineral density, which may increase with longer use and may not be completely reversible.",
-            objective: .blackBoxWarning,
+            objective: .pearl,
             relatedDrugIds: ["d183"],
             tags: ["10c", "depo-provera", "bone-density", "boxed-warning"],
             source: .curated
@@ -600,7 +600,7 @@ extension DrugDataService {
             options: ["Secondary exposure causing virilization in children or others who contact the application site", "Immediate severe hypocalcemia", "Permanent infertility in the user after one dose", "Bone mineral density loss in adolescents", "Drug-induced angle-closure glaucoma"],
             answer: "Secondary exposure causing virilization in children or others who contact the application site",
             explanation: "Testosterone gels carry a boxed warning for secondary exposure; unwashed or uncovered application sites can transfer testosterone to others.",
-            objective: .blackBoxWarning,
+            objective: .pearl,
             relatedDrugIds: ["d187"],
             tags: ["10c", "testosterone", "boxed-warning", "secondary-exposure"],
             source: .curated
