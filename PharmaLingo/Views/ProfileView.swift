@@ -83,7 +83,7 @@ struct ProfileView: View {
                             .overlay(alignment: .topTrailing) {
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
-                                    .foregroundStyle(.tertiary)
+                                    .foregroundStyle(AppTheme.primaryBlue)
                                     .padding(12)
                             }
                         }
@@ -164,7 +164,7 @@ struct ProfileView: View {
                             }
                         }
                         .padding(16)
-                        .cardStyle(borderColor: gameVM.currentStreak > 0 ? AppTheme.accentOrange.opacity(0.3) : nil)
+                        .cardStyle(borderColor: AppTheme.accentOrange.opacity(gameVM.currentStreak > 0 ? 0.3 : 0.5))
                         .onReceive(timer) { _ in
                             streakCountdown = gameVM.timeUntilStreakBreaks
                         }
@@ -197,7 +197,7 @@ struct ProfileView: View {
                                     Spacer()
                                     Image(systemName: "chevron.right")
                                         .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(AppTheme.xpPurple)
                                 }
                             }
                             .buttonStyle(.plain)
@@ -227,7 +227,7 @@ struct ProfileView: View {
                                     Spacer()
                                     Image(systemName: "chevron.right")
                                         .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(AppTheme.primaryBlue)
                                 }
                             }
                             .buttonStyle(.plain)
