@@ -16,6 +16,14 @@ struct AvatarRendererView: View {
         configuration.animalType == .bunny
     }
 
+    private var useRiveCat: Bool {
+        configuration.animalType == .cat
+    }
+
+    private var useRiveAvatar: Bool {
+        useRiveBunny || useRiveCat
+    }
+
     var body: some View {
         ZStack {
             backgroundLayer
@@ -23,11 +31,14 @@ struct AvatarRendererView: View {
             if useRiveBunny {
                 RiveBunnyAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle)
                     .allowsHitTesting(false)
+            } else if useRiveCat {
+                RiveCatAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle)
+                    .allowsHitTesting(false)
             } else {
                 animalLayer
             }
 
-            if !useRiveBunny {
+            if !useRiveAvatar {
                 shadingOverlay
                 highlightOverlay
             }
@@ -52,7 +63,7 @@ struct AvatarRendererView: View {
         .shadow(color: .black.opacity(0.15), radius: size * 0.06, x: 0, y: size * 0.025)
         .scaleEffect(breathScale)
         .task {
-            guard showIdleAnimation, !useRiveBunny else { return }
+            guard showIdleAnimation, !useRiveAvatar else { return }
             await withTaskGroup(of: Void.self) { group in
                 group.addTask { @MainActor in
                     while !Task.isCancelled {
