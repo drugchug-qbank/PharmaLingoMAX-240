@@ -15,6 +15,7 @@ struct RanksView: View {
 
     enum RanksTab: String, CaseIterable {
         case league = "League"
+        case blitz = "Blitz"
         case friends = "Friends"
         case school = "School"
         case profession = "Profession"
@@ -22,6 +23,7 @@ struct RanksView: View {
         var icon: String {
             switch self {
             case .league: "trophy.fill"
+            case .blitz: "bolt.fill"
             case .friends: "person.2.fill"
             case .school: "building.columns.fill"
             case .profession: "cross.case.fill"
@@ -128,11 +130,11 @@ struct RanksView: View {
                                 Button {
                                     withAnimation(.spring(duration: 0.25)) { selectedTab = tab }
                                 } label: {
-                                    VStack(spacing: 4) {
+                                    VStack(spacing: 3) {
                                         Image(systemName: tab.icon)
-                                            .font(.subheadline)
+                                            .font(.caption)
                                         Text(tab.rawValue)
-                                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                                            .font(AppTheme.funFont(.caption2, weight: .heavy))
                                     }
                                     .foregroundStyle(selectedTab == tab ? AppTheme.primaryBlue : .secondary)
                                     .frame(maxWidth: .infinity)
@@ -154,6 +156,8 @@ struct RanksView: View {
                         switch selectedTab {
                         case .league:
                             leagueContent
+                        case .blitz:
+                            blitzLeaderboardContent
                         case .friends:
                             friendsContent
                         case .school:
@@ -477,6 +481,180 @@ struct RanksView: View {
                 professionRankings = await supabase.fetchProfessionRankings()
             }
         })
+    }
+
+    @ViewBuilder
+    private var blitzLeaderboardContent: some View {
+        VStack(spacing: 16) {
+            VStack(spacing: 12) {
+                HStack(spacing: 8) {
+                    Image(systemName: "bolt.fill")
+                        .font(.title2)
+                        .foregroundStyle(AppTheme.xpPurple)
+                    Text("Brand Blitz")
+                        .font(AppTheme.funFont(.title3, weight: .heavy))
+                    Spacer()
+                    Text("Today")
+                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule().fill(
+                                LinearGradient(colors: [AppTheme.xpPurple, AppTheme.funPink], startPoint: .leading, endPoint: .trailing)
+                            )
+                        )
+                }
+
+                let bestScore = UserDefaults.standard.integer(forKey: "blitz_best_score")
+                let bestCombo = UserDefaults.standard.integer(forKey: "blitz_best_combo")
+                let bestAccuracy = UserDefaults.standard.double(forKey: "blitz_best_accuracy")
+
+                if bestScore > 0 {
+                    HStack(spacing: 0) {
+                        blitzPersonalStat(icon: "bolt.fill", value: "\(bestScore)", label: "Best XP", color: AppTheme.xpPurple)
+                        blitzPersonalStat(icon: "flame.fill", value: "\(bestCombo)x", label: "Best Combo", color: AppTheme.accentOrange)
+                        blitzPersonalStat(icon: "target", value: "\(Int(bestAccuracy * 100))%", label: "Best Acc", color: AppTheme.funTeal)
+                    }
+                    .padding(.vertical, 12)
+                    .background(AppTheme.xpPurple.opacity(0.06))
+                    .clipShape(.rect(cornerRadius: 12))
+                }
+            }
+            .padding(16)
+            .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.3))
+
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 6) {
+                    Image(systemName: "chart.bar.fill")
+                        .foregroundStyle(AppTheme.funPink)
+                    Text("Today's Runs")
+                        .font(AppTheme.funFont(.headline, weight: .heavy))
+                }
+
+                let todayScores = loadTodayScores()
+
+                if todayScores.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "bolt.circle.fill")
+                            .font(.system(size: 44))
+                            .foregroundStyle(AppTheme.xpPurple.opacity(0.4))
+                        Text("No runs today")
+                            .font(AppTheme.funFont(.headline, weight: .bold))
+                            .foregroundStyle(.secondary)
+                        Text("Complete a Brand Blitz to see your scores here!")
+                            .font(AppTheme.funFont(.subheadline, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(24)
+                    .frame(maxWidth: .infinity)
+                } else {
+                    ForEach(Array(todayScores.enumerated()), id: \.offset) { index, run in
+                        HStack(spacing: 12) {
+                            Text("#\(index + 1)")
+                                .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                                .foregroundStyle(index == 0 ? AppTheme.xpPurple : .secondary)
+                                .frame(width: 30)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("\(run.score) XP")
+                                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                                HStack(spacing: 8) {
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "target")
+                                            .font(.caption2)
+                                        Text("\(Int(run.accuracy * 100))%")
+                                            .font(AppTheme.funFont(.caption, weight: .bold))
+                                    }
+                                    .foregroundStyle(.secondary)
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "flame.fill")
+                                            .font(.caption2)
+                                            .foregroundStyle(AppTheme.accentOrange)
+                                        Text("\(run.combo)x")
+                                            .font(AppTheme.funFont(.caption, weight: .bold))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+
+                            Spacer()
+
+                            Text(String(format: "%.0fs", run.time))
+                                .font(.system(size: 13, weight: .bold, design: .monospaced))
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(index == 0 ? AppTheme.xpPurple.opacity(0.06) : .clear)
+                        .clipShape(.rect(cornerRadius: 10))
+                    }
+                }
+            }
+            .padding(16)
+            .cardStyle(borderColor: AppTheme.funPink.opacity(0.3))
+
+            VStack(spacing: 10) {
+                HStack(spacing: 6) {
+                    Image(systemName: "globe")
+                        .foregroundStyle(AppTheme.primaryBlue)
+                    Text("Global Blitz Leaderboard")
+                        .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                }
+
+                HStack(spacing: 8) {
+                    Image(systemName: "wrench.and.screwdriver.fill")
+                        .foregroundStyle(.secondary)
+                    Text("Coming soon! Your scores are being tracked.")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity)
+                .background(Color(.tertiarySystemFill))
+                .clipShape(.rect(cornerRadius: 12))
+            }
+            .padding(16)
+            .cardStyle()
+        }
+    }
+
+    private func blitzPersonalStat(icon: String, value: String, label: String, color: Color) -> some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(color)
+            Text(value)
+                .font(AppTheme.funFont(.headline, weight: .heavy))
+                .foregroundStyle(color)
+            Text(label)
+                .font(AppTheme.funFont(.caption2, weight: .bold))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private struct BlitzDailyRun {
+        let score: Int
+        let accuracy: Double
+        let combo: Int
+        let time: Double
+    }
+
+    private func loadTodayScores() -> [BlitzDailyRun] {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let today = formatter.string(from: Date())
+        guard let lastDate = UserDefaults.standard.string(forKey: "blitz_daily_date"), lastDate == today else { return [] }
+        guard let raw = UserDefaults.standard.array(forKey: "blitz_daily_scores") as? [[String: Any]] else { return [] }
+        return raw.compactMap { dict in
+            guard let score = dict["score"] as? Int,
+                  let accuracy = dict["accuracy"] as? Double,
+                  let combo = dict["combo"] as? Int,
+                  let time = dict["time"] as? Double else { return nil }
+            return BlitzDailyRun(score: score, accuracy: accuracy, combo: combo, time: time)
+        }.sorted { $0.score > $1.score }
     }
 
     private func rankColor(for rank: Int) -> Color {
