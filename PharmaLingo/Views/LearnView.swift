@@ -73,6 +73,9 @@ struct LearnView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                                 activePresentation = .quiz(sub)
                             }
+                        },
+                        onExit: {
+                            activePresentation = nil
                         }
                     )
                 case .quiz(let sub):
