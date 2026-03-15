@@ -26,7 +26,7 @@ nonisolated enum QuestionDifficulty: Int, Sendable, Comparable {
     }
 }
 
-nonisolated enum QuestionObjective: String, Sendable {
+nonisolated enum QuestionObjective: String, Sendable, CaseIterable {
     case brandGeneric
     case genericBrand
     case classId

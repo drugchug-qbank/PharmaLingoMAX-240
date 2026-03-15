@@ -287,8 +287,13 @@ struct PracticeView: View {
         .buttonStyle(.plain)
     }
 
+    private var drugSummaries: [String: DrugMasterySummary] {
+        DrugMasteryService.computeAllMastery(drugs: allDrugs, masteryMap: gameVM.masteryMap)
+    }
+
     private var masteredCount: Int {
-        allDrugs.filter { drugMasteryLevel($0) >= 3 }.count
+        let summaries = drugSummaries
+        return allDrugs.filter { (summaries[$0.id]?.overallLevel ?? 0) >= 3 }.count
     }
 
     private var masteryProgress: Double {
@@ -297,12 +302,7 @@ struct PracticeView: View {
     }
 
     private func drugMasteryLevel(_ drug: Drug) -> Int {
-        let subsections = gameVM.completedSubsections
-        let module = DrugDataService.shared.modules.first { m in
-            m.subsections.contains { s in s.drugs.contains { $0.id == drug.id } }
-        }
-        guard let sub = module?.subsections.first(where: { $0.drugs.contains { $0.id == drug.id } }) else { return 0 }
-        return subsections.contains(sub.id) ? min(gameVM.starsFor(sub.id) + 1, 5) : 0
+        drugSummaries[drug.id]?.overallLevel ?? 0
     }
 
     private var fallbackSubsection: Subsection {
@@ -578,6 +578,11 @@ struct DrugMasteryListView: View {
     let gameVM: GameViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var searchText: String = ""
+    @State private var selectedDrug: Drug? = nil
+
+    private var summaries: [String: DrugMasterySummary] {
+        DrugMasteryService.computeAllMastery(drugs: drugs, masteryMap: gameVM.masteryMap)
+    }
 
     private var filteredDrugs: [Drug] {
         if searchText.isEmpty { return drugs }
@@ -591,30 +596,35 @@ struct DrugMasteryListView: View {
     var body: some View {
         NavigationStack {
             List(filteredDrugs) { drug in
-                HStack(spacing: 12) {
-                    let level = masteryLevel(drug)
-                    Circle()
-                        .fill(masteryColor(level))
-                        .frame(width: 12, height: 12)
+                let level = summaries[drug.id]?.overallLevel ?? 0
+                Button {
+                    selectedDrug = drug
+                } label: {
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(masteryColor(level))
+                            .frame(width: 12, height: 12)
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(drug.genericName)
-                            .font(AppTheme.funFont(.subheadline, weight: .bold))
-                        Text("\(drug.brandName) • \(drug.drugClass)")
-                            .font(AppTheme.funFont(.caption, weight: .medium))
-                            .foregroundStyle(.secondary)
-                    }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(drug.genericName)
+                                .font(AppTheme.funFont(.subheadline, weight: .bold))
+                            Text("\(drug.brandName) • \(drug.drugClass)")
+                                .font(AppTheme.funFont(.caption, weight: .medium))
+                                .foregroundStyle(.secondary)
+                        }
 
-                    Spacer()
+                        Spacer()
 
-                    HStack(spacing: 2) {
-                        ForEach(0..<5, id: \.self) { i in
-                            Image(systemName: i < level ? "star.fill" : "star")
-                                .font(.system(size: 8))
-                                .foregroundStyle(i < level ? AppTheme.warningYellow : Color(.tertiaryLabel))
+                        HStack(spacing: 2) {
+                            ForEach(0..<5, id: \.self) { i in
+                                Image(systemName: i < level ? "star.fill" : "star")
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(i < level ? AppTheme.warningYellow : Color(.tertiaryLabel))
+                            }
                         }
                     }
                 }
+                .buttonStyle(.plain)
             }
             .searchable(text: $searchText, prompt: "Search drugs...")
             .navigationTitle("Drug Mastery")
@@ -624,15 +634,10 @@ struct DrugMasteryListView: View {
                     Button("Done") { dismiss() }
                 }
             }
+            .sheet(item: $selectedDrug) { drug in
+                DrugMasteryDetailSheet(drug: drug, summary: summaries[drug.id] ?? DrugMasteryService.computeMastery(for: drug.id, masteryMap: gameVM.masteryMap))
+            }
         }
-    }
-
-    private func masteryLevel(_ drug: Drug) -> Int {
-        let module = DrugDataService.shared.modules.first { m in
-            m.subsections.contains { s in s.drugs.contains { $0.id == drug.id } }
-        }
-        guard let sub = module?.subsections.first(where: { $0.drugs.contains { $0.id == drug.id } }) else { return 0 }
-        return gameVM.completedSubsections.contains(sub.id) ? min(gameVM.starsFor(sub.id) + 1, 5) : 0
     }
 
     private func masteryColor(_ level: Int) -> Color {
@@ -644,6 +649,220 @@ struct DrugMasteryListView: View {
         case 4: AppTheme.successGreen
         default: AppTheme.xpPurple
         }
+    }
+}
+
+struct DrugMasteryDetailSheet: View {
+    let drug: Drug
+    let summary: DrugMasterySummary
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    masteryHeader
+                    drugInfoSection
+                    conceptMasterySection
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 32)
+            }
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle(drug.genericName)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var masteryHeader: some View {
+        VStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(levelColor.opacity(0.15))
+                    .frame(width: 72, height: 72)
+                Circle()
+                    .trim(from: 0, to: Double(summary.overallLevel) / 5.0)
+                    .stroke(levelColor, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                    .frame(width: 72, height: 72)
+                    .rotationEffect(.degrees(-90))
+                Text("\(summary.overallLevel)")
+                    .font(.system(size: 28, weight: .heavy, design: .rounded))
+                    .foregroundStyle(levelColor)
+            }
+
+            Text(levelLabel)
+                .font(AppTheme.funFont(.headline, weight: .heavy))
+                .foregroundStyle(levelColor)
+
+            if summary.totalAttempts > 0 {
+                HStack(spacing: 16) {
+                    StatChip(label: "Attempts", value: "\(summary.totalAttempts)", color: AppTheme.primaryBlue)
+                    StatChip(label: "Accuracy", value: "\(Int(summary.accuracy * 100))%", color: AppTheme.successGreen)
+                }
+            } else {
+                Text("No questions attempted yet")
+                    .font(AppTheme.funFont(.subheadline, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity)
+        .cardStyle(borderColor: levelColor.opacity(0.4))
+    }
+
+    @ViewBuilder
+    private var drugInfoSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            FunSectionHeader(icon: "pills.fill", title: "Drug Info", color: AppTheme.primaryBlue)
+
+            InfoRow(label: "Generic", value: drug.genericName)
+            InfoRow(label: "Brand", value: drug.brandName)
+            InfoRow(label: "Class", value: drug.drugClass)
+        }
+        .padding(16)
+        .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.3))
+    }
+
+    @ViewBuilder
+    private var conceptMasterySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            FunSectionHeader(icon: "chart.bar.fill", title: "Concept Mastery", color: AppTheme.xpPurple)
+
+            ForEach(ConceptBucket.allCases, id: \.rawValue) { bucket in
+                let concept = summary.conceptMastery[bucket]
+                ConceptMasteryRow(bucket: bucket, concept: concept)
+            }
+        }
+        .padding(16)
+        .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.3))
+    }
+
+    private var levelColor: Color {
+        switch summary.overallLevel {
+        case 0: Color(.systemGray4)
+        case 1: AppTheme.heartRed
+        case 2: AppTheme.accentOrange
+        case 3: AppTheme.warningYellow
+        case 4: AppTheme.successGreen
+        default: AppTheme.xpPurple
+        }
+    }
+
+    private var levelLabel: String {
+        switch summary.overallLevel {
+        case 0: "Not Started"
+        case 1: "Beginner"
+        case 2: "Developing"
+        case 3: "Proficient"
+        case 4: "Advanced"
+        default: "Mastered"
+        }
+    }
+}
+
+private struct StatChip: View {
+    let label: String
+    let value: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(AppTheme.funFont(.headline, weight: .heavy))
+                .foregroundStyle(color)
+            Text(label)
+                .font(AppTheme.funFont(.caption2, weight: .medium))
+                .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(color.opacity(0.08))
+        .clipShape(.rect(cornerRadius: 12))
+    }
+}
+
+private struct InfoRow: View {
+    let label: String
+    let value: String
+
+    var body: some View {
+        HStack {
+            Text(label)
+                .font(AppTheme.funFont(.subheadline, weight: .medium))
+                .foregroundStyle(.secondary)
+                .frame(width: 60, alignment: .leading)
+            Text(value)
+                .font(AppTheme.funFont(.subheadline, weight: .semibold))
+            Spacer()
+        }
+    }
+}
+
+private struct ConceptMasteryRow: View {
+    let bucket: ConceptBucket
+    let concept: DrugConceptMastery?
+
+    private var progress: Double {
+        guard let c = concept, c.totalAttempts > 0 else { return 0 }
+        return min(c.averageLevel / 5.0, 1.0)
+    }
+
+    private var barColor: Color {
+        let level = concept?.averageLevel ?? 0
+        switch level {
+        case 0..<1: return Color(.systemGray4)
+        case 1..<2: return AppTheme.heartRed
+        case 2..<3: return AppTheme.accentOrange
+        case 3..<4: return AppTheme.warningYellow
+        case 4..<5: return AppTheme.successGreen
+        default: return AppTheme.xpPurple
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: bucket.icon)
+                .font(.subheadline)
+                .foregroundStyle(barColor)
+                .frame(width: 22)
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(bucket.label)
+                        .font(AppTheme.funFont(.caption, weight: .semibold))
+                    Spacer()
+                    if let c = concept, c.totalAttempts > 0 {
+                        Text("\(Int(c.accuracy * 100))%")
+                            .font(AppTheme.funFont(.caption2, weight: .heavy))
+                            .foregroundStyle(barColor)
+                    } else {
+                        Text("—")
+                            .font(AppTheme.funFont(.caption2, weight: .medium))
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(barColor.opacity(0.12))
+                            .frame(height: 6)
+                        Capsule()
+                            .fill(barColor)
+                            .frame(width: max(4, geo.size.width * progress), height: 6)
+                    }
+                }
+                .frame(height: 6)
+            }
+        }
+        .padding(.vertical, 2)
     }
 }
 
