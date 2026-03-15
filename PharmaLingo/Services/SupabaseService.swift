@@ -1361,6 +1361,47 @@ class SupabaseService {
         return hash
     }
 
+    func fetchDailyChestState() async -> (opensUsed: Int, lastOpenDate: String?, xpAtSessionStart: Int)? {
+        do {
+            let resultData = try await client.rpc("fetch_daily_chest_state", params: EmptyParams()).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let opensUsed = json?["opens_used"] as? Int ?? 0
+            let lastOpenDate = json?["last_open_date"] as? String
+            let xpStart = json?["xp_at_session_start"] as? Int ?? 0
+            return (opensUsed, lastOpenDate, xpStart)
+        } catch {
+            print("RPC fetch_daily_chest_state failed: \(error)")
+            return nil
+        }
+    }
+
+    func openDailyChest(rewardType: String, rewardAmount: Int, wasApplied: Bool) async -> (success: Bool, opensUsed: Int) {
+        do {
+            let resultData = try await client.rpc("open_daily_chest", params: [
+                "p_reward_type": AnyEncodableValue.string(rewardType),
+                "p_reward_amount": AnyEncodableValue.int(rewardAmount),
+                "p_was_applied": AnyEncodableValue.bool(wasApplied),
+            ]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let success = json?["success"] as? Bool ?? false
+            let opensUsed = json?["opens_used"] as? Int ?? 0
+            return (success, opensUsed)
+        } catch {
+            print("RPC open_daily_chest failed: \(error)")
+            return (false, 0)
+        }
+    }
+
+    func saveDailyChestXPStart(xp: Int) async {
+        do {
+            try await client.rpc("save_daily_chest_xp_start", params: [
+                "p_xp": xp,
+            ]).execute()
+        } catch {
+            print("RPC save_daily_chest_xp_start failed: \(error)")
+        }
+    }
+
     func searchUsers(query: String) async -> [LeaderboardRecord] {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         let trimmed = query.trimmingCharacters(in: .whitespaces)

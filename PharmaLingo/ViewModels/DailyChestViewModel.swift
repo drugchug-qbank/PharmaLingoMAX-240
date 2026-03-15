@@ -9,11 +9,13 @@ class DailyChestViewModel {
     var chestRewardApplied: Bool = false
     var isLoadingAd: Bool = false
     var xpAtSessionStart: Int = 0
+    var hasLoadedFromCloud: Bool = false
 
     private let maxOpensPerDay = 4
+    private let supabase = SupabaseService.shared
 
     init() {
-        loadState()
+        loadLocalState()
     }
 
     var todayString: String {
@@ -63,9 +65,39 @@ class DailyChestViewModel {
         chestReward = MysteryChestReward(type: reward.type, amount: reward.amount, wasApplied: applied)
         chestRewardApplied = applied
         opensUsedToday += 1
-        saveState()
+        saveLocalState()
         withAnimation(.spring(duration: 0.3)) {
             showChestReveal = true
+        }
+        Task {
+            let result = await supabase.openDailyChest(
+                rewardType: reward.type.rawValue,
+                rewardAmount: reward.amount,
+                wasApplied: applied
+            )
+            if result.success {
+                opensUsedToday = result.opensUsed
+                saveLocalState()
+            }
+            await supabase.fetchProfile()
+        }
+        gameVM.syncToCloud()
+    }
+
+    func openChestFromView(gameVM: GameViewModel, reward: MysteryChestReward, applied: Bool) {
+        opensUsedToday += 1
+        saveLocalState()
+        Task {
+            let result = await supabase.openDailyChest(
+                rewardType: reward.type.rawValue,
+                rewardAmount: reward.amount,
+                wasApplied: applied
+            )
+            if result.success {
+                opensUsedToday = result.opensUsed
+                saveLocalState()
+            }
+            await supabase.fetchProfile()
         }
         gameVM.syncToCloud()
     }
@@ -76,7 +108,7 @@ class DailyChestViewModel {
             opensUsedToday = 0
             lastOpenDate = today
             xpAtSessionStart = 0
-            saveState()
+            saveLocalState()
         }
     }
 
@@ -84,21 +116,45 @@ class DailyChestViewModel {
         resetIfNewDay()
         if xpAtSessionStart == 0 {
             xpAtSessionStart = totalXP
-            saveState()
+            saveLocalState()
+            Task {
+                await supabase.saveDailyChestXPStart(xp: totalXP)
+            }
+        }
+    }
+
+    func loadFromCloud() async {
+        guard supabase.isAuthenticated else { return }
+        if let state = await supabase.fetchDailyChestState() {
+            let today = todayString
+            let cloudDate = state.lastOpenDate ?? ""
+            let cloudDateTrimmed = String(cloudDate.prefix(10))
+
+            if cloudDateTrimmed == today {
+                opensUsedToday = state.opensUsed
+                lastOpenDate = today
+                xpAtSessionStart = state.xpAtSessionStart
+            } else {
+                opensUsedToday = 0
+                lastOpenDate = today
+                xpAtSessionStart = 0
+            }
+            saveLocalState()
+            hasLoadedFromCloud = true
         }
     }
 
     func saveStatePublic() {
-        saveState()
+        saveLocalState()
     }
 
-    private func saveState() {
+    private func saveLocalState() {
         UserDefaults.standard.set(opensUsedToday, forKey: "daily_chest_opens_used")
         UserDefaults.standard.set(lastOpenDate, forKey: "daily_chest_last_date")
         UserDefaults.standard.set(xpAtSessionStart, forKey: "daily_chest_xp_start")
     }
 
-    private func loadState() {
+    private func loadLocalState() {
         opensUsedToday = UserDefaults.standard.integer(forKey: "daily_chest_opens_used")
         lastOpenDate = UserDefaults.standard.string(forKey: "daily_chest_last_date") ?? ""
         xpAtSessionStart = UserDefaults.standard.integer(forKey: "daily_chest_xp_start")

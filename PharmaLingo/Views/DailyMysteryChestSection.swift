@@ -98,6 +98,9 @@ struct DailyMysteryChestSection: View {
                 glowPhase = true
             }
         }
+        .task {
+            await chestVM.loadFromCloud()
+        }
     }
 
     @ViewBuilder
@@ -295,9 +298,7 @@ struct DailyMysteryChestSection: View {
         let applied = gameVM.applyMysteryChestReward(reward)
         pendingReward = MysteryChestReward(type: reward.type, amount: reward.amount, wasApplied: applied)
         pendingApplied = applied
-        chestVM.opensUsedToday += 1
-        chestVM.saveStatePublic()
-        gameVM.syncToCloud()
+        chestVM.openChestFromView(gameVM: gameVM, reward: reward, applied: applied)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             showChestPopup = true
