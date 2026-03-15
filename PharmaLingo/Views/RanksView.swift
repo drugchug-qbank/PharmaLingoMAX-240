@@ -842,7 +842,7 @@ struct ProfessionBattleView: View {
                 .clipShape(.rect(cornerRadius: 10))
 
                 HStack(spacing: 0) {
-                    PrizePodium(place: "1st", coins: 500, color: AppTheme.warningYellow, icon: "trophy.fill")
+                    PrizePodium(place: "1st", coins: 500, color: Color(hex: "B8860B"), icon: "trophy.fill")
                     PrizePodium(place: "2nd", coins: 250, color: Color(.systemGray3), icon: "medal.fill")
                     PrizePodium(place: "3rd", coins: 100, color: Color(hex: "CD7F32"), icon: "star.fill")
                 }
@@ -894,7 +894,7 @@ struct ProfessionBattleView: View {
                                     if let medalStyle {
                                         Text(medalStyle.label)
                                             .font(AppTheme.funFont(.caption2, weight: .heavy))
-                                            .foregroundStyle(.white)
+                                            .foregroundStyle(.black)
                                             .padding(.horizontal, 7)
                                             .padding(.vertical, 2)
                                             .background(medalStyle.color)
@@ -908,7 +908,7 @@ struct ProfessionBattleView: View {
                                 if let medalStyle, rank <= 3 {
                                     Text(medalStyle.subtitle)
                                         .font(AppTheme.funFont(.caption2, weight: .bold))
-                                        .foregroundStyle(medalStyle.color)
+                                        .foregroundStyle(.black)
                                 }
                             }
 
@@ -916,7 +916,7 @@ struct ProfessionBattleView: View {
 
                             Text("\(entry.donations) coins")
                                 .font(AppTheme.funFont(rank == 1 ? .headline : .body, weight: .heavy))
-                                .foregroundStyle(medalStyle?.color ?? (entry.donations > 0 ? AppTheme.accentOrange : .secondary))
+                                .foregroundStyle(.black)
                         }
                         .padding(.vertical, rank == 1 ? 14 : 10)
                         .padding(.horizontal, 12)
@@ -1137,7 +1137,7 @@ struct ProfessionMedalStyle: Equatable {
     let label: String
     let subtitle: String
 
-    static let gold = ProfessionMedalStyle(color: Color(hex: "FFD700"), label: "1st", subtitle: "Leading the charge!")
+    static let gold = ProfessionMedalStyle(color: Color(hex: "B8860B"), label: "1st", subtitle: "Leading the charge!")
     static let silver = ProfessionMedalStyle(color: Color(hex: "A8A9AD"), label: "2nd", subtitle: "Close behind!")
     static let bronze = ProfessionMedalStyle(color: Color(hex: "CD7F32"), label: "3rd", subtitle: "In the running!")
 
