@@ -6,6 +6,9 @@ struct DailyMysteryChestSection: View {
     @State private var isLoadingAd: Bool = false
     @State private var chestBounce: Bool = false
     @State private var glowPhase: Bool = false
+    @State private var showChestPopup: Bool = false
+    @State private var pendingReward: MysteryChestReward?
+    @State private var pendingApplied: Bool = false
 
     private var opensRemaining: Int {
         chestVM.remainingOpens(isPro: gameVM.isProUser)
@@ -25,6 +28,27 @@ struct DailyMysteryChestSection: View {
 
     private var hasAnyOpenAvailable: Bool {
         canOpenFree || canOpenWithAd || canOpenPro
+    }
+
+    private var allOpened: Bool {
+        chestVM.opensUsedToday >= 4
+    }
+
+    private enum OpenMode {
+        case free
+        case ad
+        case xpLocked
+        case xpReady
+        case done
+    }
+
+    private var currentMode: OpenMode {
+        if allOpened { return .done }
+        if canOpenFree { return .free }
+        if gameVM.isProUser {
+            return canOpenPro ? .xpReady : .xpLocked
+        }
+        return .ad
     }
 
     var body: some View {
@@ -48,27 +72,24 @@ struct DailyMysteryChestSection: View {
 
             chestVisual
 
-            openSlotsIndicator
-
-            if gameVM.isProUser {
-                proOpenSection
-            } else {
-                freeOpenSection
+            if gameVM.isProUser && currentMode == .xpLocked {
+                proXPProgress
             }
+
+            dynamicOpenButton
         }
         .padding(16)
         .cardStyle(borderColor: (hasAnyOpenAvailable ? AppTheme.warningYellow : Color(.tertiarySystemFill)).opacity(hasAnyOpenAvailable ? 0.6 : 0.3))
-        .overlay {
-            if chestVM.showChestReveal, let reward = chestVM.chestReward {
-                MysteryChestRevealView(
+        .fullScreenCover(isPresented: $showChestPopup) {
+            if let reward = pendingReward {
+                MysteryChestPopupView(
                     reward: reward,
-                    wasApplied: chestVM.chestRewardApplied,
+                    wasApplied: pendingApplied,
                     onDismiss: {
-                        withAnimation(.spring(duration: 0.3)) {
-                            chestVM.showChestReveal = false
-                        }
+                        showChestPopup = false
                     }
                 )
+                .background(ClearBackgroundView())
             }
         }
         .onAppear {
@@ -125,48 +146,52 @@ struct DailyMysteryChestSection: View {
     }
 
     @ViewBuilder
-    private var openSlotsIndicator: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<4, id: \.self) { index in
-                let isUsed = index < chestVM.opensUsedToday
-                VStack(spacing: 4) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(isUsed ? AppTheme.successGreen.opacity(0.12) : Color(.tertiarySystemFill))
-                            .frame(height: 36)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(isUsed ? AppTheme.successGreen.opacity(0.4) : Color(.quaternaryLabel), lineWidth: 1.5)
-                            )
+    private var proXPProgress: some View {
+        let xpGained = gameVM.totalXP - chestVM.xpAtSessionStart
+        let xpNeeded = chestVM.xpNeededForNextOpen(opensUsed: chestVM.opensUsedToday)
 
-                        if isUsed {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.body)
-                                .foregroundStyle(AppTheme.successGreen)
-                        } else {
-                            Image(systemName: index == 0 ? "gift.fill" : (gameVM.isProUser ? "star.fill" : "play.circle.fill"))
-                                .font(.caption)
-                                .foregroundStyle(index == 0 ? AppTheme.warningYellow : (gameVM.isProUser ? AppTheme.xpPurple : AppTheme.primaryBlue))
-                        }
-                    }
+        VStack(spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "bolt.fill")
+                    .font(.caption)
+                    .foregroundStyle(AppTheme.xpPurple)
+                Text("Earn \(xpNeeded) XP to unlock next chest")
+                    .font(AppTheme.funFont(.caption, weight: .bold))
+                    .foregroundStyle(.secondary)
+            }
 
-                    Text(index == 0 ? "Free" : (gameVM.isProUser ? "XP" : "Ad"))
-                        .font(.system(size: 9, weight: .bold, design: .rounded))
-                        .foregroundStyle(.secondary)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color(.tertiarySystemFill))
+                        .frame(height: 8)
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(
+                            LinearGradient(colors: [AppTheme.xpPurple.opacity(0.7), AppTheme.xpPurple], startPoint: .leading, endPoint: .trailing)
+                        )
+                        .frame(width: geo.size.width * min(Double(xpGained) / Double(max(xpNeeded, 1)), 1.0), height: 8)
                 }
-                .frame(maxWidth: .infinity)
+            }
+            .frame(height: 8)
+
+            HStack {
+                Text("\(min(xpGained, xpNeeded))/\(xpNeeded) XP")
+                    .font(AppTheme.funFont(.caption2, weight: .heavy))
+                    .foregroundStyle(AppTheme.xpPurple)
+                Spacer()
             }
         }
     }
 
     @ViewBuilder
-    private var freeOpenSection: some View {
-        if chestVM.opensUsedToday == 0 {
+    private var dynamicOpenButton: some View {
+        switch currentMode {
+        case .free:
             Button {
                 chestBounce.toggle()
-                chestVM.openChest(gameVM: gameVM)
+                openAndShowPopup()
             } label: {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     Image(systemName: "sparkles")
                         .font(.subheadline)
                     Text("Open Free Chest")
@@ -174,26 +199,27 @@ struct DailyMysteryChestSection: View {
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .padding(.vertical, 13)
                 .background(
                     LinearGradient(colors: [AppTheme.warningYellow, AppTheme.accentOrange], startPoint: .leading, endPoint: .trailing)
                 )
                 .clipShape(.rect(cornerRadius: 14))
+                .shadow(color: AppTheme.warningYellow.opacity(0.3), radius: 8, y: 3)
             }
             .buttonStyle(.plain)
-            .sensoryFeedback(.impact(weight: .medium), trigger: chestVM.showChestReveal)
-        } else if chestVM.opensUsedToday < 4 {
+
+        case .ad:
             Button {
                 isLoadingAd = true
                 AdService.shared.showRewardedAd { rewarded in
                     isLoadingAd = false
                     if rewarded {
                         chestBounce.toggle()
-                        chestVM.openChest(gameVM: gameVM)
+                        openAndShowPopup()
                     }
                 }
             } label: {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     if isLoadingAd {
                         ProgressView().tint(.white)
                     } else {
@@ -205,124 +231,97 @@ struct DailyMysteryChestSection: View {
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .padding(.vertical, 13)
                 .background(
                     LinearGradient(colors: [AppTheme.primaryBlue, AppTheme.funTeal], startPoint: .leading, endPoint: .trailing)
                 )
                 .clipShape(.rect(cornerRadius: 14))
+                .shadow(color: AppTheme.primaryBlue.opacity(0.3), radius: 8, y: 3)
             }
             .buttonStyle(.plain)
             .disabled(isLoadingAd)
-        } else {
-            HStack(spacing: 6) {
-                Image(systemName: "clock.fill")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("All chests opened today! Come back tomorrow.")
-                    .font(AppTheme.funFont(.caption, weight: .bold))
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity)
-        }
-    }
 
-    @ViewBuilder
-    private var proOpenSection: some View {
-        if chestVM.opensUsedToday == 0 {
+        case .xpLocked:
+            HStack(spacing: 8) {
+                Image(systemName: "lock.fill")
+                    .font(.subheadline)
+                Text("Earn XP to Unlock")
+                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+            }
+            .foregroundStyle(.white.opacity(0.6))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 13)
+            .background(Color(.quaternarySystemFill))
+            .clipShape(.rect(cornerRadius: 14))
+
+        case .xpReady:
             Button {
                 chestBounce.toggle()
-                chestVM.openChest(gameVM: gameVM)
+                openAndShowPopup()
             } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "sparkles")
+                HStack(spacing: 8) {
+                    Image(systemName: "crown.fill")
                         .font(.subheadline)
-                    Text("Open Free Chest")
+                    Text("Open Pro Chest")
                         .font(AppTheme.funFont(.subheadline, weight: .heavy))
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .padding(.vertical, 13)
                 .background(
-                    LinearGradient(colors: [AppTheme.warningYellow, AppTheme.accentOrange], startPoint: .leading, endPoint: .trailing)
+                    LinearGradient(colors: [AppTheme.xpPurple, AppTheme.funPink], startPoint: .leading, endPoint: .trailing)
                 )
                 .clipShape(.rect(cornerRadius: 14))
+                .shadow(color: AppTheme.xpPurple.opacity(0.3), radius: 8, y: 3)
             }
             .buttonStyle(.plain)
-            .sensoryFeedback(.impact(weight: .medium), trigger: chestVM.showChestReveal)
-        } else if chestVM.opensUsedToday < 4 {
-            let xpGained = gameVM.totalXP - chestVM.xpAtSessionStart
-            let xpNeeded = chestVM.xpNeededForNextOpen(opensUsed: chestVM.opensUsedToday)
-            let hasEnoughXP = xpGained >= xpNeeded
 
-            VStack(spacing: 10) {
-                HStack(spacing: 6) {
-                    Image(systemName: "bolt.fill")
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.xpPurple)
-                    Text("Earn \(xpNeeded) XP today to unlock next chest")
-                        .font(AppTheme.funFont(.caption, weight: .bold))
-                        .foregroundStyle(.secondary)
-                }
-
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color(.tertiarySystemFill))
-                            .frame(height: 8)
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(
-                                LinearGradient(colors: [AppTheme.xpPurple.opacity(0.7), AppTheme.xpPurple], startPoint: .leading, endPoint: .trailing)
-                            )
-                            .frame(width: geo.size.width * min(Double(xpGained) / Double(max(xpNeeded, 1)), 1.0), height: 8)
-                    }
-                }
-                .frame(height: 8)
-
-                HStack {
-                    Text("\(min(xpGained, xpNeeded))/\(xpNeeded) XP")
-                        .font(AppTheme.funFont(.caption2, weight: .heavy))
-                        .foregroundStyle(AppTheme.xpPurple)
-                    Spacer()
-                    if hasEnoughXP {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.caption)
-                            .foregroundStyle(AppTheme.successGreen)
-                    }
-                }
-
-                if hasEnoughXP {
-                    Button {
-                        chestBounce.toggle()
-                        chestVM.openChest(gameVM: gameVM)
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "crown.fill")
-                                .font(.subheadline)
-                            Text("Open Pro Chest")
-                                .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                        }
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(
-                            LinearGradient(colors: [AppTheme.xpPurple, AppTheme.funPink], startPoint: .leading, endPoint: .trailing)
-                        )
-                        .clipShape(.rect(cornerRadius: 14))
-                    }
-                    .buttonStyle(.plain)
-                    .sensoryFeedback(.impact(weight: .medium), trigger: chestVM.showChestReveal)
-                }
-            }
-        } else {
+        case .done:
             HStack(spacing: 6) {
-                Image(systemName: "clock.fill")
+                Image(systemName: "checkmark.circle.fill")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppTheme.successGreen)
                 Text("All chests opened today! Come back tomorrow.")
                     .font(AppTheme.funFont(.caption, weight: .bold))
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+        }
+    }
+
+    private func openAndShowPopup() {
+        let reward = MysteryChestReward.roll()
+        let applied = gameVM.applyMysteryChestReward(reward)
+        pendingReward = MysteryChestReward(type: reward.type, amount: reward.amount, wasApplied: applied)
+        pendingApplied = applied
+        chestVM.opensUsedToday += 1
+        chestVM.saveStatePublic()
+        gameVM.syncToCloud()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            showChestPopup = true
+        }
+    }
+}
+
+struct ClearBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        let view = InnerView()
+        DispatchQueue.main.async {
+            if let window = view.window {
+                window.rootViewController?.view.backgroundColor = .clear
+            }
+        }
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+
+    private class InnerView: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            superview?.superview?.backgroundColor = .clear
         }
     }
 }

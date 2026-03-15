@@ -88,6 +88,10 @@ class DailyChestViewModel {
         }
     }
 
+    func saveStatePublic() {
+        saveState()
+    }
+
     private func saveState() {
         UserDefaults.standard.set(opensUsedToday, forKey: "daily_chest_opens_used")
         UserDefaults.standard.set(lastOpenDate, forKey: "daily_chest_last_date")
