@@ -1166,6 +1166,45 @@ class GameViewModel {
         }
     }
 
+    func applyMysteryChestReward(_ reward: MysteryChestReward) -> Bool {
+        switch reward.type {
+        case .coins:
+            coins += reward.amount
+            save()
+            return true
+        case .maxHearts:
+            if hearts >= maxHearts { return false }
+            hearts = maxHearts
+            save()
+            return true
+        case .doubleXP:
+            if doubleXPNextAttempt { return false }
+            doubleXPNextAttempt = true
+            save()
+            return true
+        case .powerUpFiftyFifty:
+            if powerUpInventory.isAtCapacity(for: .fiftyFifty, isPro: isProUser) { return false }
+            _ = powerUpInventory.add(.fiftyFifty, isPro: isProUser)
+            save()
+            return true
+        case .powerUpShieldHeart:
+            if powerUpInventory.isAtCapacity(for: .shieldHeart, isPro: isProUser) { return false }
+            _ = powerUpInventory.add(.shieldHeart, isPro: isProUser)
+            save()
+            return true
+        case .powerUpPharmaVision:
+            if powerUpInventory.isAtCapacity(for: .pharmaVision, isPro: isProUser) { return false }
+            _ = powerUpInventory.add(.pharmaVision, isPro: isProUser)
+            save()
+            return true
+        case .streakSave:
+            if streakSaves >= 3 { return false }
+            streakSaves += 1
+            save()
+            return true
+        }
+    }
+
     func loadFromProfile(_ profile: UserProfile) {
         currentUserId = profile.id
 

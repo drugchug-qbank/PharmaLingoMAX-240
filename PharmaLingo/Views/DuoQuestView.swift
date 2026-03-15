@@ -8,6 +8,11 @@ struct DuoQuestView: View {
     @State private var claimingQuestId: String?
     @State private var showRewardBanner: Bool = false
     @State private var rewardAmount: Int = 0
+    @State private var showChestReveal: Bool = false
+    @State private var chestReward: MysteryChestReward?
+    @State private var chestRewardApplied: Bool = false
+    @State private var chestClaimed: Bool = false
+    @State private var chestPulsePhase: Bool = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -155,6 +160,10 @@ struct DuoQuestView: View {
                 .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.3))
             }
 
+            if !duoService.weeklyQuests.isEmpty {
+                mysteryChestSection
+            }
+
             if showRewardBanner {
                 HStack(spacing: 8) {
                     Image(systemName: "party.popper.fill")
@@ -171,6 +180,22 @@ struct DuoQuestView: View {
                 .clipShape(.rect(cornerRadius: 14))
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
+        }
+        .overlay {
+            if showChestReveal, let reward = chestReward {
+                MysteryChestRevealView(
+                    reward: reward,
+                    wasApplied: chestRewardApplied,
+                    onDismiss: {
+                        withAnimation(.spring(duration: 0.3)) {
+                            showChestReveal = false
+                        }
+                    }
+                )
+            }
+        }
+        .onAppear {
+            loadChestClaimedState()
         }
         .alert("Dissolve Duo?", isPresented: $showDissolvAlert) {
             Button("Cancel", role: .cancel) {}
@@ -471,6 +496,144 @@ struct DuoQuestView: View {
         case "primaryBlue": return AppTheme.primaryBlue
         default: return AppTheme.primaryBlue
         }
+    }
+
+    private var allQuestsComplete: Bool {
+        let quests = duoService.weeklyQuests
+        guard !quests.isEmpty else { return false }
+        return quests.allSatisfy(\.isComplete)
+    }
+
+    private var allQuestsClaimed: Bool {
+        let quests = duoService.weeklyQuests
+        guard !quests.isEmpty else { return false }
+        return quests.allSatisfy { $0.isComplete && $0.rewardClaimed }
+    }
+
+    @ViewBuilder
+    private var mysteryChestSection: some View {
+        let quests = duoService.weeklyQuests
+        let completedCount = quests.filter(\.isComplete).count
+        let totalCount = quests.count
+        let allDone = allQuestsComplete
+        let canOpen = allQuestsClaimed && !chestClaimed
+
+        VStack(spacing: 14) {
+            HStack(spacing: 8) {
+                Image(systemName: "shippingbox.fill")
+                    .font(.title3)
+                    .foregroundStyle(
+                        LinearGradient(colors: [AppTheme.warningYellow, AppTheme.accentOrange], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    )
+                Text("Mystery Chest")
+                    .font(AppTheme.funFont(.headline, weight: .heavy))
+                Spacer()
+                if chestClaimed {
+                    Image(systemName: "checkmark.seal.fill")
+                        .font(.title3)
+                        .foregroundStyle(AppTheme.successGreen)
+                }
+            }
+
+            HStack(spacing: 12) {
+                ForEach(0..<totalCount, id: \.self) { index in
+                    let done = index < completedCount
+                    Circle()
+                        .fill(done ? AppTheme.warningYellow : Color(.tertiarySystemFill))
+                        .frame(width: 14, height: 14)
+                        .overlay {
+                            if done {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 8, weight: .heavy))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+
+                    if index < totalCount - 1 {
+                        Rectangle()
+                            .fill(index < completedCount - 1 ? AppTheme.warningYellow : Color(.tertiarySystemFill))
+                            .frame(height: 3)
+                    }
+                }
+
+                Image(systemName: "shippingbox.fill")
+                    .font(.title2)
+                    .foregroundStyle(
+                        allDone
+                            ? LinearGradient(colors: [AppTheme.warningYellow, AppTheme.accentOrange], startPoint: .top, endPoint: .bottom)
+                            : LinearGradient(colors: [Color(.tertiaryLabel), Color(.quaternaryLabel)], startPoint: .top, endPoint: .bottom)
+                    )
+                    .scaleEffect(canOpen && chestPulsePhase ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: chestPulsePhase)
+                    .onAppear {
+                        if canOpen { chestPulsePhase = true }
+                    }
+                    .onChange(of: canOpen) { _, newValue in
+                        chestPulsePhase = newValue
+                    }
+            }
+
+            if chestClaimed {
+                Text("Chest opened this week!")
+                    .font(AppTheme.funFont(.caption, weight: .bold))
+                    .foregroundStyle(AppTheme.successGreen)
+            } else if canOpen {
+                Button {
+                    openMysteryChest()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "sparkles")
+                            .font(.subheadline)
+                        Text("Open Mystery Chest")
+                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                        LinearGradient(colors: [AppTheme.warningYellow, AppTheme.accentOrange], startPoint: .leading, endPoint: .trailing)
+                    )
+                    .clipShape(.rect(cornerRadius: 14))
+                }
+                .buttonStyle(.plain)
+                .sensoryFeedback(.impact(weight: .medium), trigger: showChestReveal)
+            } else {
+                Text("Complete & claim all 3 quests to unlock")
+                    .font(AppTheme.funFont(.caption, weight: .bold))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(16)
+        .cardStyle(borderColor: (canOpen ? AppTheme.warningYellow : Color(.tertiarySystemFill)).opacity(canOpen ? 0.6 : 0.3))
+    }
+
+    private func openMysteryChest() {
+        let reward = MysteryChestReward.roll()
+        let applied = gameVM.applyMysteryChestReward(reward)
+        chestReward = MysteryChestReward(type: reward.type, amount: reward.amount, wasApplied: applied)
+        chestRewardApplied = applied
+        withAnimation(.spring(duration: 0.3)) {
+            showChestReveal = true
+        }
+        chestClaimed = true
+        saveChestClaimedState()
+        gameVM.syncToCloud()
+    }
+
+    private var chestClaimedKey: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-'W'ww"
+        let weekKey = formatter.string(from: Date())
+        let partnershipId = duoService.currentPartnership?.partnershipId ?? "none"
+        return "duo_chest_claimed_\(partnershipId)_\(weekKey)"
+    }
+
+    private func loadChestClaimedState() {
+        chestClaimed = UserDefaults.standard.bool(forKey: chestClaimedKey)
+    }
+
+    private func saveChestClaimedState() {
+        UserDefaults.standard.set(true, forKey: chestClaimedKey)
     }
 
     private var weekTimeRemaining: String {
