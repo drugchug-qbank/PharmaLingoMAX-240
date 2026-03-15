@@ -389,6 +389,8 @@ class GameViewModel {
 
         save()
 
+        reportDuoProgress(questionsAnswered: totalCount, xpEarned: finalXP, perfectQuiz: score >= 1.0)
+
         if hasLoadedFromCloud {
             Task {
                 await SupabaseService.shared.syncGameState(from: self)
@@ -442,6 +444,8 @@ class GameViewModel {
         if score >= 1.0 { updatePerfectQuests() }
 
         save()
+
+        reportDuoProgress(questionsAnswered: totalCount, xpEarned: finalXP, perfectQuiz: score >= 1.0, lessonCompleted: score >= 0.8)
 
         let idempotencyKey = "\(subsectionId)_\(Int(Date().timeIntervalSince1970 * 1000))"
         Task {
@@ -1137,6 +1141,26 @@ class GameViewModel {
     }
 
     private var professionDonationsFromProfile: Int = 0
+
+    func reportDuoProgress(questionsAnswered: Int = 0, xpEarned: Int = 0, perfectQuiz: Bool = false, lessonCompleted: Bool = false) {
+        let duo = DuoQuestService.shared
+        guard duo.currentPartnership != nil else { return }
+        Task {
+            if questionsAnswered > 0 {
+                await duo.reportDuoProgress(questType: "questions", amount: questionsAnswered)
+            }
+            if xpEarned > 0 {
+                await duo.reportDuoProgress(questType: "xp_earned", amount: xpEarned)
+            }
+            if perfectQuiz {
+                await duo.reportDuoProgress(questType: "perfect_quizzes", amount: 1)
+            }
+            if lessonCompleted {
+                await duo.reportDuoProgress(questType: "lessons", amount: 1)
+            }
+            await duo.reportDuoProgress(questType: "streak_days", amount: 1)
+        }
+    }
 
     func loadFromProfile(_ profile: UserProfile) {
         currentUserId = profile.id

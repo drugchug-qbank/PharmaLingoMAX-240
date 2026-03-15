@@ -12,6 +12,16 @@ struct FriendProfileView: View {
     @State private var friendshipStatus: FriendshipStatus = .friend
     @State private var isSendingRequest: Bool = false
     @State private var friendRequestError: String?
+    @State private var isSendingDuoInvite: Bool = false
+    @State private var duoInviteStatus: DuoInviteStatus = .none
+    @State private var duoService = DuoQuestService.shared
+
+    private enum DuoInviteStatus {
+        case none
+        case sent
+        case alreadyPartnered
+        case error(String)
+    }
 
     var body: some View {
         ScrollView {
@@ -112,6 +122,13 @@ struct FriendProfileView: View {
             friendProfile = await profileTask
             friendshipStatus = await statusTask
             isLoading = false
+
+            if duoService.currentPartnership == nil {
+                await duoService.loadDuoData()
+            }
+            if let partner = duoService.currentPartnership, partner.partnerId == friendId {
+                duoInviteStatus = .alreadyPartnered
+            }
         }
         .alert("Remove Friend", isPresented: $showRemoveAlert) {
             Button("Cancel", role: .cancel) {}
@@ -130,21 +147,25 @@ struct FriendProfileView: View {
     private var friendActionButton: some View {
         switch friendshipStatus {
         case .friend:
-            Button {
-                showRemoveAlert = true
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "person.badge.minus")
-                    Text("Remove Friend")
+            VStack(spacing: 10) {
+                duoInviteButton
+
+                Button {
+                    showRemoveAlert = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "person.badge.minus")
+                        Text("Remove Friend")
+                    }
+                    .font(AppTheme.funFont(.subheadline, weight: .medium))
+                    .foregroundStyle(AppTheme.heartRed)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(AppTheme.heartRed.opacity(0.08))
+                    .clipShape(.rect(cornerRadius: 14))
                 }
-                .font(AppTheme.funFont(.subheadline, weight: .medium))
-                .foregroundStyle(AppTheme.heartRed)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(AppTheme.heartRed.opacity(0.08))
-                .clipShape(.rect(cornerRadius: 14))
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         case .notFriend:
             VStack(spacing: 8) {
                 Button {
@@ -209,6 +230,85 @@ struct FriendProfileView: View {
             .clipShape(.rect(cornerRadius: 14))
         case .isSelf:
             EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private var duoInviteButton: some View {
+        switch duoInviteStatus {
+        case .none:
+            if duoService.currentPartnership == nil {
+                Button {
+                    isSendingDuoInvite = true
+                    Task {
+                        let success = await duoService.sendDuoInvite(toFriendId: friendId)
+                        if success {
+                            duoInviteStatus = .sent
+                        } else {
+                            duoInviteStatus = .error("Could not send invite. They may already have a partner.")
+                        }
+                        isSendingDuoInvite = false
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        if isSendingDuoInvite {
+                            ProgressView().tint(.white)
+                        } else {
+                            Image(systemName: "person.2.circle.fill")
+                            Text("Start Duo Quest")
+                        }
+                    }
+                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        LinearGradient(colors: [AppTheme.funTeal, AppTheme.primaryBlue], startPoint: .leading, endPoint: .trailing)
+                    )
+                    .clipShape(.rect(cornerRadius: 14))
+                }
+                .buttonStyle(.plain)
+                .disabled(isSendingDuoInvite)
+            } else {
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(AppTheme.funTeal)
+                    Text("You already have a Duo partner")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 10)
+            }
+        case .sent:
+            HStack(spacing: 6) {
+                Image(systemName: "paperplane.fill")
+                    .foregroundStyle(AppTheme.funTeal)
+                Text("Duo Invite Sent!")
+                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    .foregroundStyle(AppTheme.funTeal)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(AppTheme.funTeal.opacity(0.08))
+            .clipShape(.rect(cornerRadius: 14))
+        case .alreadyPartnered:
+            HStack(spacing: 6) {
+                Image(systemName: "person.2.fill")
+                    .foregroundStyle(AppTheme.funTeal)
+                Text("Already Duo Partners!")
+                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    .foregroundStyle(AppTheme.funTeal)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(AppTheme.funTeal.opacity(0.08))
+            .clipShape(.rect(cornerRadius: 14))
+        case .error(let msg):
+            VStack(spacing: 6) {
+                Text(msg)
+                    .font(AppTheme.funFont(.caption, weight: .bold))
+                    .foregroundStyle(AppTheme.heartRed)
+            }
         }
     }
 
