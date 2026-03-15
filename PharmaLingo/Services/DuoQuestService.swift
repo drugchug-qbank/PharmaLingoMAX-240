@@ -23,6 +23,7 @@ class DuoQuestService {
         await fetchPartnership()
         if currentPartnership != nil {
             await fetchWeeklyQuests()
+            await checkMysteryChestClaimed()
         }
         await checkPendingInvites()
     }
@@ -177,6 +178,56 @@ class DuoQuestService {
         } catch {
             print("Failed to claim duo reward: \(error)")
             return nil
+        }
+    }
+
+    var chestClaimedThisWeek: Bool = false
+
+    func checkMysteryChestClaimed() async {
+        guard let partnership = currentPartnership else {
+            chestClaimedThisWeek = false
+            return
+        }
+        do {
+            let resultData = try await supabase.client.rpc("check_duo_chest_claimed", params: [
+                "p_partnership_id": partnership.partnershipId
+            ]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            chestClaimedThisWeek = json?["claimed"] as? Bool ?? false
+        } catch {
+            print("Failed to check chest claimed: \(error)")
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-'W'ww"
+            let weekKey = formatter.string(from: Date())
+            let key = "duo_chest_claimed_\(partnership.partnershipId)_\(weekKey)"
+            chestClaimedThisWeek = UserDefaults.standard.bool(forKey: key)
+        }
+    }
+
+    func claimMysteryChest(rewardType: String, rewardAmount: Int, wasApplied: Bool) async -> Bool {
+        guard let partnership = currentPartnership else { return false }
+        do {
+            let resultData = try await supabase.client.rpc("claim_duo_mystery_chest", params: [
+                "p_partnership_id": AnyEncodableValue.string(partnership.partnershipId),
+                "p_reward_type": AnyEncodableValue.string(rewardType),
+                "p_reward_amount": AnyEncodableValue.int(rewardAmount),
+                "p_was_applied": AnyEncodableValue.bool(wasApplied),
+            ]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let success = json?["success"] as? Bool ?? false
+            if success {
+                chestClaimedThisWeek = true
+            }
+            return success
+        } catch {
+            print("Failed to claim mystery chest via RPC: \(error)")
+            chestClaimedThisWeek = true
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-'W'ww"
+            let weekKey = formatter.string(from: Date())
+            let key = "duo_chest_claimed_\(partnership.partnershipId)_\(weekKey)"
+            UserDefaults.standard.set(true, forKey: key)
+            return true
         }
     }
 

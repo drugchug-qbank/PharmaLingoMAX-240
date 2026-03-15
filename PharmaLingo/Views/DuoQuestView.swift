@@ -11,7 +11,6 @@ struct DuoQuestView: View {
     @State private var showChestReveal: Bool = false
     @State private var chestReward: MysteryChestReward?
     @State private var chestRewardApplied: Bool = false
-    @State private var chestClaimed: Bool = false
     @State private var chestPulsePhase: Bool = false
 
     var body: some View {
@@ -195,7 +194,7 @@ struct DuoQuestView: View {
             }
         }
         .onAppear {
-            loadChestClaimedState()
+            Task { await duoService.checkMysteryChestClaimed() }
         }
         .alert("Dissolve Duo?", isPresented: $showDissolvAlert) {
             Button("Cancel", role: .cancel) {}
@@ -516,7 +515,7 @@ struct DuoQuestView: View {
         let completedCount = quests.filter(\.isComplete).count
         let totalCount = quests.count
         let allDone = allQuestsComplete
-        let canOpen = allQuestsClaimed && !chestClaimed
+        let canOpen = allQuestsClaimed && !duoService.chestClaimedThisWeek
 
         VStack(spacing: 14) {
             HStack(spacing: 8) {
@@ -528,7 +527,7 @@ struct DuoQuestView: View {
                 Text("Mystery Chest")
                     .font(AppTheme.funFont(.headline, weight: .heavy))
                 Spacer()
-                if chestClaimed {
+                if duoService.chestClaimedThisWeek {
                     Image(systemName: "checkmark.seal.fill")
                         .font(.title3)
                         .foregroundStyle(AppTheme.successGreen)
@@ -573,7 +572,7 @@ struct DuoQuestView: View {
                     }
             }
 
-            if chestClaimed {
+            if duoService.chestClaimedThisWeek {
                 Text("Chest opened this week!")
                     .font(AppTheme.funFont(.caption, weight: .bold))
                     .foregroundStyle(AppTheme.successGreen)
@@ -615,25 +614,14 @@ struct DuoQuestView: View {
         withAnimation(.spring(duration: 0.3)) {
             showChestReveal = true
         }
-        chestClaimed = true
-        saveChestClaimedState()
+        Task {
+            _ = await duoService.claimMysteryChest(
+                rewardType: reward.type.rawValue,
+                rewardAmount: reward.amount,
+                wasApplied: applied
+            )
+        }
         gameVM.syncToCloud()
-    }
-
-    private var chestClaimedKey: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-'W'ww"
-        let weekKey = formatter.string(from: Date())
-        let partnershipId = duoService.currentPartnership?.partnershipId ?? "none"
-        return "duo_chest_claimed_\(partnershipId)_\(weekKey)"
-    }
-
-    private func loadChestClaimedState() {
-        chestClaimed = UserDefaults.standard.bool(forKey: chestClaimedKey)
-    }
-
-    private func saveChestClaimedState() {
-        UserDefaults.standard.set(true, forKey: chestClaimedKey)
     }
 
     private var weekTimeRemaining: String {
