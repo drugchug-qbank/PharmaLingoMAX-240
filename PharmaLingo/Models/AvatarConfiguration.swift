@@ -28,11 +28,11 @@ nonisolated struct AvatarConfiguration: Hashable, Codable, Sendable {
         AccessoryType(rawValue: accessory) ?? .none
     }
 
-    var bodyColor: Color {
+    @MainActor var bodyColor: Color {
         bodyHex.isEmpty ? Color(hex: animalType.defaultColorHex) : Color(hex: bodyHex)
     }
 
-    var bgColor: Color {
+    @MainActor var bgColor: Color {
         bgHex.isEmpty ? Color(hex: "E3F2FD") : Color(hex: bgHex)
     }
 

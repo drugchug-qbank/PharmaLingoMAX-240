@@ -1,4 +1,5 @@
 import SwiftUI
+import Auth
 
 struct DuoQuestView: View {
     let gameVM: GameViewModel
