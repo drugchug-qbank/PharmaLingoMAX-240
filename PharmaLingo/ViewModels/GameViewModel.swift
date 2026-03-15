@@ -351,6 +351,51 @@ class GameViewModel {
     var streakExtended: Bool = false
     var previousStreak: Int = 0
 
+    func completePracticeSession(score: Double, correctCount: Int, totalCount: Int, xpEarned: Int = 0, coinsEarned: Int = 0) {
+        questionsAnswered += totalCount
+        questionsCorrect += correctCount
+
+        var finalXP: Int
+        if xpEarned > 0 {
+            finalXP = Int(Double(xpEarned) * xpMultiplier())
+        } else {
+            var xp = correctCount * 10
+            if score == 1.0 { xp += 50 }
+            else if score >= 0.9 { xp += 25 }
+            finalXP = Int(Double(xp) * xpMultiplier())
+        }
+
+        var finalCoins: Int
+        if coinsEarned > 0 {
+            finalCoins = Int(Double(coinsEarned) * coinMultiplier())
+        } else {
+            var coinReward = 5
+            if score == 1.0 { coinReward += 20 }
+            else if score >= 0.9 { coinReward += 10 }
+            finalCoins = Int(Double(coinReward) * coinMultiplier())
+        }
+
+        totalXP += finalXP
+        weeklyXP += finalXP
+        monthlyXP += finalXP
+        coins += finalCoins
+        consumeDoubleXPIfActive()
+
+        updateStreak()
+
+        updateAnswerQuests(totalCount)
+        updateCorrectQuests(correctCount)
+        if score >= 1.0 { updatePerfectQuests() }
+
+        save()
+
+        if hasLoadedFromCloud {
+            Task {
+                await SupabaseService.shared.syncGameState(from: self)
+            }
+        }
+    }
+
     func completeSubsection(_ subsectionId: String, score: Double, correctCount: Int, totalCount: Int, xpEarned: Int = 0, coinsEarned: Int = 0) {
         questionsAnswered += totalCount
         questionsCorrect += correctCount

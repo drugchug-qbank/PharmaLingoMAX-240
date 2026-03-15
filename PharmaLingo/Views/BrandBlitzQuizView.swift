@@ -201,8 +201,7 @@ struct BrandBlitzQuizView: View {
 
                     if quizVM.currentIndex >= quizVM.questions.count - 1 {
                         quizVM.finalizeQuiz()
-                        gameVM.completeSubsection(
-                            quizVM.subsectionId,
+                        gameVM.completePracticeSession(
                             score: quizVM.score,
                             correctCount: quizVM.correctCount,
                             totalCount: quizVM.totalQuestions,
@@ -230,6 +229,9 @@ struct BrandBlitzQuizView: View {
                 Button {
                     withAnimation(.spring(duration: 0.3)) {
                         quizVM.submitAnswer()
+                    }
+                    if let q = quizVM.currentQuestion {
+                        gameVM.recordQuestionAttempt(question: q, isCorrect: quizVM.isCorrect)
                     }
                     if quizVM.isCorrect {
                         bounceCorrect.toggle()
