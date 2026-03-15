@@ -242,6 +242,8 @@ struct ProfileView: View {
                         .padding(16)
                         .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
 
+                        duoPartnerSection
+
                         profileFriendsSection
 
                         NavigationLink {
@@ -350,32 +352,13 @@ struct ProfileView: View {
     }
 
     @ViewBuilder
-    private var profileFriendsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("YOUR FRIENDS")
+    private var duoPartnerSection: some View {
+        if let partner = duoService.currentPartnership {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("DUO PARTNER")
                     .font(AppTheme.funFont(.caption, weight: .heavy))
                     .foregroundStyle(AppTheme.funTeal)
-                Spacer()
-                Button {
-                    showAddFriend = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "person.badge.plus")
-                            .font(.caption)
-                        Text("Add")
-                            .font(AppTheme.funFont(.caption2, weight: .heavy))
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(AppTheme.funTeal)
-                    .clipShape(Capsule())
-                }
-                .buttonStyle(.plain)
-            }
 
-            if let partner = duoService.currentPartnership {
                 Button {
                     showDuoDetail = true
                 } label: {
@@ -390,17 +373,8 @@ struct ProfileView: View {
                             size: 44
                         )
                         VStack(alignment: .leading, spacing: 3) {
-                            HStack(spacing: 6) {
-                                Text("Duo Partner")
-                                    .font(AppTheme.funFont(.caption2, weight: .heavy))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 7)
-                                    .padding(.vertical, 2)
-                                    .background(AppTheme.funTeal)
-                                    .clipShape(Capsule())
-                                Text(partner.partnerName)
-                                    .font(AppTheme.funFont(.subheadline, weight: .bold))
-                            }
+                            Text(partner.partnerName)
+                                .font(AppTheme.funFont(.subheadline, weight: .bold))
                             HStack(spacing: 10) {
                                 HStack(spacing: 3) {
                                     Image(systemName: "link.circle.fill")
@@ -427,14 +401,15 @@ struct ProfileView: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .padding(12)
-                .background(AppTheme.funTeal.opacity(0.06))
-                .clipShape(.rect(cornerRadius: 12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(AppTheme.funTeal.opacity(0.25), lineWidth: 1.5)
-                )
-            } else if duoService.hasPendingDuoInvite, let sender = duoService.pendingInviteFrom {
+            }
+            .padding(16)
+            .cardStyle(borderColor: AppTheme.funTeal.opacity(0.5))
+        } else if duoService.hasPendingDuoInvite, let sender = duoService.pendingInviteFrom {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("DUO PARTNER")
+                    .font(AppTheme.funFont(.caption, weight: .heavy))
+                    .foregroundStyle(AppTheme.accentOrange)
+
                 HStack(spacing: 10) {
                     AvatarDisplayView(
                         animal: sender.avatarAnimal,
@@ -473,13 +448,36 @@ struct ProfileView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .padding(10)
-                .background(AppTheme.accentOrange.opacity(0.06))
-                .clipShape(.rect(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(AppTheme.accentOrange.opacity(0.25), lineWidth: 1.5)
-                )
+            }
+            .padding(16)
+            .cardStyle(borderColor: AppTheme.accentOrange.opacity(0.5))
+        }
+    }
+
+    @ViewBuilder
+    private var profileFriendsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("YOUR FRIENDS")
+                    .font(AppTheme.funFont(.caption, weight: .heavy))
+                    .foregroundStyle(AppTheme.funTeal)
+                Spacer()
+                Button {
+                    showAddFriend = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "person.badge.plus")
+                            .font(.caption)
+                        Text("Add")
+                            .font(AppTheme.funFont(.caption2, weight: .heavy))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(AppTheme.funTeal)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
             }
 
             if !pendingRequests.isEmpty {
