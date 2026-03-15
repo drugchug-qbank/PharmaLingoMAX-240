@@ -1,6 +1,6 @@
 import Foundation
 
-nonisolated enum ConceptBucket: String, Sendable, CaseIterable {
+nonisolated enum HighYieldBucket: String, Sendable, CaseIterable {
     case classPattern
     case indication
     case sideEffect
@@ -31,6 +31,7 @@ nonisolated enum ConceptBucket: String, Sendable, CaseIterable {
     }
 }
 
+
 struct HighYieldQuestionFactory {
     static let shared = HighYieldQuestionFactory()
     private let dataService = DrugDataService.shared
@@ -47,7 +48,7 @@ struct HighYieldQuestionFactory {
             classPattern + indication + sideEffect + blackBoxContraindication + pearlDifferentiator + dosing
         }
 
-        func forBucket(_ bucket: ConceptBucket) -> [Question] {
+        func forBucket(_ bucket: HighYieldBucket) -> [Question] {
             switch bucket {
             case .classPattern: classPattern
             case .indication: indication

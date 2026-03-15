@@ -29,7 +29,7 @@ struct QuizEngine {
         let reviewCount = reviewSubIds.isEmpty ? 0 : min(2, totalCount - 6)
         let focusCount = totalCount - reviewCount
 
-        var focusQuestions = selectTeachingArcQuestions(
+        let focusQuestions = selectTeachingArcQuestions(
             subsectionId: subsectionId,
             count: focusCount,
             masteryMap: masteryMap

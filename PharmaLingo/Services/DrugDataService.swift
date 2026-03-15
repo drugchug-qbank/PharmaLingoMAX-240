@@ -86,7 +86,7 @@ struct DrugDataService {
     }
 
     func questionsForQuiz(subsectionId: String, completedSubsections: Set<String>, count: Int = 12) -> [Question] {
-        var pool = allQuestions(for: subsectionId)
+        let pool = allQuestions(for: subsectionId)
         if pool.isEmpty { return [] }
         let teachingQuestions = pool.filter { $0.difficulty == .easy }.shuffled()
         let teachingCount = min(teachingQuestions.count, max(3, count / 3))
