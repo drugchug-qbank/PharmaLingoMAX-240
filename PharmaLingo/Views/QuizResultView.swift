@@ -11,9 +11,11 @@ struct QuizResultView: View {
     @State private var showStreak: Bool = false
     @State private var showConfetti: Bool = false
     @State private var showBonusPage: Bool = false
+    @State private var showMedal: Bool = false
 
     private var passed: Bool { quizVM.score >= 0.8 }
     private var perfect: Bool { quizVM.score == 1.0 }
+    private var isBoss: Bool { quizVM.isMasteryQuiz }
 
     var body: some View {
         ZStack {
@@ -31,24 +33,32 @@ struct QuizResultView: View {
 
                         ZStack {
                             Circle()
-                                .fill(passed ? AppTheme.successGreen.opacity(0.1) : AppTheme.heartRed.opacity(0.1))
+                                .fill(bossRingColor.opacity(0.1))
                                 .frame(width: 140, height: 140)
 
                             ProgressRing(
                                 progress: animateScore ? quizVM.score : 0,
                                 size: 130,
-                                lineWidth: 10,
-                                color: passed ? AppTheme.successGreen : AppTheme.heartRed
+                                lineWidth: isBoss ? 12 : 10,
+                                color: bossRingColor
                             )
                             .animation(.spring(duration: 1.0).delay(0.3), value: animateScore)
 
                             VStack(spacing: 2) {
                                 Text("\(Int(quizVM.score * 100))%")
                                     .font(.system(.title, design: .rounded, weight: .heavy))
-                                    .foregroundStyle(passed ? AppTheme.successGreen : AppTheme.heartRed)
+                                    .foregroundStyle(bossRingColor)
                                 Text("\(quizVM.correctCount)/\(quizVM.totalQuestions)")
                                     .font(AppTheme.funFont(.caption, weight: .bold))
                                     .foregroundStyle(.secondary)
+                            }
+
+                            if isBoss && passed && showMedal {
+                                Image(systemName: bossMedalIcon)
+                                    .font(.system(size: 28, weight: .bold))
+                                    .foregroundStyle(bossMedalColor)
+                                    .offset(x: 48, y: -48)
+                                    .transition(.scale.combined(with: .opacity))
                             }
                         }
 
@@ -188,10 +198,22 @@ struct QuizResultView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 showConfetti = true
             }
+            if isBoss && passed {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.5)) { showMedal = true }
+                }
+            }
         }
     }
 
     private var resultTitle: String {
+        if isBoss {
+            if perfect { return "Flawless Victory!" }
+            if quizVM.score >= 0.9 { return "Boss Cleared!" }
+            if passed { return "Boss Defeated!" }
+            if quizVM.score >= 0.6 { return "Almost Had It!" }
+            return "Boss Wins... This Time"
+        }
         if perfect { return "Perfect Score!" }
         if quizVM.score >= 0.9 { return "Excellent!" }
         if passed { return "Great Job!" }
@@ -200,10 +222,35 @@ struct QuizResultView: View {
     }
 
     private var resultSubtitle: String {
+        if isBoss {
+            if passed {
+                return "You've conquered this mastery challenge."
+            }
+            return "Score 80% or higher to defeat the boss."
+        }
         if passed {
             return "You've earned a mastery star for this section."
         }
         return "Score 80% or higher to earn a mastery star."
+    }
+
+    private var bossRingColor: Color {
+        if isBoss {
+            return passed ? AppTheme.accentOrange : AppTheme.heartRed
+        }
+        return passed ? AppTheme.successGreen : AppTheme.heartRed
+    }
+
+    private var bossMedalIcon: String {
+        if perfect { return "medal.fill" }
+        if quizVM.score >= 0.9 { return "trophy.fill" }
+        return "shield.checkered"
+    }
+
+    private var bossMedalColor: Color {
+        if perfect { return Color(hex: "FFD700") }
+        if quizVM.score >= 0.9 { return AppTheme.accentOrange }
+        return AppTheme.warningYellow
     }
 }
 

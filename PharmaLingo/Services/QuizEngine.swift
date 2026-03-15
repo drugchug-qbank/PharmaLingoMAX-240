@@ -335,7 +335,7 @@ struct QuizEngine {
         }
     }
 
-    // MARK: - Mastery Session
+    // MARK: - Mastery (Boss Battle) Session
 
     private func buildMasterySession(
         subsectionId: String,
@@ -343,23 +343,27 @@ struct QuizEngine {
         masteryMap: [String: MasteryRecord]
     ) -> [Question] {
         guard let subsection = dataService.subsection(for: subsectionId),
-              let module = dataService.module(for: subsection.moduleId) else { return [] }
+              let currentModule = dataService.module(for: subsection.moduleId) else { return [] }
 
-        let moduleSubIds = module.subsections.filter { !$0.isMasteryQuiz }.map(\.id)
-        var allPool: [Question] = []
+        let totalCount = Int.random(in: 12...18)
+        let callbackSlots = Int.random(in: max(2, totalCount / 5)...max(3, totalCount * 3 / 10))
+        let moduleSlots = totalCount - callbackSlots
+        let bossEscalationCount = Int.random(in: 3...4)
+
+        let moduleSubIds = currentModule.subsections.filter { !$0.isMasteryQuiz }.map(\.id)
+        var modulePool: [Question] = []
         for subId in moduleSubIds {
-            allPool.append(contentsOf: dataService.allQuestions(for: subId))
+            modulePool.append(contentsOf: dataService.allQuestions(for: subId))
             if let sub = dataService.subsection(for: subId) {
-                allPool.append(contentsOf: hyFactory.generateBucketed(for: sub).all())
+                modulePool.append(contentsOf: hyFactory.generateBucketed(for: sub).all())
             }
         }
-
-        let uniquePool = Dictionary(grouping: allPool, by: \.id).compactMap(\.value.first)
+        modulePool = Dictionary(grouping: modulePool, by: \.id).compactMap(\.value.first)
 
         var bgMatchingQuestions: [Question] = []
         var usedBGSubsections: Set<String> = []
         for subId in moduleSubIds {
-            let bgCandidates = uniquePool.filter { q in
+            let bgCandidates = modulePool.filter { q in
                 q.type == .matching
                 && (q.objective == .genericBrand || q.objective == .brandGeneric)
                 && q.subsectionId == subId
@@ -369,40 +373,94 @@ struct QuizEngine {
                 bgMatchingQuestions.append(bg)
                 usedBGSubsections.insert(subId)
             }
-            if bgMatchingQuestions.count >= 5 { break }
+            if bgMatchingQuestions.count >= 2 { break }
         }
-
         let bgIds = Set(bgMatchingQuestions.map(\.id))
 
-        let nonBGPool = uniquePool.filter { !bgIds.contains($0.id) }
-        let sorted = nonBGPool.sorted { q1, q2 in
+        let nonBGModulePool = modulePool.filter { !bgIds.contains($0.id) }
+        let weakFirst = nonBGModulePool.sorted { q1, q2 in
             let m1 = masteryMap[q1.masteryKey]?.level ?? 0
             let m2 = masteryMap[q2.masteryKey]?.level ?? 0
             if m1 != m2 { return m1 < m2 }
             return q1.difficulty.rawValue < q2.difficulty.rawValue
         }
 
-        let maxTotal = 30
-        let remainingSlots = maxTotal - bgMatchingQuestions.count
-
         var selected: [Question] = []
         var usedIds: Set<String> = bgIds
+        let coreSlots = moduleSlots - bgMatchingQuestions.count - bossEscalationCount
 
-        var addedCount = 0
-        for q in sorted {
+        for q in weakFirst {
+            guard selected.count < coreSlots else { break }
             guard !usedIds.contains(q.id) else { continue }
+            guard q.difficulty != .expert else { continue }
             selected.append(q)
             usedIds.insert(q.id)
-            addedCount += 1
-            if addedCount >= remainingSlots { break }
+        }
+
+        let escalationPool = modulePool.filter {
+            !usedIds.contains($0.id) && ($0.difficulty == .hard || $0.difficulty == .expert)
+        }.shuffled()
+        var escalation: [Question] = []
+        for q in escalationPool {
+            guard escalation.count < bossEscalationCount else { break }
+            escalation.append(q)
+            usedIds.insert(q.id)
+        }
+        if escalation.count < bossEscalationCount {
+            let fallback = modulePool.filter { !usedIds.contains($0.id) && $0.difficulty == .medium }.shuffled()
+            for q in fallback {
+                guard escalation.count < bossEscalationCount else { break }
+                escalation.append(q)
+                usedIds.insert(q.id)
+            }
+        }
+
+        var callbackQuestions: [Question] = []
+        let currentModuleId = currentModule.id
+        let earlierModules = dataService.modules.filter { $0.id != currentModuleId }
+        let completedNonMasteryIds = completedSubsections.filter { subId in
+            !moduleSubIds.contains(subId)
+            && earlierModules.contains(where: { mod in mod.subsections.contains(where: { $0.id == subId && !$0.isMasteryQuiz }) })
+        }
+
+        if !completedNonMasteryIds.isEmpty {
+            var callbackPool: [Question] = []
+            for subId in completedNonMasteryIds {
+                callbackPool.append(contentsOf: dataService.allQuestions(for: subId))
+            }
+            callbackPool = callbackPool.filter { !usedIds.contains($0.id) }
+            let callbackSorted = callbackPool.sorted { q1, q2 in
+                let m1 = masteryMap[q1.masteryKey]?.level ?? 0
+                let m2 = masteryMap[q2.masteryKey]?.level ?? 0
+                if m1 != m2 { return m1 < m2 }
+                let d1 = masteryMap[q1.masteryKey]?.nextDueDate ?? .distantPast
+                let d2 = masteryMap[q2.masteryKey]?.nextDueDate ?? .distantPast
+                return d1 < d2
+            }
+            for q in callbackSorted {
+                guard callbackQuestions.count < callbackSlots else { break }
+                guard !usedIds.contains(q.id) else { continue }
+                callbackQuestions.append(q)
+                usedIds.insert(q.id)
+            }
         }
 
         selected.shuffle()
 
+        let reviewPositions = calculateReviewPositions(focusCount: selected.count, reviewCount: callbackQuestions.count)
+        for (i, pos) in reviewPositions.enumerated() where i < callbackQuestions.count {
+            let insertAt = min(pos, selected.count)
+            selected.insert(callbackQuestions[i], at: insertAt)
+        }
+
         for bg in bgMatchingQuestions {
-            let position = Int.random(in: 0...selected.count)
+            let position = Int.random(in: 0...min(selected.count, max(selected.count / 2, 1)))
             selected.insert(bg, at: position)
         }
+
+        selected.append(contentsOf: escalation)
+
+        selected = Array(selected.prefix(totalCount))
 
         return enforceVariety(selected)
     }

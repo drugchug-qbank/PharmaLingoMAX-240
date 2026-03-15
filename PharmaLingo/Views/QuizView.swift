@@ -24,8 +24,15 @@ struct QuizView: View {
     @State private var showCombo: Bool = false
     @State private var comboScale: CGFloat = 0.1
     @State private var comboOpacity: Double = 0
+    @State private var showBossIntro: Bool = false
+    @State private var bossIntroOpacity: Double = 1.0
+
+    private var isBossBattle: Bool {
+        quizVM?.isMasteryQuiz == true && !isPracticeSession
+    }
 
     var body: some View {
+        ZStack {
         VStack(spacing: 0) {
             if hasNoQuestions {
                 noQuestionsView
@@ -106,6 +113,13 @@ struct QuizView: View {
                 comboOverlay
                     .transition(.scale.combined(with: .opacity))
                     .allowsHitTesting(false)
+            }
+        }
+
+            if showBossIntro {
+                bossIntroOverlay
+                    .transition(.opacity)
+                    .zIndex(10)
             }
         }
         .onAppear { setupQuiz() }
@@ -195,53 +209,90 @@ struct QuizView: View {
             isMastery: customQuestions.isEmpty && subsection.isMasteryQuiz,
             questions: questions
         )
+
+        if subsection.isMasteryQuiz && customQuestions.isEmpty {
+            showBossIntro = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) {
+                withAnimation(.easeOut(duration: 0.5)) {
+                    bossIntroOpacity = 0
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.7) {
+                showBossIntro = false
+            }
+        }
     }
 
     @ViewBuilder
     private func quizHeader(quizVM: QuizViewModel) -> some View {
-        HStack {
-            Button { dismiss() } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(.secondary)
-            }
-            .layoutPriority(1)
-
-            Text(quizVM.subsectionTitle)
-                .font(AppTheme.funFont(.headline, weight: .bold))
-                .minimumScaleFactor(0.6)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity)
-
-            HStack(spacing: 4) {
-                ForEach(0..<gameVM.maxHearts, id: \.self) { i in
-                    Image(systemName: i < gameVM.hearts ? "heart.fill" : "heart")
-                        .font(.caption)
-                        .foregroundStyle(i < gameVM.hearts ? AppTheme.heartRed : Color(.tertiaryLabel))
+        VStack(spacing: 0) {
+            if isBossBattle {
+                HStack(spacing: 6) {
+                    Image(systemName: "shield.checkered")
+                        .font(.system(size: 11, weight: .black))
+                    Text("BOSS BATTLE")
+                        .font(.system(size: 11, weight: .black, design: .rounded))
                 }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule().fill(
+                        LinearGradient(colors: [AppTheme.accentOrange, AppTheme.heartRed], startPoint: .leading, endPoint: .trailing)
+                    )
+                )
+                .padding(.top, 6)
             }
-            .layoutPriority(1)
+
+            HStack {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                }
+                .layoutPriority(1)
+
+                Text(quizVM.subsectionTitle)
+                    .font(AppTheme.funFont(.headline, weight: .bold))
+                    .minimumScaleFactor(0.6)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity)
+
+                HStack(spacing: 4) {
+                    ForEach(0..<gameVM.maxHearts, id: \.self) { i in
+                        Image(systemName: i < gameVM.hearts ? "heart.fill" : "heart")
+                            .font(.caption)
+                            .foregroundStyle(i < gameVM.hearts ? AppTheme.heartRed : Color(.tertiaryLabel))
+                    }
+                }
+                .layoutPriority(1)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 12)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
     }
 
     @ViewBuilder
     private func progressBar(quizVM: QuizViewModel) -> some View {
+        let barColors: [Color] = isBossBattle
+            ? [AppTheme.accentOrange, AppTheme.heartRed]
+            : [AppTheme.successGreen, AppTheme.funTeal]
+        let barHeight: CGFloat = isBossBattle ? 12 : 10
+
         GeometryReader { geo in
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(Color(.systemFill))
-                    .frame(height: 10)
+                    .frame(height: barHeight)
                 Capsule()
                     .fill(
-                        LinearGradient(colors: [AppTheme.successGreen, AppTheme.funTeal], startPoint: .leading, endPoint: .trailing)
+                        LinearGradient(colors: barColors, startPoint: .leading, endPoint: .trailing)
                     )
-                    .frame(width: max(geo.size.width * quizVM.progress, 10), height: 10)
+                    .frame(width: max(geo.size.width * quizVM.progress, 10), height: barHeight)
                     .animation(.spring(duration: 0.4), value: quizVM.progress)
             }
         }
-        .frame(height: 10)
+        .frame(height: barHeight)
         .padding(.horizontal)
     }
 
@@ -517,6 +568,40 @@ struct QuizView: View {
                 .rotationEffect(.degrees(comboScale < 1 ? -5 : 0))
         }
         .padding(.bottom, 120)
+    }
+
+    private var bossIntroOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.75)
+                .ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                Image(systemName: "shield.checkered")
+                    .font(.system(size: 64, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(colors: [AppTheme.accentOrange, AppTheme.heartRed], startPoint: .top, endPoint: .bottom)
+                    )
+                    .shadow(color: AppTheme.accentOrange.opacity(0.6), radius: 20, x: 0, y: 8)
+
+                Text("BOSS BATTLE")
+                    .font(.system(size: 32, weight: .black, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(colors: [AppTheme.accentOrange, AppTheme.heartRed], startPoint: .leading, endPoint: .trailing)
+                    )
+
+                Text(subsection.title)
+                    .font(AppTheme.funFont(.title3, weight: .bold))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+
+                Text("Prove your mastery. No mercy.")
+                    .font(AppTheme.funFont(.subheadline, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.7))
+            }
+            .scaleEffect(bossIntroOpacity > 0.5 ? 1.0 : 0.8)
+            .animation(.spring(response: 0.5, dampingFraction: 0.7), value: bossIntroOpacity)
+        }
+        .opacity(bossIntroOpacity)
     }
 
     private var comboGradientColors: [Color] {
