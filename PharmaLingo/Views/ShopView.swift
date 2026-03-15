@@ -155,6 +155,8 @@ struct ShopView: View {
                         }
                         .buttonStyle(.plain)
 
+                        DailyMysteryChestSection(gameVM: gameVM)
+
                         VStack(alignment: .leading, spacing: 14) {
                             FunSectionHeader(icon: "heart.fill", title: "Hearts", color: AppTheme.heartRed)
 
