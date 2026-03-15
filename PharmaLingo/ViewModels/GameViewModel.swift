@@ -381,7 +381,9 @@ class GameViewModel {
         coins += finalCoins
         consumeDoubleXPIfActive()
 
-        updateStreak()
+        if score >= 0.8 {
+            updateStreak()
+        }
 
         updateAnswerQuests(totalCount)
         updateCorrectQuests(correctCount)
@@ -436,7 +438,9 @@ class GameViewModel {
         coins += finalCoins
         consumeDoubleXPIfActive()
 
-        updateStreak()
+        if score >= 0.8 {
+            updateStreak()
+        }
 
         updateLessonQuests()
         updateAnswerQuests(totalCount)
