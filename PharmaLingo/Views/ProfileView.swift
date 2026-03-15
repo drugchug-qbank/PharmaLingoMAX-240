@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import Auth
 
 struct ProfileView: View {
     let gameVM: GameViewModel
@@ -7,7 +8,12 @@ struct ProfileView: View {
     @State private var showEditProfile: Bool = false
     @State private var showAvatarCustomization: Bool = false
     @State private var showSignOutAlert: Bool = false
+    @State private var showAddFriend: Bool = false
     @State private var streakCountdown: TimeInterval = 0
+    @State private var friends: [LeaderboardRecord] = []
+    @State private var pendingRequests: [PendingFriendInfo] = []
+    @State private var duoService = DuoQuestService.shared
+    @State private var isLoadingFriends: Bool = false
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var streakCountdownString: String {
@@ -235,6 +241,8 @@ struct ProfileView: View {
                         .padding(16)
                         .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.5))
 
+                        profileFriendsSection
+
                         NavigationLink {
                             AchievementsView(gameVM: gameVM)
                         } label: {
@@ -290,11 +298,26 @@ struct ProfileView: View {
                 .scrollIndicators(.hidden)
             }
             .background(Color(.systemGroupedBackground))
+            .task {
+                await loadFriendsData()
+            }
             .sheet(isPresented: $showEditProfile) {
                 EditProfileSheet(gameVM: gameVM)
             }
             .sheet(isPresented: $showAvatarCustomization) {
                 AvatarCustomizationView(gameVM: gameVM)
+            }
+            .sheet(isPresented: $showAddFriend) {
+                AddFriendSheet(onRequestSent: {
+                    Task { pendingRequests = await supabase.fetchPendingRequests() }
+                })
+            }
+            .navigationDestination(for: String.self) { userId in
+                let name = friends.first(where: { $0.id == userId })?.username ?? "User"
+                FriendProfileView(friendId: userId, friendName: name, gameVM: gameVM)
+            }
+            .refreshable {
+                await loadFriendsData()
             }
             .alert("Sign Out", isPresented: $showSignOutAlert) {
                 Button("Cancel", role: .cancel) {}
@@ -308,6 +331,289 @@ struct ProfileView: View {
                 Text("Are you sure you want to sign out?")
             }
         }
+    }
+
+    private func loadFriendsData() async {
+        isLoadingFriends = true
+        async let fr = supabase.fetchFriends()
+        async let pr = supabase.fetchPendingRequests()
+        friends = await fr
+        pendingRequests = await pr
+        await duoService.loadDuoData()
+        isLoadingFriends = false
+    }
+
+    @ViewBuilder
+    private var profileFriendsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("YOUR FRIENDS")
+                    .font(AppTheme.funFont(.caption, weight: .heavy))
+                    .foregroundStyle(AppTheme.funTeal)
+                Spacer()
+                Button {
+                    showAddFriend = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "person.badge.plus")
+                            .font(.caption)
+                        Text("Add")
+                            .font(AppTheme.funFont(.caption2, weight: .heavy))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(AppTheme.funTeal)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+
+            if let partner = duoService.currentPartnership {
+                HStack(spacing: 12) {
+                    AvatarDisplayView(
+                        animal: partner.partnerAvatar.animal,
+                        eyes: partner.partnerAvatar.eyes,
+                        mouth: partner.partnerAvatar.mouth,
+                        accessory: partner.partnerAvatar.accessory,
+                        bodyColor: partner.partnerAvatar.bodyColor,
+                        backgroundColor: partner.partnerAvatar.bgColor,
+                        size: 44
+                    )
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: 6) {
+                            Text("Duo Partner")
+                                .font(AppTheme.funFont(.caption2, weight: .heavy))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 7)
+                                .padding(.vertical, 2)
+                                .background(AppTheme.funTeal)
+                                .clipShape(Capsule())
+                            Text(partner.partnerName)
+                                .font(AppTheme.funFont(.subheadline, weight: .bold))
+                        }
+                        HStack(spacing: 10) {
+                            HStack(spacing: 3) {
+                                Image(systemName: "link.circle.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(AppTheme.funTeal)
+                                Text("\(partner.sharedStreak) duo streak")
+                                    .font(AppTheme.funFont(.caption, weight: .bold))
+                                    .foregroundStyle(.secondary)
+                            }
+                            HStack(spacing: 3) {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(AppTheme.successGreen)
+                                Text("\(duoService.weeklyQuests.filter(\.isComplete).count)/\(duoService.weeklyQuests.count) quests")
+                                    .font(AppTheme.funFont(.caption, weight: .bold))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(12)
+                .background(AppTheme.funTeal.opacity(0.06))
+                .clipShape(.rect(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(AppTheme.funTeal.opacity(0.25), lineWidth: 1.5)
+                )
+            } else if duoService.hasPendingDuoInvite, let sender = duoService.pendingInviteFrom {
+                HStack(spacing: 10) {
+                    AvatarDisplayView(
+                        animal: sender.avatarAnimal,
+                        eyes: sender.avatarEyes,
+                        mouth: sender.avatarMouth,
+                        accessory: sender.avatarAccessory,
+                        bodyColor: sender.avatarBodyColor,
+                        backgroundColor: sender.avatarBgColor,
+                        size: 36
+                    )
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "bell.badge.fill")
+                                .font(.caption2)
+                                .foregroundStyle(AppTheme.accentOrange)
+                            Text("Duo invite from \(sender.username)")
+                                .font(AppTheme.funFont(.caption, weight: .bold))
+                        }
+                    }
+                    Spacer()
+                    Button {
+                        Task {
+                            if let pId = duoService.pendingPartnershipId {
+                                _ = await duoService.acceptDuoInvite(partnershipId: pId)
+                                await loadFriendsData()
+                            }
+                        }
+                    } label: {
+                        Text("Accept")
+                            .font(AppTheme.funFont(.caption2, weight: .heavy))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(AppTheme.successGreen)
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(10)
+                .background(AppTheme.accentOrange.opacity(0.06))
+                .clipShape(.rect(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(AppTheme.accentOrange.opacity(0.25), lineWidth: 1.5)
+                )
+            }
+
+            if !pendingRequests.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "bell.badge.fill")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.accentOrange)
+                        Text("Pending Requests (\(pendingRequests.count))")
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                            .foregroundStyle(AppTheme.accentOrange)
+                    }
+
+                    ForEach(pendingRequests) { request in
+                        HStack(spacing: 10) {
+                            AvatarDisplayView(
+                                animal: request.avatarAnimal,
+                                eyes: request.avatarEyes,
+                                mouth: request.avatarMouth,
+                                accessory: request.avatarAccessory,
+                                bodyColor: request.avatarBodyColor,
+                                backgroundColor: request.avatarBgColor,
+                                size: 34
+                            )
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(request.username)
+                                    .font(AppTheme.funFont(.caption, weight: .bold))
+                                Text("Lv.\(request.level)")
+                                    .font(AppTheme.funFont(.caption2, weight: .medium))
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Button {
+                                Task {
+                                    try? await supabase.acceptFriendRequest(requestId: request.requestId)
+                                    await loadFriendsData()
+                                }
+                            } label: {
+                                Image(systemName: "checkmark")
+                                    .font(.caption2.bold())
+                                    .foregroundStyle(.white)
+                                    .frame(width: 28, height: 28)
+                                    .background(AppTheme.successGreen)
+                                    .clipShape(Circle())
+                            }
+                            .buttonStyle(.plain)
+                            Button {
+                                Task {
+                                    try? await supabase.declineFriendRequest(requestId: request.requestId)
+                                    pendingRequests.removeAll { $0.requestId == request.requestId }
+                                }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.caption2.bold())
+                                    .foregroundStyle(.white)
+                                    .frame(width: 28, height: 28)
+                                    .background(Color(.systemGray3))
+                                    .clipShape(Circle())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .padding(10)
+                .background(AppTheme.accentOrange.opacity(0.04))
+                .clipShape(.rect(cornerRadius: 10))
+            }
+
+            if isLoadingFriends {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+            } else if friends.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "person.2.fill")
+                        .font(.title2)
+                        .foregroundStyle(AppTheme.funTeal.opacity(0.4))
+                    Text("No friends yet")
+                        .font(AppTheme.funFont(.subheadline, weight: .bold))
+                        .foregroundStyle(.secondary)
+                    Text("Add classmates to compare progress!")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+            } else {
+                ForEach(friends.prefix(5), id: \.id) { friend in
+                    NavigationLink(value: friend.id) {
+                        HStack(spacing: 10) {
+                            AvatarDisplayView(
+                                animal: friend.avatarAnimal,
+                                eyes: friend.avatarEyes,
+                                mouth: friend.avatarMouth,
+                                accessory: friend.avatarAccessory,
+                                bodyColor: friend.avatarBodyColor,
+                                backgroundColor: friend.avatarBgColor,
+                                size: 36
+                            )
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(friend.username)
+                                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                                HStack(spacing: 8) {
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "flame.fill")
+                                            .font(.caption2)
+                                            .foregroundStyle(AppTheme.accentOrange)
+                                        Text("\(friend.currentStreak)")
+                                            .font(AppTheme.funFont(.caption2, weight: .bold))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "star.fill")
+                                            .font(.caption2)
+                                            .foregroundStyle(AppTheme.warningYellow)
+                                        Text("Lv.\(friend.level)")
+                                            .font(AppTheme.funFont(.caption2, weight: .bold))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if friends.count > 5 {
+                    HStack {
+                        Spacer()
+                        Text("View all \(friends.count) friends on Ranks")
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(AppTheme.funTeal)
+                        Image(systemName: "arrow.right")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.funTeal)
+                        Spacer()
+                    }
+                    .padding(.top, 4)
+                }
+            }
+        }
+        .padding(16)
+        .cardStyle(borderColor: AppTheme.funTeal.opacity(0.5))
     }
 }
 

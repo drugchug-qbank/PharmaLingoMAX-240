@@ -12,11 +12,9 @@ struct RanksView: View {
     @State private var professionRankings: [ProfessionRanking] = []
     @State private var showAddFriend: Bool = false
     @State private var isLoadingLeaderboard: Bool = false
-    @State private var duoService = DuoQuestService.shared
 
     enum RanksTab: String, CaseIterable {
         case league = "League"
-        case duo = "Duo"
         case blitz = "Blitz"
         case friends = "Friends"
         case school = "School"
@@ -25,7 +23,6 @@ struct RanksView: View {
         var icon: String {
             switch self {
             case .league: "trophy.fill"
-            case .duo: "person.2.circle.fill"
             case .blitz: "bolt.fill"
             case .friends: "person.2.fill"
             case .school: "building.columns.fill"
@@ -159,8 +156,6 @@ struct RanksView: View {
                         switch selectedTab {
                         case .league:
                             leagueContent
-                        case .duo:
-                            DuoQuestView(gameVM: gameVM)
                         case .blitz:
                             blitzLeaderboardContent
                         case .friends:
@@ -180,7 +175,6 @@ struct RanksView: View {
             .background(Color(.systemGroupedBackground))
             .task {
                 await loadAllData()
-                await duoService.loadDuoData()
             }
             .refreshable {
                 await loadAllData()
