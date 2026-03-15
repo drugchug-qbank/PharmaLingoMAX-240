@@ -14,6 +14,7 @@ struct ProfileView: View {
     @State private var pendingRequests: [PendingFriendInfo] = []
     @State private var duoService = DuoQuestService.shared
     @State private var isLoadingFriends: Bool = false
+    @State private var showDuoDetail: Bool = false
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var streakCountdownString: String {
@@ -312,6 +313,11 @@ struct ProfileView: View {
                     Task { pendingRequests = await supabase.fetchPendingRequests() }
                 })
             }
+            .sheet(isPresented: $showDuoDetail) {
+                if let partner = duoService.currentPartnership {
+                    DuoPartnerDetailSheet(partner: partner, weeklyQuests: duoService.weeklyQuests, gameVM: gameVM)
+                }
+            }
             .navigationDestination(for: String.self) { userId in
                 let name = friends.first(where: { $0.id == userId })?.username ?? "User"
                 FriendProfileView(friendId: userId, friendName: name, gameVM: gameVM)
@@ -370,49 +376,57 @@ struct ProfileView: View {
             }
 
             if let partner = duoService.currentPartnership {
-                HStack(spacing: 12) {
-                    AvatarDisplayView(
-                        animal: partner.partnerAvatar.animal,
-                        eyes: partner.partnerAvatar.eyes,
-                        mouth: partner.partnerAvatar.mouth,
-                        accessory: partner.partnerAvatar.accessory,
-                        bodyColor: partner.partnerAvatar.bodyColor,
-                        backgroundColor: partner.partnerAvatar.bgColor,
-                        size: 44
-                    )
-                    VStack(alignment: .leading, spacing: 3) {
-                        HStack(spacing: 6) {
-                            Text("Duo Partner")
-                                .font(AppTheme.funFont(.caption2, weight: .heavy))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 7)
-                                .padding(.vertical, 2)
-                                .background(AppTheme.funTeal)
-                                .clipShape(Capsule())
-                            Text(partner.partnerName)
-                                .font(AppTheme.funFont(.subheadline, weight: .bold))
-                        }
-                        HStack(spacing: 10) {
-                            HStack(spacing: 3) {
-                                Image(systemName: "link.circle.fill")
-                                    .font(.caption2)
-                                    .foregroundStyle(AppTheme.funTeal)
-                                Text("\(partner.sharedStreak) duo streak")
-                                    .font(AppTheme.funFont(.caption, weight: .bold))
-                                    .foregroundStyle(.secondary)
+                Button {
+                    showDuoDetail = true
+                } label: {
+                    HStack(spacing: 12) {
+                        AvatarDisplayView(
+                            animal: partner.partnerAvatar.animal,
+                            eyes: partner.partnerAvatar.eyes,
+                            mouth: partner.partnerAvatar.mouth,
+                            accessory: partner.partnerAvatar.accessory,
+                            bodyColor: partner.partnerAvatar.bodyColor,
+                            backgroundColor: partner.partnerAvatar.bgColor,
+                            size: 44
+                        )
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack(spacing: 6) {
+                                Text("Duo Partner")
+                                    .font(AppTheme.funFont(.caption2, weight: .heavy))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 7)
+                                    .padding(.vertical, 2)
+                                    .background(AppTheme.funTeal)
+                                    .clipShape(Capsule())
+                                Text(partner.partnerName)
+                                    .font(AppTheme.funFont(.subheadline, weight: .bold))
                             }
-                            HStack(spacing: 3) {
-                                Image(systemName: "checkmark.seal.fill")
-                                    .font(.caption2)
-                                    .foregroundStyle(AppTheme.successGreen)
-                                Text("\(duoService.weeklyQuests.filter(\.isComplete).count)/\(duoService.weeklyQuests.count) quests")
-                                    .font(AppTheme.funFont(.caption, weight: .bold))
-                                    .foregroundStyle(.secondary)
+                            HStack(spacing: 10) {
+                                HStack(spacing: 3) {
+                                    Image(systemName: "link.circle.fill")
+                                        .font(.caption2)
+                                        .foregroundStyle(AppTheme.funTeal)
+                                    Text("\(partner.sharedStreak) duo streak")
+                                        .font(AppTheme.funFont(.caption, weight: .bold))
+                                        .foregroundStyle(.secondary)
+                                }
+                                HStack(spacing: 3) {
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .font(.caption2)
+                                        .foregroundStyle(AppTheme.successGreen)
+                                    Text("\(duoService.weeklyQuests.filter(\.isComplete).count)/\(duoService.weeklyQuests.count) quests")
+                                        .font(AppTheme.funFont(.caption, weight: .bold))
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                         }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.funTeal)
                     }
-                    Spacer()
                 }
+                .buttonStyle(.plain)
                 .padding(12)
                 .background(AppTheme.funTeal.opacity(0.06))
                 .clipShape(.rect(cornerRadius: 12))

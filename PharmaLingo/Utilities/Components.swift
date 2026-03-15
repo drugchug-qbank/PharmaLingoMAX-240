@@ -51,18 +51,11 @@ struct HeaderBar: View {
 
                 Spacer()
 
-                HStack(spacing: 4) {
-                    Image(systemName: "flame.fill")
-                        .font(.title2)
-                        .foregroundStyle(AppTheme.accentOrange)
-                    Text("\(gameVM.currentStreak)")
-                        .font(AppTheme.funFont(.title2, weight: .heavy))
-                        .foregroundStyle(.white)
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(.white.opacity(0.18))
-                .clipShape(Capsule())
+                FlickeringStreakView(streak: gameVM.currentStreak)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(.white.opacity(0.18))
+                    .clipShape(Capsule())
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)

@@ -808,6 +808,13 @@ struct ProfessionBattleView: View {
         Double(max(gameVM.coins, 1))
     }
 
+    private var professionStandings: [ProfessionStanding] {
+        let rankingMap = Dictionary(uniqueKeysWithValues: professionRankings.map { ($0.profession, $0.totalDonations) })
+        return Profession.allCases
+            .map { ProfessionStanding(profession: $0.rawValue, donations: rankingMap[$0.rawValue] ?? 0) }
+            .sorted { $0.donations > $1.donations }
+    }
+
     var body: some View {
         VStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 16) {
@@ -850,28 +857,86 @@ struct ProfessionBattleView: View {
                     Text("Current Standings")
                         .font(AppTheme.funFont(.subheadline, weight: .heavy))
 
-                    let rankingMap = Dictionary(uniqueKeysWithValues: professionRankings.map { ($0.profession, $0.totalDonations) })
+                    let rankedProfessions = professionStandings
 
-                    ForEach(Profession.allCases, id: \.self) { prof in
-                        let donations = rankingMap[prof.rawValue] ?? 0
-                        HStack(spacing: 10) {
-                            Image(prof.badgeImageName)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 48, height: 48)
-                            Text(prof.rawValue)
-                                .font(AppTheme.funFont(.body, weight: prof == gameVM.selectedProfession ? .heavy : .medium))
-                                .foregroundStyle(prof == gameVM.selectedProfession ? AppTheme.primaryBlue : .primary)
-                                .lineLimit(1)
+                    ForEach(Array(rankedProfessions.enumerated()), id: \.element.profession) { index, entry in
+                        let rank = index + 1
+                        let prof = Profession.allCases.first { $0.rawValue == entry.profession }
+                        let isMyProfession = prof == gameVM.selectedProfession
+                        let medalStyle = ProfessionMedalStyle.forRank(rank, donations: entry.donations)
+
+                        HStack(spacing: 12) {
+                            if let medalStyle {
+                                ZStack {
+                                    Circle()
+                                        .fill(medalStyle.color.opacity(0.15))
+                                        .frame(width: rank == 1 ? 56 : 48, height: rank == 1 ? 56 : 48)
+                                    if rank == 1 {
+                                        Circle()
+                                            .stroke(medalStyle.color, lineWidth: 3)
+                                            .frame(width: 56, height: 56)
+                                            .shadow(color: medalStyle.color.opacity(0.6), radius: 8)
+                                    }
+                                    Image(prof?.badgeImageName ?? "ProfessionOther")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: rank == 1 ? 36 : 30, height: rank == 1 ? 36 : 30)
+                                }
+                            } else {
+                                Image(prof?.badgeImageName ?? "ProfessionOther")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 48, height: 48)
+                            }
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                HStack(spacing: 6) {
+                                    if let medalStyle {
+                                        Text(medalStyle.label)
+                                            .font(AppTheme.funFont(.caption2, weight: .heavy))
+                                            .foregroundStyle(.white)
+                                            .padding(.horizontal, 7)
+                                            .padding(.vertical, 2)
+                                            .background(medalStyle.color)
+                                            .clipShape(Capsule())
+                                    }
+                                    Text(entry.profession)
+                                        .font(AppTheme.funFont(rank == 1 ? .headline : .body, weight: isMyProfession || medalStyle != nil ? .heavy : .medium))
+                                        .foregroundStyle(isMyProfession ? AppTheme.primaryBlue : .primary)
+                                        .lineLimit(1)
+                                }
+                                if let medalStyle, rank <= 3 {
+                                    Text(medalStyle.subtitle)
+                                        .font(AppTheme.funFont(.caption2, weight: .bold))
+                                        .foregroundStyle(medalStyle.color)
+                                }
+                            }
+
                             Spacer()
-                            Text("\(donations) coins")
-                                .font(AppTheme.funFont(.body, weight: .bold))
-                                .foregroundStyle(donations > 0 ? AppTheme.accentOrange : .secondary)
+
+                            Text("\(entry.donations) coins")
+                                .font(AppTheme.funFont(rank == 1 ? .headline : .body, weight: .heavy))
+                                .foregroundStyle(medalStyle?.color ?? (entry.donations > 0 ? AppTheme.accentOrange : .secondary))
                         }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 10)
-                        .background(prof == gameVM.selectedProfession ? AppTheme.primaryBlue.opacity(0.06) : .clear)
-                        .clipShape(.rect(cornerRadius: 8))
+                        .padding(.vertical, rank == 1 ? 14 : 10)
+                        .padding(.horizontal, 12)
+                        .background(
+                            Group {
+                                if let medalStyle, rank == 1 {
+                                    medalStyle.color.opacity(0.08)
+                                } else if isMyProfession {
+                                    AppTheme.primaryBlue.opacity(0.06)
+                                } else {
+                                    Color.clear
+                                }
+                            }
+                        )
+                        .clipShape(.rect(cornerRadius: rank == 1 ? 14 : 10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: rank == 1 ? 14 : 10)
+                                .stroke(medalStyle?.color.opacity(rank == 1 ? 0.6 : 0.3) ?? .clear, lineWidth: rank == 1 ? 2.5 : 1.5)
+                        )
+                        .shadow(color: rank == 1 ? (medalStyle?.color.opacity(0.25) ?? .clear) : .clear, radius: 6, y: 2)
                     }
                 }
 
@@ -1059,6 +1124,31 @@ struct SchoolRankRow: View {
         .padding(10)
         .background(isHighlighted ? AppTheme.primaryBlue.opacity(0.06) : Color(.tertiarySystemFill))
         .clipShape(.rect(cornerRadius: 10))
+    }
+}
+
+nonisolated struct ProfessionStanding: Sendable {
+    let profession: String
+    let donations: Int
+}
+
+struct ProfessionMedalStyle: Equatable {
+    let color: Color
+    let label: String
+    let subtitle: String
+
+    static let gold = ProfessionMedalStyle(color: Color(hex: "FFD700"), label: "1st", subtitle: "Leading the charge!")
+    static let silver = ProfessionMedalStyle(color: Color(hex: "A8A9AD"), label: "2nd", subtitle: "Close behind!")
+    static let bronze = ProfessionMedalStyle(color: Color(hex: "CD7F32"), label: "3rd", subtitle: "In the running!")
+
+    static func forRank(_ rank: Int, donations: Int) -> ProfessionMedalStyle? {
+        guard donations > 0 else { return nil }
+        switch rank {
+        case 1: return .gold
+        case 2: return .silver
+        case 3: return .bronze
+        default: return nil
+        }
     }
 }
 
