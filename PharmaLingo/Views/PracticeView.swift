@@ -318,6 +318,7 @@ struct PracticeView: View {
             customQuestions: questions,
             customTitle: "Quick Practice",
             isPracticeSession: true,
+            practiceContentKey: "practice:quick_practice",
             onQuizComplete: {
                 gameVM.recordPracticeModeUse(.quickPractice)
                 gameVM.recordPracticeComplete()
@@ -334,6 +335,7 @@ struct PracticeView: View {
             customQuestions: questions,
             customTitle: "Spaced Review",
             isPracticeSession: true,
+            practiceContentKey: "practice:spaced_review",
             onQuizComplete: {
                 gameVM.recordPracticeModeUse(.spacedReview)
                 gameVM.recordPracticeComplete()
@@ -351,6 +353,7 @@ struct PracticeView: View {
                 customQuestions: questions,
                 customTitle: "Review Mistakes",
                 isPracticeSession: true,
+                practiceContentKey: "practice:review_mistakes",
                 onQuizComplete: {
                     gameVM.recordPracticeComplete()
                 }

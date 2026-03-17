@@ -52,6 +52,9 @@ class GameViewModel {
     var dailySpacedReviewCount: Int = 0
     private var dailyPracticeDate: String = ""
 
+    var dailyXPRunCounts: [String: Int] = [:]
+    private var dailyXPRunCountDate: String = ""
+
     var activityDates: Set<String> = []
     var streakSaveDates: Set<String> = []
     var accountCreatedDate: Date?
@@ -144,6 +147,16 @@ class GameViewModel {
             dailySpacedReviewCount = 0
             dailyPracticeDate = today
             save()
+        }
+    }
+
+    private func resetDailyXPRunCountsIfNeeded() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let today = formatter.string(from: Date())
+        if dailyXPRunCountDate != today {
+            dailyXPRunCounts = [:]
+            dailyXPRunCountDate = today
         }
     }
 
@@ -352,18 +365,19 @@ class GameViewModel {
     var streakExtended: Bool = false
     var previousStreak: Int = 0
 
-    func completePracticeSession(score: Double, correctCount: Int, totalCount: Int, xpEarned: Int = 0, coinsEarned: Int = 0) {
+    @discardableResult
+    func completePracticeSession(score: Double, correctCount: Int, totalCount: Int, xpEarned: Int = 0, coinsEarned: Int = 0, contentKey: String = "practice:unknown") -> XPRewardBreakdown {
         questionsAnswered += totalCount
         questionsCorrect += correctCount
 
-        var finalXP: Int
+        var baseXP: Int
         if xpEarned > 0 {
-            finalXP = Int(Double(xpEarned) * xpMultiplier())
+            baseXP = Int(Double(xpEarned) * xpMultiplier())
         } else {
             var xp = correctCount * 10
             if score == 1.0 { xp += 50 }
             else if score >= 0.9 { xp += 25 }
-            finalXP = Int(Double(xp) * xpMultiplier())
+            baseXP = Int(Double(xp) * xpMultiplier())
         }
 
         var finalCoins: Int
@@ -375,6 +389,26 @@ class GameViewModel {
             else if score >= 0.9 { coinReward += 10 }
             finalCoins = Int(Double(coinReward) * coinMultiplier())
         }
+
+        let isPerfect = score == 1.0
+        let perfectBonus = isPerfect ? 500 : 0
+
+        resetDailyXPRunCountsIfNeeded()
+        let runCount = (dailyXPRunCounts[contentKey] ?? 0) + 1
+        dailyXPRunCounts[contentKey] = runCount
+
+        let rawXP = baseXP + perfectBonus
+        let penaltyApplied = runCount >= 6
+        let finalXP = penaltyApplied ? Int(floor(Double(rawXP) * 0.5)) : rawXP
+
+        let breakdown = XPRewardBreakdown(
+            baseXP: baseXP,
+            perfectBonusXP: perfectBonus,
+            firstCompletionBonusXP: 0,
+            repeatPenaltyApplied: penaltyApplied,
+            runCountToday: runCount,
+            finalAwardedXP: finalXP
+        )
 
         totalXP += finalXP
         weeklyXP += finalXP
@@ -396,14 +430,21 @@ class GameViewModel {
 
         if hasLoadedFromCloud {
             Task {
+                await SupabaseService.shared.recordContentCompletion(contentKey: contentKey, contentType: "practice")
                 await SupabaseService.shared.syncGameState(from: self)
             }
         }
+
+        return breakdown
     }
 
-    func completeSubsection(_ subsectionId: String, score: Double, correctCount: Int, totalCount: Int, xpEarned: Int = 0, coinsEarned: Int = 0) {
+    @discardableResult
+    func completeSubsection(_ subsectionId: String, score: Double, correctCount: Int, totalCount: Int, xpEarned: Int = 0, coinsEarned: Int = 0) -> XPRewardBreakdown {
         questionsAnswered += totalCount
         questionsCorrect += correctCount
+
+        let contentKey = "lesson:\(subsectionId)"
+        let isNewCompletion = score >= 0.8 && !completedSubsections.contains(subsectionId)
 
         if score >= 0.8 {
             let currentStars = subsectionStars[subsectionId] ?? 0
@@ -413,14 +454,14 @@ class GameViewModel {
             completedSubsections.insert(subsectionId)
         }
 
-        var finalXP: Int
+        var baseXP: Int
         if xpEarned > 0 {
-            finalXP = Int(Double(xpEarned) * xpMultiplier())
+            baseXP = Int(Double(xpEarned) * xpMultiplier())
         } else {
             var xp = correctCount * 10
             if score == 1.0 { xp += 50 }
             else if score >= 0.9 { xp += 25 }
-            finalXP = Int(Double(xp) * xpMultiplier())
+            baseXP = Int(Double(xp) * xpMultiplier())
         }
 
         var finalCoins: Int
@@ -432,6 +473,27 @@ class GameViewModel {
             else if score >= 0.9 { coinReward += 10 }
             finalCoins = Int(Double(coinReward) * coinMultiplier())
         }
+
+        let isPerfect = score == 1.0
+        let perfectBonus = isPerfect ? 500 : 0
+        let firstTimeBonus = isNewCompletion ? 1000 : 0
+
+        resetDailyXPRunCountsIfNeeded()
+        let runCount = (dailyXPRunCounts[contentKey] ?? 0) + 1
+        dailyXPRunCounts[contentKey] = runCount
+
+        let rawXP = baseXP + perfectBonus + firstTimeBonus
+        let penaltyApplied = runCount >= 6
+        let finalXP = penaltyApplied ? Int(floor(Double(rawXP) * 0.5)) : rawXP
+
+        let breakdown = XPRewardBreakdown(
+            baseXP: baseXP,
+            perfectBonusXP: perfectBonus,
+            firstCompletionBonusXP: firstTimeBonus,
+            repeatPenaltyApplied: penaltyApplied,
+            runCountToday: runCount,
+            finalAwardedXP: finalXP
+        )
 
         totalXP += finalXP
         weeklyXP += finalXP
@@ -454,6 +516,7 @@ class GameViewModel {
 
         let idempotencyKey = "\(subsectionId)_\(Int(Date().timeIntervalSince1970 * 1000))"
         Task {
+            await SupabaseService.shared.recordContentCompletion(contentKey: contentKey, contentType: "lesson")
             if let updatedProfile = await SupabaseService.shared.applyQuizCompletion(
                 subsectionId: subsectionId,
                 score: score,
@@ -468,6 +531,8 @@ class GameViewModel {
                 await SupabaseService.shared.syncGameState(from: self)
             }
         }
+
+        return breakdown
     }
 
     func recordConsecutiveCorrect(_ count: Int) {
@@ -948,6 +1013,8 @@ class GameViewModel {
         activityDates = []
         streakSaveDates = []
         accountCreatedDate = nil
+        dailyXPRunCounts = [:]
+        dailyXPRunCountDate = ""
         UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state")
         UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map")
         if let uid = oldUserId {
@@ -1021,6 +1088,8 @@ class GameViewModel {
             "dailyQuickPracticeCount": dailyQuickPracticeCount,
             "dailySpacedReviewCount": dailySpacedReviewCount,
             "dailyPracticeDate": dailyPracticeDate,
+            "dailyXPRunCounts": dailyXPRunCounts,
+            "dailyXPRunCountDate": dailyXPRunCountDate,
             "activeBoosts": activeBoosts.filter { $0.isActive }.map { ["type": $0.type.rawValue, "expiresAt": $0.expiresAt.timeIntervalSince1970] as [String : Any] },
             "doubleXPNextAttempt": doubleXPNextAttempt,
             "powerUpInventory": powerUpInventory.toDictionary(),
@@ -1070,6 +1139,8 @@ class GameViewModel {
         dailyQuickPracticeCount = state["dailyQuickPracticeCount"] as? Int ?? 0
         dailySpacedReviewCount = state["dailySpacedReviewCount"] as? Int ?? 0
         dailyPracticeDate = state["dailyPracticeDate"] as? String ?? ""
+        dailyXPRunCounts = state["dailyXPRunCounts"] as? [String: Int] ?? [:]
+        dailyXPRunCountDate = state["dailyXPRunCountDate"] as? String ?? ""
         clinicalAuraPoints = state["clinicalAuraPoints"] as? Int ?? 0
         activityDates = Set(state["activityDates"] as? [String] ?? [])
         streakSaveDates = Set(state["streakSaveDates"] as? [String] ?? [])
@@ -1308,6 +1379,19 @@ class GameViewModel {
             let streakHistory = await SupabaseService.shared.fetchStreakActivity()
             if !streakHistory.isEmpty {
                 streakActivityLog = streakHistory
+            }
+
+            let serverRunCounts = await SupabaseService.shared.fetchDailyRunCounts()
+            if !serverRunCounts.isEmpty {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                let today = formatter.string(from: Date())
+                dailyXPRunCountDate = today
+                for (key, count) in serverRunCounts {
+                    let local = dailyXPRunCounts[key] ?? 0
+                    dailyXPRunCounts[key] = max(local, count)
+                }
+                save()
             }
         }
     }

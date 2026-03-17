@@ -3,6 +3,7 @@ import SwiftUI
 struct BlitzResultView: View {
     let summary: BlitzRunSummary
     let gameVM: GameViewModel
+    var xpBreakdown: XPRewardBreakdown? = nil
     let onDismiss: () -> Void
 
     @State private var animateScore: Bool = false
@@ -222,19 +223,38 @@ struct BlitzResultView: View {
 
     private var rewardsSection: some View {
         VStack(spacing: 14) {
-            HStack(spacing: 24) {
-                RewardItem(
-                    icon: "bolt.fill",
-                    value: "+\(summary.totalXP)",
-                    label: "Total XP",
-                    color: AppTheme.xpPurple
-                )
-                RewardItem(
-                    icon: "bitcoinsign.circle.fill",
-                    value: "+\(summary.totalCoins)",
-                    label: "Coins",
-                    color: AppTheme.accentOrange
-                )
+            if let breakdown = xpBreakdown {
+                HStack(spacing: 24) {
+                    RewardItem(
+                        icon: "bolt.fill",
+                        value: "+\(breakdown.finalAwardedXP)",
+                        label: "Total XP",
+                        color: AppTheme.xpPurple
+                    )
+                    RewardItem(
+                        icon: "bitcoinsign.circle.fill",
+                        value: "+\(summary.totalCoins)",
+                        label: "Coins",
+                        color: AppTheme.accentOrange
+                    )
+                }
+
+                XPBreakdownCard(breakdown: breakdown)
+            } else {
+                HStack(spacing: 24) {
+                    RewardItem(
+                        icon: "bolt.fill",
+                        value: "+\(summary.totalXP)",
+                        label: "Total XP",
+                        color: AppTheme.xpPurple
+                    )
+                    RewardItem(
+                        icon: "bitcoinsign.circle.fill",
+                        value: "+\(summary.totalCoins)",
+                        label: "Coins",
+                        color: AppTheme.accentOrange
+                    )
+                }
             }
 
             if summary.comboBonus > 0 {
@@ -253,7 +273,7 @@ struct BlitzResultView: View {
                 )
             }
 
-            if summary.isPerfect {
+            if summary.isPerfect && xpBreakdown == nil {
                 bonusPill(
                     icon: "sparkles",
                     text: "PERFECT BLITZ BONUS!",

@@ -6,6 +6,7 @@ struct QuizView: View {
     var customQuestions: [Question] = []
     var customTitle: String? = nil
     var isPracticeSession: Bool = false
+    var practiceContentKey: String? = nil
     var onQuizComplete: (() -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     @State private var quizVM: QuizViewModel?
@@ -677,15 +678,18 @@ struct QuizView: View {
                     if quizVM.currentIndex >= quizVM.questions.count - 1 {
                         quizVM.finalizeQuiz()
                         if isPracticeSession {
-                            gameVM.completePracticeSession(
+                            let contentKey = practiceContentKey ?? "practice:unknown"
+                            let breakdown = gameVM.completePracticeSession(
                                 score: quizVM.score,
                                 correctCount: quizVM.correctCount,
                                 totalCount: quizVM.totalQuestions,
                                 xpEarned: quizVM.xpEarned,
-                                coinsEarned: quizVM.coinsEarned
+                                coinsEarned: quizVM.coinsEarned,
+                                contentKey: contentKey
                             )
+                            quizVM.xpBreakdown = breakdown
                         } else {
-                            gameVM.completeSubsection(
+                            let breakdown = gameVM.completeSubsection(
                                 quizVM.subsectionId,
                                 score: quizVM.score,
                                 correctCount: quizVM.correctCount,
@@ -693,6 +697,7 @@ struct QuizView: View {
                                 xpEarned: quizVM.xpEarned,
                                 coinsEarned: quizVM.coinsEarned
                             )
+                            quizVM.xpBreakdown = breakdown
                         }
                         onQuizComplete?()
                         withAnimation { showResult = true }

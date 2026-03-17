@@ -28,6 +28,7 @@ class QuizViewModel {
     var isComplete: Bool = false
     var xpEarned: Int = 0
     var coinsEarned: Int = 0
+    var xpBreakdown: XPRewardBreakdown?
 
     var currentQuestion: Question? {
         guard currentIndex < questions.count else { return nil }

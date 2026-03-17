@@ -1375,6 +1375,34 @@ class SupabaseService {
         }
     }
 
+    @discardableResult
+    func recordContentCompletion(contentKey: String, contentType: String) async -> (runCountToday: Int, isFirstCompletion: Bool)? {
+        do {
+            let resultData = try await client.rpc("record_content_completion", params: [
+                "p_content_key": AnyEncodableValue.string(contentKey),
+                "p_content_type": AnyEncodableValue.string(contentType),
+            ]).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
+            let runCount = json?["run_count_today"] as? Int ?? 1
+            let isFirst = json?["is_first_completion"] as? Bool ?? false
+            return (runCount, isFirst)
+        } catch {
+            print("RPC record_content_completion failed: \(error)")
+            return nil
+        }
+    }
+
+    func fetchDailyRunCounts() async -> [String: Int] {
+        do {
+            let resultData = try await client.rpc("fetch_daily_run_counts", params: EmptyParams()).execute().data
+            let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Int]
+            return json ?? [:]
+        } catch {
+            print("RPC fetch_daily_run_counts failed: \(error)")
+            return [:]
+        }
+    }
+
     func logStreakActivity(date: String, eventType: String, streakCount: Int, streakSavesRemaining: Int) async {
         do {
             try await client.rpc("log_streak_activity", params: [

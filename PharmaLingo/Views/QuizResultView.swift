@@ -87,9 +87,18 @@ struct QuizResultView: View {
 
                         if showRewards {
                             VStack(spacing: 14) {
-                                HStack(spacing: 24) {
-                                    RewardItem(icon: "bolt.fill", value: "+\(quizVM.xpEarned)", label: "XP", color: AppTheme.primaryBlue)
-                                    RewardItem(icon: "bitcoinsign.circle.fill", value: "+\(quizVM.coinsEarned)", label: "Coins", color: AppTheme.accentOrange)
+                                if let breakdown = quizVM.xpBreakdown {
+                                    HStack(spacing: 24) {
+                                        RewardItem(icon: "bolt.fill", value: "+\(breakdown.finalAwardedXP)", label: "XP", color: AppTheme.primaryBlue)
+                                        RewardItem(icon: "bitcoinsign.circle.fill", value: "+\(quizVM.coinsEarned)", label: "Coins", color: AppTheme.accentOrange)
+                                    }
+
+                                    XPBreakdownCard(breakdown: breakdown)
+                                } else {
+                                    HStack(spacing: 24) {
+                                        RewardItem(icon: "bolt.fill", value: "+\(quizVM.xpEarned)", label: "XP", color: AppTheme.primaryBlue)
+                                        RewardItem(icon: "bitcoinsign.circle.fill", value: "+\(quizVM.coinsEarned)", label: "Coins", color: AppTheme.accentOrange)
+                                    }
                                 }
 
                                 if gameVM.isProUser {
@@ -120,7 +129,7 @@ struct QuizResultView: View {
                                     .clipShape(Capsule())
                                 }
 
-                                if perfect {
+                                if perfect && quizVM.xpBreakdown == nil {
                                     HStack(spacing: 6) {
                                         Image(systemName: "sparkles")
                                             .foregroundStyle(AppTheme.warningYellow)

@@ -19,6 +19,7 @@ struct BrandBlitzQuizView: View {
     @State private var totalSpeedBonusXP: Int = 0
     @State private var runStartDate: Date = .now
     @State private var blitzSummary: BlitzRunSummary?
+    @State private var blitzXPBreakdown: XPRewardBreakdown?
 
     @State private var showComboPopup: Bool = false
     @State private var comboPopupText: String = ""
@@ -35,7 +36,7 @@ struct BrandBlitzQuizView: View {
             VStack(spacing: 0) {
                 if let quizVM {
                     if showResult, let summary = blitzSummary {
-                        BlitzResultView(summary: summary, gameVM: gameVM, onDismiss: { dismiss() })
+                        BlitzResultView(summary: summary, gameVM: gameVM, xpBreakdown: blitzXPBreakdown, onDismiss: { dismiss() })
                     } else {
                         blitzHeader(quizVM: quizVM)
                         blitzTimerBar
@@ -576,13 +577,15 @@ struct BrandBlitzQuizView: View {
         )
         blitzSummary = summary
 
-        gameVM.completePracticeSession(
+        let breakdown = gameVM.completePracticeSession(
             score: quizVM.score,
             correctCount: quizVM.correctCount,
             totalCount: quizVM.totalQuestions,
             xpEarned: summary.totalXP,
-            coinsEarned: summary.totalCoins
+            coinsEarned: summary.totalCoins,
+            contentKey: "practice:brand_blitz"
         )
+        blitzXPBreakdown = breakdown
         gameVM.recordBrandBlitzComplete()
 
         saveBestBlitzScore(summary)
