@@ -114,6 +114,8 @@ struct StatsDetailView: View {
             .padding(16)
             .cardStyle(borderColor: AppTheme.accentOrange.opacity(0.3))
 
+            StreakActivityHistoryView(activityLog: gameVM.streakActivityLog)
+
             VStack(alignment: .leading, spacing: 12) {
                 FunSectionHeader(icon: "chart.bar.fill", title: "Streak Milestones", color: AppTheme.warningYellow)
 
@@ -529,6 +531,10 @@ struct StreakCalendarView: View {
         return calendar.date(byAdding: .month, value: -1, to: Date())
     }
 
+    private var eventsByDate: [String: [StreakActivityRecord]] {
+        Dictionary(grouping: gameVM.streakActivityLog, by: { $0.date })
+    }
+
     private var calendarDays: [CalendarDay] {
         let comps = calendar.dateComponents([.year, .month], from: displayedMonth)
         guard let firstOfMonth = calendar.date(from: comps),
@@ -555,6 +561,8 @@ struct StreakCalendarView: View {
             return allDates.compactMap { formatter.date(from: $0) }.min().map { calendar.startOfDay(for: $0) }
         }()
 
+        let evts = eventsByDate
+
         for day in range {
             var dateComps = comps
             dateComps.day = day
@@ -577,7 +585,8 @@ struct StreakCalendarView: View {
                 isPlaceholder: false,
                 isFuture: isFuture,
                 isBeforeAccount: isBeforeAccount,
-                isBeforeFirstActivity: isBeforeFirstActivity
+                isBeforeFirstActivity: isBeforeFirstActivity,
+                streakEvents: evts[dateStr] ?? []
             ))
         }
 
@@ -677,6 +686,7 @@ struct CalendarDay {
     var isFuture: Bool = false
     var isBeforeAccount: Bool = false
     var isBeforeFirstActivity: Bool = false
+    var streakEvents: [StreakActivityRecord] = []
 }
 
 struct CalendarDayCell: View {
@@ -720,6 +730,129 @@ struct CalendarDayCell: View {
                 .frame(width: 36, height: 36)
             }
         }
+    }
+}
+
+struct StreakActivityHistoryView: View {
+    let activityLog: [StreakActivityRecord]
+
+    private var recentEvents: [StreakActivityRecord] {
+        Array(activityLog.prefix(20))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            FunSectionHeader(icon: "clock.arrow.circlepath", title: "Streak History", color: AppTheme.accentOrange)
+
+            if recentEvents.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "flame.slash")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                    Text("No streak activity yet")
+                        .font(AppTheme.funFont(.subheadline, weight: .bold))
+                        .foregroundStyle(.secondary)
+                    Text("Complete lessons to start building your streak!")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(16)
+            } else {
+                VStack(spacing: 2) {
+                    ForEach(Array(recentEvents.enumerated()), id: \.offset) { _, event in
+                        StreakEventRow(event: event)
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .cardStyle(borderColor: AppTheme.accentOrange.opacity(0.3))
+    }
+}
+
+struct StreakEventRow: View {
+    let event: StreakActivityRecord
+
+    private var icon: String {
+        switch event.eventType {
+        case "streak_started": return "flame"
+        case "active": return "checkmark.circle.fill"
+        case "streak_save_used": return "shield.fill"
+        case "streak_lost": return "flame.slash"
+        default: return "circle.fill"
+        }
+    }
+
+    private var color: Color {
+        switch event.eventType {
+        case "streak_started": return AppTheme.accentOrange
+        case "active": return AppTheme.successGreen
+        case "streak_save_used": return AppTheme.xpPurple
+        case "streak_lost": return AppTheme.heartRed
+        default: return .secondary
+        }
+    }
+
+    private var title: String {
+        switch event.eventType {
+        case "streak_started": return "Streak Started"
+        case "active": return "Streak Continued"
+        case "streak_save_used": return "Streak Save Used"
+        case "streak_lost": return "Streak Lost"
+        default: return "Activity"
+        }
+    }
+
+    private var subtitle: String {
+        switch event.eventType {
+        case "streak_started": return "Day 1 — new streak begun"
+        case "active": return "Day \(event.streakCount) streak"
+        case "streak_save_used": return "Saved! \(event.streakSavesRemaining) save\(event.streakSavesRemaining == 1 ? "" : "s") left"
+        case "streak_lost": return "\(event.streakCount) day streak ended"
+        default: return ""
+        }
+    }
+
+    private var formattedDate: String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd"
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MMM d"
+        if let date = inputFormatter.date(from: event.date) {
+            return outputFormatter.string(from: date)
+        }
+        return event.date
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(color.opacity(0.15))
+                    .frame(width: 34, height: 34)
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(color)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                    .foregroundStyle(.primary)
+                Text(subtitle)
+                    .font(AppTheme.funFont(.caption, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Text(formattedDate)
+                .font(AppTheme.funFont(.caption, weight: .bold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 6)
     }
 }
 

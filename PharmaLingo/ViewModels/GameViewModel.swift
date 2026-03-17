@@ -55,6 +55,7 @@ class GameViewModel {
     var activityDates: Set<String> = []
     var streakSaveDates: Set<String> = []
     var accountCreatedDate: Date?
+    var streakActivityLog: [StreakActivityRecord] = []
 
     private var hasLoadedFromCloud: Bool = false
 
@@ -600,48 +601,83 @@ class GameViewModel {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         previousStreak = currentStreak
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        let todayStr = fmt.string(from: today)
+
         if let lastActive = lastActiveDate {
             let lastDay = calendar.startOfDay(for: lastActive)
             let daysDiff = calendar.dateComponents([.day], from: lastDay, to: today).day ?? 0
             if daysDiff == 0 {
                 if currentStreak == 0 {
                     currentStreak = 1
+                    logStreakEvent(date: todayStr, eventType: "streak_started", streakCount: currentStreak)
+                } else {
+                    logStreakEvent(date: todayStr, eventType: "active", streakCount: currentStreak)
                 }
                 streakExtended = true
             } else if daysDiff == 1 {
                 currentStreak += 1
                 streakExtended = true
+                logStreakEvent(date: todayStr, eventType: "active", streakCount: currentStreak)
             } else {
-                let formatter = DateFormatter()
-                formatter.dateFormat = "yyyy-MM-dd"
                 let missedDays = daysDiff - 1
                 if streakSaves > 0 && missedDays > 0 {
                     let savesToUse = min(missedDays, streakSaves)
                     streakSaves -= savesToUse
                     for i in 1...missedDays {
                         if i <= savesToUse, let missedDate = calendar.date(byAdding: .day, value: -i, to: today) {
-                            streakSaveDates.insert(formatter.string(from: missedDate))
+                            let missedStr = fmt.string(from: missedDate)
+                            streakSaveDates.insert(missedStr)
+                            logStreakEvent(date: missedStr, eventType: "streak_save_used", streakCount: currentStreak)
                         }
                     }
                     if savesToUse == missedDays {
                         currentStreak += 1
+                        logStreakEvent(date: todayStr, eventType: "active", streakCount: currentStreak)
                     } else {
+                        logStreakEvent(date: todayStr, eventType: "streak_lost", streakCount: currentStreak)
                         currentStreak = 1
+                        logStreakEvent(date: todayStr, eventType: "streak_started", streakCount: 1)
                     }
                 } else {
+                    logStreakEvent(date: todayStr, eventType: "streak_lost", streakCount: currentStreak)
                     currentStreak = 1
+                    logStreakEvent(date: todayStr, eventType: "streak_started", streakCount: 1)
                 }
                 streakExtended = true
             }
         } else {
             currentStreak = 1
             streakExtended = true
+            logStreakEvent(date: todayStr, eventType: "streak_started", streakCount: 1)
         }
         lastActiveDate = Date()
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
-        activityDates.insert(fmt.string(from: today))
+        activityDates.insert(todayStr)
         save()
+        syncStreakDatesToCloud()
+    }
+
+    private func logStreakEvent(date: String, eventType: String, streakCount: Int) {
+        guard hasLoadedFromCloud else { return }
+        Task {
+            await SupabaseService.shared.logStreakActivity(
+                date: date,
+                eventType: eventType,
+                streakCount: streakCount,
+                streakSavesRemaining: streakSaves
+            )
+        }
+    }
+
+    private func syncStreakDatesToCloud() {
+        guard hasLoadedFromCloud else { return }
+        Task {
+            await SupabaseService.shared.syncStreakDates(
+                activityDates: activityDates,
+                streakSaveDates: streakSaveDates
+            )
+        }
     }
 
     private func backfillActivityDatesFromStreak(streakOverride: Int? = nil) {
@@ -738,7 +774,9 @@ class GameViewModel {
 
             for i in 1...savesToUse {
                 if let missedDate = calendar.date(byAdding: .day, value: -i, to: today) {
-                    streakSaveDates.insert(formatter.string(from: missedDate))
+                    let missedStr = formatter.string(from: missedDate)
+                    streakSaveDates.insert(missedStr)
+                    logStreakEvent(date: missedStr, eventType: "streak_save_used", streakCount: currentStreak)
                 }
             }
 
@@ -746,12 +784,17 @@ class GameViewModel {
                 let bridgeDate = calendar.date(byAdding: .day, value: -1, to: today) ?? today
                 lastActiveDate = bridgeDate
             } else {
+                let todayStr = formatter.string(from: today)
+                logStreakEvent(date: todayStr, eventType: "streak_lost", streakCount: currentStreak)
                 currentStreak = 0
             }
         } else {
+            let todayStr = formatter.string(from: today)
+            logStreakEvent(date: todayStr, eventType: "streak_lost", streakCount: currentStreak)
             currentStreak = 0
         }
         save()
+        syncStreakDatesToCloud()
     }
 
     private func regenerateHearts() {
@@ -1139,7 +1182,17 @@ class GameViewModel {
             }
         }
 
-        backfillActivityDatesFromStreak(streakOverride: profile.currentStreak)
+        let decoder2 = JSONDecoder()
+        if let data = profile.activityDates.data(using: .utf8),
+           let arr = try? decoder2.decode([String].self, from: data), !arr.isEmpty {
+            activityDates = Set(arr)
+        } else {
+            backfillActivityDatesFromStreak(streakOverride: profile.currentStreak)
+        }
+        if let data = profile.streakSaveDates.data(using: .utf8),
+           let arr = try? decoder2.decode([String].self, from: data), !arr.isEmpty {
+            streakSaveDates = Set(arr)
+        }
 
         save()
     }
@@ -1250,6 +1303,11 @@ class GameViewModel {
             let history = await SupabaseService.shared.fetchCQOTDHistory()
             if !history.isEmpty {
                 UserDefaults.standard.set(history, forKey: "cqotd_answered_dates")
+            }
+
+            let streakHistory = await SupabaseService.shared.fetchStreakActivity()
+            if !streakHistory.isEmpty {
+                streakActivityLog = streakHistory
             }
         }
     }

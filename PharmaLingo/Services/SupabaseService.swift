@@ -33,6 +33,8 @@ nonisolated struct UserProfile: Codable, Sendable {
     var ownedAccessories: String
     var professionDonations: Int
     var clinicalAuraPoints: Int
+    var activityDates: String
+    var streakSaveDates: String
     var createdAt: String?
     var updatedAt: String?
 
@@ -64,6 +66,8 @@ nonisolated struct UserProfile: Codable, Sendable {
         case ownedAccessories = "owned_accessories"
         case professionDonations = "profession_donations"
         case clinicalAuraPoints = "clinical_aura_points"
+        case activityDates = "activity_dates"
+        case streakSaveDates = "streak_save_dates"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
@@ -101,11 +105,13 @@ nonisolated struct UserProfile: Codable, Sendable {
         ownedAccessories = (try? container.decode(String.self, forKey: .ownedAccessories)) ?? "[]"
         professionDonations = (try? container.decode(Int.self, forKey: .professionDonations)) ?? 0
         clinicalAuraPoints = (try? container.decode(Int.self, forKey: .clinicalAuraPoints)) ?? 0
+        activityDates = (try? container.decode(String.self, forKey: .activityDates)) ?? "[]"
+        streakSaveDates = (try? container.decode(String.self, forKey: .streakSaveDates)) ?? "[]"
         createdAt = try? container.decode(String.self, forKey: .createdAt)
         updatedAt = try? container.decode(String.self, forKey: .updatedAt)
     }
 
-    init(id: String, username: String, profession: String, school: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, totalXP: Int, coins: Int, currentStreak: Int, streakSaves: Int, hearts: Int, level: Int, weeklyXP: Int, monthlyXP: Int, completedSubsections: String, subsectionStars: String, hasSeenLearning: String, questionsAnswered: Int, questionsCorrect: Int, lastActiveDate: String?, lastHeartLossDate: String?, ownedAvatars: String, ownedEyes: String, ownedMouths: String, ownedAccessories: String, professionDonations: Int, clinicalAuraPoints: Int, createdAt: String?, updatedAt: String?) {
+    init(id: String, username: String, profession: String, school: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, totalXP: Int, coins: Int, currentStreak: Int, streakSaves: Int, hearts: Int, level: Int, weeklyXP: Int, monthlyXP: Int, completedSubsections: String, subsectionStars: String, hasSeenLearning: String, questionsAnswered: Int, questionsCorrect: Int, lastActiveDate: String?, lastHeartLossDate: String?, ownedAvatars: String, ownedEyes: String, ownedMouths: String, ownedAccessories: String, professionDonations: Int, clinicalAuraPoints: Int, activityDates: String = "[]", streakSaveDates: String = "[]", createdAt: String?, updatedAt: String?) {
         self.id = id
         self.username = username
         self.profession = profession
@@ -137,6 +143,8 @@ nonisolated struct UserProfile: Codable, Sendable {
         self.ownedAccessories = ownedAccessories
         self.professionDonations = professionDonations
         self.clinicalAuraPoints = clinicalAuraPoints
+        self.activityDates = activityDates
+        self.streakSaveDates = streakSaveDates
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -306,6 +314,8 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
     let ownedAccessories: String
     let professionDonations: Int
     let clinicalAuraPoints: Int
+    let activityDates: String
+    let streakSaveDates: String
 
     enum CodingKeys: String, CodingKey {
         case username, profession, school
@@ -335,6 +345,8 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
         case ownedAccessories = "owned_accessories"
         case professionDonations = "profession_donations"
         case clinicalAuraPoints = "clinical_aura_points"
+        case activityDates = "activity_dates"
+        case streakSaveDates = "streak_save_dates"
     }
 }
 
@@ -368,6 +380,8 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
     let ownedAccessories: String = "[\"none\"]"
     let professionDonations: Int = 0
     let clinicalAuraPoints: Int = 0
+    let activityDates: String = "[]"
+    let streakSaveDates: String = "[]"
 
     enum CodingKeys: String, CodingKey {
         case id, username, profession, school
@@ -395,6 +409,8 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
         case ownedAccessories = "owned_accessories"
         case professionDonations = "profession_donations"
         case clinicalAuraPoints = "clinical_aura_points"
+        case activityDates = "activity_dates"
+        case streakSaveDates = "streak_save_dates"
     }
 }
 
@@ -890,6 +906,8 @@ class SupabaseService {
         let ownedEyesData = (try? encoder.encode(Array(gameVM.ownedEyes))) ?? Data()
         let ownedMouthsData = (try? encoder.encode(Array(gameVM.ownedMouths))) ?? Data()
         let ownedAccessoriesData = (try? encoder.encode(Array(gameVM.ownedAccessories))) ?? Data()
+        let activityDatesData = (try? encoder.encode(Array(gameVM.activityDates))) ?? Data()
+        let streakSaveDatesData = (try? encoder.encode(Array(gameVM.streakSaveDates))) ?? Data()
 
         let isoFormatter = ISO8601DateFormatter()
         isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -924,7 +942,9 @@ class SupabaseService {
             ownedMouths: String(data: ownedMouthsData, encoding: .utf8) ?? "[]",
             ownedAccessories: String(data: ownedAccessoriesData, encoding: .utf8) ?? "[]",
             professionDonations: profile.professionDonations,
-            clinicalAuraPoints: gameVM.clinicalAuraPoints
+            clinicalAuraPoints: gameVM.clinicalAuraPoints,
+            activityDates: String(data: activityDatesData, encoding: .utf8) ?? "[]",
+            streakSaveDates: String(data: streakSaveDatesData, encoding: .utf8) ?? "[]"
         )
 
         do {
@@ -1353,6 +1373,48 @@ class SupabaseService {
         }
     }
 
+    func logStreakActivity(date: String, eventType: String, streakCount: Int, streakSavesRemaining: Int) async {
+        do {
+            try await client.rpc("log_streak_activity", params: [
+                "p_activity_date": AnyEncodableValue.string(date),
+                "p_event_type": AnyEncodableValue.string(eventType),
+                "p_streak_count": AnyEncodableValue.int(streakCount),
+                "p_streak_saves_remaining": AnyEncodableValue.int(streakSavesRemaining),
+            ]).execute()
+        } catch {
+            print("RPC log_streak_activity failed: \(error)")
+        }
+    }
+
+    func fetchStreakActivity() async -> [StreakActivityRecord] {
+        do {
+            let resultData = try await client.rpc("fetch_streak_activity", params: EmptyParams()).execute().data
+            let decoder = JSONDecoder()
+            let records = try decoder.decode([StreakActivityRecord].self, from: resultData)
+            return records
+        } catch {
+            print("RPC fetch_streak_activity failed: \(error)")
+            return []
+        }
+    }
+
+    func syncStreakDates(activityDates: Set<String>, streakSaveDates: Set<String>) async {
+        do {
+            let encoder = JSONEncoder()
+            let activityData = (try? encoder.encode(Array(activityDates))) ?? Data()
+            let saveData = (try? encoder.encode(Array(streakSaveDates))) ?? Data()
+            let activityStr = String(data: activityData, encoding: .utf8) ?? "[]"
+            let saveStr = String(data: saveData, encoding: .utf8) ?? "[]"
+
+            try await client.rpc("sync_streak_dates", params: [
+                "p_activity_dates": AnyEncodableValue.string(activityStr),
+                "p_streak_save_dates": AnyEncodableValue.string(saveStr),
+            ]).execute()
+        } catch {
+            print("RPC sync_streak_dates failed: \(error)")
+        }
+    }
+
     private static func stableHash(_ string: String) -> UInt64 {
         var hash: UInt64 = 5381
         for byte in string.utf8 {
@@ -1428,6 +1490,20 @@ class SupabaseService {
             print("Failed to search users: \(error)")
             return []
         }
+    }
+}
+
+nonisolated struct StreakActivityRecord: Codable, Sendable {
+    let date: String
+    let eventType: String
+    let streakCount: Int
+    let streakSavesRemaining: Int
+
+    enum CodingKeys: String, CodingKey {
+        case date
+        case eventType = "event_type"
+        case streakCount = "streak_count"
+        case streakSavesRemaining = "streak_saves_remaining"
     }
 }
 
