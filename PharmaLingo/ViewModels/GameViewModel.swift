@@ -102,10 +102,31 @@ class GameViewModel {
 
     private let dataService = DrugDataService.shared
 
-    var level: Int { totalXP / 500 + 1 }
-    var xpInCurrentLevel: Int { totalXP % 500 }
-    var xpForNextLevel: Int { 500 }
-    var xpProgress: Double { Double(xpInCurrentLevel) / Double(xpForNextLevel) }
+    var level: Int { Self.levelForTotalXP(totalXP) }
+    var xpInCurrentLevel: Int { totalXP - Self.cumulativeXPForLevel(level) }
+    var xpForNextLevel: Int { Self.cumulativeXPForLevel(level + 1) - Self.cumulativeXPForLevel(level) }
+    var xpProgress: Double { Double(xpInCurrentLevel) / Double(max(xpForNextLevel, 1)) }
+
+    static func xpBetweenLevels(_ l: Int) -> Int {
+        Int(floor(Double(l) + 300.0 * pow(2.0, Double(l) / 7.0)))
+    }
+
+    static func cumulativeXPForLevel(_ level: Int) -> Int {
+        guard level >= 2 else { return 0 }
+        var total = 0
+        for l in 1..<level {
+            total += xpBetweenLevels(l)
+        }
+        return total
+    }
+
+    static func levelForTotalXP(_ xp: Int) -> Int {
+        var level = 1
+        while cumulativeXPForLevel(level + 1) <= xp {
+            level += 1
+        }
+        return level
+    }
     var accuracy: Double {
         guard questionsAnswered > 0 else { return 0 }
         return Double(questionsCorrect) / Double(questionsAnswered)
