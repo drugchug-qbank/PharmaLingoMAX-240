@@ -250,6 +250,64 @@ nonisolated struct DailyStateRecord: Codable, Sendable {
     }
 }
 
+nonisolated struct AllTimeLeaderboardRecord: Codable, Identifiable, Sendable {
+    let id: String
+    let username: String
+    let avatarAnimal: String
+    let avatarEyes: String
+    let avatarMouth: String
+    let avatarAccessory: String
+    let avatarBodyColor: String
+    let avatarBgColor: String
+    let totalXP: Int
+    let currentStreak: Int
+    let level: Int
+    let clinicalAuraPoints: Int
+
+    enum CodingKeys: String, CodingKey {
+        case id, username, level
+        case avatarAnimal = "avatar_animal"
+        case avatarEyes = "avatar_eyes"
+        case avatarMouth = "avatar_mouth"
+        case avatarAccessory = "avatar_accessory"
+        case avatarBodyColor = "avatar_body_color"
+        case avatarBgColor = "avatar_bg_color"
+        case totalXP = "total_xp"
+        case currentStreak = "current_streak"
+        case clinicalAuraPoints = "clinical_aura_points"
+    }
+
+    static func currentUser(
+        id: String,
+        username: String,
+        avatarAnimal: String,
+        avatarEyes: String,
+        avatarMouth: String,
+        avatarAccessory: String,
+        avatarBodyColor: String,
+        avatarBgColor: String,
+        totalXP: Int,
+        currentStreak: Int,
+        level: Int,
+        clinicalAuraPoints: Int
+    ) -> AllTimeLeaderboardRecord {
+        AllTimeLeaderboardRecord(
+            id: id,
+            username: username,
+            avatarAnimal: avatarAnimal,
+            avatarEyes: avatarEyes,
+            avatarMouth: avatarMouth,
+            avatarAccessory: avatarAccessory,
+            avatarBodyColor: avatarBodyColor,
+            avatarBgColor: avatarBgColor,
+            totalXP: totalXP,
+            currentStreak: currentStreak,
+            level: level,
+            clinicalAuraPoints: clinicalAuraPoints
+        )
+    }
+}
+
 nonisolated enum AnyCodableValue: Codable, Sendable {
     case string(String)
     case int(Int)
