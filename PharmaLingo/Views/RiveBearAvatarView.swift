@@ -161,7 +161,7 @@ struct RiveBearAvatarView: View {
     }
 
     var body: some View {
-        riveViewModel.view()
+        TransparentRiveView(viewModel: riveViewModel)
             .frame(width: size, height: size)
             .onChange(of: eyeStyle) { _, _ in applyInputs() }
             .onChange(of: mouthStyle) { _, _ in applyInputs() }
