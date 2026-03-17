@@ -6,6 +6,7 @@ struct RiveBearAvatarView: View {
     var eyeStyle: EyeStyle = .normal
     var mouthStyle: MouthStyle = .smile
     var accessoryType: AccessoryType = .none
+    var bodyColorIndex: Double = 0
 
     @State private var riveViewModel = RiveViewModel(fileName: "bear_v3", autoPlay: true)
     @State private var isReady: Bool = false
@@ -31,6 +32,30 @@ struct RiveBearAvatarView: View {
         .flowerCrown, .crown, .bucketHat, .wizardHat,
         .gradCap, .bandana, .bowClip, .pearlNecklace
     ]
+
+    static let supportedBodyColors: [(name: String, hex: String, index: Double)] = [
+        ("Brown", "8D6E63", 0),
+        ("Dark Brown", "795548", 1),
+        ("Light Brown", "A1887F", 2),
+        ("Espresso", "5D4037", 3),
+        ("Tan", "D7CCC8", 4),
+        ("Mocha", "8B5E3C", 5),
+        ("Honey", "FFB74D", 6),
+        ("Cream", "FFF8E1", 7),
+        ("Gray", "BDBDBD", 8),
+        ("Slate", "90A4AE", 9),
+        ("Rose", "F48FB1", 10),
+        ("Teal", "26A69A", 11),
+        ("Sky", "4FC3F7", 12),
+    ]
+
+    static func bodyColorIndex(for hex: String) -> Double {
+        let upperHex = hex.uppercased()
+        if let match = supportedBodyColors.first(where: { $0.hex.uppercased() == upperHex }) {
+            return match.index
+        }
+        return 0
+    }
 
     private var riveEyeValue: Double {
         switch eyeStyle {
@@ -113,9 +138,11 @@ struct RiveBearAvatarView: View {
     }
 
     private func applyInputs() {
-        riveViewModel.setInput("eyeStyle", value: Float(riveEyeValue))
-        riveViewModel.setInput("mouthStyle", value: Float(riveMouthValue))
-        riveViewModel.setInput("accessoryStyle", value: Float(riveAccessoryValue))
+        riveViewModel.setInput("Eyes", value: riveEyeValue)
+        riveViewModel.setInput("Mouth", value: riveMouthValue)
+        riveViewModel.setInput("Accessory", value: riveAccessoryValue)
+        riveViewModel.setInput("Base Color", value: bodyColorIndex)
+        riveViewModel.setInput("Charecter Color", value: bodyColorIndex)
     }
 
     var body: some View {
@@ -124,9 +151,10 @@ struct RiveBearAvatarView: View {
             .onChange(of: eyeStyle) { _, _ in applyInputs() }
             .onChange(of: mouthStyle) { _, _ in applyInputs() }
             .onChange(of: accessoryType) { _, _ in applyInputs() }
+            .onChange(of: bodyColorIndex) { _, _ in applyInputs() }
             .onAppear {
                 Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(100))
+                    try? await Task.sleep(for: .milliseconds(300))
                     applyInputs()
                     isReady = true
                 }

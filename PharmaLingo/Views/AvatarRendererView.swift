@@ -39,7 +39,7 @@ struct AvatarRendererView: View {
                 RiveCatAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle)
                     .allowsHitTesting(false)
             } else if useRiveBear {
-                RiveBearAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType)
+                RiveBearAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveBearAvatarView.bodyColorIndex(for: configuration.bodyHex))
                     .allowsHitTesting(false)
             } else {
                 animalLayer
