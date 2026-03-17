@@ -263,67 +263,6 @@ nonisolated enum SupabaseServiceError: Error, LocalizedError, Sendable {
     }
 }
 
-nonisolated struct AllTimeLeaderboardRecord: Codable, Identifiable, Sendable {
-    let id: String
-    let username: String
-    let avatarAnimal: String
-    let avatarEyes: String
-    let avatarMouth: String
-    let avatarAccessory: String
-    let avatarBodyColor: String
-    let avatarBgColor: String
-    let totalXP: Int
-    let currentStreak: Int
-    let level: Int
-    let clinicalAuraPoints: Int
-
-    enum CodingKeys: String, CodingKey {
-        case id, username, level
-        case avatarAnimal = "avatar_animal"
-        case avatarEyes = "avatar_eyes"
-        case avatarMouth = "avatar_mouth"
-        case avatarAccessory = "avatar_accessory"
-        case avatarBodyColor = "avatar_body_color"
-        case avatarBgColor = "avatar_bg_color"
-        case totalXP = "total_xp"
-        case currentStreak = "current_streak"
-        case clinicalAuraPoints = "clinical_aura_points"
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        username = (try? container.decode(String.self, forKey: .username)) ?? "User"
-        avatarAnimal = (try? container.decode(String.self, forKey: .avatarAnimal)) ?? "beaver"
-        avatarEyes = (try? container.decode(String.self, forKey: .avatarEyes)) ?? "normal"
-        avatarMouth = (try? container.decode(String.self, forKey: .avatarMouth)) ?? "smile"
-        avatarAccessory = (try? container.decode(String.self, forKey: .avatarAccessory)) ?? "none"
-        avatarBodyColor = (try? container.decode(String.self, forKey: .avatarBodyColor)) ?? ""
-        avatarBgColor = (try? container.decode(String.self, forKey: .avatarBgColor)) ?? ""
-        totalXP = (try? container.decode(Int.self, forKey: .totalXP)) ?? 0
-        currentStreak = (try? container.decode(Int.self, forKey: .currentStreak)) ?? 0
-        level = (try? container.decode(Int.self, forKey: .level)) ?? 1
-        clinicalAuraPoints = (try? container.decode(Int.self, forKey: .clinicalAuraPoints)) ?? 0
-    }
-
-    static func currentUser(
-        id: String, username: String, avatarAnimal: String, avatarEyes: String,
-        avatarMouth: String, avatarAccessory: String, avatarBodyColor: String,
-        avatarBgColor: String, totalXP: Int, currentStreak: Int, level: Int, clinicalAuraPoints: Int
-    ) -> AllTimeLeaderboardRecord {
-        let json: [String: Any] = [
-            "id": id, "username": username, "avatar_animal": avatarAnimal,
-            "avatar_eyes": avatarEyes, "avatar_mouth": avatarMouth,
-            "avatar_accessory": avatarAccessory, "avatar_body_color": avatarBodyColor,
-            "avatar_bg_color": avatarBgColor, "total_xp": totalXP,
-            "current_streak": currentStreak, "level": level,
-            "clinical_aura_points": clinicalAuraPoints
-        ]
-        let data = try! JSONSerialization.data(withJSONObject: json)
-        return try! JSONDecoder().decode(AllTimeLeaderboardRecord.self, from: data)
-    }
-}
-
 nonisolated struct SchoolRanking: Codable, Sendable {
     let school: String
     let totalXP: Int
