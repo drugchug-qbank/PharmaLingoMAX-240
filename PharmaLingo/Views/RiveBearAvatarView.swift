@@ -8,6 +8,7 @@ struct RiveBearAvatarView: View {
     var accessoryType: AccessoryType = .none
 
     @State private var riveViewModel = RiveViewModel(fileName: "bear_v3", autoPlay: true)
+    @State private var isReady: Bool = false
 
     static let supportedEyes: [EyeStyle] = [
         .dotFriendly, .roundBright, .almond, .droopy, .sleepy,
@@ -58,7 +59,7 @@ struct RiveBearAvatarView: View {
         case .cool: 22
         case .determined: 23
         case .wink: 24
-        default: 0
+        default: 7
         }
     }
 
@@ -89,7 +90,7 @@ struct RiveBearAvatarView: View {
         case .smile: 22
         case .smirkTeeth: 23
         case .vampire: 24
-        default: 0
+        default: 22
         }
     }
 
@@ -123,6 +124,12 @@ struct RiveBearAvatarView: View {
             .onChange(of: eyeStyle) { _, _ in applyInputs() }
             .onChange(of: mouthStyle) { _, _ in applyInputs() }
             .onChange(of: accessoryType) { _, _ in applyInputs() }
-            .onAppear { applyInputs() }
+            .onAppear {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(100))
+                    applyInputs()
+                    isReady = true
+                }
+            }
     }
 }
