@@ -1,11 +1,12 @@
 import SwiftUI
 
 nonisolated enum AnimalType: String, CaseIterable, Sendable {
-    case beaver, bird, bunny, cat, dog, dragon, elephant, fox, frog, giraffe
+    case bear, beaver, bird, bunny, cat, dog, dragon, elephant, fox, frog, giraffe
     case lion, monkey, panda, raccoon, seal, sloth, turtle, unicorn
 
     var displayName: String {
         switch self {
+        case .bear: "Bear"
         case .beaver: "Beaver"
         case .bird: "Bird"
         case .bunny: "Bunny"
@@ -31,6 +32,7 @@ nonisolated enum AnimalType: String, CaseIterable, Sendable {
 
     var defaultColorHex: String {
         switch self {
+        case .bear: "8D6E63"
         case .beaver: "8B5E3C"
         case .bird: "4FC3F7"
         case .bunny: "F8BBD0"

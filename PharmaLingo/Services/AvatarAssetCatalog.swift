@@ -69,6 +69,7 @@ enum AvatarAssetCatalog {
 
     static func recommendedBodyColors(for animal: AnimalType) -> [String] {
         switch animal {
+        case .bear: return ["8D6E63", "795548", "A1887F", "5D4037"]
         case .beaver: return ["8B5E3C", "A1887F", "795548", "D7CCC8"]
         case .bird: return ["4FC3F7", "42A5F5", "26C6DA", "81D4FA"]
         case .bunny: return ["F8BBD0", "F48FB1", "CE93D8", "FFCCBC"]

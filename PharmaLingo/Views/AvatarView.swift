@@ -184,6 +184,9 @@ struct AvatarCustomizationView: View {
                 if newAnimal == .cat && !RiveCatAvatarView.supportedEyes.contains(selectedEyes) {
                     selectedEyes = .normal
                 }
+                if newAnimal == .bear && !RiveBearAvatarView.supportedEyes.contains(selectedEyes) {
+                    selectedEyes = .normal
+                }
             }
         }
     }
@@ -382,6 +385,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .cat {
             return RiveCatAvatarView.supportedEyes
+        }
+        if selectedAnimal == .bear {
+            return RiveBearAvatarView.supportedEyes
         }
         return EyeStyle.allCases.map { $0 }
     }

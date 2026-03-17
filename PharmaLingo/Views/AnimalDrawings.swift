@@ -65,6 +65,24 @@ struct AnimalAvatarView: View {
         let iw: CGFloat = s * 0.009
 
         switch type {
+        case .bear:
+            let earL = CGRect(x: s * 0.10, y: s * 0.18, width: s * 0.22, height: s * 0.22)
+            let earR = CGRect(x: s * 0.68, y: s * 0.18, width: s * 0.22, height: s * 0.22)
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.04, dy: s * 0.04)), with: .color(Color(hex: "FFAB91").opacity(0.4)))
+            context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.04, dy: s * 0.04)), with: .color(Color(hex: "FFAB91").opacity(0.4)))
+            let bearHead = CGRect(x: s * 0.12, y: s * 0.24, width: s * 0.76, height: s * 0.64)
+            fns(context: &context, path: Path(ellipseIn: bearHead), fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.17, y: s * 0.26, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
+            let bearMuzzle = CGRect(x: s * 0.28, y: s * 0.52, width: s * 0.44, height: s * 0.30)
+            fns(context: &context, path: Path(ellipseIn: bearMuzzle), fill: belly, outline: oc, lineWidth: iw)
+            let bearNose = CGRect(x: s * 0.42, y: s * 0.54, width: s * 0.16, height: s * 0.11)
+            context.fill(Path(ellipseIn: bearNose), with: .color(noseColor))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.55, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.4)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.54, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.54, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
+
         case .beaver:
             let earL = CGRect(x: s * 0.16, y: s * 0.22, width: s * 0.18, height: s * 0.16)
             let earR = CGRect(x: s * 0.66, y: s * 0.22, width: s * 0.18, height: s * 0.16)
