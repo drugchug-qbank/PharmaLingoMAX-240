@@ -24,6 +24,9 @@ struct ContentView: View {
             }
         }
         .tint(AppTheme.primaryBlue)
+        .overlay {
+            AppEventHost(selectedTab: $selectedTab)
+        }
         .task {
             if let profile = supabase.currentProfile {
                 gameVM.loadFromProfile(profile)

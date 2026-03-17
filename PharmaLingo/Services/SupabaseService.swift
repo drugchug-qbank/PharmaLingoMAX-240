@@ -1525,6 +1525,26 @@ class SupabaseService {
         }
     }
 
+    func fetchUnseenAppEvents() async -> [AppEvent] {
+        do {
+            let resultData = try await client.rpc("fetch_unseen_app_events", params: EmptyParams()).execute().data
+            let decoder = JSONDecoder()
+            let events = try decoder.decode([AppEvent].self, from: resultData)
+            return events
+        } catch {
+            print("RPC fetch_unseen_app_events failed: \(error)")
+            return []
+        }
+    }
+
+    func dismissAppEvent(eventId: String) async {
+        do {
+            try await client.rpc("dismiss_app_event", params: ["p_event_id": eventId]).execute()
+        } catch {
+            print("RPC dismiss_app_event failed: \(error)")
+        }
+    }
+
     func searchUsers(query: String) async -> [LeaderboardRecord] {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         let trimmed = query.trimmingCharacters(in: .whitespaces)
