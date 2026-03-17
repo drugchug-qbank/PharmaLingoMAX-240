@@ -61,6 +61,7 @@ nonisolated enum EyeStyle: String, CaseIterable, Sendable {
     case dotFriendly, roundBright, almond, droopy, sharpConfident
     case sparkleGlam, glanceLeft, glanceRight, winkLeft, winkRight
     case lashesSoft, boldBrow, relaxedBlink, sadEyes
+    case dizzySwirl, starEyes, heartEyes
 
     var displayName: String {
         switch self {
@@ -93,6 +94,9 @@ nonisolated enum EyeStyle: String, CaseIterable, Sendable {
         case .boldBrow: "Bold Brow"
         case .relaxedBlink: "Relaxed"
         case .sadEyes: "Sad"
+        case .dizzySwirl: "Dizzy Swirl"
+        case .starEyes: "Star Eyes"
+        case .heartEyes: "Heart Eyes"
         }
     }
 
@@ -163,7 +167,7 @@ nonisolated enum AccessoryType: String, CaseIterable, Sendable {
         case .partyHat: "Party Hat"
         case .flower: "Flower"
         case .horns: "Horns"
-        case .tiara: "Tiara"
+        case .tiara: "Small Crown"
         case .beanie: "Beanie"
         case .roundGlasses: "Glasses"
         case .heartSunglasses: "Heart Shades"

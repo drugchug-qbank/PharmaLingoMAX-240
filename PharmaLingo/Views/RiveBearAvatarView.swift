@@ -12,24 +12,24 @@ struct RiveBearAvatarView: View {
 
     static let supportedEyes: [EyeStyle] = [
         .dotFriendly, .roundBright, .almond, .droopy, .sleepy,
-        .happy, .sharpConfident, .normal, .stars, .heart,
+        .happy, .sharpConfident, .stars, .heart,
         .sparkleGlam, .glanceLeft, .glanceRight, .winkLeft, .winkRight,
-        .lashesSoft, .boldBrow, .dizzy, .angry, .relaxedBlink,
-        .sadEyes, .surprised, .cool, .determined, .wink
+        .lashesSoft, .boldBrow, .dizzy, .determined, .relaxedBlink,
+        .sadEyes, .angry, .normal, .dizzySwirl, .starEyes, .heartEyes
     ]
 
     static let supportedMouths: [MouthStyle] = [
-        .teethGrin, .tongue, .grin, .toothedGrin, .catMouth,
-        .neutralLine, .smirk, .oh, .sadMouth, .pout,
-        .surprisedO, .laughOpen, .tonguePlayful, .wavy, .sadDown,
+        .smile, .teethGrin, .tongue, .grin, .toothedGrin, .catMouth,
+        .neutralLine, .smirk, .oh, .pout,
+        .sadMouth, .surprisedO, .laughOpen, .tonguePlayful, .wavy, .sadDown,
         .determinedFlat, .buckToothSmile, .fangPeek, .sleepySmall,
-        .grittedTeeth, .buckTeeth, .kiss, .smile, .smirkTeeth, .vampire
+        .grittedTeeth, .buckTeeth, .kiss, .smirkTeeth, .vampire
     ]
 
     static let supportedAccessories: [AccessoryType] = [
         .none, .roundGlasses, .heartSunglasses, .monocle,
-        .flowerCrown, .crown, .bucketHat, .wizardHat,
-        .gradCap, .bandana, .bowClip, .pearlNecklace
+        .flowerCrown, .tiara, .bucketHat, .wizardHat,
+        .gradCap, .bandana, .bowClip, .pearlNecklace, .crown
     ]
 
     static let bearBodyColors: [(name: String, index: Double)] = [
@@ -81,74 +81,75 @@ struct RiveBearAvatarView: View {
         case .sleepy: 4
         case .happy: 5
         case .sharpConfident: 6
-        case .normal: 7
-        case .stars: 8
-        case .heart: 9
-        case .sparkleGlam: 10
-        case .glanceLeft: 11
-        case .glanceRight: 12
-        case .winkLeft: 13
-        case .winkRight: 14
-        case .lashesSoft: 15
-        case .boldBrow: 16
-        case .dizzy: 17
-        case .angry: 18
-        case .relaxedBlink: 19
-        case .sadEyes: 20
-        case .surprised: 21
-        case .cool: 22
-        case .determined: 23
-        case .wink: 24
-        default: 7
+        case .stars: 7
+        case .heart: 8
+        case .sparkleGlam: 9
+        case .glanceLeft: 10
+        case .glanceRight: 11
+        case .winkLeft: 12
+        case .winkRight: 13
+        case .lashesSoft: 14
+        case .boldBrow: 15
+        case .dizzy: 16
+        case .determined: 17
+        case .relaxedBlink: 18
+        case .sadEyes: 19
+        case .angry: 20
+        case .normal: 21
+        case .dizzySwirl: 22
+        case .starEyes: 23
+        case .heartEyes: 24
+        default: 21
         }
     }
 
     private var riveMouthValue: Double {
         switch mouthStyle {
-        case .teethGrin: 0
-        case .tongue: 1
-        case .grin: 2
-        case .toothedGrin: 3
-        case .catMouth: 4
-        case .neutralLine: 5
-        case .smirk: 6
-        case .oh: 7
-        case .sadMouth: 8
+        case .smile: 0
+        case .teethGrin: 1
+        case .tongue: 2
+        case .grin: 3
+        case .toothedGrin: 4
+        case .catMouth: 5
+        case .neutralLine: 6
+        case .smirk: 7
+        case .oh: 8
         case .pout: 9
-        case .surprisedO: 10
-        case .laughOpen: 11
-        case .tonguePlayful: 12
-        case .wavy: 13
-        case .sadDown: 14
-        case .determinedFlat: 15
-        case .buckToothSmile: 16
-        case .fangPeek: 17
-        case .sleepySmall: 18
-        case .grittedTeeth: 19
-        case .buckTeeth: 20
-        case .kiss: 21
-        case .smile: 22
+        case .sadMouth: 10
+        case .surprisedO: 11
+        case .laughOpen: 12
+        case .tonguePlayful: 13
+        case .wavy: 14
+        case .sadDown: 15
+        case .determinedFlat: 16
+        case .buckToothSmile: 17
+        case .fangPeek: 18
+        case .sleepySmall: 19
+        case .grittedTeeth: 20
+        case .buckTeeth: 21
+        case .kiss: 22
         case .smirkTeeth: 23
         case .vampire: 24
-        default: 22
+        default: 0
         }
     }
 
     private var riveAccessoryValue: Double {
         switch accessoryType {
-        case .roundGlasses: 0
-        case .heartSunglasses: 1
-        case .monocle: 2
-        case .flowerCrown: 3
-        case .crown: 4
-        case .bucketHat: 5
-        case .wizardHat: 6
-        case .gradCap: 7
-        case .bandana: 8
-        case .bowClip: 9
-        case .pearlNecklace: 10
-        case .none: 11
-        default: 11
+        case .none: 0
+        case .roundGlasses: 1
+        case .heartSunglasses: 2
+        case .monocle: 3
+        case .flowerCrown: 4
+        case .tiara: 5
+        case .bucketHat: 6
+        case .wizardHat: 7
+        case .gradCap: 8
+        case .bandana: 9
+        case .bowClip: 10
+        case .pearlNecklace: 11
+        case .crown: 12
+        default: 0
         }
     }
 
