@@ -12,10 +12,12 @@ struct RanksView: View {
     @State private var professionRankings: [ProfessionRanking] = []
     @State private var showAddFriend: Bool = false
     @State private var isLoadingLeaderboard: Bool = false
+    @State private var allTimeLeaderboard: [AllTimeLeaderboardRecord] = []
+    @State private var allTimeMyRank: Int? = nil
 
     enum RanksTab: String, CaseIterable {
         case league = "League"
-        case blitz = "Blitz"
+        case hallOfFame = "Hall of Fame"
         case friends = "Friends"
         case school = "School"
         case profession = "Profession"
@@ -23,7 +25,7 @@ struct RanksView: View {
         var icon: String {
             switch self {
             case .league: "trophy.fill"
-            case .blitz: "bolt.fill"
+            case .hallOfFame: "crown.fill"
             case .friends: "person.2.fill"
             case .school: "building.columns.fill"
             case .profession: "cross.case.fill"
@@ -156,8 +158,8 @@ struct RanksView: View {
                         switch selectedTab {
                         case .league:
                             leagueContent
-                        case .blitz:
-                            blitzLeaderboardContent
+                        case .hallOfFame:
+                            hallOfFameContent
                         case .friends:
                             friendsContent
                         case .school:
@@ -230,11 +232,15 @@ struct RanksView: View {
         async let pr = supabase.fetchPendingRequests()
         async let sr = supabase.fetchSchoolRankings()
         async let prr = supabase.fetchProfessionRankings()
+        async let at = supabase.fetchAllTimeLeaderboard()
         leaderboard = await lb
         friends = await fr
         pendingRequests = await pr
         schoolRankings = await sr
         professionRankings = await prr
+        let allTimeResult = await at
+        allTimeLeaderboard = allTimeResult.top300
+        allTimeMyRank = allTimeResult.myRank
         isLoadingLeaderboard = false
     }
 
@@ -484,177 +490,86 @@ struct RanksView: View {
     }
 
     @ViewBuilder
-    private var blitzLeaderboardContent: some View {
-        VStack(spacing: 16) {
-            VStack(spacing: 12) {
-                HStack(spacing: 8) {
-                    Image(systemName: "bolt.fill")
-                        .font(.title2)
-                        .foregroundStyle(AppTheme.xpPurple)
-                    Text("Brand Blitz")
-                        .font(AppTheme.funFont(.title3, weight: .heavy))
-                    Spacer()
-                    Text("Today")
-                        .font(AppTheme.funFont(.caption, weight: .heavy))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 5)
-                        .background(
-                            Capsule().fill(
-                                LinearGradient(colors: [AppTheme.xpPurple, AppTheme.funPink], startPoint: .leading, endPoint: .trailing)
-                            )
-                        )
-                }
+    private var hallOfFameContent: some View {
+        let currentUserId = supabase.currentUser?.id.uuidString.lowercased()
+        let isInTop300 = allTimeLeaderboard.contains(where: { $0.id == currentUserId })
 
-                let bestScore = UserDefaults.standard.integer(forKey: "blitz_best_score")
-                let bestCombo = UserDefaults.standard.integer(forKey: "blitz_best_combo")
-                let bestAccuracy = UserDefaults.standard.double(forKey: "blitz_best_accuracy")
-
-                if bestScore > 0 {
-                    HStack(spacing: 0) {
-                        blitzPersonalStat(icon: "bolt.fill", value: "\(bestScore)", label: "Best XP", color: AppTheme.xpPurple)
-                        blitzPersonalStat(icon: "flame.fill", value: "\(bestCombo)x", label: "Best Combo", color: AppTheme.accentOrange)
-                        blitzPersonalStat(icon: "target", value: "\(Int(bestAccuracy * 100))%", label: "Best Acc", color: AppTheme.funTeal)
-                    }
-                    .padding(.vertical, 12)
-                    .background(AppTheme.xpPurple.opacity(0.06))
-                    .clipShape(.rect(cornerRadius: 12))
-                }
+        VStack(spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "crown.fill")
+                    .foregroundStyle(AppTheme.warningYellow)
+                Text("All-Time Top 300")
+                    .font(AppTheme.funFont(.headline, weight: .heavy))
+                Spacer()
+                Image(systemName: "star.fill")
+                    .foregroundStyle(AppTheme.warningYellow.opacity(0.6))
             }
-            .padding(16)
-            .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.3))
+            .padding(12)
+            .background(
+                LinearGradient(colors: [AppTheme.warningYellow.opacity(0.08), AppTheme.accentOrange.opacity(0.04)], startPoint: .leading, endPoint: .trailing)
+            )
+            .clipShape(.rect(cornerRadius: 12))
 
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 6) {
-                    Image(systemName: "chart.bar.fill")
-                        .foregroundStyle(AppTheme.funPink)
-                    Text("Today's Runs")
-                        .font(AppTheme.funFont(.headline, weight: .heavy))
+            if isLoadingLeaderboard {
+                ProgressView()
+                    .padding(40)
+            } else if allTimeLeaderboard.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "crown.fill")
+                        .font(.largeTitle)
+                        .foregroundStyle(.secondary)
+                    Text("Hall of Fame Loading...")
+                        .font(AppTheme.funFont(.headline, weight: .bold))
+                    Text("Earn XP to climb the all-time rankings!")
+                        .font(AppTheme.funFont(.subheadline, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(32)
+            } else {
+                ForEach(Array(allTimeLeaderboard.enumerated()), id: \.element.id) { index, entry in
+                    let isCurrentUser = entry.id == currentUserId
+                    HallOfFameRow(
+                        entry: entry,
+                        rank: index + 1,
+                        isCurrentUser: isCurrentUser
+                    )
                 }
 
-                let todayScores = loadTodayScores()
+                if !isInTop300, let myRank = allTimeMyRank {
+                    Divider()
+                        .padding(.vertical, 4)
 
-                if todayScores.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "bolt.circle.fill")
-                            .font(.system(size: 44))
-                            .foregroundStyle(AppTheme.xpPurple.opacity(0.4))
-                        Text("No runs today")
-                            .font(AppTheme.funFont(.headline, weight: .bold))
+                    HStack(spacing: 8) {
+                        Image(systemName: "ellipsis")
                             .foregroundStyle(.secondary)
-                        Text("Complete a Brand Blitz to see your scores here!")
-                            .font(AppTheme.funFont(.subheadline, weight: .medium))
+                        Text("Your Rank")
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
                             .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
                     }
-                    .padding(24)
                     .frame(maxWidth: .infinity)
-                } else {
-                    ForEach(Array(todayScores.enumerated()), id: \.offset) { index, run in
-                        HStack(spacing: 12) {
-                            Text("#\(index + 1)")
-                                .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                                .foregroundStyle(index == 0 ? AppTheme.xpPurple : .secondary)
-                                .frame(width: 30)
 
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("\(run.score) XP")
-                                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                                HStack(spacing: 8) {
-                                    HStack(spacing: 3) {
-                                        Image(systemName: "target")
-                                            .font(.caption2)
-                                        Text("\(Int(run.accuracy * 100))%")
-                                            .font(AppTheme.funFont(.caption, weight: .bold))
-                                    }
-                                    .foregroundStyle(.secondary)
-                                    HStack(spacing: 3) {
-                                        Image(systemName: "flame.fill")
-                                            .font(.caption2)
-                                            .foregroundStyle(AppTheme.accentOrange)
-                                        Text("\(run.combo)x")
-                                            .font(AppTheme.funFont(.caption, weight: .bold))
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                            }
-
-                            Spacer()
-
-                            Text(String(format: "%.0fs", run.time))
-                                .font(.system(size: 13, weight: .bold, design: .monospaced))
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 12)
-                        .background(index == 0 ? AppTheme.xpPurple.opacity(0.06) : .clear)
-                        .clipShape(.rect(cornerRadius: 10))
-                    }
+                    HallOfFameRow(
+                        entry: AllTimeLeaderboardRecord.currentUser(
+                            id: currentUserId ?? "",
+                            username: gameVM.username,
+                            avatarAnimal: gameVM.avatarAnimal,
+                            avatarEyes: gameVM.avatarEyes,
+                            avatarMouth: gameVM.avatarMouth,
+                            avatarAccessory: gameVM.avatarAccessory,
+                            avatarBodyColor: gameVM.avatarBodyColor,
+                            avatarBgColor: gameVM.avatarBgColor,
+                            totalXP: gameVM.totalXP,
+                            currentStreak: gameVM.currentStreak,
+                            level: gameVM.level,
+                            clinicalAuraPoints: gameVM.clinicalAuraPoints
+                        ),
+                        rank: myRank,
+                        isCurrentUser: true
+                    )
                 }
             }
-            .padding(16)
-            .cardStyle(borderColor: AppTheme.funPink.opacity(0.3))
-
-            VStack(spacing: 10) {
-                HStack(spacing: 6) {
-                    Image(systemName: "globe")
-                        .foregroundStyle(AppTheme.primaryBlue)
-                    Text("Global Blitz Leaderboard")
-                        .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                }
-
-                HStack(spacing: 8) {
-                    Image(systemName: "wrench.and.screwdriver.fill")
-                        .foregroundStyle(.secondary)
-                    Text("Coming soon! Your scores are being tracked.")
-                        .font(AppTheme.funFont(.caption, weight: .bold))
-                        .foregroundStyle(.secondary)
-                }
-                .padding(14)
-                .frame(maxWidth: .infinity)
-                .background(Color(.tertiarySystemFill))
-                .clipShape(.rect(cornerRadius: 12))
-            }
-            .padding(16)
-            .cardStyle()
         }
-    }
-
-    private func blitzPersonalStat(icon: String, value: String, label: String, color: Color) -> some View {
-        VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.caption)
-                .foregroundStyle(color)
-            Text(value)
-                .font(AppTheme.funFont(.headline, weight: .heavy))
-                .foregroundStyle(color)
-            Text(label)
-                .font(AppTheme.funFont(.caption2, weight: .bold))
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private struct BlitzDailyRun {
-        let score: Int
-        let accuracy: Double
-        let combo: Int
-        let time: Double
-    }
-
-    private func loadTodayScores() -> [BlitzDailyRun] {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let today = formatter.string(from: Date())
-        guard let lastDate = UserDefaults.standard.string(forKey: "blitz_daily_date"), lastDate == today else { return [] }
-        guard let raw = UserDefaults.standard.array(forKey: "blitz_daily_scores") as? [[String: Any]] else { return [] }
-        return raw.compactMap { dict in
-            guard let score = dict["score"] as? Int,
-                  let accuracy = dict["accuracy"] as? Double,
-                  let combo = dict["combo"] as? Int,
-                  let time = dict["time"] as? Double else { return nil }
-            return BlitzDailyRun(score: score, accuracy: accuracy, combo: combo, time: time)
-        }.sorted { $0.score > $1.score }
     }
 
     private func rankColor(for rank: Int) -> Color {
@@ -1091,6 +1006,92 @@ struct LeaderboardRow: View {
 
     private var rankColor: Color {
         switch entry.rank {
+        case 1: AppTheme.warningYellow
+        case 2: Color(.systemGray3)
+        case 3: Color(hex: "CD7F32")
+        default: .secondary
+        }
+    }
+}
+
+struct HallOfFameRow: View {
+    let entry: AllTimeLeaderboardRecord
+    let rank: Int
+    let isCurrentUser: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text("#\(rank)")
+                .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                .foregroundStyle(rankColor)
+                .frame(width: 34)
+
+            AvatarDisplayView(
+                animal: entry.avatarAnimal,
+                eyes: entry.avatarEyes,
+                mouth: entry.avatarMouth,
+                accessory: entry.avatarAccessory,
+                bodyColor: entry.avatarBodyColor,
+                backgroundColor: entry.avatarBgColor,
+                size: 38
+            )
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(entry.username)
+                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                    .foregroundStyle(isCurrentUser ? AppTheme.primaryBlue : .primary)
+                    .lineLimit(1)
+                HStack(spacing: 8) {
+                    HStack(spacing: 3) {
+                        Image(systemName: "star.fill")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.warningYellow)
+                        Text("Lv.\(entry.level)")
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                    HStack(spacing: 3) {
+                        Image(systemName: "flame.fill")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.accentOrange)
+                        Text("\(entry.currentStreak)")
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                    HStack(spacing: 3) {
+                        Image(systemName: "sparkles")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.xpPurple)
+                        Text("\(entry.clinicalAuraPoints)")
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            Spacer()
+
+            Text("\(entry.totalXP.formatted()) XP")
+                .font(AppTheme.funFont(.caption, weight: .heavy))
+                .foregroundStyle(isCurrentUser ? AppTheme.primaryBlue : .primary)
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .background(
+            rank <= 3
+                ? rankColor.opacity(0.06)
+                : (isCurrentUser ? AppTheme.primaryBlue.opacity(0.06) : Color(.secondarySystemGroupedBackground))
+        )
+        .clipShape(.rect(cornerRadius: 12))
+        .overlay(
+            rank <= 3
+                ? RoundedRectangle(cornerRadius: 12).stroke(rankColor.opacity(0.3), lineWidth: 1.5)
+                : nil
+        )
+    }
+
+    private var rankColor: Color {
+        switch rank {
         case 1: AppTheme.warningYellow
         case 2: Color(.systemGray3)
         case 3: Color(hex: "CD7F32")
