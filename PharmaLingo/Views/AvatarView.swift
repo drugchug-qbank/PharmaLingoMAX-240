@@ -184,8 +184,16 @@ struct AvatarCustomizationView: View {
                 if newAnimal == .cat && !RiveCatAvatarView.supportedEyes.contains(selectedEyes) {
                     selectedEyes = .normal
                 }
-                if newAnimal == .bear && !RiveBearAvatarView.supportedEyes.contains(selectedEyes) {
-                    selectedEyes = .normal
+                if newAnimal == .bear {
+                    if !RiveBearAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveBearAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveBearAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
                 }
             }
         }
@@ -392,6 +400,20 @@ struct AvatarCustomizationView: View {
         return EyeStyle.allCases.map { $0 }
     }
 
+    private var availableMouths: [MouthStyle] {
+        if selectedAnimal == .bear {
+            return RiveBearAvatarView.supportedMouths
+        }
+        return MouthStyle.allCases.map { $0 }
+    }
+
+    private var availableAccessories: [AccessoryType] {
+        if selectedAnimal == .bear {
+            return RiveBearAvatarView.supportedAccessories
+        }
+        return AccessoryType.allCases.map { $0 }
+    }
+
     private var eyeGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 10) {
             ForEach(availableEyes, id: \.self) { eye in
@@ -442,7 +464,7 @@ struct AvatarCustomizationView: View {
 
     private var mouthGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 10) {
-            ForEach(MouthStyle.allCases, id: \.self) { mouth in
+            ForEach(availableMouths, id: \.self) { mouth in
                 let isOwned = gameVM.ownedMouths.contains(mouth.rawValue)
                 let isSelected = selectedMouth == mouth
                 Button {
@@ -490,7 +512,7 @@ struct AvatarCustomizationView: View {
 
     private var accessoryGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 10) {
-            ForEach(AccessoryType.allCases, id: \.self) { acc in
+            ForEach(availableAccessories, id: \.self) { acc in
                 let isOwned = gameVM.ownedAccessories.contains(acc.rawValue)
                 let isSelected = selectedAccessory == acc
                 Button {

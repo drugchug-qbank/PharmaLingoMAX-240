@@ -58,6 +58,9 @@ nonisolated enum AnimalType: String, CaseIterable, Sendable {
 nonisolated enum EyeStyle: String, CaseIterable, Sendable {
     case normal, happy, big, sleepy, wink, stars, heart, determined, surprised, cool
     case angry, rainbow, eyeRoll, dizzy, crying
+    case dotFriendly, roundBright, almond, droopy, sharpConfident
+    case sparkleGlam, glanceLeft, glanceRight, winkLeft, winkRight
+    case lashesSoft, boldBrow, relaxedBlink, sadEyes
 
     var displayName: String {
         switch self {
@@ -76,6 +79,20 @@ nonisolated enum EyeStyle: String, CaseIterable, Sendable {
         case .eyeRoll: "Eye Roll"
         case .dizzy: "Dizzy"
         case .crying: "Crying"
+        case .dotFriendly: "Dot"
+        case .roundBright: "Round"
+        case .almond: "Almond"
+        case .droopy: "Droopy"
+        case .sharpConfident: "Sharp"
+        case .sparkleGlam: "Sparkle"
+        case .glanceLeft: "Glance Left"
+        case .glanceRight: "Glance Right"
+        case .winkLeft: "Wink Left"
+        case .winkRight: "Wink Right"
+        case .lashesSoft: "Lashes"
+        case .boldBrow: "Bold Brow"
+        case .relaxedBlink: "Relaxed"
+        case .sadEyes: "Sad"
         }
     }
 
@@ -84,6 +101,10 @@ nonisolated enum EyeStyle: String, CaseIterable, Sendable {
 
 nonisolated enum MouthStyle: String, CaseIterable, Sendable {
     case smile, bigSmile, tongue, oh, catMouth, smirk, teeth, tiny, flat, wavy
+    case teethGrin, grin, toothedGrin, neutralLine, pout
+    case surprisedO, laughOpen, tonguePlayful, sadMouth, sadDown
+    case determinedFlat, buckToothSmile, fangPeek, sleepySmall
+    case grittedTeeth, buckTeeth, kiss, smirkTeeth, vampire
 
     var displayName: String {
         switch self {
@@ -97,6 +118,25 @@ nonisolated enum MouthStyle: String, CaseIterable, Sendable {
         case .tiny: "Tiny"
         case .flat: "Flat"
         case .wavy: "Wavy"
+        case .teethGrin: "Teeth Grin"
+        case .grin: "Grin Wide"
+        case .toothedGrin: "Toothy"
+        case .neutralLine: "Neutral"
+        case .pout: "Pout"
+        case .surprisedO: "Surprised"
+        case .laughOpen: "Laugh"
+        case .tonguePlayful: "Playful"
+        case .sadMouth: "Sad"
+        case .sadDown: "Frown"
+        case .determinedFlat: "Determined"
+        case .buckToothSmile: "Buck Tooth"
+        case .fangPeek: "Fang"
+        case .sleepySmall: "Sleepy"
+        case .grittedTeeth: "Gritted"
+        case .buckTeeth: "Buck Teeth"
+        case .kiss: "Kiss"
+        case .smirkTeeth: "Smirk Teeth"
+        case .vampire: "Vampire"
         }
     }
 
@@ -106,6 +146,8 @@ nonisolated enum MouthStyle: String, CaseIterable, Sendable {
 nonisolated enum AccessoryType: String, CaseIterable, Sendable {
     case none, crown, gradCap, topHat, bow, bandana, halo, headphones
     case eyePatch, partyHat, flower, horns, tiara, beanie
+    case roundGlasses, heartSunglasses, monocle, flowerCrown
+    case wizardHat, bucketHat, pearlNecklace, bowClip
 
     var displayName: String {
         switch self {
@@ -123,6 +165,14 @@ nonisolated enum AccessoryType: String, CaseIterable, Sendable {
         case .horns: "Horns"
         case .tiara: "Tiara"
         case .beanie: "Beanie"
+        case .roundGlasses: "Glasses"
+        case .heartSunglasses: "Heart Shades"
+        case .monocle: "Monocle"
+        case .flowerCrown: "Flower Crown"
+        case .wizardHat: "Wizard Hat"
+        case .bucketHat: "Bucket Hat"
+        case .pearlNecklace: "Pearls"
+        case .bowClip: "Bow Clip"
         }
     }
 

@@ -974,6 +974,18 @@ struct AnimalAvatarView: View {
             let tearH = eyeSize * 1.2
             context.fill(Path(ellipseIn: CGRect(x: leftX + eyeSize * 0.15, y: eyeY + eyeSize * 1.3, width: tearW, height: tearH)), with: .color(Color(hex: "4FC3F7").opacity(0.55)))
             context.fill(Path(ellipseIn: CGRect(x: rightX + eyeSize * 0.55, y: eyeY + eyeSize * 1.3, width: tearW, height: tearH)), with: .color(Color(hex: "4FC3F7").opacity(0.55)))
+
+        default:
+            let whiteL = CGRect(x: leftX - eyeSize * 0.3, y: eyeY - eyeSize * 0.3, width: eyeSize * 1.6, height: eyeSize * 1.7)
+            let whiteR = CGRect(x: rightX - eyeSize * 0.3, y: eyeY - eyeSize * 0.3, width: eyeSize * 1.6, height: eyeSize * 1.7)
+            context.fill(Path(ellipseIn: whiteL), with: .color(.white))
+            context.fill(Path(ellipseIn: whiteR), with: .color(.white))
+            context.stroke(Path(ellipseIn: whiteL), with: .color(oc), lineWidth: ow)
+            context.stroke(Path(ellipseIn: whiteR), with: .color(oc), lineWidth: ow)
+            let irisLD = CGRect(x: leftX - eyeSize * 0.05, y: eyeY - eyeSize * 0.05, width: eyeSize * 1.1, height: eyeSize * 1.2)
+            let irisRD = CGRect(x: rightX - eyeSize * 0.05, y: eyeY - eyeSize * 0.05, width: eyeSize * 1.1, height: eyeSize * 1.2)
+            context.fill(Path(ellipseIn: irisLD), with: .color(Color(hex: "2C2C2C")))
+            context.fill(Path(ellipseIn: irisRD), with: .color(Color(hex: "2C2C2C")))
         }
     }
 
@@ -1075,6 +1087,12 @@ struct AnimalAvatarView: View {
                 control1: CGPoint(x: centerX - mouthW * 0.4, y: mouthY + s * 0.07),
                 control2: CGPoint(x: centerX + mouthW * 0.4, y: mouthY - s * 0.05)
             )
+            context.stroke(path, with: .color(mc), lineWidth: mw)
+
+        default:
+            var path = Path()
+            path.move(to: CGPoint(x: centerX - mouthW * 1.1, y: mouthY))
+            path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.1, y: mouthY), control: CGPoint(x: centerX, y: mouthY + s * 0.10))
             context.stroke(path, with: .color(mc), lineWidth: mw)
         }
     }
@@ -1300,6 +1318,8 @@ struct AnimalAvatarView: View {
             context.stroke(brim, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.02, width: s * 0.08, height: s * 0.08)), with: .color(Color(hex: "5C6BC0")))
             context.stroke(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.02, width: s * 0.08, height: s * 0.08)), with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
+
+        default: break
         }
     }
 

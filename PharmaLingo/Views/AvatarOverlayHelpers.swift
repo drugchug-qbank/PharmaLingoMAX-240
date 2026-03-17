@@ -101,6 +101,12 @@ enum AvatarOverlayHelpers {
                 control2: CGPoint(x: centerX + mouthW * 0.4, y: mouthY - s * 0.05)
             )
             context.stroke(path, with: .color(mc), lineWidth: mw)
+
+        default:
+            var path = Path()
+            path.move(to: CGPoint(x: centerX - mouthW * 1.1, y: mouthY))
+            path.addQuadCurve(to: CGPoint(x: centerX + mouthW * 1.1, y: mouthY), control: CGPoint(x: centerX, y: mouthY + s * 0.10))
+            context.stroke(path, with: .color(mc), lineWidth: mw)
         }
     }
 
@@ -329,6 +335,8 @@ enum AvatarOverlayHelpers {
             context.stroke(brim, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.02, width: s * 0.08, height: s * 0.08)), with: .color(Color(hex: "5C6BC0")))
             context.stroke(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.02, width: s * 0.08, height: s * 0.08)), with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
+
+        default: break
         }
     }
 }

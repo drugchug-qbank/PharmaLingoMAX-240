@@ -37,6 +37,7 @@ struct RiveCatAvatarView: View {
         case .tiny: 7
         case .flat: 8
         case .wavy: 9
+        default: 0
         }
     }
 
