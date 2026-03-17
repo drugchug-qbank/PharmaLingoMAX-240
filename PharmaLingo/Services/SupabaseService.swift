@@ -552,7 +552,9 @@ class SupabaseService {
             ownedMouths: profile.ownedMouths,
             ownedAccessories: profile.ownedAccessories,
             professionDonations: profile.professionDonations,
-            clinicalAuraPoints: profile.clinicalAuraPoints
+            clinicalAuraPoints: profile.clinicalAuraPoints,
+            activityDates: profile.activityDates,
+            streakSaveDates: profile.streakSaveDates
         )
         do {
             try await client.from("profiles")
