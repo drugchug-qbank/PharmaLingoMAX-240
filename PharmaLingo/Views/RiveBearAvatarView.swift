@@ -9,7 +9,6 @@ struct RiveBearAvatarView: View {
     var bodyColorIndex: Double = 0
 
     @State private var riveViewModel = RiveViewModel(fileName: "bear_v3", autoPlay: true)
-    @State private var isReady: Bool = false
 
     static let supportedEyes: [EyeStyle] = [
         .dotFriendly, .roundBright, .almond, .droopy, .sleepy,
@@ -33,25 +32,41 @@ struct RiveBearAvatarView: View {
         .gradCap, .bandana, .bowClip, .pearlNecklace
     ]
 
-    static let supportedBodyColors: [(name: String, hex: String, index: Double)] = [
-        ("Brown", "8D6E63", 0),
-        ("Dark Brown", "795548", 1),
-        ("Light Brown", "A1887F", 2),
-        ("Espresso", "5D4037", 3),
-        ("Tan", "D7CCC8", 4),
-        ("Mocha", "8B5E3C", 5),
-        ("Honey", "FFB74D", 6),
-        ("Cream", "FFF8E1", 7),
-        ("Gray", "BDBDBD", 8),
-        ("Slate", "90A4AE", 9),
-        ("Rose", "F48FB1", 10),
-        ("Teal", "26A69A", 11),
-        ("Sky", "4FC3F7", 12),
+    static let bearBodyColors: [(name: String, index: Double)] = [
+        ("Base", 0),
+        ("Cocoa Cream", 1),
+        ("Charcoal Mint", 2),
+        ("Honey Gold", 3),
+        ("Strawberry Cream", 4),
+        ("Mint Cloud", 5),
+        ("Sky Blue", 6),
+        ("Lavender Dream", 7),
+        ("Forest Moss", 8),
+        ("Sunset Orange", 9),
+        ("Arctic White", 10),
+        ("Neon", 11),
+        ("Autumn Maple", 12),
+    ]
+
+    static let bearBodyColorHexes: [(name: String, hex: String, index: Double)] = [
+        ("Base", "8D6E63", 0),
+        ("Cocoa Cream", "D2B48C", 1),
+        ("Charcoal Mint", "4A6B5D", 2),
+        ("Honey Gold", "DAA520", 3),
+        ("Strawberry Cream", "F4A6B0", 4),
+        ("Mint Cloud", "B2DFDB", 5),
+        ("Sky Blue", "87CEEB", 6),
+        ("Lavender Dream", "C4A8D8", 7),
+        ("Forest Moss", "6B8E4E", 8),
+        ("Sunset Orange", "E8733A", 9),
+        ("Arctic White", "F0F0F0", 10),
+        ("Neon", "39FF14", 11),
+        ("Autumn Maple", "C0593A", 12),
     ]
 
     static func bodyColorIndex(for hex: String) -> Double {
         let upperHex = hex.uppercased()
-        if let match = supportedBodyColors.first(where: { $0.hex.uppercased() == upperHex }) {
+        if let match = bearBodyColorHexes.first(where: { $0.hex.uppercased() == upperHex }) {
             return match.index
         }
         return 0
@@ -121,19 +136,19 @@ struct RiveBearAvatarView: View {
 
     private var riveAccessoryValue: Double {
         switch accessoryType {
-        case .none: 0
-        case .roundGlasses: 1
-        case .heartSunglasses: 2
-        case .monocle: 3
-        case .flowerCrown: 4
-        case .crown: 5
-        case .bucketHat: 6
-        case .wizardHat: 7
-        case .gradCap: 8
-        case .bandana: 9
-        case .bowClip: 10
-        case .pearlNecklace: 11
-        default: 0
+        case .roundGlasses: 0
+        case .heartSunglasses: 1
+        case .monocle: 2
+        case .flowerCrown: 3
+        case .crown: 4
+        case .bucketHat: 5
+        case .wizardHat: 6
+        case .gradCap: 7
+        case .bandana: 8
+        case .bowClip: 9
+        case .pearlNecklace: 10
+        case .none: 11
+        default: 11
         }
     }
 
@@ -142,7 +157,6 @@ struct RiveBearAvatarView: View {
         riveViewModel.setInput("Mouth", value: riveMouthValue)
         riveViewModel.setInput("Accessory", value: riveAccessoryValue)
         riveViewModel.setInput("Base Color", value: bodyColorIndex)
-        riveViewModel.setInput("Charecter Color", value: bodyColorIndex)
     }
 
     var body: some View {
@@ -154,9 +168,8 @@ struct RiveBearAvatarView: View {
             .onChange(of: bodyColorIndex) { _, _ in applyInputs() }
             .onAppear {
                 Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(300))
+                    try? await Task.sleep(for: .milliseconds(150))
                     applyInputs()
-                    isReady = true
                 }
             }
     }

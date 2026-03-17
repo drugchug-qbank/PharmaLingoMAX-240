@@ -194,6 +194,10 @@ struct AvatarCustomizationView: View {
                     if !RiveBearAvatarView.supportedAccessories.contains(selectedAccessory) {
                         selectedAccessory = .none
                     }
+                    let bearHex = RiveBearAvatarView.bearBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if bearHex == nil {
+                        selectedBodyColor = RiveBearAvatarView.bearBodyColorHexes[0].hex
+                    }
                 }
             }
         }
@@ -302,38 +306,67 @@ struct AvatarCustomizationView: View {
         .padding()
     }
 
+    private var isBearSelected: Bool {
+        selectedAnimal == .bear
+    }
+
     private var colorGrid: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Body Color")
                 .font(AppTheme.funFont(.subheadline, weight: .bold))
                 .padding(.horizontal)
 
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            if isBearSelected {
+                bearColorGrid
+            } else {
+                genericColorGrid
+            }
+        }
+        .padding(.vertical)
+    }
+
+    private var bearColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveBearAvatarView.bearBodyColorHexes.enumerated()), id: \.offset) { _, color in
                 Button {
                     withAnimation(.spring(duration: 0.2)) {
-                        selectedBodyColor = selectedAnimal.defaultColorHex
+                        selectedBodyColor = color.hex
                     }
                     triggerBounce()
                 } label: {
-                    colorCell(hex: selectedAnimal.defaultColorHex, name: "Default", isSelected: selectedBodyColor == selectedAnimal.defaultColorHex)
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
                 }
                 .buttonStyle(.plain)
-
-                ForEach(AvatarColorPalette.bodyColors, id: \.hex) { color in
-                    Button {
-                        withAnimation(.spring(duration: 0.2)) {
-                            selectedBodyColor = color.hex
-                        }
-                        triggerBounce()
-                    } label: {
-                        colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
-                    }
-                    .buttonStyle(.plain)
-                }
             }
-            .padding(.horizontal)
         }
-        .padding(.vertical)
+        .padding(.horizontal)
+    }
+
+    private var genericColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            Button {
+                withAnimation(.spring(duration: 0.2)) {
+                    selectedBodyColor = selectedAnimal.defaultColorHex
+                }
+                triggerBounce()
+            } label: {
+                colorCell(hex: selectedAnimal.defaultColorHex, name: "Default", isSelected: selectedBodyColor == selectedAnimal.defaultColorHex)
+            }
+            .buttonStyle(.plain)
+
+            ForEach(AvatarColorPalette.bodyColors, id: \.hex) { color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
     }
 
     private var backgroundGrid: some View {
@@ -424,17 +457,21 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            CachedAvatarView(
-                                configuration: AvatarConfiguration(
-                                    animal: selectedAnimal.rawValue,
-                                    eyes: eye.rawValue,
-                                    mouth: selectedMouth.rawValue,
-                                    accessory: "none",
-                                    bodyHex: selectedBodyColor,
-                                    bgHex: selectedBgColor
-                                ),
-                                size: 60
-                            )
+                            if isBearSelected {
+                                riveOptionTile(icon: "eyes", label: eye.displayName)
+                            } else {
+                                CachedAvatarView(
+                                    configuration: AvatarConfiguration(
+                                        animal: selectedAnimal.rawValue,
+                                        eyes: eye.rawValue,
+                                        mouth: selectedMouth.rawValue,
+                                        accessory: "none",
+                                        bodyHex: selectedBodyColor,
+                                        bgHex: selectedBgColor
+                                    ),
+                                    size: 60
+                                )
+                            }
                             if !isOwned {
                                 RoundedRectangle(cornerRadius: AnimalAvatarView.tileCornerRadius(for: 60)).fill(.black.opacity(0.3)).frame(width: 60, height: 60)
                                 Image(systemName: "lock.fill").font(.caption).foregroundStyle(.white)
@@ -472,17 +509,21 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            CachedAvatarView(
-                                configuration: AvatarConfiguration(
-                                    animal: selectedAnimal.rawValue,
-                                    eyes: selectedEyes.rawValue,
-                                    mouth: mouth.rawValue,
-                                    accessory: "none",
-                                    bodyHex: selectedBodyColor,
-                                    bgHex: selectedBgColor
-                                ),
-                                size: 60
-                            )
+                            if isBearSelected {
+                                riveOptionTile(icon: "mouth.fill", label: mouth.displayName)
+                            } else {
+                                CachedAvatarView(
+                                    configuration: AvatarConfiguration(
+                                        animal: selectedAnimal.rawValue,
+                                        eyes: selectedEyes.rawValue,
+                                        mouth: mouth.rawValue,
+                                        accessory: "none",
+                                        bodyHex: selectedBodyColor,
+                                        bgHex: selectedBgColor
+                                    ),
+                                    size: 60
+                                )
+                            }
                             if !isOwned {
                                 RoundedRectangle(cornerRadius: AnimalAvatarView.tileCornerRadius(for: 60)).fill(.black.opacity(0.3)).frame(width: 60, height: 60)
                                 Image(systemName: "lock.fill").font(.caption).foregroundStyle(.white)
@@ -520,17 +561,21 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            CachedAvatarView(
-                                configuration: AvatarConfiguration(
-                                    animal: selectedAnimal.rawValue,
-                                    eyes: selectedEyes.rawValue,
-                                    mouth: selectedMouth.rawValue,
-                                    accessory: acc.rawValue,
-                                    bodyHex: selectedBodyColor,
-                                    bgHex: selectedBgColor
-                                ),
-                                size: 60
-                            )
+                            if isBearSelected {
+                                riveOptionTile(icon: acc == .none ? "xmark.circle" : "crown.fill", label: acc.displayName)
+                            } else {
+                                CachedAvatarView(
+                                    configuration: AvatarConfiguration(
+                                        animal: selectedAnimal.rawValue,
+                                        eyes: selectedEyes.rawValue,
+                                        mouth: selectedMouth.rawValue,
+                                        accessory: acc.rawValue,
+                                        bodyHex: selectedBodyColor,
+                                        bgHex: selectedBgColor
+                                    ),
+                                    size: 60
+                                )
+                            }
                             if !isOwned && acc != .none {
                                 RoundedRectangle(cornerRadius: AnimalAvatarView.tileCornerRadius(for: 60)).fill(.black.opacity(0.3)).frame(width: 60, height: 60)
                                 Image(systemName: "lock.fill").font(.caption).foregroundStyle(.white)
@@ -574,6 +619,17 @@ struct AvatarCustomizationView: View {
                     .font(.system(size: 9, weight: .bold))
             }
         }
+    }
+
+    private func riveOptionTile(icon: String, label: String) -> some View {
+        RoundedRectangle(cornerRadius: AnimalAvatarView.tileCornerRadius(for: 60))
+            .fill(Color(.tertiarySystemBackground))
+            .frame(width: 60, height: 60)
+            .overlay {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+            }
     }
 
     private func handleAnimalPurchase(animal: AnimalType, isOwned: Bool) {
