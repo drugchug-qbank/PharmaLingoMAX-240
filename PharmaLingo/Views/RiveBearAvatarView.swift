@@ -74,63 +74,63 @@ struct RiveBearAvatarView: View {
 
     private var riveEyeValue: Double {
         switch eyeStyle {
-        case .dotFriendly: 0
-        case .roundBright: 1
-        case .almond: 2
-        case .droopy: 3
-        case .sleepy: 4
-        case .happy: 5
-        case .sharpConfident: 6
-        case .stars: 7
-        case .heart: 8
-        case .sparkleGlam: 9
-        case .glanceLeft: 10
-        case .glanceRight: 11
-        case .winkLeft: 12
-        case .winkRight: 13
-        case .lashesSoft: 14
-        case .boldBrow: 15
-        case .dizzy: 16
-        case .determined: 17
-        case .relaxedBlink: 18
-        case .sadEyes: 19
-        case .angry: 20
-        case .normal: 21
-        case .dizzySwirl: 22
-        case .starEyes: 23
-        case .heartEyes: 24
-        default: 21
+        case .dotFriendly: 1
+        case .roundBright: 2
+        case .almond: 3
+        case .droopy: 4
+        case .sleepy: 5
+        case .happy: 6
+        case .sharpConfident: 7
+        case .stars: 8
+        case .heart: 9
+        case .sparkleGlam: 10
+        case .glanceLeft: 11
+        case .glanceRight: 12
+        case .winkLeft: 13
+        case .winkRight: 14
+        case .lashesSoft: 15
+        case .boldBrow: 16
+        case .dizzy: 17
+        case .determined: 18
+        case .relaxedBlink: 19
+        case .sadEyes: 20
+        case .angry: 21
+        case .normal: 22
+        case .dizzySwirl: 23
+        case .starEyes: 24
+        case .heartEyes: 25
+        default: 22
         }
     }
 
     private var riveMouthValue: Double {
         switch mouthStyle {
-        case .smile: 0
-        case .teethGrin: 1
-        case .tongue: 2
-        case .grin: 3
-        case .toothedGrin: 4
-        case .catMouth: 5
-        case .neutralLine: 6
-        case .smirk: 7
-        case .oh: 8
-        case .pout: 9
-        case .sadMouth: 10
-        case .surprisedO: 11
-        case .laughOpen: 12
-        case .tonguePlayful: 13
-        case .wavy: 14
-        case .sadDown: 15
-        case .determinedFlat: 16
-        case .buckToothSmile: 17
-        case .fangPeek: 18
-        case .sleepySmall: 19
-        case .grittedTeeth: 20
-        case .buckTeeth: 21
-        case .kiss: 22
-        case .smirkTeeth: 23
-        case .vampire: 24
-        default: 0
+        case .smile: 1
+        case .teethGrin: 2
+        case .tongue: 3
+        case .grin: 4
+        case .toothedGrin: 5
+        case .catMouth: 6
+        case .neutralLine: 7
+        case .smirk: 8
+        case .oh: 9
+        case .pout: 10
+        case .sadMouth: 11
+        case .surprisedO: 12
+        case .laughOpen: 13
+        case .tonguePlayful: 14
+        case .wavy: 15
+        case .sadDown: 16
+        case .determinedFlat: 17
+        case .buckToothSmile: 18
+        case .fangPeek: 19
+        case .sleepySmall: 20
+        case .grittedTeeth: 21
+        case .buckTeeth: 22
+        case .kiss: 23
+        case .smirkTeeth: 24
+        case .vampire: 25
+        default: 1
         }
     }
 
