@@ -181,8 +181,20 @@ struct AvatarCustomizationView: View {
                 if newAnimal == .bunny && !RiveBunnyAvatarView.supportedEyes.contains(selectedEyes) {
                     selectedEyes = .normal
                 }
-                if newAnimal == .cat && !RiveCatAvatarView.supportedEyes.contains(selectedEyes) {
-                    selectedEyes = .normal
+                if newAnimal == .cat {
+                    if !RiveCatAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveCatAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveCatAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let catHex = RiveCatAvatarView.catBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if catHex == nil {
+                        selectedBodyColor = RiveCatAvatarView.catBodyColorHexes[0].hex
+                    }
                 }
                 if newAnimal == .bear {
                     if !RiveBearAvatarView.supportedEyes.contains(selectedEyes) {
@@ -329,8 +341,12 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .beaver
     }
 
+    private var isCatSelected: Bool {
+        selectedAnimal == .cat
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected
+        isBearSelected || isBeaverSelected || isCatSelected
     }
 
     private var colorGrid: some View {
@@ -343,6 +359,8 @@ struct AvatarCustomizationView: View {
                 bearColorGrid
             } else if isBeaverSelected {
                 beaverColorGrid
+            } else if isCatSelected {
+                catColorGrid
             } else {
                 genericColorGrid
             }
@@ -353,6 +371,23 @@ struct AvatarCustomizationView: View {
     private var bearColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             ForEach(Array(RiveBearAvatarView.bearBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var catColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveCatAvatarView.catBodyColorHexes.enumerated()), id: \.offset) { _, color in
                 Button {
                     withAnimation(.spring(duration: 0.2)) {
                         selectedBodyColor = color.hex
@@ -485,6 +520,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .beaver {
             return RiveBeaverAvatarView.supportedMouths
         }
+        if selectedAnimal == .cat {
+            return RiveCatAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
@@ -494,6 +532,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .beaver {
             return RiveBeaverAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .cat {
+            return RiveCatAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }

@@ -40,7 +40,7 @@ struct AvatarRendererView: View {
                 RiveBunnyAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle)
                     .allowsHitTesting(false)
             } else if useRiveCat {
-                RiveCatAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle)
+                RiveCatAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveCatAvatarView.bodyColorIndex(for: configuration.bodyHex))
                     .allowsHitTesting(false)
             } else if useRiveBear {
                 RiveBearAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveBearAvatarView.bodyColorIndex(for: configuration.bodyHex))
