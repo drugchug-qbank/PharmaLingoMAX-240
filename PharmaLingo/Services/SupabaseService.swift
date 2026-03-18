@@ -301,6 +301,10 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
     let level: Int
     let weeklyXP: Int
     let monthlyXP: Int
+    let weeklyXPResetWeek: Int
+    let weeklyXPResetYear: Int
+    let monthlyXPResetMonth: Int
+    let monthlyXPResetYear: Int
     let completedSubsections: String
     let subsectionStars: String
     let hasSeenLearning: String
@@ -332,6 +336,10 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
         case hearts, level
         case weeklyXP = "weekly_xp"
         case monthlyXP = "monthly_xp"
+        case weeklyXPResetWeek = "weekly_xp_reset_week"
+        case weeklyXPResetYear = "weekly_xp_reset_year"
+        case monthlyXPResetMonth = "monthly_xp_reset_month"
+        case monthlyXPResetYear = "monthly_xp_reset_year"
         case completedSubsections = "completed_subsections"
         case subsectionStars = "subsection_stars"
         case hasSeenLearning = "has_seen_learning"
@@ -522,6 +530,12 @@ class SupabaseService {
         let isoFormatter = ISO8601DateFormatter()
         isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
+        let now = Date()
+        let cal = Calendar.current
+        let curWeek = cal.component(.weekOfYear, from: now)
+        let curYear = cal.component(.yearForWeekOfYear, from: now)
+        let curMonth = cal.component(.month, from: now)
+
         let updateData = ProfileUpdateData(
             username: profile.username,
             profession: profile.profession,
@@ -540,6 +554,10 @@ class SupabaseService {
             level: profile.level,
             weeklyXP: profile.weeklyXP,
             monthlyXP: profile.monthlyXP,
+            weeklyXPResetWeek: curWeek,
+            weeklyXPResetYear: curYear,
+            monthlyXPResetMonth: curMonth,
+            monthlyXPResetYear: curYear,
             completedSubsections: profile.completedSubsections,
             subsectionStars: profile.subsectionStars,
             hasSeenLearning: profile.hasSeenLearning,
@@ -914,6 +932,12 @@ class SupabaseService {
         let isoFormatter = ISO8601DateFormatter()
         isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
+        let now = Date()
+        let cal = Calendar.current
+        let curWeek = cal.component(.weekOfYear, from: now)
+        let curYear = cal.component(.yearForWeekOfYear, from: now)
+        let curMonth = cal.component(.month, from: now)
+
         let updateData = ProfileUpdateData(
             username: gameVM.username,
             profession: gameVM.selectedProfession.rawValue,
@@ -932,6 +956,10 @@ class SupabaseService {
             level: gameVM.level,
             weeklyXP: gameVM.weeklyXP,
             monthlyXP: gameVM.monthlyXP,
+            weeklyXPResetWeek: curWeek,
+            weeklyXPResetYear: curYear,
+            monthlyXPResetMonth: curMonth,
+            monthlyXPResetYear: curYear,
             completedSubsections: String(data: completedData, encoding: .utf8) ?? "[]",
             subsectionStars: String(data: starsData, encoding: .utf8) ?? "{}",
             hasSeenLearning: String(data: learningData, encoding: .utf8) ?? "[]",
@@ -1330,7 +1358,10 @@ class SupabaseService {
         do {
             let resultData = try await client.rpc("get_monthly_profession_standings", params: EmptyParams()).execute().data
             let records = try JSONDecoder().decode([ProfessionRanking].self, from: resultData)
-            return records
+            if !records.isEmpty {
+                return records
+            }
+            return await fetchProfessionRankingsFallback()
         } catch {
             print("RPC get_monthly_profession_standings failed, using fallback: \(error)")
             return await fetchProfessionRankingsFallback()
