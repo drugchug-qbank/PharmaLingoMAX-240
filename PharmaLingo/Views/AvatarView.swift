@@ -199,6 +199,21 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveBearAvatarView.bearBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .beaver {
+                    if !RiveBeaverAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveBeaverAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveBeaverAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let beaverHex = RiveBeaverAvatarView.beaverBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if beaverHex == nil {
+                        selectedBodyColor = RiveBeaverAvatarView.beaverBodyColorHexes[0].hex
+                    }
+                }
             }
         }
     }
@@ -310,6 +325,14 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .bear
     }
 
+    private var isBeaverSelected: Bool {
+        selectedAnimal == .beaver
+    }
+
+    private var isRiveAnimalSelected: Bool {
+        isBearSelected || isBeaverSelected
+    }
+
     private var colorGrid: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Body Color")
@@ -318,6 +341,8 @@ struct AvatarCustomizationView: View {
 
             if isBearSelected {
                 bearColorGrid
+            } else if isBeaverSelected {
+                beaverColorGrid
             } else {
                 genericColorGrid
             }
@@ -328,6 +353,23 @@ struct AvatarCustomizationView: View {
     private var bearColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             ForEach(Array(RiveBearAvatarView.bearBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var beaverColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveBeaverAvatarView.beaverBodyColorHexes.enumerated()), id: \.offset) { _, color in
                 Button {
                     withAnimation(.spring(duration: 0.2)) {
                         selectedBodyColor = color.hex
@@ -430,6 +472,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .bear {
             return RiveBearAvatarView.supportedEyes
         }
+        if selectedAnimal == .beaver {
+            return RiveBeaverAvatarView.supportedEyes
+        }
         return EyeStyle.allCases.map { $0 }
     }
 
@@ -437,12 +482,18 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .bear {
             return RiveBearAvatarView.supportedMouths
         }
+        if selectedAnimal == .beaver {
+            return RiveBeaverAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
     private var availableAccessories: [AccessoryType] {
         if selectedAnimal == .bear {
             return RiveBearAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .beaver {
+            return RiveBeaverAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }
@@ -457,7 +508,7 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            if isBearSelected {
+                            if isRiveAnimalSelected {
                                 riveOptionTile(icon: "eyes", label: eye.displayName)
                             } else {
                                 CachedAvatarView(
@@ -509,7 +560,7 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            if isBearSelected {
+                            if isRiveAnimalSelected {
                                 riveOptionTile(icon: "mouth.fill", label: mouth.displayName)
                             } else {
                                 CachedAvatarView(
@@ -561,7 +612,7 @@ struct AvatarCustomizationView: View {
                 } label: {
                     VStack(spacing: 6) {
                         ZStack {
-                            if isBearSelected {
+                            if isRiveAnimalSelected {
                                 riveOptionTile(icon: acc == .none ? "xmark.circle" : "crown.fill", label: acc.displayName)
                             } else {
                                 CachedAvatarView(
