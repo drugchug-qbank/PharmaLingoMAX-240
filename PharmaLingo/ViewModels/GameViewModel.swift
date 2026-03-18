@@ -742,6 +742,7 @@ class GameViewModel {
         activityDates.insert(todayStr)
         save()
         syncStreakDatesToCloud()
+        NotificationService.shared.cancelStreakReminders()
     }
 
     private func logStreakEvent(date: String, eventType: String, streakCount: Int) {
@@ -1368,6 +1369,11 @@ class GameViewModel {
         save()
 
         let streakStateChanged = currentStreak != preStreak || streakSaves != preSaves || lastActiveDate != preLastActive
+
+        NotificationService.shared.rescheduleStreakReminders(
+            currentStreak: currentStreak,
+            isStreakSafeToday: isStreakSafeToday
+        )
 
         Task {
             if streakStateChanged {

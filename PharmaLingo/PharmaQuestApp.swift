@@ -5,6 +5,7 @@ import RevenueCat
 struct PharmaQuestApp: App {
     @State private var supabase = SupabaseService.shared
     @State private var didInitialize: Bool = false
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         Self.configureRevenueCat()
@@ -18,7 +19,33 @@ struct PharmaQuestApp: App {
                     guard !didInitialize else { return }
                     didInitialize = true
                     AdService.shared.initializeSDK()
+                    NotificationService.shared.requestPermissionIfNeeded()
                 }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            handleScenePhaseChange(newPhase)
+        }
+    }
+
+    private func handleScenePhaseChange(_ phase: ScenePhase) {
+        switch phase {
+        case .active:
+            NotificationService.shared.cancelStreakReminders()
+        case .background:
+            guard let profile = supabase.currentProfile else { return }
+            let isActiveToday: Bool = {
+                guard let lastActive = profile.lastActiveDate, !lastActive.isEmpty else { return false }
+                let isoFormatter = ISO8601DateFormatter()
+                isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                guard let date = isoFormatter.date(from: lastActive) else { return false }
+                return Calendar.current.isDateInToday(date)
+            }()
+            NotificationService.shared.rescheduleStreakReminders(
+                currentStreak: profile.currentStreak,
+                isStreakSafeToday: isActiveToday
+            )
+        default:
+            break
         }
     }
 
