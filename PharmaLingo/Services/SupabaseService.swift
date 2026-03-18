@@ -961,6 +961,17 @@ class SupabaseService {
     }
 
     func fetchLeaderboard() async -> [LeaderboardRecord] {
+        do {
+            let resultData = try await client.rpc("enroll_weekly_league", params: EmptyParams()).execute().data
+            let records = try JSONDecoder().decode([LeaderboardRecord].self, from: resultData)
+            return records
+        } catch {
+            print("RPC enroll_weekly_league failed, using fallback: \(error)")
+            return await fetchLeaderboardFallback()
+        }
+    }
+
+    private func fetchLeaderboardFallback() async -> [LeaderboardRecord] {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         do {
             let allProfiles: [UserProfile] = try await client.from("profiles")
@@ -1035,7 +1046,7 @@ class SupabaseService {
 
             return leagueMembers
         } catch {
-            print("Failed to fetch leaderboard: \(error)")
+            print("Failed to fetch leaderboard fallback: \(error)")
             return []
         }
     }
@@ -1317,6 +1328,17 @@ class SupabaseService {
 
     func fetchProfessionRankings() async -> [ProfessionRanking] {
         do {
+            let resultData = try await client.rpc("get_monthly_profession_standings", params: EmptyParams()).execute().data
+            let records = try JSONDecoder().decode([ProfessionRanking].self, from: resultData)
+            return records
+        } catch {
+            print("RPC get_monthly_profession_standings failed, using fallback: \(error)")
+            return await fetchProfessionRankingsFallback()
+        }
+    }
+
+    private func fetchProfessionRankingsFallback() async -> [ProfessionRanking] {
+        do {
             let profiles: [UserProfile] = try await client.from("profiles")
                 .select()
                 .execute()
@@ -1331,7 +1353,7 @@ class SupabaseService {
             return profDonations.map { ProfessionRanking(profession: $0.key, totalDonations: $0.value) }
                 .sorted { $0.totalDonations > $1.totalDonations }
         } catch {
-            print("Failed to fetch profession rankings: \(error)")
+            print("Failed to fetch profession rankings fallback: \(error)")
             return []
         }
     }

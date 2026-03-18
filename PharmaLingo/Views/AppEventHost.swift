@@ -52,6 +52,10 @@ struct AppEventHost: View {
                 onDismiss: { eventService.dismissCurrent() },
                 onNavigate: { tab in selectedTab = tab }
             )
+        case .promotionZoneLost, .duoStarted, .duoProgress, .duoCompleted:
+            Color.clear.onAppear {
+                eventService.dismissCurrent()
+            }
         case nil:
             Color.clear.onAppear {
                 eventService.dismissCurrent()

@@ -5,6 +5,10 @@ nonisolated enum AppEventType: String, Codable, Sendable {
     case streakBroken = "streak_broken"
     case weeklyLeagueResult = "weekly_league_result"
     case monthlyProfessionResult = "monthly_profession_result"
+    case promotionZoneLost = "promotion_zone_lost"
+    case duoStarted = "duo_started"
+    case duoProgress = "duo_progress"
+    case duoCompleted = "duo_completed"
 
     var priority: Int {
         switch self {
@@ -12,6 +16,19 @@ nonisolated enum AppEventType: String, Codable, Sendable {
         case .streakSaveUsed: 2
         case .weeklyLeagueResult: 3
         case .monthlyProfessionResult: 4
+        case .promotionZoneLost: 5
+        case .duoStarted: 6
+        case .duoProgress: 7
+        case .duoCompleted: 8
+        }
+    }
+
+    var isFullScreenModal: Bool {
+        switch self {
+        case .streakSaveUsed, .streakBroken, .weeklyLeagueResult, .monthlyProfessionResult:
+            return true
+        case .promotionZoneLost, .duoStarted, .duoProgress, .duoCompleted:
+            return false
         }
     }
 }
