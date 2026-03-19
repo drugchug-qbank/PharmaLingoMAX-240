@@ -12,49 +12,25 @@ struct AvatarRendererView: View {
         AnimalAvatarView.tileCornerRadius(for: size)
     }
 
-    private var useRiveBunny: Bool {
-        configuration.animalType == .bunny
-    }
+    private static let riveMinSize: CGFloat = 80
 
-    private var useRiveCat: Bool {
-        configuration.animalType == .cat
-    }
-
-    private var useRiveBear: Bool {
-        configuration.animalType == .bear
-    }
-
-    private var useRiveBeaver: Bool {
-        configuration.animalType == .beaver
-    }
-
-    private var useRiveChipmunk: Bool {
-        configuration.animalType == .chipmunk
+    private var isRiveAnimal: Bool {
+        switch configuration.animalType {
+        case .bunny, .cat, .bear, .beaver, .chipmunk: true
+        default: false
+        }
     }
 
     private var useRiveAvatar: Bool {
-        useRiveBunny || useRiveCat || useRiveBear || useRiveBeaver || useRiveChipmunk
+        isRiveAnimal && size >= Self.riveMinSize
     }
 
     var body: some View {
         ZStack {
             backgroundLayer
 
-            if useRiveBunny {
-                RiveBunnyAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle)
-                    .allowsHitTesting(false)
-            } else if useRiveCat {
-                RiveCatAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveCatAvatarView.bodyColorIndex(for: configuration.bodyHex))
-                    .allowsHitTesting(false)
-            } else if useRiveBear {
-                RiveBearAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveBearAvatarView.bodyColorIndex(for: configuration.bodyHex))
-                    .allowsHitTesting(false)
-            } else if useRiveBeaver {
-                RiveBeaverAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveBeaverAvatarView.bodyColorIndex(for: configuration.bodyHex))
-                    .allowsHitTesting(false)
-            } else if useRiveChipmunk {
-                RiveChipmunkAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveChipmunkAvatarView.bodyColorIndex(for: configuration.bodyHex))
-                    .allowsHitTesting(false)
+            if useRiveAvatar {
+                riveLayer
             } else {
                 animalLayer
             }
@@ -136,8 +112,31 @@ struct AvatarRendererView: View {
     }
 
     @ViewBuilder
+    private var riveLayer: some View {
+        switch configuration.animalType {
+        case .bunny:
+            RiveBunnyAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle)
+                .allowsHitTesting(false)
+        case .cat:
+            RiveCatAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveCatAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
+        case .bear:
+            RiveBearAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveBearAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
+        case .beaver:
+            RiveBeaverAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveBeaverAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
+        case .chipmunk:
+            RiveChipmunkAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveChipmunkAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
+        default:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
     private var animalLayer: some View {
-        if useBunnyImagePath {
+        if !isRiveAnimal && useBunnyImagePath {
             BunnyImageAvatarView(
                 eyeStyle: .normal,
                 mouthStyle: configuration.mouthStyle,

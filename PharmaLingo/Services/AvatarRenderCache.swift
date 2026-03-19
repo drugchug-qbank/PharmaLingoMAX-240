@@ -26,15 +26,27 @@ final class AvatarRenderCache {
         cache.removeAllObjects()
     }
 
+    private static let riveAnimals: Set<String> = ["bunny", "cat", "bear", "beaver", "chipmunk"]
+
     @discardableResult
     func renderAndCache(config: AvatarConfiguration, size: CGFloat) -> UIImage? {
         if let existing = thumbnail(for: config, size: size) {
             return existing
         }
 
+        let canvasConfig = config
+        let canvasView = AnimalAvatarView(
+            animalType: canvasConfig.animalType,
+            bodyColor: canvasConfig.bodyColor,
+            backgroundColor: canvasConfig.bgColor,
+            eyeStyle: canvasConfig.eyeStyle,
+            mouthStyle: canvasConfig.mouthStyle,
+            accessory: canvasConfig.accessoryType,
+            size: size
+        )
+
         let renderer = ImageRenderer(
-            content: AvatarRendererView(configuration: config, size: size)
-                .frame(width: size, height: size)
+            content: canvasView.frame(width: size, height: size)
         )
         renderer.scale = 2.0
 
