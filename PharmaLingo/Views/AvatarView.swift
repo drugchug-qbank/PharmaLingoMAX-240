@@ -226,6 +226,21 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveBeaverAvatarView.beaverBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .chipmunk {
+                    if !RiveChipmunkAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveChipmunkAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveChipmunkAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let chipmunkHex = RiveChipmunkAvatarView.chipmunkBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if chipmunkHex == nil {
+                        selectedBodyColor = RiveChipmunkAvatarView.chipmunkBodyColorHexes[0].hex
+                    }
+                }
             }
         }
     }
@@ -345,8 +360,12 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .cat
     }
 
+    private var isChipmunkSelected: Bool {
+        selectedAnimal == .chipmunk
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected
     }
 
     private var colorGrid: some View {
@@ -361,6 +380,8 @@ struct AvatarCustomizationView: View {
                 beaverColorGrid
             } else if isCatSelected {
                 catColorGrid
+            } else if isChipmunkSelected {
+                chipmunkColorGrid
             } else {
                 genericColorGrid
             }
@@ -405,6 +426,23 @@ struct AvatarCustomizationView: View {
     private var beaverColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             ForEach(Array(RiveBeaverAvatarView.beaverBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var chipmunkColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveChipmunkAvatarView.chipmunkBodyColorHexes.enumerated()), id: \.offset) { _, color in
                 Button {
                     withAnimation(.spring(duration: 0.2)) {
                         selectedBodyColor = color.hex
@@ -510,6 +548,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .beaver {
             return RiveBeaverAvatarView.supportedEyes
         }
+        if selectedAnimal == .chipmunk {
+            return RiveChipmunkAvatarView.supportedEyes
+        }
         return EyeStyle.allCases.map { $0 }
     }
 
@@ -523,6 +564,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .cat {
             return RiveCatAvatarView.supportedMouths
         }
+        if selectedAnimal == .chipmunk {
+            return RiveChipmunkAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
@@ -535,6 +579,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .cat {
             return RiveCatAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .chipmunk {
+            return RiveChipmunkAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }

@@ -28,8 +28,12 @@ struct AvatarRendererView: View {
         configuration.animalType == .beaver
     }
 
+    private var useRiveChipmunk: Bool {
+        configuration.animalType == .chipmunk
+    }
+
     private var useRiveAvatar: Bool {
-        useRiveBunny || useRiveCat || useRiveBear || useRiveBeaver
+        useRiveBunny || useRiveCat || useRiveBear || useRiveBeaver || useRiveChipmunk
     }
 
     var body: some View {
@@ -47,6 +51,9 @@ struct AvatarRendererView: View {
                     .allowsHitTesting(false)
             } else if useRiveBeaver {
                 RiveBeaverAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveBeaverAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                    .allowsHitTesting(false)
+            } else if useRiveChipmunk {
+                RiveChipmunkAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveChipmunkAvatarView.bodyColorIndex(for: configuration.bodyHex))
                     .allowsHitTesting(false)
             } else {
                 animalLayer
