@@ -271,6 +271,21 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveDogAvatarView.dogBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .fox {
+                    if !RiveFoxAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveFoxAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveFoxAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let foxHex = RiveFoxAvatarView.foxBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if foxHex == nil {
+                        selectedBodyColor = RiveFoxAvatarView.foxBodyColorHexes[0].hex
+                    }
+                }
             }
         }
     }
@@ -402,8 +417,12 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .dog
     }
 
+    private var isFoxSelected: Bool {
+        selectedAnimal == .fox
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isFoxSelected
     }
 
     private var colorGrid: some View {
@@ -424,6 +443,8 @@ struct AvatarCustomizationView: View {
                 deerColorGrid
             } else if isDogSelected {
                 dogColorGrid
+            } else if isFoxSelected {
+                foxColorGrid
             } else {
                 genericColorGrid
             }
@@ -519,6 +540,23 @@ struct AvatarCustomizationView: View {
     private var dogColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             ForEach(Array(RiveDogAvatarView.dogBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var foxColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveFoxAvatarView.foxBodyColorHexes.enumerated()), id: \.offset) { _, color in
                 Button {
                     withAnimation(.spring(duration: 0.2)) {
                         selectedBodyColor = color.hex
@@ -633,6 +671,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .dog {
             return RiveDogAvatarView.supportedEyes
         }
+        if selectedAnimal == .fox {
+            return RiveFoxAvatarView.supportedEyes
+        }
         return EyeStyle.allCases.map { $0 }
     }
 
@@ -655,6 +696,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .dog {
             return RiveDogAvatarView.supportedMouths
         }
+        if selectedAnimal == .fox {
+            return RiveFoxAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
@@ -676,6 +720,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .dog {
             return RiveDogAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .fox {
+            return RiveFoxAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }
