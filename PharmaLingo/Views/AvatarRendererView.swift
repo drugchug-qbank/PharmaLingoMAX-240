@@ -16,7 +16,7 @@ struct AvatarRendererView: View {
 
     private var isRiveAnimal: Bool {
         switch configuration.animalType {
-        case .bunny, .cat, .bear, .beaver, .chipmunk: true
+        case .bunny, .cat, .bear, .beaver, .chipmunk, .dog: true
         default: false
         }
     }
@@ -128,6 +128,9 @@ struct AvatarRendererView: View {
                 .allowsHitTesting(false)
         case .chipmunk:
             RiveChipmunkAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveChipmunkAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
+        case .dog:
+            RiveDogAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveDogAvatarView.bodyColorIndex(for: configuration.bodyHex))
                 .allowsHitTesting(false)
         default:
             EmptyView()
