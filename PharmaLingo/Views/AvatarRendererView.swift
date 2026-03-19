@@ -12,8 +12,6 @@ struct AvatarRendererView: View {
         AnimalAvatarView.tileCornerRadius(for: size)
     }
 
-    private static let riveMinSize: CGFloat = 80
-
     private var isRiveAnimal: Bool {
         switch configuration.animalType {
         case .bunny, .cat, .bear, .beaver, .chipmunk, .dog: true
@@ -22,7 +20,7 @@ struct AvatarRendererView: View {
     }
 
     private var useRiveAvatar: Bool {
-        isRiveAnimal && size >= Self.riveMinSize
+        isRiveAnimal
     }
 
     var body: some View {
@@ -60,7 +58,7 @@ struct AvatarRendererView: View {
         .shadow(color: .black.opacity(0.15), radius: size * 0.06, x: 0, y: size * 0.025)
         .scaleEffect(breathScale)
         .task {
-            guard showIdleAnimation, !useRiveAvatar else { return }
+            guard showIdleAnimation, !isRiveAnimal else { return }
             await withTaskGroup(of: Void.self) { group in
                 group.addTask { @MainActor in
                     while !Task.isCancelled {

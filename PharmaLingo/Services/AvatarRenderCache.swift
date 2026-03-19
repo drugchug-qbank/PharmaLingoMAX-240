@@ -30,6 +30,10 @@ final class AvatarRenderCache {
 
     @discardableResult
     func renderAndCache(config: AvatarConfiguration, size: CGFloat) -> UIImage? {
+        if Self.riveAnimals.contains(config.animal) {
+            return nil
+        }
+
         if let existing = thumbnail(for: config, size: size) {
             return existing
         }
