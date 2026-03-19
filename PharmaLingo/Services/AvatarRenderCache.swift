@@ -26,7 +26,7 @@ final class AvatarRenderCache {
         cache.removeAllObjects()
     }
 
-    private static let riveAnimals: Set<String> = ["bunny", "cat", "bear", "beaver", "chipmunk", "dog"]
+    private static let riveAnimals: Set<String> = ["bunny", "cat", "bear", "beaver", "chipmunk", "deer", "dog"]
 
     @discardableResult
     func renderAndCache(config: AvatarConfiguration, size: CGFloat) -> UIImage? {

@@ -241,6 +241,21 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveChipmunkAvatarView.chipmunkBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .deer {
+                    if !RiveDeerAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveDeerAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveDeerAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let deerHex = RiveDeerAvatarView.deerBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if deerHex == nil {
+                        selectedBodyColor = RiveDeerAvatarView.deerBodyColorHexes[0].hex
+                    }
+                }
                 if newAnimal == .dog {
                     if !RiveDogAvatarView.supportedEyes.contains(selectedEyes) {
                         selectedEyes = .normal
@@ -379,12 +394,16 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .chipmunk
     }
 
+    private var isDeerSelected: Bool {
+        selectedAnimal == .deer
+    }
+
     private var isDogSelected: Bool {
         selectedAnimal == .dog
     }
 
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDogSelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected
     }
 
     private var colorGrid: some View {
@@ -401,6 +420,8 @@ struct AvatarCustomizationView: View {
                 catColorGrid
             } else if isChipmunkSelected {
                 chipmunkColorGrid
+            } else if isDeerSelected {
+                deerColorGrid
             } else if isDogSelected {
                 dogColorGrid
             } else {
@@ -464,6 +485,23 @@ struct AvatarCustomizationView: View {
     private var chipmunkColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             ForEach(Array(RiveChipmunkAvatarView.chipmunkBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var deerColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveDeerAvatarView.deerBodyColorHexes.enumerated()), id: \.offset) { _, color in
                 Button {
                     withAnimation(.spring(duration: 0.2)) {
                         selectedBodyColor = color.hex
@@ -589,6 +627,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .chipmunk {
             return RiveChipmunkAvatarView.supportedEyes
         }
+        if selectedAnimal == .deer {
+            return RiveDeerAvatarView.supportedEyes
+        }
         if selectedAnimal == .dog {
             return RiveDogAvatarView.supportedEyes
         }
@@ -608,6 +649,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .chipmunk {
             return RiveChipmunkAvatarView.supportedMouths
         }
+        if selectedAnimal == .deer {
+            return RiveDeerAvatarView.supportedMouths
+        }
         if selectedAnimal == .dog {
             return RiveDogAvatarView.supportedMouths
         }
@@ -626,6 +670,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .chipmunk {
             return RiveChipmunkAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .deer {
+            return RiveDeerAvatarView.supportedAccessories
         }
         if selectedAnimal == .dog {
             return RiveDogAvatarView.supportedAccessories
