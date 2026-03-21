@@ -20,7 +20,7 @@ struct TransparentRiveView: UIViewRepresentable {
         Self.applyTransparency(to: uiView)
     }
 
-    class Coordinator {
+    class Coordinator: NSObject {
         private var displayLink: CADisplayLink?
         private weak var targetView: UIView?
         private var tickCount = 0
