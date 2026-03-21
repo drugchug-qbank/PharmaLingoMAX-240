@@ -691,6 +691,33 @@ struct AnimalAvatarView: View {
             context.fill(Path(ellipseIn: CGRect(x: s * 0.19, y: s * 0.44, width: s * 0.13, height: s * 0.08)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.68, y: s * 0.44, width: s * 0.13, height: s * 0.08)), with: .color(cheek))
 
+        case .hedgehog:
+            let earL = CGRect(x: s * 0.12, y: s * 0.26, width: s * 0.18, height: s * 0.16)
+            let earR = CGRect(x: s * 0.70, y: s * 0.26, width: s * 0.18, height: s * 0.16)
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.03, dy: s * 0.03)), with: .color(Color(hex: "FFAB91").opacity(0.4)))
+            context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.03, dy: s * 0.03)), with: .color(Color(hex: "FFAB91").opacity(0.4)))
+            var spinesH = Path()
+            for i in 0..<7 {
+                let cx = s * (0.26 + CGFloat(i) * 0.08)
+                spinesH.move(to: CGPoint(x: cx - s * 0.03, y: s * 0.28))
+                spinesH.addQuadCurve(to: CGPoint(x: cx + s * 0.03, y: s * 0.28), control: CGPoint(x: cx, y: s * 0.12))
+                spinesH.closeSubpath()
+            }
+            context.fill(spinesH, with: .color(darker(fc, by: 0.20)))
+            context.stroke(spinesH, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
+            let hedgeHead = CGRect(x: s * 0.14, y: s * 0.26, width: s * 0.72, height: s * 0.62)
+            fns(context: &context, path: Path(ellipseIn: hedgeHead), fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.19, y: s * 0.28, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
+            let hedgeMuzzle = CGRect(x: s * 0.30, y: s * 0.54, width: s * 0.40, height: s * 0.26)
+            fns(context: &context, path: Path(ellipseIn: hedgeMuzzle), fill: belly, outline: oc, lineWidth: iw)
+            let hedgeNose = CGRect(x: s * 0.43, y: s * 0.56, width: s * 0.14, height: s * 0.10)
+            context.fill(Path(ellipseIn: hedgeNose), with: .color(noseColor))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.57, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.4)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.56, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.56, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
+
         case .unicorn:
             var horn = Path()
             horn.move(to: CGPoint(x: s * 0.50, y: s * 0.00))
