@@ -79,6 +79,7 @@ enum AvatarAssetCatalog {
         case .dog: return ["A1887F", "8D6E63", "D7CCC8", "BCAAA4"]
         case .dragon: return ["66BB6A", "4DB6AC", "81C784", "AED581"]
         case .fox: return ["FF7043", "FF8A65", "FFA726", "FFAB91"]
+        case .hedgehog: return ["C4956A", "D2B48C", "DAA520", "8D6E63"]
         case .frog: return ["81C784", "66BB6A", "4DB6AC", "AED581"]
         case .panda: return ["E0E0E0", "BDBDBD", "F5F5F5", "CFD8DC"]
         case .unicorn: return ["F8BBD0", "CE93D8", "B39DDB", "81D4FA"]

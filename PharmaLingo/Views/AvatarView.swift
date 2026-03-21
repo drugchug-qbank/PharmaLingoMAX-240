@@ -286,6 +286,21 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveFoxAvatarView.foxBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .hedgehog {
+                    if !RiveHedgehogAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveHedgehogAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveHedgehogAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let hedgehogHex = RiveHedgehogAvatarView.hedgehogBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if hedgehogHex == nil {
+                        selectedBodyColor = RiveHedgehogAvatarView.hedgehogBodyColorHexes[0].hex
+                    }
+                }
                 if newAnimal == .dragon {
                     if !RiveDragonAvatarView.supportedEyes.contains(selectedEyes) {
                         selectedEyes = .normal
@@ -440,8 +455,12 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .dragon
     }
 
+    private var isHedgehogSelected: Bool {
+        selectedAnimal == .hedgehog
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected
     }
 
     private var colorGrid: some View {
@@ -466,6 +485,8 @@ struct AvatarCustomizationView: View {
                 foxColorGrid
             } else if isDragonSelected {
                 dragonColorGrid
+            } else if isHedgehogSelected {
+                hedgehogColorGrid
             } else {
                 genericColorGrid
             }
@@ -609,6 +630,23 @@ struct AvatarCustomizationView: View {
         .padding(.horizontal)
     }
 
+    private var hedgehogColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveHedgehogAvatarView.hedgehogBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
     private var genericColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             Button {
@@ -715,6 +753,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .dragon {
             return RiveDragonAvatarView.supportedEyes
         }
+        if selectedAnimal == .hedgehog {
+            return RiveHedgehogAvatarView.supportedEyes
+        }
         return EyeStyle.allCases.map { $0 }
     }
 
@@ -743,6 +784,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .dragon {
             return RiveDragonAvatarView.supportedMouths
         }
+        if selectedAnimal == .hedgehog {
+            return RiveHedgehogAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
@@ -770,6 +814,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .dragon {
             return RiveDragonAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .hedgehog {
+            return RiveHedgehogAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }
