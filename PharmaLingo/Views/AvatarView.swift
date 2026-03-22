@@ -301,6 +301,36 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveHedgehogAvatarView.hedgehogBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .lion {
+                    if !RiveLionAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveLionAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveLionAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let lionHex = RiveLionAvatarView.lionBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if lionHex == nil {
+                        selectedBodyColor = RiveLionAvatarView.lionBodyColorHexes[0].hex
+                    }
+                }
+                if newAnimal == .monkey {
+                    if !RiveMonkeyAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveMonkeyAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveMonkeyAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let monkeyHex = RiveMonkeyAvatarView.monkeyBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if monkeyHex == nil {
+                        selectedBodyColor = RiveMonkeyAvatarView.monkeyBodyColorHexes[0].hex
+                    }
+                }
                 if newAnimal == .dragon {
                     if !RiveDragonAvatarView.supportedEyes.contains(selectedEyes) {
                         selectedEyes = .normal
@@ -459,8 +489,16 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .hedgehog
     }
 
+    private var isLionSelected: Bool {
+        selectedAnimal == .lion
+    }
+
+    private var isMonkeySelected: Bool {
+        selectedAnimal == .monkey
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected
     }
 
     private var colorGrid: some View {
@@ -487,6 +525,10 @@ struct AvatarCustomizationView: View {
                 dragonColorGrid
             } else if isHedgehogSelected {
                 hedgehogColorGrid
+            } else if isLionSelected {
+                lionColorGrid
+            } else if isMonkeySelected {
+                monkeyColorGrid
             } else {
                 genericColorGrid
             }
@@ -647,6 +689,40 @@ struct AvatarCustomizationView: View {
         .padding(.horizontal)
     }
 
+    private var lionColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveLionAvatarView.lionBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var monkeyColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveMonkeyAvatarView.monkeyBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
     private var genericColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             Button {
@@ -756,6 +832,12 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .hedgehog {
             return RiveHedgehogAvatarView.supportedEyes
         }
+        if selectedAnimal == .lion {
+            return RiveLionAvatarView.supportedEyes
+        }
+        if selectedAnimal == .monkey {
+            return RiveMonkeyAvatarView.supportedEyes
+        }
         return EyeStyle.allCases.map { $0 }
     }
 
@@ -787,6 +869,12 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .hedgehog {
             return RiveHedgehogAvatarView.supportedMouths
         }
+        if selectedAnimal == .lion {
+            return RiveLionAvatarView.supportedMouths
+        }
+        if selectedAnimal == .monkey {
+            return RiveMonkeyAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
@@ -817,6 +905,12 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .hedgehog {
             return RiveHedgehogAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .lion {
+            return RiveLionAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .monkey {
+            return RiveMonkeyAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }
