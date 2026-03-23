@@ -1,6 +1,7 @@
 import SwiftUI
 import RiveRuntime
 import QuartzCore
+import Metal
 
 struct TransparentRiveView: UIViewRepresentable {
     let viewModel: RiveViewModel
