@@ -331,6 +331,21 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveMonkeyAvatarView.monkeyBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .mouse {
+                    if !RiveMouseAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveMouseAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveMouseAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let mouseHex = RiveMouseAvatarView.mouseBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if mouseHex == nil {
+                        selectedBodyColor = RiveMouseAvatarView.mouseBodyColorHexes[0].hex
+                    }
+                }
                 if newAnimal == .dragon {
                     if !RiveDragonAvatarView.supportedEyes.contains(selectedEyes) {
                         selectedEyes = .normal
@@ -497,8 +512,12 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .monkey
     }
 
+    private var isMouseSelected: Bool {
+        selectedAnimal == .mouse
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected || isMouseSelected
     }
 
     private var colorGrid: some View {
@@ -529,6 +548,8 @@ struct AvatarCustomizationView: View {
                 lionColorGrid
             } else if isMonkeySelected {
                 monkeyColorGrid
+            } else if isMouseSelected {
+                mouseColorGrid
             } else {
                 genericColorGrid
             }
@@ -723,6 +744,23 @@ struct AvatarCustomizationView: View {
         .padding(.horizontal)
     }
 
+    private var mouseColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveMouseAvatarView.mouseBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
     private var genericColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             Button {
@@ -838,6 +876,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .monkey {
             return RiveMonkeyAvatarView.supportedEyes
         }
+        if selectedAnimal == .mouse {
+            return RiveMouseAvatarView.supportedEyes
+        }
         return EyeStyle.allCases.map { $0 }
     }
 
@@ -875,6 +916,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .monkey {
             return RiveMonkeyAvatarView.supportedMouths
         }
+        if selectedAnimal == .mouse {
+            return RiveMouseAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
@@ -911,6 +955,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .monkey {
             return RiveMonkeyAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .mouse {
+            return RiveMouseAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }

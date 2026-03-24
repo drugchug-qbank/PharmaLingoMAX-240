@@ -19,34 +19,7 @@ enum AvatarAssetCatalog {
     }
 
     static func anchors(for animal: AnimalType) -> AnchorPoints {
-        switch animal {
-        case .frog:
-            return AnchorPoints(
-                eyeCenter: CGPoint(x: 0.50, y: 0.34),
-                mouthCenter: CGPoint(x: 0.50, y: 0.60),
-                accessoryCenter: CGPoint(x: 0.50, y: 0.16),
-                eyeScale: 1.1,
-                mouthScale: 1.0
-            )
-        case .elephant:
-            return AnchorPoints(
-                eyeCenter: CGPoint(x: 0.50, y: 0.40),
-                mouthCenter: CGPoint(x: 0.50, y: 0.55),
-                accessoryCenter: CGPoint(x: 0.50, y: 0.16),
-                eyeScale: 1.0,
-                mouthScale: 0.85
-            )
-        case .turtle:
-            return AnchorPoints(
-                eyeCenter: CGPoint(x: 0.50, y: 0.34),
-                mouthCenter: CGPoint(x: 0.50, y: 0.50),
-                accessoryCenter: CGPoint(x: 0.50, y: 0.12),
-                eyeScale: 0.95,
-                mouthScale: 0.9
-            )
-        default:
-            return .standard
-        }
+        .standard
     }
 
     struct ShadingConfig {
@@ -80,7 +53,7 @@ enum AvatarAssetCatalog {
         case .dragon: return ["66BB6A", "4DB6AC", "81C784", "AED581"]
         case .fox: return ["FF7043", "FF8A65", "FFA726", "FFAB91"]
         case .hedgehog: return ["C4956A", "D2B48C", "DAA520", "8D6E63"]
-        case .frog: return ["81C784", "66BB6A", "4DB6AC", "AED581"]
+        case .mouse: return ["B0BEC5", "90A4AE", "CFD8DC", "78909C"]
         case .panda: return ["E0E0E0", "BDBDBD", "F5F5F5", "CFD8DC"]
         case .unicorn: return ["F8BBD0", "CE93D8", "B39DDB", "81D4FA"]
         default: return [animal.defaultColorHex]
