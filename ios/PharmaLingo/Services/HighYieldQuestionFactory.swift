@@ -474,61 +474,188 @@ struct HighYieldQuestionFactory {
         guard !drug.commonDosing.isEmpty else { return [] }
         var qs: [Question] = []
 
+        let firstFact = drug.commonDosing[0]
         let startDose = drug.commonDosing.first(where: { $0.context.contains("start") })
-        if let sd = startDose {
-            let otherDoses = allDrugs.filter { $0.id != drug.id && !$0.commonDosing.isEmpty }
-                .compactMap { $0.commonDosing.first(where: { $0.context.contains("start") })?.dose }
-            let distractors = Array(Set(otherDoses).subtracting([sd.dose]))
-                .shuffledStable(seed: drug.id + "hy_dose1").prefix(3)
-            if distractors.count >= 2 {
-                let opts = (Array(distractors) + [sd.dose]).shuffledStable(seed: drug.id + "hy_dose1o")
-                qs.append(.multipleChoice(
-                    id: "hy_\(sid)_\(drug.id)_dose_mc1",
-                    subsectionId: sid, difficulty: .medium,
-                    question: "What is the typical starting dose of \(drug.genericName) for HTN?",
-                    options: opts, answer: sd.dose,
-                    explanation: "Rule: \(drug.genericName) starts at \(sd.dose) for HTN.\nWhy: Knowing starting doses prevents under- or over-dosing at initiation.",
-                    objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing", drug.drugClass], source: .generated
-                ))
+        let rangeDose = drug.commonDosing.first(where: { $0.context.contains("range") || $0.context.contains("max") || $0.context.contains("usual") })
+        let otherDrugsWithDosing = allDrugs.filter { $0.id != drug.id && !$0.commonDosing.isEmpty }
+        let otherStartDoses = otherDrugsWithDosing
+            .compactMap { $0.commonDosing.first(where: { $0.context.contains("start") })?.dose }
+        let otherAnyDoses = otherDrugsWithDosing.compactMap { $0.commonDosing.first?.dose }
+        let startDistractors = Array(Set(otherStartDoses).subtracting([startDose?.dose ?? ""]))
+            .shuffledStable(seed: drug.id + "hy_dose_sd")
+        let anyDistractors = Array(Set(otherAnyDoses).subtracting([firstFact.dose]))
+            .shuffledStable(seed: drug.id + "hy_dose_ad")
 
-                let fbOpts = (Array(distractors.prefix(3)) + [sd.dose]).shuffledStable(seed: drug.id + "hy_dose_fb1")
-                qs.append(.fillBlank(
-                    id: "hy_\(sid)_\(drug.id)_dose_fb1",
-                    subsectionId: sid, difficulty: .medium,
-                    question: "The starting dose of \(drug.genericName) (\(drug.brandName)) for HTN is _____.",
-                    options: Array(fbOpts), answer: sd.dose,
-                    explanation: "Rule: Start \(drug.genericName) at \(sd.dose) for HTN.\nWhy: Accurate dosing recall is essential for safe prescribing.",
-                    objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
+        // --- EASY: identify the common starting dose via MCQ ---
+        if let sd = startDose, startDistractors.count >= 2 {
+            let d3 = Array(startDistractors.prefix(3))
+            let opts = (d3 + [sd.dose]).shuffledStable(seed: drug.id + "hy_dose1o")
+            qs.append(.multipleChoice(
+                id: "hy_\(sid)_\(drug.id)_dose_mc1",
+                subsectionId: sid, difficulty: .easy,
+                question: "What is the typical starting dose of \(drug.genericName) for \(contextLabel(firstFact.context))?",
+                options: opts, answer: sd.dose,
+                explanation: "Rule: \(drug.genericName) starts at \(sd.dose) for \(contextLabel(firstFact.context)).\nWhy: Knowing starting doses prevents under- or over-dosing at initiation.",
+                objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing", drug.drugClass], source: .generated
+            ))
+        }
+
+        // --- EASY: true/false confirm the stored dose fact ---
+        let tfTemplates: [(String, String)] = [
+            ("\(drug.genericName) (\(drug.brandName)): \(firstFact.context) is \(firstFact.dose).",
+             "Rule: \(drug.genericName) \(firstFact.context) = \(firstFact.dose).\nWhy: Know dosing facts for commonly prescribed medications."),
+            ("The dose for \(drug.genericName) (\(firstFact.context)) is \(firstFact.dose).",
+             "Rule: \(drug.genericName) \(firstFact.context) = \(firstFact.dose).\nWhy: Accurate dosing recall supports safe prescribing."),
+        ]
+        let tfIdx = stableIndex(seed: drug.id + "hy_dose_tft", count: tfTemplates.count)
+        qs.append(.trueFalse(
+            id: "hy_\(sid)_\(drug.id)_dose_tf1",
+            subsectionId: sid, difficulty: .easy,
+            question: tfTemplates[tfIdx].0,
+            answer: true,
+            explanation: tfTemplates[tfIdx].1,
+            objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
+        ))
+
+        // --- EASY/MEDIUM: fill-blank using stored context + dose ---
+        if let sd = startDose, startDistractors.count >= 2 {
+            let fbTemplates: [(String, String)] = [
+                ("The starting dose of \(drug.genericName) (\(drug.brandName)) for \(contextLabel(firstFact.context)) is _____.",
+                 "Rule: Start \(drug.genericName) at \(sd.dose).\nWhy: Accurate dosing recall is essential for safe prescribing."),
+                ("\(drug.genericName) is typically initiated at _____ for \(contextLabel(firstFact.context)).",
+                 "Rule: \(drug.genericName) starts at \(sd.dose).\nWhy: Starting at the correct dose minimizes adverse effects while achieving efficacy."),
+                ("For a new patient, \(drug.genericName) (\(drug.brandName)) is started at _____.",
+                 "Rule: \(drug.genericName) starts at \(sd.dose).\nWhy: Know the standard initiation dose for first-line agents."),
+            ]
+            let fbIdx = stableIndex(seed: drug.id + "hy_dose_fbt", count: fbTemplates.count)
+            let fbOpts = (Array(startDistractors.prefix(3)) + [sd.dose]).shuffledStable(seed: drug.id + "hy_dose_fb1o")
+            qs.append(.fillBlank(
+                id: "hy_\(sid)_\(drug.id)_dose_fb1",
+                subsectionId: sid, difficulty: .medium,
+                question: fbTemplates[fbIdx].0,
+                options: Array(fbOpts), answer: sd.dose,
+                explanation: fbTemplates[fbIdx].1,
+                objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
+            ))
+        }
+
+        // --- MEDIUM: false true/false with a wrong dose from another drug ---
+        if anyDistractors.count >= 1 {
+            let wrongDose = anyDistractors.first!
+            let falseTFTemplates: [(String, String)] = [
+                ("The typical starting dose of \(drug.genericName) is \(wrongDose).",
+                 "Rule: \(drug.genericName) dose is \(firstFact.dose), not \(wrongDose).\nWhy: Confusing doses between drugs is a common prescribing error."),
+                ("\(drug.genericName) (\(drug.brandName)) is dosed at \(wrongDose) for \(contextLabel(firstFact.context)).",
+                 "Rule: \(drug.genericName) \(firstFact.context) = \(firstFact.dose), not \(wrongDose).\nWhy: Each drug has specific dosing — do not confuse with similar agents."),
+            ]
+            let ftfIdx = stableIndex(seed: drug.id + "hy_dose_ftf", count: falseTFTemplates.count)
+            qs.append(.trueFalse(
+                id: "hy_\(sid)_\(drug.id)_dose_tf2",
+                subsectionId: sid, difficulty: .medium,
+                question: falseTFTemplates[ftfIdx].0,
+                answer: false,
+                explanation: falseTFTemplates[ftfIdx].1,
+                objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
+            ))
+        }
+
+        // --- MEDIUM: MCQ choosing correct dose/frequency when range data exists ---
+        if let rd = rangeDose, anyDistractors.count >= 2 {
+            let rangeD3 = Array(anyDistractors.prefix(3))
+            let rangeOpts = (rangeD3 + [rd.dose]).shuffledStable(seed: drug.id + "hy_dose_rng")
+            let rangeTemplates = [
+                "What is the usual dose range for \(drug.genericName) (\(rd.context))?",
+                "Which of the following represents the \(rd.context) of \(drug.genericName)?",
+            ]
+            let rIdx = stableIndex(seed: drug.id + "hy_dose_rt", count: rangeTemplates.count)
+            qs.append(.multipleChoice(
+                id: "hy_\(sid)_\(drug.id)_dose_mc2",
+                subsectionId: sid, difficulty: .medium,
+                question: rangeTemplates[rIdx],
+                options: rangeOpts, answer: rd.dose,
+                explanation: "Rule: \(drug.genericName) \(rd.context) = \(rd.dose).\nWhy: Knowing the therapeutic range helps with dose titration.",
+                objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing", drug.drugClass], source: .generated
+            ))
+        }
+
+        // --- MEDIUM: fill-blank for a secondary dose fact (range/max) ---
+        if let rd = rangeDose, rd.dose != firstFact.dose, anyDistractors.count >= 2 {
+            let fb2Opts = (Array(anyDistractors.prefix(3)) + [rd.dose]).shuffledStable(seed: drug.id + "hy_dose_fb2o")
+            qs.append(.fillBlank(
+                id: "hy_\(sid)_\(drug.id)_dose_fb2",
+                subsectionId: sid, difficulty: .medium,
+                question: "The \(rd.context) of \(drug.genericName) (\(drug.brandName)) is _____.",
+                options: Array(fb2Opts), answer: rd.dose,
+                explanation: "Rule: \(drug.genericName) \(rd.context) = \(rd.dose).\nWhy: Knowing the full dose range supports safe titration decisions.",
+                objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
+            ))
+        }
+
+        // --- HARD: pick the drug that matches a given starting dose (reverse lookup) ---
+        if let sd = startDose {
+            let sameClassOthers = otherDrugsWithDosing.filter { $0.drugClass == drug.drugClass }
+            let diffClassOthers = otherDrugsWithDosing.filter { $0.drugClass != drug.drugClass }
+            let distractorDrugs = Array((sameClassOthers + diffClassOthers)
+                .filter { $0.commonDosing.first(where: { $0.context.contains("start") })?.dose != sd.dose }
+                .shuffledStable(seed: drug.id + "hy_dose_rev").prefix(3))
+            if distractorDrugs.count >= 2 {
+                let revOpts = (distractorDrugs.map(\.genericName) + [drug.genericName]).shuffledStable(seed: drug.id + "hy_dose_revo")
+                qs.append(.multipleChoice(
+                    id: "hy_\(sid)_\(drug.id)_dose_mc3",
+                    subsectionId: sid, difficulty: .hard,
+                    question: "Which drug has a typical starting dose of \(sd.dose)?",
+                    options: revOpts, answer: drug.genericName,
+                    explanation: "Rule: \(drug.genericName) starts at \(sd.dose).\nWhy: Recognizing doses by value helps verify prescription accuracy.",
+                    objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing", drug.drugClass], source: .generated
                 ))
             }
         }
 
-        qs.append(.trueFalse(
-            id: "hy_\(sid)_\(drug.id)_dose_fc1",
-            subsectionId: sid, difficulty: .medium,
-            question: "\(drug.genericName) (\(drug.brandName)): \(drug.commonDosing[0].context) is \(drug.commonDosing[0].dose).",
-            answer: true,
-            explanation: "Rule: \(drug.genericName) \(drug.commonDosing[0].context) = \(drug.commonDosing[0].dose).\nWhy: Know starting doses for commonly prescribed medications.",
-            objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
-        ))
-
-        if drug.commonDosing.count >= 2 {
-            let wrongDose = allDrugs.filter { $0.id != drug.id && !$0.commonDosing.isEmpty }
-                .compactMap { $0.commonDosing.first?.dose }
-                .shuffledStable(seed: drug.id + "hy_dose_fc2").first
-            if let wd = wrongDose {
-                qs.append(.trueFalse(
-                    id: "hy_\(sid)_\(drug.id)_dose_fc2",
-                    subsectionId: sid, difficulty: .medium,
-                    question: "The typical starting dose of \(drug.genericName) for HTN is \(wd).",
-                    answer: false,
-                    explanation: "Rule: \(drug.genericName) starts at \(drug.commonDosing[0].dose), not \(wd).\nWhy: Confusing doses between drugs is a common prescribing error.",
+        // --- HARD: short dosing application question using context ---
+        if drug.commonDosing.count >= 2, let sd = startDose {
+            let indication = drug.indications.first ?? contextLabel(firstFact.context)
+            let appTemplates: [(String, String, String)] = [
+                ("A patient is newly started on \(drug.genericName) (\(drug.brandName)) for \(indication). What initial dose should be prescribed?",
+                 sd.dose,
+                 "Rule: \(drug.genericName) starts at \(sd.dose) for \(indication).\nWhy: Apply dosing knowledge to realistic prescribing scenarios."),
+                ("You are initiating \(drug.genericName) for a patient with \(indication). The appropriate starting dose is:",
+                 sd.dose,
+                 "Rule: Start \(drug.genericName) at \(sd.dose).\nWhy: Correct initial dosing ensures safety and efficacy from day one."),
+            ]
+            let appIdx = stableIndex(seed: drug.id + "hy_dose_app", count: appTemplates.count)
+            let template = appTemplates[appIdx]
+            if startDistractors.count >= 2 {
+                let appOpts = (Array(startDistractors.prefix(3)) + [template.1]).shuffledStable(seed: drug.id + "hy_dose_appo")
+                qs.append(.multipleChoice(
+                    id: "hy_\(sid)_\(drug.id)_dose_mc4",
+                    subsectionId: sid, difficulty: .hard,
+                    question: template.0,
+                    options: appOpts, answer: template.1,
+                    explanation: template.2,
                     objective: .dosing, relatedDrugIds: [drug.id], tags: ["dosing"], source: .generated
                 ))
             }
         }
 
         return qs
+    }
+
+    private func contextLabel(_ context: String) -> String {
+        if context.lowercased().contains("htn") { return "HTN" }
+        if context.lowercased().contains("smoking") { return "smoking cessation" }
+        if context.lowercased().contains("titration") { return "initiation" }
+        let cleaned = context
+            .replacingOccurrences(of: "(adult start)", with: "")
+            .replacingOccurrences(of: "(adult)", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        return cleaned.isEmpty ? "the primary indication" : cleaned
+    }
+
+    private func stableIndex(seed: String, count: Int) -> Int {
+        guard count > 0 else { return 0 }
+        var hash: UInt64 = 5381
+        for byte in seed.utf8 { hash = hash &* 33 &+ UInt64(byte) }
+        return Int(hash % UInt64(count))
     }
 
     // MARK: - Matching Questions (3 types only)
@@ -577,23 +704,48 @@ struct HighYieldQuestionFactory {
     private func matchingDrugDoseQuestions(drugs: [Drug], sid: String) -> [Question] {
         let drugsWithDosing = drugs.filter { !$0.commonDosing.isEmpty }
         guard drugsWithDosing.count >= 3 else { return [] }
-        var pairs: [MatchingPair] = []
-        var usedDoses: Set<String> = []
+        var qs: [Question] = []
+
+        var startPairs: [MatchingPair] = []
+        var usedStartDoses: Set<String> = []
         for d in drugsWithDosing {
-            if let start = d.commonDosing.first(where: { $0.context.contains("start") && !usedDoses.contains($0.dose) }) {
-                pairs.append(MatchingPair(left: d.genericName, right: start.dose))
-                usedDoses.insert(start.dose)
+            if let start = d.commonDosing.first(where: { $0.context.contains("start") && !usedStartDoses.contains($0.dose) }) {
+                startPairs.append(MatchingPair(left: d.genericName, right: start.dose))
+                usedStartDoses.insert(start.dose)
             }
         }
-        guard pairs.count >= 3 else { return [] }
-        return [.matching(
-            id: "hy_\(sid)_match_dose",
-            subsectionId: sid, difficulty: .hard,
-            question: "Match each drug to its starting dose for HTN:",
-            pairs: pairs,
-            explanation: "Rule: Each antihypertensive has a specific starting dose.\nWhy: Dose recall is essential for safe prescribing.",
-            objective: .dosing, relatedDrugIds: pairs.compactMap { p in drugsWithDosing.first(where: { $0.genericName == p.left })?.id }, tags: ["dosing"], source: .generated
-        )]
+        if startPairs.count >= 3 {
+            let label = contextLabel(drugsWithDosing.first?.commonDosing.first?.context ?? "")
+            qs.append(.matching(
+                id: "hy_\(sid)_match_dose",
+                subsectionId: sid, difficulty: .hard,
+                question: "Match each drug to its starting dose for \(label):",
+                pairs: startPairs,
+                explanation: "Rule: Each drug has a specific starting dose.\nWhy: Dose recall is essential for safe prescribing.",
+                objective: .dosing, relatedDrugIds: startPairs.compactMap { p in drugsWithDosing.first(where: { $0.genericName == p.left })?.id }, tags: ["dosing"], source: .generated
+            ))
+        }
+
+        var rangePairs: [MatchingPair] = []
+        var usedRangeDoses: Set<String> = []
+        for d in drugsWithDosing {
+            if let rangeFact = d.commonDosing.first(where: { ($0.context.contains("range") || $0.context.contains("max") || $0.context.contains("usual")) && !usedRangeDoses.contains($0.dose) }) {
+                rangePairs.append(MatchingPair(left: d.genericName, right: rangeFact.dose))
+                usedRangeDoses.insert(rangeFact.dose)
+            }
+        }
+        if rangePairs.count >= 3 {
+            qs.append(.matching(
+                id: "hy_\(sid)_match_dose_rng",
+                subsectionId: sid, difficulty: .hard,
+                question: "Match each drug to its usual dose range/max:",
+                pairs: rangePairs,
+                explanation: "Rule: Knowing the full dose range supports safe titration.\nWhy: Dose range recall prevents over- or under-dosing during adjustment.",
+                objective: .dosing, relatedDrugIds: rangePairs.compactMap { p in drugsWithDosing.first(where: { $0.genericName == p.left })?.id }, tags: ["dosing"], source: .generated
+            ))
+        }
+
+        return qs
     }
 
     // MARK: - Extra Select-All Questions
