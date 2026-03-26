@@ -59,7 +59,7 @@ struct QuizEngine {
         }
 
         var session = Array(focusQuestions.prefix(totalCount))
-        session = smoothVariety(session, masteryMap: masteryMap)
+        session = smoothVariety(session, masteryMap: masteryMap, subsectionId: subsectionId)
         return session
     }
 
@@ -180,6 +180,17 @@ struct QuizEngine {
         let available = pool.filter { !usedIds.contains($0.id) }
         var burst: [Question] = []
         var burstUsed = usedIds
+
+        let m3RoleBurst = Module3SessionLogic.insulinRoleBurstOrder(for: drug.id, stage: stage, pool: pool, usedIds: usedIds)
+        if !m3RoleBurst.isEmpty {
+            for q in m3RoleBurst {
+                guard burst.count < burstSize else { break }
+                guard !burstUsed.contains(q.id) else { continue }
+                burst.append(q)
+                burstUsed.insert(q.id)
+            }
+            if burst.count >= burstSize { return burst }
+        }
 
         let stageFilter = stageObjectivesAndFormats(for: stage, drug: drug)
 
@@ -315,7 +326,7 @@ struct QuizEngine {
 
     // MARK: - Smooth Variety (Post-Processing)
 
-    private func smoothVariety(_ questions: [Question], masteryMap: [String: MasteryRecord]) -> [Question] {
+    private func smoothVariety(_ questions: [Question], masteryMap: [String: MasteryRecord], subsectionId: String = "") -> [Question] {
         var result = questions
         guard result.count > 3 else { return result }
 
@@ -323,6 +334,25 @@ struct QuizEngine {
         result = enforceMaxConsecutiveDrug(result)
         result = enforceStagedFormats(result, masteryMap: masteryMap)
         result = enforceVariety(result)
+
+        if Module3SessionLogic.isModule3Subsection(subsectionId) {
+            result = injectModule3ContrastQuestions(result, subsectionId: subsectionId, masteryMap: masteryMap)
+        }
+
+        return result
+    }
+
+    private func injectModule3ContrastQuestions(_ questions: [Question], subsectionId: String, masteryMap: [String: MasteryRecord]) -> [Question] {
+        var result = questions
+        let usedIds = Set(result.map(\.id))
+        guard let subsection = dataService.subsection(for: subsectionId) else { return result }
+        let pool = buildQuestionPool(for: subsection)
+        let contrastQs = Module3SessionLogic.contrastQuestionsForSubsection(subsectionId, pool: pool, usedIds: usedIds, count: 2)
+
+        for q in contrastQs {
+            let insertPos = min(result.count, max(4, result.count / 2))
+            result.insert(q, at: insertPos)
+        }
 
         return result
     }
@@ -581,6 +611,15 @@ struct QuizEngine {
         let drugId = missedQuestion.relatedDrugIds.first ?? ""
         let bucket = ConceptBucket.bucket(for: missedQuestion.objective)
         let available = pool.filter { !excludeIds.contains($0.id) }
+
+        if let antiConfusion = Module3SessionLogic.findAntiConfusionFollowUp(
+            for: missedQuestion,
+            subsectionId: subsectionId,
+            pool: pool,
+            usedIds: excludeIds
+        ) {
+            return antiConfusion
+        }
 
         if let match = pickRemediationFromPool(
             available, drugId: drugId, bucket: bucket,

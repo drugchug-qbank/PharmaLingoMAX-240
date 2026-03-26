@@ -241,21 +241,26 @@ struct DrugDataService {
 
         if bank["3a"] == nil { bank["3a"] = [] }
         bank["3a"]?.append(contentsOf: Self.curatedAddOnQuestions_3a)
+        bank["3a"]?.append(contentsOf: Self.module3ContrastQuestions.filter { $0.subsectionId == "3a" })
 
         if bank["3b"] == nil { bank["3b"] = [] }
         bank["3b"]?.append(contentsOf: Self.curatedAddOnQuestions_3b)
 
         if bank["3c"] == nil { bank["3c"] = [] }
         bank["3c"]?.append(contentsOf: Self.curatedAddOnQuestions_3c)
+        bank["3c"]?.append(contentsOf: Self.module3ContrastQuestions.filter { $0.subsectionId == "3c" })
 
         if bank["3d"] == nil { bank["3d"] = [] }
         bank["3d"]?.append(contentsOf: Self.curatedAddOnQuestions_3d)
+        bank["3d"]?.append(contentsOf: Self.module3ContrastQuestions.filter { $0.subsectionId == "3d" })
 
         if bank["3e"] == nil { bank["3e"] = [] }
         bank["3e"]?.append(contentsOf: Self.curatedAddOnQuestions_3e)
+        bank["3e"]?.append(contentsOf: Self.module3ContrastQuestions.filter { $0.subsectionId == "3e" })
 
         if bank["3f"] == nil { bank["3f"] = [] }
         bank["3f"]?.append(contentsOf: Self.curatedAddOnQuestions_3f)
+        bank["3f"]?.append(contentsOf: Self.module3ContrastQuestions.filter { $0.subsectionId == "3f" })
 
         if bank["4a"] == nil { bank["4a"] = [] }
         bank["4a"]?.append(contentsOf: Self.curatedAddOnQuestions_4a)
