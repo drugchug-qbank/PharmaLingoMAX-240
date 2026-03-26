@@ -75,6 +75,7 @@ struct HighYieldQuestionFactory {
             result.indication.append(contentsOf: indicationQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs))
             result.sideEffect.append(contentsOf: sideEffectQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs, sameClassMap: sameClassMap))
             result.blackBoxContraindication.append(contentsOf: blackBoxQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs))
+            result.blackBoxContraindication.append(contentsOf: monitoringQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs))
             result.pearlDifferentiator.append(contentsOf: pearlQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs, sameClassMap: sameClassMap))
             result.dosing.append(contentsOf: dosingQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs))
         }
@@ -415,6 +416,67 @@ struct HighYieldQuestionFactory {
                     ))
                 }
             }
+        }
+
+        return qs
+    }
+
+    // MARK: - Monitoring Templates
+
+    private func monitoringQuestions(drug: Drug, sid: String, allDrugs: [Drug]) -> [Question] {
+        guard !drug.monitoring.isEmpty else { return [] }
+        var qs: [Question] = []
+        let primaryMonitor = drug.monitoring[0]
+
+        let wrongMonitors = Array(Set(allDrugs.filter { $0.drugClass != drug.drugClass }.flatMap(\.monitoring)).subtracting(Set(drug.monitoring)))
+        let d3 = Array(wrongMonitors.shuffledStable(seed: drug.id + "hy_mon1").prefix(3))
+        if d3.count >= 2 {
+            let opts = (d3 + [primaryMonitor]).shuffledStable(seed: drug.id + "hy_mon1o")
+            qs.append(.multipleChoice(
+                id: "hy_\(sid)_\(drug.id)_mon_mc1",
+                subsectionId: sid, difficulty: .medium,
+                question: "After starting \(drug.genericName) (\(drug.brandName)), which parameter is most important to monitor?",
+                options: opts, answer: primaryMonitor,
+                explanation: "Rule: \(drug.genericName) requires monitoring of \(primaryMonitor).\nWhy: \(drug.drugClass) drugs can alter \(primaryMonitor), so early detection prevents complications.",
+                objective: .monitoring, relatedDrugIds: [drug.id], tags: ["monitoring", drug.drugClass], source: .generated
+            ))
+        }
+
+        if drug.monitoring.count >= 2 {
+            let secondMonitor = drug.monitoring[1]
+            qs.append(.trueFalse(
+                id: "hy_\(sid)_\(drug.id)_mon_tf1",
+                subsectionId: sid, difficulty: .medium,
+                question: "\(drug.genericName) (\(drug.brandName)) therapy requires monitoring of \(secondMonitor).",
+                answer: true,
+                explanation: "Rule: \(drug.genericName) requires monitoring of \(drug.monitoring.prefix(3).joined(separator: ", ")).\nWhy: Routine lab checks detect drug-related changes before they become clinically significant.",
+                objective: .monitoring, relatedDrugIds: [drug.id], tags: ["monitoring"], source: .generated
+            ))
+        }
+
+        if drug.monitoring.count >= 2, d3.count >= 1 {
+            let wrongMonitor = d3[0]
+            qs.append(.trueFalse(
+                id: "hy_\(sid)_\(drug.id)_mon_tf2",
+                subsectionId: sid, difficulty: .medium,
+                question: "\(drug.genericName) (\(drug.brandName)) primarily requires monitoring of \(wrongMonitor).",
+                answer: false,
+                explanation: "Rule: \(drug.genericName) requires monitoring of \(drug.monitoring.prefix(3).joined(separator: ", ")), not \(wrongMonitor).\nWhy: Matching the correct monitoring to each drug prevents missed safety signals.",
+                objective: .monitoring, relatedDrugIds: [drug.id], tags: ["monitoring"], source: .generated
+            ))
+        }
+
+        if drug.monitoring.count >= 2, d3.count >= 2 {
+            let allMonitors = drug.monitoring.prefix(3)
+            let fbOpts = (Array(d3.prefix(3)) + [allMonitors.joined(separator: ", ")]).shuffledStable(seed: drug.id + "hy_mon_fb")
+            qs.append(.fillBlank(
+                id: "hy_\(sid)_\(drug.id)_mon_fb1",
+                subsectionId: sid, difficulty: .medium,
+                question: "When initiating \(drug.genericName) for \(drug.indications.first ?? "its indication"), the key monitoring parameters include _____.",
+                options: Array(fbOpts), answer: allMonitors.joined(separator: ", "),
+                explanation: "Rule: \(drug.genericName) monitoring includes \(drug.monitoring.joined(separator: ", ")).\nWhy: Proactive monitoring is essential for safe prescribing of \(drug.drugClass) drugs.",
+                objective: .monitoring, relatedDrugIds: [drug.id], tags: ["monitoring"], source: .generated
+            ))
         }
 
         return qs
