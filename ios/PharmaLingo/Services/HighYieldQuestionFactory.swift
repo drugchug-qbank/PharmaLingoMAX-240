@@ -43,9 +43,10 @@ struct HighYieldQuestionFactory {
         var blackBoxContraindication: [Question] = []
         var pearlDifferentiator: [Question] = []
         var dosing: [Question] = []
+        var miniCase: [Question] = []
 
         func all() -> [Question] {
-            classPattern + indication + sideEffect + blackBoxContraindication + pearlDifferentiator + dosing
+            classPattern + indication + sideEffect + blackBoxContraindication + pearlDifferentiator + dosing + miniCase
         }
 
         func forBucket(_ bucket: HighYieldBucket) -> [Question] {
@@ -83,6 +84,10 @@ struct HighYieldQuestionFactory {
         result.dosing.append(contentsOf: matchingDrugDoseQuestions(drugs: drugs, sid: sid))
         result.classPattern.append(contentsOf: selectAllClassQuestions(drugs: drugs, sid: sid, allDrugs: moduleDrugs))
         result.blackBoxContraindication.append(contentsOf: selectAllPregnancyQuestions(drugs: drugs, sid: sid))
+
+        for drug in drugs {
+            result.miniCase.append(contentsOf: miniCaseQuestions(drug: drug, sid: sid, allDrugs: moduleDrugs, sameClassMap: sameClassMap))
+        }
 
         return result
     }
@@ -792,6 +797,317 @@ struct HighYieldQuestionFactory {
     }
 
 
+
+    // MARK: - Mini-Case Questions (Advanced Stage)
+
+    private func miniCaseQuestions(drug: Drug, sid: String, allDrugs: [Drug], sameClassMap: [String: [Drug]]) -> [Question] {
+        var qs: [Question] = []
+
+        qs.append(contentsOf: indicationSelectionCases(drug: drug, sid: sid, allDrugs: allDrugs))
+        qs.append(contentsOf: adverseEffectRecognitionCases(drug: drug, sid: sid, allDrugs: allDrugs))
+        qs.append(contentsOf: contraindicationAvoidanceCases(drug: drug, sid: sid, allDrugs: allDrugs))
+        qs.append(contentsOf: monitoringFocusedCases(drug: drug, sid: sid, allDrugs: allDrugs))
+        qs.append(contentsOf: withinClassDifferentiatorCases(drug: drug, sid: sid, sameClassMap: sameClassMap))
+
+        return qs
+    }
+
+    // MARK: Mini-Case — Indication Selection
+
+    private func indicationSelectionCases(drug: Drug, sid: String, allDrugs: [Drug]) -> [Question] {
+        guard let primary = drug.indications.first else { return [] }
+        var qs: [Question] = []
+
+        let vignetteMap = indicationVignettes()
+        let ages = ["48-year-old", "55-year-old", "63-year-old", "70-year-old", "58-year-old"]
+        let age = ages[stableIndex(seed: drug.id + "mc_ind_age", count: ages.count)]
+
+        let stem: String
+        if let mapped = vignetteMap[primary] {
+            stem = mapped
+        } else {
+            let templates = [
+                "A \(age) presents with \(primary). The physician decides to start pharmacotherapy.",
+                "A \(age) is newly diagnosed with \(primary) and requires medication.",
+                "A \(age) with \(primary) is evaluated for first-line drug therapy.",
+            ]
+            stem = templates[stableIndex(seed: drug.id + "mc_ind_st", count: templates.count)]
+        }
+
+        let wrongDrugs = allDrugs.filter { $0.id != drug.id && !$0.indications.contains(primary) }
+        let distractors = Array(wrongDrugs.shuffledStable(seed: drug.id + "mc_ind1").prefix(3).map { "\($0.genericName) (\($0.brandName))" })
+        guard distractors.count >= 2 else { return [] }
+
+        let correctLabel = "\(drug.genericName) (\(drug.brandName))"
+        let opts = (distractors + [correctLabel]).shuffledStable(seed: drug.id + "mc_ind1o")
+
+        let wrongExplanations = wrongDrugs.prefix(2).map { "\($0.genericName) is a \($0.drugClass) used for \($0.indications.first ?? "other indications"), not \(primary)." }
+
+        qs.append(.multipleChoice(
+            id: "mc_\(sid)_\(drug.id)_ind1",
+            subsectionId: sid, difficulty: .hard,
+            question: "\(stem) Which medication is most appropriate?",
+            options: opts, answer: correctLabel,
+            explanation: "Correct: \(drug.genericName) is a \(drug.drugClass) indicated for \(primary).\n\(wrongExplanations.joined(separator: "\n"))",
+            objective: .indication, relatedDrugIds: [drug.id], tags: ["mini_case", primary], source: .generated
+        ))
+
+        if drug.indications.count >= 2 {
+            let secondInd = drug.indications[1]
+            let secondStem: String
+            if let mapped = vignetteMap[secondInd] {
+                secondStem = mapped
+            } else {
+                secondStem = "A \(age) with \(secondInd) needs treatment initiation."
+            }
+            let wrongForSecond = allDrugs.filter { $0.id != drug.id && !$0.indications.contains(secondInd) }
+            let dist2 = Array(wrongForSecond.shuffledStable(seed: drug.id + "mc_ind2").prefix(3).map { "\($0.genericName) (\($0.brandName))" })
+            if dist2.count >= 2 {
+                let opts2 = (dist2 + [correctLabel]).shuffledStable(seed: drug.id + "mc_ind2o")
+                qs.append(.multipleChoice(
+                    id: "mc_\(sid)_\(drug.id)_ind2",
+                    subsectionId: sid, difficulty: .hard,
+                    question: "\(secondStem) Which medication is most appropriate?",
+                    options: opts2, answer: correctLabel,
+                    explanation: "Correct: \(drug.genericName) is also indicated for \(secondInd).\nWhy: Know all approved indications for each drug.",
+                    objective: .indication, relatedDrugIds: [drug.id], tags: ["mini_case", secondInd], source: .generated
+                ))
+            }
+        }
+
+        return qs
+    }
+
+    // MARK: Mini-Case — Adverse Effect Recognition
+
+    private func adverseEffectRecognitionCases(drug: Drug, sid: String, allDrugs: [Drug]) -> [Question] {
+        guard drug.sideEffects.count >= 2 else { return [] }
+        var qs: [Question] = []
+
+        let se = drug.sideEffects[0]
+        let secondSE = drug.sideEffects[1]
+        let indication = drug.indications.first ?? "a chronic condition"
+        let ages = ["52-year-old", "67-year-old", "45-year-old", "73-year-old"]
+        let age = ages[stableIndex(seed: drug.id + "mc_ae_age", count: ages.count)]
+
+        let templates: [(String, String)] = [
+            ("A \(age) on \(drug.genericName) for \(indication) develops \(se). Which drug is the most likely cause?",
+             se),
+            ("A \(age) started on \(drug.genericName) (\(drug.brandName)) 2 weeks ago reports \(se). This is most consistent with:",
+             se),
+            ("A patient taking \(drug.genericName) for \(indication) presents with new-onset \(secondSE). The most likely explanation is:",
+             secondSE),
+        ]
+        let tIdx = stableIndex(seed: drug.id + "mc_ae_t", count: templates.count)
+        let (stem, targetSE) = templates[tIdx]
+
+        let wrongSEPool = Set(allDrugs.filter { $0.drugClass != drug.drugClass }.flatMap(\.sideEffects)).subtracting(drug.sideEffects)
+        let distractors = Array(Array(wrongSEPool).shuffledStable(seed: drug.id + "mc_ae1").prefix(3))
+        guard distractors.count >= 2 else { return [] }
+
+        let opts = (distractors + ["Known side effect of \(drug.genericName)"]).shuffledStable(seed: drug.id + "mc_ae1o")
+
+        qs.append(.multipleChoice(
+            id: "mc_\(sid)_\(drug.id)_ae1",
+            subsectionId: sid, difficulty: .hard,
+            question: stem,
+            options: (distractors + [targetSE]).shuffledStable(seed: drug.id + "mc_ae1v"),
+            answer: targetSE,
+            explanation: "Correct: \(targetSE) is a recognized adverse effect of \(drug.genericName) (\(drug.drugClass)).\nWhy: \(drug.sideEffects.prefix(3).joined(separator: ", ")) are the key side effects to monitor.",
+            objective: .adverseEffect, relatedDrugIds: [drug.id], tags: ["mini_case", "adverse_effect"], source: .generated
+        ))
+
+        let culpritStem: String
+        let culpritTemplates = [
+            "A \(age) taking multiple medications develops \(se). Which of the following drugs is most likely responsible?",
+            "A patient reports \(se) after starting a new medication regimen. Which drug is the most likely cause?",
+        ]
+        culpritStem = culpritTemplates[stableIndex(seed: drug.id + "mc_ae2t", count: culpritTemplates.count)]
+
+        let innocentDrugs = allDrugs.filter { $0.id != drug.id && !$0.sideEffects.contains(se) }
+        let culpritDist = Array(innocentDrugs.shuffledStable(seed: drug.id + "mc_ae2").prefix(3).map(\.genericName))
+        if culpritDist.count >= 2 {
+            let culpritOpts = (culpritDist + [drug.genericName]).shuffledStable(seed: drug.id + "mc_ae2o")
+            qs.append(.multipleChoice(
+                id: "mc_\(sid)_\(drug.id)_ae2",
+                subsectionId: sid, difficulty: .hard,
+                question: culpritStem,
+                options: culpritOpts, answer: drug.genericName,
+                explanation: "Correct: \(se) is characteristic of \(drug.genericName) (\(drug.drugClass)).\nWhy: The other drugs listed do not typically cause \(se).",
+                objective: .adverseEffect, relatedDrugIds: [drug.id], tags: ["mini_case", "adverse_effect"], source: .generated
+            ))
+        }
+
+        return qs
+    }
+
+    // MARK: Mini-Case — Contraindication Avoidance
+
+    private func contraindicationAvoidanceCases(drug: Drug, sid: String, allDrugs: [Drug]) -> [Question] {
+        guard let contra = drug.majorContraindications.first else { return [] }
+        var qs: [Question] = []
+
+        let ages = ["60-year-old", "38-year-old", "71-year-old", "50-year-old"]
+        let age = ages[stableIndex(seed: drug.id + "mc_ci_age", count: ages.count)]
+        let indication = drug.indications.first ?? "treatment"
+
+        let isPregnancy = contra.lowercased().contains("pregnancy")
+        let scenario: String
+        if isPregnancy {
+            scenario = "A 32-year-old woman with \(indication) discovers she is pregnant. She is currently taking \(drug.genericName)."
+        } else {
+            let templates = [
+                "A \(age) with \(contra) needs treatment for \(indication).",
+                "A \(age) with a history of \(contra) is being evaluated for \(indication) therapy.",
+            ]
+            scenario = templates[stableIndex(seed: drug.id + "mc_ci_t", count: templates.count)]
+        }
+
+        let safeDrugs = allDrugs.filter { $0.id != drug.id && !$0.majorContraindications.contains(contra) && $0.indications.contains(where: { drug.indications.contains($0) }) }
+        let unsafeDrugs = allDrugs.filter { $0.id != drug.id && $0.majorContraindications.contains(contra) }
+
+        let avoidDistractors = allDrugs.filter { $0.id != drug.id && !$0.majorContraindications.contains(contra) }
+            .shuffledStable(seed: drug.id + "mc_ci1").prefix(3).map(\.genericName)
+        if avoidDistractors.count >= 2 {
+            let opts = (Array(avoidDistractors) + [drug.genericName]).shuffledStable(seed: drug.id + "mc_ci1o")
+            qs.append(.multipleChoice(
+                id: "mc_\(sid)_\(drug.id)_ci1",
+                subsectionId: sid, difficulty: .hard,
+                question: "\(scenario) Which drug should be AVOIDED?",
+                options: opts, answer: drug.genericName,
+                explanation: "Correct: \(drug.genericName) is contraindicated in \(contra).\nWhy: Prescribing \(drug.genericName) in this setting risks serious harm.",
+                objective: .contraindication, relatedDrugIds: [drug.id], tags: ["mini_case", "contraindication"], source: .generated
+            ))
+        }
+
+        if drug.blackBoxWarnings.count >= 1 {
+            let bbw = drug.blackBoxWarnings[0]
+            guard filterTrialContent(bbw) else { return qs }
+            let bbwStem = "A \(age) is prescribed \(drug.genericName) (\(drug.brandName)) for \(indication). Before starting, the provider should be most concerned about:"
+            let wrongBBW = Set(allDrugs.filter { $0.drugClass != drug.drugClass }.flatMap(\.blackBoxWarnings).filter(filterTrialContent)).subtracting(drug.blackBoxWarnings)
+            let bbwDist = Array(Array(wrongBBW).shuffledStable(seed: drug.id + "mc_ci2").prefix(3))
+            if bbwDist.count >= 2 {
+                let bbwOpts = (bbwDist + [bbw]).shuffledStable(seed: drug.id + "mc_ci2o")
+                qs.append(.multipleChoice(
+                    id: "mc_\(sid)_\(drug.id)_ci2",
+                    subsectionId: sid, difficulty: .hard,
+                    question: bbwStem,
+                    options: bbwOpts, answer: bbw,
+                    explanation: "Correct: \(drug.genericName) carries a Black Box Warning for \(bbw).\nWhy: This is the most serious FDA safety concern for this drug.",
+                    objective: .contraindication, relatedDrugIds: [drug.id], tags: ["mini_case", "black_box"], source: .generated
+                ))
+            }
+        }
+
+        return qs
+    }
+
+    // MARK: Mini-Case — Monitoring Focused
+
+    private func monitoringFocusedCases(drug: Drug, sid: String, allDrugs: [Drug]) -> [Question] {
+        guard let primaryMonitor = drug.monitoring.first else { return [] }
+        var qs: [Question] = []
+
+        let indication = drug.indications.first ?? "a chronic condition"
+        let ages = ["56-year-old", "64-year-old", "49-year-old", "72-year-old"]
+        let age = ages[stableIndex(seed: drug.id + "mc_mon_age", count: ages.count)]
+
+        let templates = [
+            "A \(age) is started on \(drug.genericName) for \(indication). Which lab value should be monitored most closely?",
+            "A \(age) begins \(drug.genericName) (\(drug.brandName)) therapy. What is the most important parameter to monitor?",
+            "Before and during treatment with \(drug.genericName) for \(indication), the provider should routinely check:",
+        ]
+        let tIdx = stableIndex(seed: drug.id + "mc_mon_t", count: templates.count)
+
+        let wrongMonitors = Set(allDrugs.filter { $0.drugClass != drug.drugClass }.flatMap(\.monitoring)).subtracting(drug.monitoring)
+        let distractors = Array(Array(wrongMonitors).shuffledStable(seed: drug.id + "mc_mon1").prefix(3))
+        guard distractors.count >= 2 else { return [] }
+
+        let opts = (distractors + [primaryMonitor]).shuffledStable(seed: drug.id + "mc_mon1o")
+        qs.append(.multipleChoice(
+            id: "mc_\(sid)_\(drug.id)_mon1",
+            subsectionId: sid, difficulty: .hard,
+            question: templates[tIdx],
+            options: opts, answer: primaryMonitor,
+            explanation: "Correct: \(primaryMonitor) should be monitored with \(drug.genericName).\nWhy: \(drug.drugClass) drugs require monitoring of \(drug.monitoring.prefix(3).joined(separator: ", ")) to ensure safety.",
+            objective: .monitoring, relatedDrugIds: [drug.id], tags: ["mini_case", "monitoring"], source: .generated
+        ))
+
+        if drug.monitoring.count >= 2 {
+            let followUpStem = "A patient on \(drug.genericName) for 3 months has routine labs drawn. The provider is most concerned about changes in \(drug.monitoring[1]) because:"
+            let reasonCorrect = "\(drug.genericName) (\(drug.drugClass)) can affect \(drug.monitoring[1])"
+            let wrongReasons = [
+                "This is unrelated to \(drug.genericName) therapy",
+                "Only relevant for \(allDrugs.filter { $0.drugClass != drug.drugClass }.first?.drugClass ?? "other") drugs",
+                "Monitoring is only needed at initiation",
+            ].shuffledStable(seed: drug.id + "mc_mon2")
+            let monOpts2 = (Array(wrongReasons.prefix(3)) + [reasonCorrect]).shuffledStable(seed: drug.id + "mc_mon2o")
+            qs.append(.multipleChoice(
+                id: "mc_\(sid)_\(drug.id)_mon2",
+                subsectionId: sid, difficulty: .hard,
+                question: followUpStem,
+                options: monOpts2, answer: reasonCorrect,
+                explanation: "Correct: \(drug.genericName) requires ongoing monitoring of \(drug.monitoring.joined(separator: ", ")).\nWhy: Catching lab changes early prevents serious adverse outcomes.",
+                objective: .monitoring, relatedDrugIds: [drug.id], tags: ["mini_case", "monitoring"], source: .generated
+            ))
+        }
+
+        return qs
+    }
+
+    // MARK: Mini-Case — Within-Class Differentiator
+
+    private func withinClassDifferentiatorCases(drug: Drug, sid: String, sameClassMap: [String: [Drug]]) -> [Question] {
+        let filteredPearls = drug.clinicalPearls.filter(filterTrialContent)
+        guard let pearl = filteredPearls.first else { return [] }
+        let classmates = (sameClassMap[drug.drugClass] ?? []).filter { $0.id != drug.id }
+        guard classmates.count >= 2 else { return [] }
+        var qs: [Question] = []
+
+        let ages = ["54-year-old", "61-year-old", "47-year-old", "68-year-old"]
+        let age = ages[stableIndex(seed: drug.id + "mc_diff_age", count: ages.count)]
+        let indication = drug.indications.first ?? "treatment"
+
+        let templates = [
+            "A \(age) with \(indication) needs a \(drug.drugClass). The clinician specifically chooses \(drug.genericName) because: \(pearl). Which drug is being described?",
+            "Among \(drug.drugClass) options for a \(age) with \(indication), one drug is preferred because: \(pearl). Which drug?",
+        ]
+        let tIdx = stableIndex(seed: drug.id + "mc_diff_t", count: templates.count)
+
+        let distractorNames = Array(classmates.shuffledStable(seed: drug.id + "mc_diff1").prefix(3).map(\.genericName))
+        guard distractorNames.count >= 2 else { return [] }
+
+        let opts = (distractorNames + [drug.genericName]).shuffledStable(seed: drug.id + "mc_diff1o")
+        qs.append(.multipleChoice(
+            id: "mc_\(sid)_\(drug.id)_diff1",
+            subsectionId: sid, difficulty: .hard,
+            question: templates[tIdx],
+            options: opts, answer: drug.genericName,
+            explanation: "Correct: \(pearl) — this distinguishes \(drug.genericName) from other \(drug.drugClass) drugs.\nWhy: Within-class differences guide individualized drug selection.",
+            objective: .pearl, relatedDrugIds: [drug.id], tags: ["mini_case", "differentiator", drug.drugClass], source: .generated
+        ))
+
+        if filteredPearls.count >= 2 {
+            let secondPearl = filteredPearls[1]
+            let stem2 = "A clinician is choosing between \(drug.drugClass) drugs. \(drug.genericName) is selected specifically because:"
+            let wrongPearls = classmates.compactMap { $0.clinicalPearls.first(where: filterTrialContent) }
+                .shuffledStable(seed: drug.id + "mc_diff2")
+            let pearlDist = Array(wrongPearls.prefix(3))
+            if pearlDist.count >= 2 {
+                let opts2 = (pearlDist + [secondPearl]).shuffledStable(seed: drug.id + "mc_diff2o")
+                qs.append(.multipleChoice(
+                    id: "mc_\(sid)_\(drug.id)_diff2",
+                    subsectionId: sid, difficulty: .expert,
+                    question: stem2,
+                    options: opts2, answer: secondPearl,
+                    explanation: "Correct: \(secondPearl) is a distinguishing feature of \(drug.genericName).\nWhy: Knowing drug-specific pearls prevents mix-ups within the same class.",
+                    objective: .pearl, relatedDrugIds: [drug.id], tags: ["mini_case", "differentiator", drug.drugClass], source: .generated
+                ))
+            }
+        }
+
+        return qs
+    }
 
     // MARK: - Vignette Stems
 
