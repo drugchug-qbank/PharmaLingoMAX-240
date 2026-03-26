@@ -27,6 +27,9 @@ struct QuizView: View {
     @State private var comboOpacity: Double = 0
     @State private var showBossIntro: Bool = false
     @State private var bossIntroOpacity: Double = 1.0
+    #if DEBUG
+    @State private var showDiagnostics: Bool = false
+    #endif
 
     private var isBossBattle: Bool {
         quizVM?.isMasteryQuiz == true && !isPracticeSession
@@ -124,6 +127,13 @@ struct QuizView: View {
             }
         }
         .onAppear { setupQuiz() }
+        #if DEBUG
+        .sheet(isPresented: $showDiagnostics) {
+            if let report = quizVM?.diagnosticsReport {
+                DiagnosticsSheetView(report: report, currentIndex: quizVM?.currentIndex ?? 0)
+            }
+        }
+        #endif
         .sensoryFeedback(.success, trigger: bounceCorrect)
         .sensoryFeedback(.error, trigger: shakeWrong)
         .alert("No Hearts!", isPresented: $showNoHeartsAlert) {
@@ -208,7 +218,8 @@ struct QuizView: View {
             subsectionId: sessionId,
             title: sessionTitle,
             isMastery: customQuestions.isEmpty && subsection.isMasteryQuiz,
-            questions: questions
+            questions: questions,
+            masteryMap: gameVM.masteryMap
         )
 
         if subsection.isMasteryQuiz && customQuestions.isEmpty {
@@ -258,6 +269,11 @@ struct QuizView: View {
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity)
+                #if DEBUG
+                    .onLongPressGesture(minimumDuration: 0.5) {
+                        showDiagnostics = true
+                    }
+                #endif
 
                 HStack(spacing: 4) {
                     ForEach(0..<gameVM.maxHearts, id: \.self) { i in

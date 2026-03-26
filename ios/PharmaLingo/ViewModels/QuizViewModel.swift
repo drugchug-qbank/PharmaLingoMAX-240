@@ -54,14 +54,36 @@ class QuizViewModel {
 
     var totalQuestions: Int { questions.count }
 
-    init(subsectionId: String, title: String, isMastery: Bool, questions: [Question]) {
+    #if DEBUG
+    var diagnosticsReport: SessionDiagnosticsReport?
+    private var diagnosticsMasteryMap: [String: MasteryRecord] = [:]
+    #endif
+
+    init(subsectionId: String, title: String, isMastery: Bool, questions: [Question], masteryMap: [String: MasteryRecord] = [:]) {
         self.subsectionId = subsectionId
         self.subsectionTitle = title
         self.isMasteryQuiz = isMastery
         self.questions = questions
         self.allUsedQuestionIds = Set(questions.map(\.id))
         prepareShuffledOptions()
+        #if DEBUG
+        self.diagnosticsMasteryMap = masteryMap
+        rebuildDiagnostics()
+        diagnosticsReport?.printSummary()
+        #endif
     }
+
+    #if DEBUG
+    private func rebuildDiagnostics() {
+        diagnosticsReport = SessionDiagnosticsBuilder().buildReport(
+            questions: questions,
+            subsectionId: subsectionId,
+            isMastery: isMasteryQuiz,
+            remediationQuestionIds: injectedQuestionIds,
+            masteryMap: diagnosticsMasteryMap
+        )
+    }
+    #endif
 
     private func prepareShuffledOptions() {
         guard let q = currentQuestion else {
@@ -140,6 +162,9 @@ class QuizViewModel {
         if !drugId.isEmpty {
             remediationDrugWindow.append((drugId: drugId, index: insertAt))
         }
+        #if DEBUG
+        rebuildDiagnostics()
+        #endif
     }
 
     func consecutiveCorrectCount(for drugId: String, objective: QuestionObjective) -> Int {
