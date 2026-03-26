@@ -23,6 +23,7 @@ class QuizViewModel {
     private var sessionCorrectByDrugConcept: [String: Int] = [:]
     private var injectedQuestionIds: Set<String> = []
     private var allUsedQuestionIds: Set<String> = []
+    private var capstoneApplied: Bool = false
 
     var fiftyFiftyUsedOnQuestion: Bool = false
     var shieldActiveOnQuestion: Bool = false
@@ -132,6 +133,10 @@ class QuizViewModel {
                 tryInjectRemediation(for: question)
             }
         }
+
+        if !isMasteryQuiz && !capstoneApplied {
+            tryRuntimeCapstoneSwap()
+        }
     }
 
     private func tryInjectRemediation(for missedQuestion: Question) {
@@ -151,6 +156,22 @@ class QuizViewModel {
             subsectionId: subsectionId,
             excludeIds: allUsedQuestionIds
         ) else { return }
+
+        if SessionPolishEngine.isHardenedModule(subsectionId) {
+            let recentWindowSize = min(currentIndex + 1, 4)
+            let recentTypes = (max(0, currentIndex + 1 - recentWindowSize)...currentIndex).map { questions[$0].type }
+            let recentGroups = (max(0, currentIndex + 1 - recentWindowSize)...currentIndex).map { SessionPolishEngine.primaryConfusionGroup(for: questions[$0]) }
+            let candidateGroup = SessionPolishEngine.primaryConfusionGroup(for: candidate)
+
+            if SessionPolishEngine.shouldThrottleRemediation(
+                recentQuestionTypes: recentTypes,
+                recentConfusionGroups: recentGroups,
+                candidateType: candidate.type,
+                candidateGroup: candidateGroup
+            ) {
+                return
+            }
+        }
 
         let insertOffset = questions.count - currentIndex <= 2 ? 1 : Int.random(in: 1...2)
         let insertAt = min(currentIndex + insertOffset, questions.count)
@@ -180,6 +201,51 @@ class QuizViewModel {
 
         currentIndex += 1
         resetQuestionState()
+    }
+
+    private func tryRuntimeCapstoneSwap() {
+        guard SessionPolishEngine.isHardenedModule(subsectionId) else { return }
+        let answered = currentIndex + 1
+        let total = questions.count
+        guard answered >= total - 2, answered >= 6 else { return }
+
+        capstoneApplied = true
+        let accuracy = total > 0 ? Double(correctCount) / Double(answered) : 0
+
+        let shouldUpgrade = SessionPolishEngine.shouldUpgradeToCapstone(
+            sessionAccuracy: accuracy,
+            currentStreak: consecutiveCorrect,
+            questionsAnswered: answered,
+            totalQuestions: total
+        )
+
+        let targetIdx = questions.count - 1
+        guard targetIdx > currentIndex else { return }
+        let targetQ = questions[targetIdx]
+
+        if shouldUpgrade && !SessionPolishEngine.isCapstoneCandidate(targetQ) {
+            if let capstone = QuizEngine.shared.findCapstoneCandidate(
+                subsectionId: subsectionId,
+                excludeIds: allUsedQuestionIds
+            ) {
+                questions[targetIdx] = capstone
+                allUsedQuestionIds.insert(capstone.id)
+                #if DEBUG
+                rebuildDiagnostics()
+                #endif
+            }
+        } else if !shouldUpgrade && SessionPolishEngine.isCapstoneCandidate(targetQ) {
+            if let confidence = QuizEngine.shared.findConfidenceCandidate(
+                subsectionId: subsectionId,
+                excludeIds: allUsedQuestionIds
+            ) {
+                questions[targetIdx] = confidence
+                allUsedQuestionIds.insert(confidence.id)
+                #if DEBUG
+                rebuildDiagnostics()
+                #endif
+            }
+        }
     }
 
     private func resetQuestionState() {

@@ -60,6 +60,19 @@ struct QuizEngine {
 
         var session = Array(focusQuestions.prefix(totalCount))
         session = smoothVariety(session, masteryMap: masteryMap, subsectionId: subsectionId)
+
+        if SessionPolishEngine.isHardenedModule(subsectionId) {
+            guard let subsectionObj = dataService.subsection(for: subsectionId) else { return session }
+            let fullPool = buildQuestionPool(for: subsectionObj)
+            session = SessionPolishEngine.applySessionPolish(
+                session,
+                subsectionId: subsectionId,
+                masteryMap: masteryMap,
+                pool: fullPool,
+                usedIds: Set(session.map(\.id))
+            )
+        }
+
         return session
     }
 
@@ -770,6 +783,53 @@ struct QuizEngine {
         }
 
         return nil
+    }
+
+    func findCapstoneCandidate(
+        subsectionId: String,
+        excludeIds: Set<String>
+    ) -> Question? {
+        guard let subsection = dataService.subsection(for: subsectionId) else { return nil }
+        let pool = buildQuestionPool(for: subsection)
+        let available = pool.filter { !excludeIds.contains($0.id) }
+
+        if Module3SessionLogic.isModule3Subsection(subsectionId) {
+            return Module3SessionLogic.pickCapstoneQuestion(subsectionId: subsectionId, pool: available, usedIds: excludeIds)
+        }
+        if Module6SessionLogic.isModule6Subsection(subsectionId) {
+            return Module6SessionLogic.pickCapstoneQuestion(subsectionId: subsectionId, pool: available, usedIds: excludeIds)
+        }
+        if Module7SessionLogic.isModule7Subsection(subsectionId) {
+            return Module7SessionLogic.pickCapstoneQuestion(subsectionId: subsectionId, pool: available, usedIds: excludeIds)
+        }
+        if Module10SessionLogic.isModule10Subsection(subsectionId) {
+            return Module10SessionLogic.pickCapstoneQuestion(subsectionId: subsectionId, pool: available, usedIds: excludeIds)
+        }
+
+        let capstoneCandidates = available.filter { q in
+            let tags = Set(q.tags)
+            return tags.contains("mini-case") || tags.contains("capstone")
+        }
+        if let best = capstoneCandidates.shuffled().first { return best }
+
+        let hardContrast = available.filter { q in
+            q.difficulty == .hard && (Set(q.tags).contains("contrast-pair") || Set(q.tags).contains("differentiator"))
+        }
+        return hardContrast.shuffled().first
+    }
+
+    func findConfidenceCandidate(
+        subsectionId: String,
+        excludeIds: Set<String>
+    ) -> Question? {
+        guard let subsection = dataService.subsection(for: subsectionId) else { return nil }
+        let pool = buildQuestionPool(for: subsection)
+        let available = pool.filter { q in
+            !excludeIds.contains(q.id)
+            && (q.difficulty == .easy || q.difficulty == .medium)
+            && q.type != .selectAll
+        }
+        return available.sorted { $0.difficulty.rawValue < $1.difficulty.rawValue }.first
     }
 
     private func pickRemediationFromPool(

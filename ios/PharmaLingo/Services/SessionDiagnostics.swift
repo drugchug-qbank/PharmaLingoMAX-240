@@ -15,6 +15,10 @@ nonisolated struct QuestionDiagnostic: Sendable {
     let source: QuestionSource
     let isRemediation: Bool
     let isReview: Bool
+    let isCapstone: Bool
+    let isContrast: Bool
+    let confusionGroup: String?
+    let contrastPairGroup: String?
     let selectionReason: String
 }
 
@@ -22,9 +26,13 @@ nonisolated struct SessionDiagnosticsReport: Sendable {
     let subsectionId: String
     let subsectionTitle: String
     let isMastery: Bool
+    let isHardenedModule: Bool
     let totalQuestions: Int
     let focusDrugNames: [String]
     let reviewCount: Int
+    let capstoneCount: Int
+    let contrastCount: Int
+    let remediationCount: Int
     let questionDiagnostics: [QuestionDiagnostic]
     let stageBreakdown: [DrugLearningStage: Int]
     let objectiveBreakdown: [QuestionObjective: Int]
@@ -38,9 +46,10 @@ nonisolated struct SessionDiagnosticsReport: Sendable {
         print("╠══════════════════════════════════════════════════════╣")
         print("║ Subsection: \(subsectionTitle) (\(subsectionId))")
         print("║ Type: \(isMastery ? "Mastery/Boss" : "Lesson")")
+        print("║ Hardened: \(isHardenedModule ? "YES" : "no")")
         print("║ Total Questions: \(totalQuestions)")
         print("║ Focus Drugs: \(focusDrugNames.joined(separator: ", "))")
-        print("║ Review Questions: \(reviewCount)")
+        print("║ Review Qs: \(reviewCount) | Contrast: \(contrastCount) | Capstone: \(capstoneCount) | Remed: \(remediationCount)")
         print("╠══════════════════════════════════════════════════════╣")
         print("║ STAGE BREAKDOWN:")
         for stage in [DrugLearningStage.foundation, .indication, .safety, .practical, .advanced] {
@@ -71,12 +80,19 @@ nonisolated struct SessionDiagnosticsReport: Sendable {
         print("╠══════════════════════════════════════════════════════╣")
         print("║ QUESTION PLAN:")
         for diag in questionDiagnostics {
-            let flags = [
-                diag.isRemediation ? "REMED" : nil,
-                diag.isReview ? "REVIEW" : nil
-            ].compactMap { $0 }.joined(separator: ",")
-            let flagStr = flags.isEmpty ? "" : " [\(flags)]"
+            var flags: [String] = []
+            if diag.isRemediation { flags.append("REMED") }
+            if diag.isReview { flags.append("REVIEW") }
+            if diag.isCapstone { flags.append("CAPSTONE") }
+            if diag.isContrast { flags.append("CONTRAST") }
+            let flagStr = flags.isEmpty ? "" : " [\(flags.joined(separator: ","))]"
             print("║  #\(String(format: "%02d", diag.index + 1)) \(diag.drugName) | \(diag.objective.rawValue) | \(diag.difficulty.label) | \(diag.questionType.rawValue) | \(diag.stage.label) | \(diag.source.rawValue)\(flagStr)")
+            if let cg = diag.confusionGroup {
+                print("║       confusionGroup: \(cg)")
+            }
+            if let cpg = diag.contrastPairGroup {
+                print("║       contrastPair: \(cpg)")
+            }
             print("║       → \(diag.selectionReason)")
         }
         print("╚══════════════════════════════════════════════════════╝")
@@ -97,6 +113,7 @@ struct SessionDiagnosticsBuilder {
         let subsectionTitle = subsection?.title ?? subsectionId
         let subsectionDrugs = subsection?.drugs ?? []
         let subsectionDrugIds = Set(subsectionDrugs.map(\.id))
+        let hardened = SessionPolishEngine.isHardenedModule(subsectionId)
 
         var allDrugs = subsectionDrugs
         let otherDrugIds = Set(questions.flatMap(\.relatedDrugIds)).subtracting(subsectionDrugIds)
@@ -115,6 +132,9 @@ struct SessionDiagnosticsBuilder {
         var typeBreakdown: [QuestionType: Int] = [:]
         var sourceBreakdown: [QuestionSource: Int] = [:]
         var reviewCount = 0
+        var capstoneCount = 0
+        var contrastCount = 0
+        var remediationCount = 0
 
         for (i, q) in questions.enumerated() {
             let drugId = q.relatedDrugIds.first ?? ""
@@ -124,13 +144,23 @@ struct SessionDiagnosticsBuilder {
             let bucket = ConceptBucket.bucket(for: q.objective)
             let isRemediation = remediationQuestionIds.contains(q.id)
             let isReview = !isMastery && q.subsectionId != subsectionId
+            let isCap = SessionPolishEngine.isCapstoneCandidate(q)
+            let isContrast = SessionPolishEngine.isContrastQuestion(q)
+            let cg = SessionPolishEngine.primaryConfusionGroup(for: q)
+            let cpg = SessionPolishEngine.contrastPairGroup(for: q)
+
             if isReview { reviewCount += 1 }
+            if isCap { capstoneCount += 1 }
+            if isContrast { contrastCount += 1 }
+            if isRemediation { remediationCount += 1 }
 
             let reason = selectionReason(
                 question: q,
                 stage: stage,
                 isRemediation: isRemediation,
                 isReview: isReview,
+                isCapstone: isCap,
+                isContrast: isContrast,
                 isFocusDrug: focusDrugIds.contains(drugId),
                 isMastery: isMastery
             )
@@ -148,6 +178,10 @@ struct SessionDiagnosticsBuilder {
                 source: q.source,
                 isRemediation: isRemediation,
                 isReview: isReview,
+                isCapstone: isCap,
+                isContrast: isContrast,
+                confusionGroup: cg,
+                contrastPairGroup: cpg,
                 selectionReason: reason
             ))
 
@@ -164,9 +198,13 @@ struct SessionDiagnosticsBuilder {
             subsectionId: subsectionId,
             subsectionTitle: subsectionTitle,
             isMastery: isMastery,
+            isHardenedModule: hardened,
             totalQuestions: questions.count,
             focusDrugNames: focusNames,
             reviewCount: reviewCount,
+            capstoneCount: capstoneCount,
+            contrastCount: contrastCount,
+            remediationCount: remediationCount,
             questionDiagnostics: questionDiags,
             stageBreakdown: stageBreakdown,
             objectiveBreakdown: objectiveBreakdown,
@@ -205,17 +243,25 @@ struct SessionDiagnosticsBuilder {
         stage: DrugLearningStage,
         isRemediation: Bool,
         isReview: Bool,
+        isCapstone: Bool,
+        isContrast: Bool,
         isFocusDrug: Bool,
         isMastery: Bool
     ) -> String {
         if isRemediation {
             return "Remediation: missed \(question.objective.rawValue) → easier follow-up"
         }
+        if isCapstone {
+            return "Earned capstone slot (\(question.difficulty.label) \(question.objective.rawValue))"
+        }
         if isReview {
             return "Spaced review from \(question.subsectionId)"
         }
         if isMastery {
             return "Mastery/boss review pool (\(question.difficulty.label) \(question.objective.rawValue))"
+        }
+        if isContrast {
+            return "Contrast/differentiator @ \(stage.label) → \(question.objective.rawValue)"
         }
         if isFocusDrug {
             return "Focus drug @ \(stage.label) → \(question.objective.rawValue) (\(question.difficulty.label))"

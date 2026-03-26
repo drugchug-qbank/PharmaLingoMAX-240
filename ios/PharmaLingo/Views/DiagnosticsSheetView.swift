@@ -10,6 +10,9 @@ struct DiagnosticsSheetView: View {
         NavigationStack {
             List {
                 summarySection
+                if report.isHardenedModule {
+                    polishSection
+                }
                 stageSection
                 difficultySection
                 objectiveSection
@@ -27,6 +30,7 @@ struct DiagnosticsSheetView: View {
         Section("Session") {
             LabeledContent("Subsection", value: "\(report.subsectionTitle) (\(report.subsectionId))")
             LabeledContent("Type", value: report.isMastery ? "Mastery/Boss" : "Lesson")
+            LabeledContent("Hardened", value: report.isHardenedModule ? "Yes" : "No")
             LabeledContent("Total Questions", value: "\(report.totalQuestions)")
             LabeledContent("Current", value: "#\(currentIndex + 1)")
             LabeledContent("Review Qs", value: "\(report.reviewCount)")
@@ -37,6 +41,29 @@ struct DiagnosticsSheetView: View {
                     Text(report.focusDrugNames.joined(separator: ", "))
                         .font(.subheadline.weight(.semibold))
                 }
+            }
+        }
+    }
+
+    private var polishSection: some View {
+        Section("Session Polish (Modules 3/6/7/10)") {
+            HStack {
+                Label("Contrast Qs", systemImage: "arrow.triangle.branch")
+                Spacer()
+                Text("\(report.contrastCount)")
+                    .foregroundStyle(.secondary)
+            }
+            HStack {
+                Label("Capstone Qs", systemImage: "star.fill")
+                Spacer()
+                Text("\(report.capstoneCount)")
+                    .foregroundStyle(.secondary)
+            }
+            HStack {
+                Label("Remediation Qs", systemImage: "arrow.uturn.backward")
+                Spacer()
+                Text("\(report.remediationCount)")
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -135,23 +162,17 @@ struct DiagnosticsSheetView: View {
 
                         Spacer()
 
+                        if diag.isCapstone {
+                            flagPill("CAP", color: .purple)
+                        }
+                        if diag.isContrast {
+                            flagPill("CNTRST", color: .indigo)
+                        }
                         if diag.isRemediation {
-                            Text("REMED")
-                                .font(.system(size: 9, weight: .black))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
-                                .background(Color.red)
-                                .clipShape(Capsule())
+                            flagPill("REMED", color: .red)
                         }
                         if diag.isReview {
-                            Text("REVIEW")
-                                .font(.system(size: 9, weight: .black))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
-                                .background(Color.orange)
-                                .clipShape(Capsule())
+                            flagPill("REVIEW", color: .orange)
                         }
                     }
 
@@ -162,6 +183,17 @@ struct DiagnosticsSheetView: View {
                         diagPill(diag.questionType.rawValue, color: .secondary)
                     }
 
+                    if let cg = diag.confusionGroup {
+                        HStack(spacing: 4) {
+                            Text("CG:")
+                                .font(.system(size: 8, weight: .bold))
+                                .foregroundStyle(.tertiary)
+                            Text(cg)
+                                .font(.system(size: 9).monospaced())
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
                     Text(diag.selectionReason)
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
@@ -170,6 +202,16 @@ struct DiagnosticsSheetView: View {
                 .padding(.vertical, 2)
             }
         }
+    }
+
+    private func flagPill(_ text: String, color: Color) -> some View {
+        Text(text)
+            .font(.system(size: 9, weight: .black))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .background(color)
+            .clipShape(Capsule())
     }
 
     private func diagPill(_ text: String, color: Color) -> some View {
