@@ -17,6 +17,13 @@ class QuizViewModel {
     var isCorrect: Bool = false
     var correctCount: Int = 0
 
+    private var remediationInjectionsUsed: Int = 0
+    private let maxRemediationInjections: Int = 2
+    private var remediationDrugWindow: [(drugId: String, index: Int)] = []
+    private var sessionCorrectByDrugConcept: [String: Int] = [:]
+    private var injectedQuestionIds: Set<String> = []
+    private var allUsedQuestionIds: Set<String> = []
+
     var fiftyFiftyUsedOnQuestion: Bool = false
     var shieldActiveOnQuestion: Bool = false
     var pharmaVisionUsedOnQuestion: Bool = false
@@ -52,6 +59,7 @@ class QuizViewModel {
         self.subsectionTitle = title
         self.isMasteryQuiz = isMastery
         self.questions = questions
+        self.allUsedQuestionIds = Set(questions.map(\.id))
         prepareShuffledOptions()
     }
 
@@ -87,14 +95,55 @@ class QuizViewModel {
             isCorrect = validateMatchingAnswer(question: question)
         }
 
+        let drugId = question.relatedDrugIds.first ?? ""
+        let conceptKey = "\(drugId)_\(question.objective.rawValue)"
+
         if isCorrect {
             correctCount += 1
             consecutiveCorrect += 1
             maxConsecutive = max(maxConsecutive, consecutiveCorrect)
+            sessionCorrectByDrugConcept[conceptKey, default: 0] += 1
         } else {
             wrongCount += 1
             consecutiveCorrect = 0
+            if !isMasteryQuiz {
+                tryInjectRemediation(for: question)
+            }
         }
+    }
+
+    private func tryInjectRemediation(for missedQuestion: Question) {
+        guard remediationInjectionsUsed < maxRemediationInjections else { return }
+
+        let drugId = missedQuestion.relatedDrugIds.first ?? ""
+        if !drugId.isEmpty {
+            let windowStart = max(0, currentIndex - 3)
+            let recentDrugRemediations = remediationDrugWindow.filter {
+                $0.drugId == drugId && $0.index >= windowStart
+            }
+            guard recentDrugRemediations.count < 1 else { return }
+        }
+
+        guard let candidate = QuizEngine.shared.findRemediationCandidate(
+            for: missedQuestion,
+            subsectionId: subsectionId,
+            excludeIds: allUsedQuestionIds
+        ) else { return }
+
+        let insertOffset = questions.count - currentIndex <= 2 ? 1 : Int.random(in: 1...2)
+        let insertAt = min(currentIndex + insertOffset, questions.count)
+
+        questions.insert(candidate, at: insertAt)
+        allUsedQuestionIds.insert(candidate.id)
+        injectedQuestionIds.insert(candidate.id)
+        remediationInjectionsUsed += 1
+        if !drugId.isEmpty {
+            remediationDrugWindow.append((drugId: drugId, index: insertAt))
+        }
+    }
+
+    func consecutiveCorrectCount(for drugId: String, objective: QuestionObjective) -> Int {
+        sessionCorrectByDrugConcept["\(drugId)_\(objective.rawValue)", default: 0]
     }
 
     func nextQuestion() {

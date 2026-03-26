@@ -568,4 +568,69 @@ struct QuizEngine {
         }
         return result
     }
+
+    // MARK: - Remediation Candidate Finder
+
+    func findRemediationCandidate(
+        for missedQuestion: Question,
+        subsectionId: String,
+        excludeIds: Set<String>
+    ) -> Question? {
+        guard let subsection = dataService.subsection(for: subsectionId) else { return nil }
+        let pool = buildQuestionPool(for: subsection)
+        let drugId = missedQuestion.relatedDrugIds.first ?? ""
+        let bucket = ConceptBucket.bucket(for: missedQuestion.objective)
+        let available = pool.filter { !excludeIds.contains($0.id) }
+
+        if let match = pickRemediationFromPool(
+            available, drugId: drugId, bucket: bucket,
+            objective: missedQuestion.objective,
+            maxDifficulty: missedQuestion.difficulty
+        ) {
+            return match
+        }
+
+        if let match = pickRemediationFromPool(
+            available, drugId: drugId, bucket: bucket,
+            objective: nil,
+            maxDifficulty: missedQuestion.difficulty
+        ) {
+            return match
+        }
+
+        let foundationObjectives: Set<QuestionObjective> = [.suffixId, .classId, .genericBrand, .brandGeneric, .moa]
+        if !drugId.isEmpty {
+            let fallback = available.filter { q in
+                q.relatedDrugIds.contains(drugId)
+                && foundationObjectives.contains(q.objective)
+                && q.difficulty.rawValue <= QuestionDifficulty.medium.rawValue
+                && q.type != .selectAll && q.type != .matching
+            }.shuffled()
+            if let f = fallback.first { return f }
+        }
+
+        return nil
+    }
+
+    private func pickRemediationFromPool(
+        _ pool: [Question],
+        drugId: String,
+        bucket: ConceptBucket,
+        objective: QuestionObjective?,
+        maxDifficulty: QuestionDifficulty
+    ) -> Question? {
+        let candidates = pool.filter { q in
+            guard !drugId.isEmpty else { return false }
+            guard q.relatedDrugIds.contains(drugId) else { return false }
+            if let obj = objective {
+                guard q.objective == obj else { return false }
+            } else {
+                guard ConceptBucket.bucket(for: q.objective) == bucket else { return false }
+            }
+            guard q.difficulty.rawValue <= maxDifficulty.rawValue else { return false }
+            guard q.type != .selectAll && q.type != .matching else { return false }
+            return true
+        }
+        return candidates.sorted(by: { $0.difficulty.rawValue < $1.difficulty.rawValue }).first
+    }
 }
