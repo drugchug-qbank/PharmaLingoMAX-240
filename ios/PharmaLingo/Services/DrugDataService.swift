@@ -355,14 +355,22 @@ struct DrugDataService {
 
         if bank["10a"] == nil { bank["10a"] = [] }
         bank["10a"]?.append(contentsOf: Self.curatedAddOnQuestions_10a)
+        bank["10a"]?.append(contentsOf: Self.curatedAddOnQuestions_10a_supplement)
 
         if bank["10b"] == nil { bank["10b"] = [] }
         bank["10b"]?.append(contentsOf: Self.curatedAddOnQuestions_10b)
+        bank["10b"]?.append(contentsOf: Self.curatedAddOnQuestions_10b_supplement)
 
         if bank["10c"] == nil { bank["10c"] = [] }
         bank["10c"]?.append(contentsOf: Self.curatedAddOnQuestions_10c)
+        bank["10c"]?.append(contentsOf: Self.curatedAddOnQuestions_10c_supplement)
 
         if bank["10d"] == nil { bank["10d"] = [] }
         bank["10d"]?.append(contentsOf: Self.curatedAddOnQuestions_10d)
+        bank["10d"]?.append(contentsOf: Self.curatedAddOnQuestions_10d_supplement)
+
+        if bank["10e"] == nil { bank["10e"] = [] }
+        bank["10e"]?.append(contentsOf: Self.curatedAddOnQuestions_10e)
+        bank["10e"]?.append(contentsOf: Self.curatedAddOnQuestions_10e_supplement)
     }
 }
