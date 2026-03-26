@@ -203,6 +203,17 @@ struct QuizEngine {
             if burst.count >= burstSize { return burst }
         }
 
+        let m7Burst = Module7SessionLogic.respiratoryBurstOrder(for: drug.id, stage: stage, pool: pool, usedIds: usedIds)
+        if !m7Burst.isEmpty {
+            for q in m7Burst {
+                guard burst.count < burstSize else { break }
+                guard !burstUsed.contains(q.id) else { continue }
+                burst.append(q)
+                burstUsed.insert(q.id)
+            }
+            if burst.count >= burstSize { return burst }
+        }
+
         let stageFilter = stageObjectivesAndFormats(for: stage, drug: drug)
 
         let preferred = available.filter { q in
@@ -355,6 +366,11 @@ struct QuizEngine {
             result = Module6SessionLogic.enforceAntimicrobialVariety(result)
         }
 
+        if Module7SessionLogic.isModule7Subsection(subsectionId) {
+            result = injectModule7ContrastQuestions(result, subsectionId: subsectionId, masteryMap: masteryMap)
+            result = Module7SessionLogic.enforceRespiratoryVariety(result)
+        }
+
         return result
     }
 
@@ -364,6 +380,21 @@ struct QuizEngine {
         guard let subsection = dataService.subsection(for: subsectionId) else { return result }
         let pool = buildQuestionPool(for: subsection)
         let contrastQs = Module6SessionLogic.contrastQuestionsForSubsection(subsectionId, pool: pool, usedIds: usedIds, count: 2)
+
+        for q in contrastQs {
+            let insertPos = min(result.count, max(4, result.count / 2))
+            result.insert(q, at: insertPos)
+        }
+
+        return result
+    }
+
+    private func injectModule7ContrastQuestions(_ questions: [Question], subsectionId: String, masteryMap: [String: MasteryRecord]) -> [Question] {
+        var result = questions
+        let usedIds = Set(result.map(\.id))
+        guard let subsection = dataService.subsection(for: subsectionId) else { return result }
+        let pool = buildQuestionPool(for: subsection)
+        let contrastQs = Module7SessionLogic.contrastQuestionsForSubsection(subsectionId, pool: pool, usedIds: usedIds, count: 2)
 
         for q in contrastQs {
             let insertPos = min(result.count, max(4, result.count / 2))
@@ -659,6 +690,15 @@ struct QuizEngine {
             usedIds: excludeIds
         ) {
             return m6AntiConfusion
+        }
+
+        if let m7AntiConfusion = Module7SessionLogic.findAntiConfusionFollowUp(
+            for: missedQuestion,
+            subsectionId: subsectionId,
+            pool: pool,
+            usedIds: excludeIds
+        ) {
+            return m7AntiConfusion
         }
 
         if let match = pickRemediationFromPool(
