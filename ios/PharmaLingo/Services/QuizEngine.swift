@@ -17,322 +17,399 @@ struct QuizEngine {
         return buildLessonSession(subsectionId: subsectionId, completedSubsections: completedSubsections, masteryMap: masteryMap)
     }
 
-    // MARK: - Lesson Session (TOTAL 10–15 questions including review)
+    // MARK: - Drug-Centric Adaptive Lesson Session (10–15 questions)
 
     private func buildLessonSession(
         subsectionId: String,
         completedSubsections: Set<String>,
         masteryMap: [String: MasteryRecord]
     ) -> [Question] {
+        guard let subsection = dataService.subsection(for: subsectionId) else { return [] }
+
         let totalCount = Int.random(in: 10...15)
         let reviewSubIds = completedSubsections.filter { $0 != subsectionId }
-        let reviewCount = reviewSubIds.isEmpty ? 0 : min(2, totalCount - 6)
+        let reviewFraction = reviewSubIds.isEmpty ? 0.0 : Double.random(in: 0.15...0.30)
+        let reviewCount = reviewSubIds.isEmpty ? 0 : max(1, min(Int(Double(totalCount) * reviewFraction), 4))
         let focusCount = totalCount - reviewCount
 
-        let focusQuestions = selectTeachingArcQuestions(
-            subsectionId: subsectionId,
-            count: focusCount,
+        let focusDrugs = selectFocusDrugs(subsection: subsection, masteryMap: masteryMap)
+
+        let allPool = buildQuestionPool(for: subsection)
+
+        var focusQuestions = buildFocusBursts(
+            drugs: focusDrugs,
+            pool: allPool,
+            subsection: subsection,
+            focusCount: focusCount,
             masteryMap: masteryMap
         )
 
-        let reviewQuestions = selectReviewQuestions(
-            currentSubsectionId: subsectionId,
+        let reviewQuestions = insertReviewQuestions(
             completedSubsections: completedSubsections,
+            currentSubsectionId: subsectionId,
             count: reviewCount,
             masteryMap: masteryMap,
             excludeIds: Set(focusQuestions.map(\.id))
         )
 
-        var combined = interleaveQuestions(focus: focusQuestions, review: reviewQuestions, masteryMap: masteryMap)
+        let positions = calculateReviewPositions(focusCount: focusQuestions.count, reviewCount: reviewQuestions.count)
+        for (i, pos) in positions.enumerated() where i < reviewQuestions.count {
+            let insertAt = min(pos, focusQuestions.count)
+            focusQuestions.insert(reviewQuestions[i], at: insertAt)
+        }
 
-        combined = enforceTypeQuotas(
-            combined,
-            subsectionId: subsectionId,
-            completedSubsections: completedSubsections,
-            totalCount: totalCount
-        )
-
-        return combined
+        var session = Array(focusQuestions.prefix(totalCount))
+        session = smoothVariety(session, masteryMap: masteryMap)
+        return session
     }
 
-    // MARK: - Teaching Arc Selection
+    // MARK: - Focus Drug Selection (2–4 weakest drugs)
 
-    private func selectTeachingArcQuestions(
-        subsectionId: String,
-        count: Int,
+    private func selectFocusDrugs(subsection: Subsection, masteryMap: [String: MasteryRecord]) -> [Drug] {
+        let drugs = subsection.drugs
+        guard !drugs.isEmpty else { return [] }
+
+        let ranked = drugs.sorted { d1, d2 in
+            let s1 = DrugMasteryService.learningStage(for: d1.id, masteryMap: masteryMap)
+            let s2 = DrugMasteryService.learningStage(for: d2.id, masteryMap: masteryMap)
+            if s1 != s2 { return s1 < s2 }
+            let sum1 = DrugMasteryService.computeMastery(for: d1.id, masteryMap: masteryMap)
+            let sum2 = DrugMasteryService.computeMastery(for: d2.id, masteryMap: masteryMap)
+            return sum1.accuracy < sum2.accuracy
+        }
+
+        let count = min(drugs.count, Int.random(in: 2...4))
+        return Array(ranked.prefix(count))
+    }
+
+    // MARK: - Build Unified Question Pool for Subsection
+
+    private func buildQuestionPool(for subsection: Subsection) -> [Question] {
+        let bucketed = hyFactory.generateBucketed(for: subsection)
+        let curated = dataService.questions(for: subsection.id)
+        let legacy = dataService.allQuestions(for: subsection.id)
+        var pool = bucketed.all() + curated + legacy
+        pool = Dictionary(grouping: pool, by: \.id).compactMap(\.value.first)
+        return pool
+    }
+
+    // MARK: - Build Drug Bursts
+
+    private func buildFocusBursts(
+        drugs: [Drug],
+        pool: [Question],
+        subsection: Subsection,
+        focusCount: Int,
         masteryMap: [String: MasteryRecord]
     ) -> [Question] {
-        guard let subsection = dataService.subsection(for: subsectionId) else { return [] }
-
-        var bucketed = hyFactory.generateBucketed(for: subsection)
-        let curatedPool = dataService.questions(for: subsectionId).shuffled()
-        for cq in curatedPool {
-            switch cq.objective {
-            case .suffixId, .classId, .genericBrand, .brandGeneric:
-                bucketed.classPattern.append(cq)
-            case .indication:
-                bucketed.indication.append(cq)
-            case .adverseEffect:
-                bucketed.sideEffect.append(cq)
-            case .contraindication:
-                bucketed.blackBoxContraindication.append(cq)
-            case .pearl, .moa:
-                bucketed.pearlDifferentiator.append(cq)
-            case .dosing:
-                bucketed.dosing.append(cq)
-            default:
-                bucketed.pearlDifferentiator.append(cq)
-            }
-        }
-        let legacyPool = dataService.allQuestions(for: subsectionId)
-
-        let avgMastery = averageMastery(for: subsectionId, masteryMap: masteryMap)
-
-        let warmupTarget = Int.random(in: 1...2)
-        let coreUseTarget = Int.random(in: 2...3)
-        let safetyTarget = Int.random(in: 2...min(4, max(2, count - warmupTarget - coreUseTarget - 2)))
-        let dosingTarget = 1
-        let diffTarget = Int.random(in: 1...2)
-        let challengeTarget = avgMastery >= 3 ? 1 : 0
-
         var selected: [Question] = []
         var usedIds: Set<String> = []
+        let drugIds = Set(drugs.map(\.id))
 
-        func pickFrom(_ pool: [Question], target: Int, preferDifficulty: [QuestionDifficulty]? = nil) {
-            guard target > 0 else { return }
-            var candidates = pool.filter { !usedIds.contains($0.id) }
-            if let prefs = preferDifficulty {
-                let preferred = candidates.filter { prefs.contains($0.difficulty) }
-                let rest = candidates.filter { !prefs.contains($0.difficulty) }
-                candidates = preferred.shuffled() + rest.shuffled()
-            } else {
-                candidates = candidates.shuffled()
+        let drugPool: [String: [Question]] = {
+            var map: [String: [Question]] = [:]
+            for drug in drugs {
+                map[drug.id] = pool.filter { q in
+                    q.relatedDrugIds.contains(drug.id)
+                }
             }
-            var picked = 0
-            for q in candidates {
-                guard picked < target else { break }
-                guard selected.count < count else { return }
-                guard !usedIds.contains(q.id) else { continue }
+            return map
+        }()
+
+        for drug in drugs {
+            let stage = DrugMasteryService.learningStage(for: drug.id, masteryMap: masteryMap)
+            let burst = buildDrugBurst(
+                for: drug,
+                stage: stage,
+                pool: drugPool[drug.id] ?? [],
+                usedIds: usedIds
+            )
+            for q in burst {
+                guard selected.count < focusCount else { break }
                 selected.append(q)
                 usedIds.insert(q.id)
-                picked += 1
             }
         }
 
-        let diffForMastery = difficultyPreference(avgMastery: avgMastery)
-
-        pickFrom(bucketed.classPattern, target: warmupTarget, preferDifficulty: [.easy])
-        if selected.count < warmupTarget {
-            let legacySuffix = legacyPool.filter { $0.objective == .suffixId || $0.objective == .classId }
-            pickFrom(legacySuffix, target: warmupTarget - selected.count, preferDifficulty: [.easy])
-        }
-
-        let coreStart = selected.count
-        pickFrom(bucketed.indication, target: coreUseTarget, preferDifficulty: diffForMastery)
-        let coreGot = selected.count - coreStart
-        if coreGot < coreUseTarget {
-            let legacyInd = legacyPool.filter { $0.objective == .indication }
-            pickFrom(legacyInd, target: coreUseTarget - coreGot, preferDifficulty: diffForMastery)
-        }
-
-        let safetyStart = selected.count
-        pickFrom(bucketed.sideEffect, target: (safetyTarget + 1) / 2, preferDifficulty: diffForMastery)
-        pickFrom(bucketed.blackBoxContraindication, target: safetyTarget - (selected.count - safetyStart), preferDifficulty: diffForMastery)
-        let safetyGot = selected.count - safetyStart
-        if safetyGot < safetyTarget {
-            let legacySafety = legacyPool.filter { $0.objective == .adverseEffect || $0.objective == .contraindication }
-            pickFrom(legacySafety, target: safetyTarget - safetyGot, preferDifficulty: diffForMastery)
-        }
-
-        let dosingStart = selected.count
-        pickFrom(bucketed.dosing, target: dosingTarget, preferDifficulty: diffForMastery)
-        let dosingGot = selected.count - dosingStart
-        if dosingGot < dosingTarget {
-            let legacyDosing = legacyPool.filter { $0.objective == .dosing }
-            pickFrom(legacyDosing, target: dosingTarget - dosingGot, preferDifficulty: diffForMastery)
-        }
-
-        let diffStart = selected.count
-        pickFrom(bucketed.pearlDifferentiator, target: diffTarget, preferDifficulty: [.hard, .medium])
-        let diffGot = selected.count - diffStart
-        if diffGot < diffTarget {
-            let legacyPearl = legacyPool.filter { $0.objective == .pearl }
-            pickFrom(legacyPearl, target: diffTarget - diffGot)
-        }
-
-        if challengeTarget > 0 {
-            let challengePool = (bucketed.all() + legacyPool).filter {
-                ($0.difficulty == .expert || $0.difficulty == .hard) &&
-                ($0.type == .selectAll || $0.type == .matching) &&
-                !usedIds.contains($0.id)
+        if selected.count < focusCount {
+            for drug in drugs {
+                let stage = DrugMasteryService.learningStage(for: drug.id, masteryMap: masteryMap)
+                let extra = buildDrugBurst(
+                    for: drug,
+                    stage: stage,
+                    pool: drugPool[drug.id] ?? [],
+                    usedIds: usedIds,
+                    burstSize: 1
+                )
+                for q in extra {
+                    guard selected.count < focusCount else { break }
+                    selected.append(q)
+                    usedIds.insert(q.id)
+                }
             }
-            pickFrom(challengePool, target: challengeTarget, preferDifficulty: [.expert, .hard])
+        }
+
+        if selected.count < focusCount {
+            let remainingPool = pool.filter { !usedIds.contains($0.id) && drugIds.contains($0.relatedDrugIds.first ?? "") }.shuffled()
+            for q in remainingPool {
+                guard selected.count < focusCount else { break }
+                selected.append(q)
+                usedIds.insert(q.id)
+            }
+        }
+
+        if selected.count < focusCount {
+            let anyRemaining = pool.filter { !usedIds.contains($0.id) }.shuffled()
+            for q in anyRemaining {
+                guard selected.count < focusCount else { break }
+                selected.append(q)
+                usedIds.insert(q.id)
+            }
+        }
+
+        return Array(selected.prefix(focusCount))
+    }
+
+    private func buildDrugBurst(
+        for drug: Drug,
+        stage: DrugLearningStage,
+        pool: [Question],
+        usedIds: Set<String>,
+        burstSize: Int = 2
+    ) -> [Question] {
+        let available = pool.filter { !usedIds.contains($0.id) }
+        var burst: [Question] = []
+        var burstUsed = usedIds
+
+        let stageFilter = stageObjectivesAndFormats(for: stage, drug: drug)
+
+        let preferred = available.filter { q in
+            stageFilter.objectives.contains(q.objective)
+            && stageFilter.allowedTypes.contains(q.type)
+            && stageFilter.allowedDifficulties.contains(q.difficulty)
+            && !burstUsed.contains(q.id)
+        }.shuffled()
+
+        for q in preferred {
+            guard burst.count < burstSize else { break }
+            burst.append(q)
+            burstUsed.insert(q.id)
+        }
+
+        if burst.count < burstSize {
+            let relaxed = available.filter { q in
+                stageFilter.objectives.contains(q.objective)
+                && !burstUsed.contains(q.id)
+            }.shuffled()
+            for q in relaxed {
+                guard burst.count < burstSize else { break }
+                burst.append(q)
+                burstUsed.insert(q.id)
+            }
+        }
+
+        if burst.count < burstSize {
+            let fallback = available.filter { !burstUsed.contains($0.id) }
+                .sorted { $0.difficulty.rawValue < $1.difficulty.rawValue }
+            for q in fallback {
+                guard burst.count < burstSize else { break }
+                burst.append(q)
+                burstUsed.insert(q.id)
+            }
+        }
+
+        return burst
+    }
+
+    private struct StageFilter {
+        let objectives: Set<QuestionObjective>
+        let allowedTypes: Set<QuestionType>
+        let allowedDifficulties: Set<QuestionDifficulty>
+    }
+
+    private func stageObjectivesAndFormats(for stage: DrugLearningStage, drug: Drug) -> StageFilter {
+        switch stage {
+        case .foundation:
+            return StageFilter(
+                objectives: [.suffixId, .classId, .genericBrand, .brandGeneric, .moa],
+                allowedTypes: [.multipleChoice, .trueFalse, .fillBlank],
+                allowedDifficulties: [.easy, .medium]
+            )
+        case .indication:
+            return StageFilter(
+                objectives: [.indication, .genericBrand, .brandGeneric],
+                allowedTypes: [.multipleChoice, .trueFalse, .fillBlank],
+                allowedDifficulties: [.easy, .medium, .hard]
+            )
+        case .safety:
+            return StageFilter(
+                objectives: [.adverseEffect, .contraindication, .indication],
+                allowedTypes: [.multipleChoice, .trueFalse, .fillBlank],
+                allowedDifficulties: [.medium, .hard]
+            )
+        case .practical:
+            let objectives: Set<QuestionObjective> = drug.commonDosing.isEmpty
+                ? [.adverseEffect, .contraindication, .monitoring, .interaction]
+                : [.dosing, .monitoring, .interaction, .adverseEffect]
+            return StageFilter(
+                objectives: objectives,
+                allowedTypes: [.multipleChoice, .trueFalse, .fillBlank, .matching],
+                allowedDifficulties: [.medium, .hard]
+            )
+        case .advanced:
+            return StageFilter(
+                objectives: [.pearl, .indication, .adverseEffect, .contraindication, .dosing, .moa, .monitoring, .interaction],
+                allowedTypes: [.multipleChoice, .trueFalse, .fillBlank, .matching, .selectAll],
+                allowedDifficulties: [.medium, .hard, .expert]
+            )
+        }
+    }
+
+    // MARK: - Insert Review Questions from Completed Subsections
+
+    private func insertReviewQuestions(
+        completedSubsections: Set<String>,
+        currentSubsectionId: String,
+        count: Int,
+        masteryMap: [String: MasteryRecord],
+        excludeIds: Set<String>
+    ) -> [Question] {
+        let reviewSubIds = completedSubsections.filter { $0 != currentSubsectionId }
+        guard !reviewSubIds.isEmpty, count > 0 else { return [] }
+
+        var candidatePool: [Question] = []
+        for subId in reviewSubIds {
+            candidatePool.append(contentsOf: dataService.allQuestions(for: subId))
+        }
+        candidatePool = candidatePool.filter { !excludeIds.contains($0.id) }
+
+        let dueItems = candidatePool.filter { q in
+            guard let record = masteryMap[q.masteryKey] else { return true }
+            return record.isDue
+        }.sorted { q1, q2 in
+            let d1 = masteryMap[q1.masteryKey]?.nextDueDate ?? .distantPast
+            let d2 = masteryMap[q2.masteryKey]?.nextDueDate ?? .distantPast
+            return d1 < d2
+        }
+
+        var selected: [Question] = []
+        var usedIds = excludeIds
+
+        for q in dueItems {
+            guard !usedIds.contains(q.id) else { continue }
+            selected.append(q)
+            usedIds.insert(q.id)
+            if selected.count >= count { break }
         }
 
         if selected.count < count {
-            let remaining = (bucketed.all() + legacyPool).filter { !usedIds.contains($0.id) }
-            pickFrom(remaining, target: count - selected.count, preferDifficulty: diffForMastery)
+            for q in candidatePool.shuffled() where !usedIds.contains(q.id) {
+                selected.append(q)
+                usedIds.insert(q.id)
+                if selected.count >= count { break }
+            }
         }
 
-        selected = Array(selected.prefix(count))
-
-        selected = addWeakConceptReinforcement(selected, subsectionId: subsectionId, masteryMap: masteryMap, bucketed: bucketed, legacyPool: legacyPool, maxCount: count)
-
-        return selected
+        return Array(selected.prefix(count))
     }
 
-    // MARK: - Enforce Matching/SelectAll Quotas
+    // MARK: - Smooth Variety (Post-Processing)
 
-    private func enforceTypeQuotas(
-        _ questions: [Question],
-        subsectionId: String,
-        completedSubsections: Set<String>,
-        totalCount: Int
-    ) -> [Question] {
+    private func smoothVariety(_ questions: [Question], masteryMap: [String: MasteryRecord]) -> [Question] {
         var result = questions
-        let matchingTarget = Int.random(in: 1...3)
-        let selectAllTarget = Int.random(in: 1...3)
+        guard result.count > 3 else { return result }
 
-        var usedIds = Set(result.map(\.id))
+        result = enforceEasyOpener(result)
+        result = enforceMaxConsecutiveDrug(result)
+        result = enforceStagedFormats(result, masteryMap: masteryMap)
+        result = enforceVariety(result)
 
-        let hasBrandGenericMatching = result.contains { q in
-            q.type == .matching
-            && (q.objective == .genericBrand || q.objective == .brandGeneric)
-            && q.subsectionId == subsectionId
-        }
-
-        if !hasBrandGenericMatching {
-            var bgCandidate: Question?
-            if let sub = dataService.subsection(for: subsectionId) {
-                let bucketed = hyFactory.generateBucketed(for: sub)
-                bgCandidate = bucketed.classPattern.first { q in
-                    q.type == .matching
-                    && (q.objective == .genericBrand || q.objective == .brandGeneric)
-                    && !usedIds.contains(q.id)
-                }
-            }
-            if bgCandidate == nil {
-                bgCandidate = dataService.allQuestions(for: subsectionId).first { q in
-                    q.type == .matching
-                    && (q.objective == .genericBrand || q.objective == .brandGeneric)
-                    && !usedIds.contains(q.id)
-                }
-            }
-            if let bg = bgCandidate {
-                let swapOutIdx = result.lastIndex(where: {
-                    $0.type != .matching && $0.type != .selectAll
-                })
-                if let idx = swapOutIdx, result.count >= totalCount {
-                    result[idx] = bg
-                } else if result.count < totalCount {
-                    result.append(bg)
-                }
-                usedIds.insert(bg.id)
-            }
-        }
-
-        let currentMatching = result.filter { $0.type == .matching }.count
-        let currentSelectAll = result.filter { $0.type == .selectAll }.count
-
-        var extraPool: [Question] = []
-        if currentMatching < matchingTarget || currentSelectAll < selectAllTarget {
-            if let sub = dataService.subsection(for: subsectionId) {
-                let bucketed = hyFactory.generateBucketed(for: sub)
-                extraPool.append(contentsOf: bucketed.all().filter { !usedIds.contains($0.id) })
-            }
-            let legacy = dataService.allQuestions(for: subsectionId).filter { !usedIds.contains($0.id) }
-            extraPool.append(contentsOf: legacy)
-
-            for compId in completedSubsections where compId != subsectionId {
-                if let compSub = dataService.subsection(for: compId) {
-                    let compBucketed = hyFactory.generateBucketed(for: compSub)
-                    extraPool.append(contentsOf: compBucketed.all().filter { !usedIds.contains($0.id) })
-                }
-            }
-        }
-
-        var usedExtraIds = usedIds
-
-        func swapInType(_ targetType: QuestionType, needed: Int) {
-            guard needed > 0 else { return }
-            let available = extraPool.filter { $0.type == targetType && !usedExtraIds.contains($0.id) }.shuffled()
-            var added = 0
-            for q in available {
-                guard added < needed else { break }
-                let swapOutIdx = result.lastIndex(where: {
-                    $0.type != .matching && $0.type != .selectAll
-                })
-                if let idx = swapOutIdx, result.count >= totalCount {
-                    result[idx] = q
-                } else if result.count < totalCount {
-                    result.append(q)
-                } else {
-                    break
-                }
-                usedExtraIds.insert(q.id)
-                added += 1
-            }
-        }
-
-        let matchingNeeded = max(0, matchingTarget - currentMatching)
-        let selectAllNeeded = max(0, selectAllTarget - currentSelectAll)
-
-        swapInType(.matching, needed: matchingNeeded)
-        swapInType(.selectAll, needed: selectAllNeeded)
-
-        result = Array(result.prefix(totalCount))
-
-        return enforceVariety(result)
+        return result
     }
 
-    private func addWeakConceptReinforcement(
-        _ questions: [Question],
-        subsectionId: String,
-        masteryMap: [String: MasteryRecord],
-        bucketed: HighYieldQuestionFactory.BucketedQuestions,
-        legacyPool: [Question],
-        maxCount: Int
-    ) -> [Question] {
+    private func enforceEasyOpener(_ questions: [Question]) -> [Question] {
         var result = questions
-        let usedIds = Set(result.map(\.id))
-
-        let wrongKeys = result.compactMap { q -> String? in
-            let record = masteryMap[q.masteryKey]
-            if let r = record, r.level <= 1, r.totalAttempts > 0 { return q.masteryKey }
-            return nil
-        }
-
-        guard !wrongKeys.isEmpty, result.count < maxCount else { return result }
-
-        let weakKeySet = Set(wrongKeys)
-        let reinforcementPool = (bucketed.all() + legacyPool).filter { q in
-            !usedIds.contains(q.id) && weakKeySet.contains(q.masteryKey)
-        }
-
-        for q in reinforcementPool.shuffled().prefix(maxCount - result.count) {
-            let alreadyHasType = result.contains(where: { $0.masteryKey == q.masteryKey && $0.type == q.type })
-            if !alreadyHasType {
-                result.append(q)
+        for i in 0..<min(3, result.count) {
+            if result[i].difficulty == .hard || result[i].difficulty == .expert || result[i].type == .selectAll {
+                if let swapIdx = (3..<result.count).first(where: {
+                    (result[$0].difficulty == .easy || result[$0].difficulty == .medium)
+                    && result[$0].type != .selectAll
+                }) {
+                    result.swapAt(i, swapIdx)
+                }
             }
         }
-
-        return Array(result.prefix(maxCount))
+        return result
     }
 
-    private func averageMastery(for subsectionId: String, masteryMap: [String: MasteryRecord]) -> Int {
-        let relevantKeys = masteryMap.filter { $0.key.contains(subsectionId) || $0.value.totalAttempts > 0 }
-        guard !relevantKeys.isEmpty else { return 0 }
-        let total = relevantKeys.values.reduce(0) { $0 + $1.level }
-        return total / relevantKeys.count
-    }
+    private func enforceMaxConsecutiveDrug(_ questions: [Question]) -> [Question] {
+        var result = questions
+        guard result.count > 2 else { return result }
 
-    private func difficultyPreference(avgMastery: Int) -> [QuestionDifficulty] {
-        switch avgMastery {
-        case 0...1: return [.easy, .medium]
-        case 2: return [.medium, .easy]
-        case 3: return [.medium, .hard]
-        default: return [.hard, .expert]
+        for i in 2..<result.count {
+            let drugA = result[i].relatedDrugIds.first ?? ""
+            let drugB = result[i-1].relatedDrugIds.first ?? ""
+            let drugC = result[i-2].relatedDrugIds.first ?? ""
+            if !drugA.isEmpty && drugA == drugB && drugA == drugC {
+                if let swapIdx = ((i+1)..<result.count).first(where: {
+                    result[$0].relatedDrugIds.first != drugA
+                }) {
+                    result.swapAt(i, swapIdx)
+                }
+            }
         }
+        return result
+    }
+
+    private func enforceStagedFormats(_ questions: [Question], masteryMap: [String: MasteryRecord]) -> [Question] {
+        var result = questions
+        var foundationSeen: Set<String> = []
+
+        for i in 0..<result.count {
+            let q = result[i]
+            let drugId = q.relatedDrugIds.first ?? ""
+
+            if !drugId.isEmpty {
+                let obj = q.objective
+                if obj == .suffixId || obj == .classId || obj == .genericBrand || obj == .brandGeneric || obj == .moa {
+                    foundationSeen.insert(drugId)
+                }
+            }
+
+            if q.type == .matching && !drugId.isEmpty && !foundationSeen.contains(drugId) {
+                if let swapIdx = ((i+1)..<result.count).first(where: {
+                    result[$0].type != .matching && result[$0].type != .selectAll
+                }) {
+                    result.swapAt(i, swapIdx)
+                    let swapped = result[i]
+                    let swappedDrug = swapped.relatedDrugIds.first ?? ""
+                    let swappedObj = swapped.objective
+                    if swappedObj == .suffixId || swappedObj == .classId || swappedObj == .genericBrand || swappedObj == .brandGeneric || swappedObj == .moa {
+                        foundationSeen.insert(swappedDrug)
+                    }
+                }
+            }
+
+            if q.type == .selectAll && !drugId.isEmpty {
+                let stage = DrugMasteryService.learningStage(for: drugId, masteryMap: masteryMap)
+                if stage < .advanced {
+                    if let swapIdx = ((i+1)..<result.count).first(where: {
+                        result[$0].type != .selectAll
+                    }) {
+                        result.swapAt(i, swapIdx)
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    private func relevantMasteryAverage(for subsection: Subsection, masteryMap: [String: MasteryRecord]) -> Int {
+        let drugIds = subsection.drugs.map(\.id)
+        let relevant = DrugMasteryService.relevantMasteryRecords(for: drugIds, masteryMap: masteryMap)
+        guard !relevant.isEmpty else { return 0 }
+        let total = relevant.values.reduce(0) { $0 + $1.level }
+        return total / relevant.count
     }
 
     // MARK: - Mastery (Boss Battle) Session
@@ -463,74 +540,6 @@ struct QuizEngine {
         selected = Array(selected.prefix(totalCount))
 
         return enforceVariety(selected)
-    }
-
-    // MARK: - Review Question Selection
-
-    private func selectReviewQuestions(
-        currentSubsectionId: String,
-        completedSubsections: Set<String>,
-        count: Int,
-        masteryMap: [String: MasteryRecord],
-        excludeIds: Set<String>
-    ) -> [Question] {
-        let reviewSubIds = completedSubsections.filter { $0 != currentSubsectionId }
-        guard !reviewSubIds.isEmpty, count > 0 else { return [] }
-
-        var candidatePool: [Question] = []
-        for subId in reviewSubIds {
-            candidatePool.append(contentsOf: dataService.allQuestions(for: subId))
-        }
-        candidatePool = candidatePool.filter { !excludeIds.contains($0.id) }
-
-        let dueItems = candidatePool.filter { q in
-            guard let record = masteryMap[q.masteryKey] else { return true }
-            return record.isDue
-        }.sorted { q1, q2 in
-            let d1 = masteryMap[q1.masteryKey]?.nextDueDate ?? .distantPast
-            let d2 = masteryMap[q2.masteryKey]?.nextDueDate ?? .distantPast
-            return d1 < d2
-        }
-
-        var selected: [Question] = []
-        var usedIds = excludeIds
-        var usedSubsections: Set<String> = []
-
-        for q in dueItems {
-            guard !usedIds.contains(q.id) else { continue }
-            selected.append(q)
-            usedIds.insert(q.id)
-            usedSubsections.insert(q.subsectionId)
-            if selected.count >= count { break }
-        }
-
-        if selected.count < count {
-            for q in candidatePool.shuffled() where !usedIds.contains(q.id) {
-                selected.append(q)
-                usedIds.insert(q.id)
-                if selected.count >= count { break }
-            }
-        }
-
-        return Array(selected.prefix(count))
-    }
-
-    // MARK: - Interleave + Enforce Variety
-
-    private func interleaveQuestions(
-        focus: [Question],
-        review: [Question],
-        masteryMap: [String: MasteryRecord]
-    ) -> [Question] {
-        var ordered = focus
-
-        let positions = calculateReviewPositions(focusCount: ordered.count, reviewCount: review.count)
-        for (i, pos) in positions.enumerated() where i < review.count {
-            let insertAt = min(pos, ordered.count)
-            ordered.insert(review[i], at: insertAt)
-        }
-
-        return enforceVariety(ordered)
     }
 
     private func calculateReviewPositions(focusCount: Int, reviewCount: Int) -> [Int] {

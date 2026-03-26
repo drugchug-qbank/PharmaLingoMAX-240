@@ -70,7 +70,64 @@ nonisolated struct DrugMasterySummary: Sendable {
     }
 }
 
+nonisolated enum DrugLearningStage: Int, Comparable, Sendable {
+    case foundation = 0
+    case indication = 1
+    case safety = 2
+    case practical = 3
+    case advanced = 4
+
+    nonisolated static func < (lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
+
+    var label: String {
+        switch self {
+        case .foundation: "Foundation"
+        case .indication: "Indications"
+        case .safety: "Safety"
+        case .practical: "Practical"
+        case .advanced: "Advanced"
+        }
+    }
+}
+
 struct DrugMasteryService {
+
+    static func learningStage(for drugId: String, masteryMap: [String: MasteryRecord]) -> DrugLearningStage {
+        let summary = computeMastery(for: drugId, masteryMap: masteryMap)
+
+        let names = summary.conceptMastery[.names]
+        let classMOA = summary.conceptMastery[.classMOA]
+        let foundationAttempts = (names?.totalAttempts ?? 0) + (classMOA?.totalAttempts ?? 0)
+        let foundationCorrect = (names?.correctAttempts ?? 0) + (classMOA?.correctAttempts ?? 0)
+        let foundationAccuracy = foundationAttempts > 0 ? Double(foundationCorrect) / Double(foundationAttempts) : 0
+        guard foundationAttempts >= 4, foundationAccuracy >= 0.75 else { return .foundation }
+
+        let ind = summary.conceptMastery[.indications]
+        guard (ind?.totalAttempts ?? 0) >= 2, (ind?.accuracy ?? 0) >= 0.75 else { return .indication }
+
+        let safety = summary.conceptMastery[.safety]
+        guard (safety?.totalAttempts ?? 0) >= 2, (safety?.accuracy ?? 0) >= 0.75 else { return .safety }
+
+        let dosing = summary.conceptMastery[.dosingMonitoring]
+        guard (dosing?.totalAttempts ?? 0) >= 1, (dosing?.accuracy ?? 0) >= 0.70 else { return .practical }
+
+        return .advanced
+    }
+
+    static func relevantMasteryRecords(for subsectionDrugIds: [String], masteryMap: [String: MasteryRecord]) -> [String: MasteryRecord] {
+        let drugIdSet = Set(subsectionDrugIds)
+        var result: [String: MasteryRecord] = [:]
+        for objective in QuestionObjective.allCases {
+            for drugId in drugIdSet {
+                let key = "\(objective.rawValue)_\(drugId)"
+                if let record = masteryMap[key] {
+                    result[key] = record
+                }
+            }
+        }
+        return result
+    }
+
     static func computeMastery(for drugId: String, masteryMap: [String: MasteryRecord]) -> DrugMasterySummary {
         var bucketAttempts: [ConceptBucket: (total: Int, correct: Int, levels: [Int])] = [:]
         for bucket in ConceptBucket.allCases {
