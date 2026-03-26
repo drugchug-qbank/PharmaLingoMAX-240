@@ -385,5 +385,10 @@ struct DrugDataService {
         if bank["10e"] == nil { bank["10e"] = [] }
         bank["10e"]?.append(contentsOf: Self.curatedAddOnQuestions_10e)
         bank["10e"]?.append(contentsOf: Self.curatedAddOnQuestions_10e_supplement)
+
+        for q in Self.module10ContrastQuestions {
+            if bank[q.subsectionId] == nil { bank[q.subsectionId] = [] }
+            bank[q.subsectionId]?.append(q)
+        }
     }
 }

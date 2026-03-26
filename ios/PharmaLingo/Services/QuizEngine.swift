@@ -214,6 +214,17 @@ struct QuizEngine {
             if burst.count >= burstSize { return burst }
         }
 
+        let m10Burst = Module10SessionLogic.microFamilyBurstOrder(for: drug.id, stage: stage, pool: pool, usedIds: usedIds)
+        if !m10Burst.isEmpty {
+            for q in m10Burst {
+                guard burst.count < burstSize else { break }
+                guard !burstUsed.contains(q.id) else { continue }
+                burst.append(q)
+                burstUsed.insert(q.id)
+            }
+            if burst.count >= burstSize { return burst }
+        }
+
         let stageFilter = stageObjectivesAndFormats(for: stage, drug: drug)
 
         let preferred = available.filter { q in
@@ -371,6 +382,12 @@ struct QuizEngine {
             result = Module7SessionLogic.enforceRespiratoryVariety(result)
         }
 
+        if Module10SessionLogic.isModule10Subsection(subsectionId) {
+            result = injectModule10ContrastQuestions(result, subsectionId: subsectionId, masteryMap: masteryMap)
+            result = Module10SessionLogic.enforceMicroFamilyVariety(result)
+            result = Module10SessionLogic.enforceMicroFamilyBursts(result, subsectionId: subsectionId)
+        }
+
         return result
     }
 
@@ -395,6 +412,21 @@ struct QuizEngine {
         guard let subsection = dataService.subsection(for: subsectionId) else { return result }
         let pool = buildQuestionPool(for: subsection)
         let contrastQs = Module7SessionLogic.contrastQuestionsForSubsection(subsectionId, pool: pool, usedIds: usedIds, count: 2)
+
+        for q in contrastQs {
+            let insertPos = min(result.count, max(4, result.count / 2))
+            result.insert(q, at: insertPos)
+        }
+
+        return result
+    }
+
+    private func injectModule10ContrastQuestions(_ questions: [Question], subsectionId: String, masteryMap: [String: MasteryRecord]) -> [Question] {
+        var result = questions
+        let usedIds = Set(result.map(\.id))
+        guard let subsection = dataService.subsection(for: subsectionId) else { return result }
+        let pool = buildQuestionPool(for: subsection)
+        let contrastQs = Module10SessionLogic.contrastQuestionsForSubsection(subsectionId, pool: pool, usedIds: usedIds, count: 2)
 
         for q in contrastQs {
             let insertPos = min(result.count, max(4, result.count / 2))
@@ -699,6 +731,15 @@ struct QuizEngine {
             usedIds: excludeIds
         ) {
             return m7AntiConfusion
+        }
+
+        if let m10AntiConfusion = Module10SessionLogic.findAntiConfusionFollowUp(
+            for: missedQuestion,
+            subsectionId: subsectionId,
+            pool: pool,
+            usedIds: excludeIds
+        ) {
+            return m10AntiConfusion
         }
 
         if let match = pickRemediationFromPool(
