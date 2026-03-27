@@ -6,19 +6,18 @@ struct MasteryDepthMeterView: View {
     let unlockState: SubsectionUnlockState
     let milestones: [MilestoneType]
 
-    @State private var animatedDepth: Int = 0
-    @State private var segmentScales: [CGFloat] = Array(repeating: 0, count: 10)
+    @State private var animatedFraction: CGFloat = 0
     @State private var showLabel: Bool = false
-    @State private var pulseNewSegments: Bool = false
     @State private var showMilestoneLabels: Bool = false
+    @State private var glowPulse: Bool = false
 
-    private let segmentHeight: CGFloat = 22
-    private let markerSize: CGFloat = 32
+    private let barHeight: CGFloat = 28
+    private let markerDiameter: CGFloat = 26
 
     private var depthIncreased: Bool { currentDepth > previousDepth }
 
     private struct MilestoneMarker {
-        let position: Int
+        let normalizedPosition: CGFloat
         let icon: String
         let label: String
         let unlocked: Bool
@@ -28,28 +27,32 @@ struct MasteryDepthMeterView: View {
 
     private var markers: [MilestoneMarker] {
         [
-            MilestoneMarker(position: 3, icon: "pills.fill", label: "Dosing", unlocked: unlockState.hasDosingUnlocked, color: AppTheme.primaryBlue, milestoneType: .dosingUnlocked),
-            MilestoneMarker(position: 5, icon: "flame.fill", label: "Advanced", unlocked: unlockState.hasHarderUnlocked, color: AppTheme.accentOrange, milestoneType: .harderUnlocked),
-            MilestoneMarker(position: 7, icon: "star.circle.fill", label: "Cases", unlocked: unlockState.hasCaseChallengeReady, color: AppTheme.xpPurple, milestoneType: .caseChallengeReady),
+            MilestoneMarker(normalizedPosition: 0.3, icon: "pills.fill", label: "Dosing", unlocked: unlockState.hasDosingUnlocked, color: AppTheme.primaryBlue, milestoneType: .dosingUnlocked),
+            MilestoneMarker(normalizedPosition: 0.5, icon: "flame.fill", label: "Advanced", unlocked: unlockState.hasHarderUnlocked, color: AppTheme.accentOrange, milestoneType: .harderUnlocked),
+            MilestoneMarker(normalizedPosition: 0.7, icon: "star.circle.fill", label: "Cases", unlocked: unlockState.hasCaseChallengeReady, color: AppTheme.xpPurple, milestoneType: .caseChallengeReady),
         ]
     }
 
+    private var targetFraction: CGFloat {
+        CGFloat(currentDepth) / 10.0
+    }
+
     var body: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 12) {
             depthHeader
 
             GeometryReader { geo in
                 let totalWidth = geo.size.width
                 ZStack(alignment: .leading) {
-                    trackBar(totalWidth: totalWidth)
+                    backgroundTrack
+                    filledTrack(totalWidth: totalWidth)
 
-                    ForEach(markers, id: \.position) { marker in
-                        milestoneNode(marker: marker, totalWidth: totalWidth)
+                    ForEach(markers, id: \.normalizedPosition) { marker in
+                        milestoneOnBar(marker: marker, totalWidth: totalWidth)
                     }
                 }
             }
-            .frame(height: markerSize + 20)
-            .padding(.horizontal, 4)
+            .frame(height: barHeight + 22)
 
             if showLabel {
                 depthLabel
@@ -84,88 +87,79 @@ struct MasteryDepthMeterView: View {
         }
     }
 
+    private var backgroundTrack: some View {
+        RoundedRectangle(cornerRadius: barHeight / 2)
+            .fill(Color(.quaternarySystemFill))
+            .frame(height: barHeight)
+    }
+
     @ViewBuilder
-    private func trackBar(totalWidth: CGFloat) -> some View {
-        let barY = markerSize / 2
+    private func filledTrack(totalWidth: CGFloat) -> some View {
+        let fillWidth = max(barHeight, totalWidth * animatedFraction)
 
         ZStack(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(Color(.quaternarySystemFill))
-                .frame(height: segmentHeight)
-
-            HStack(spacing: 2) {
-                ForEach(0..<10, id: \.self) { i in
-                    segmentPiece(index: i)
-                }
-            }
-            .frame(height: segmentHeight)
-            .clipShape(.rect(cornerRadius: 6))
-        }
-        .offset(y: barY - segmentHeight / 2)
-    }
-
-    @ViewBuilder
-    private func segmentPiece(index: Int) -> some View {
-        let isFilled = index < animatedDepth
-        let isNew = index >= previousDepth && index < currentDepth
-        let color = isFilled ? depthTierColor(index) : Color.clear
-
-        Rectangle()
-            .fill(isFilled ? AnyShapeStyle(color.gradient) : AnyShapeStyle(Color.clear))
-            .scaleEffect(y: segmentScales[index], anchor: .center)
-            .overlay {
-                if isNew && pulseNewSegments {
-                    Rectangle()
-                        .fill(color.opacity(0.5))
-                        .scaleEffect(1.08)
-                        .opacity(pulseNewSegments ? 0 : 0.8)
-                        .animation(
-                            .easeOut(duration: 0.7)
-                            .repeatCount(2, autoreverses: false)
-                            .delay(Double(index - previousDepth) * 0.1),
-                            value: pulseNewSegments
+            if animatedFraction > 0 {
+                RoundedRectangle(cornerRadius: barHeight / 2)
+                    .fill(
+                        LinearGradient(
+                            colors: filledGradientColors,
+                            startPoint: .leading,
+                            endPoint: .trailing
                         )
-                }
+                    )
+                    .frame(width: fillWidth, height: barHeight)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: barHeight / 2)
+                            .fill(.white.opacity(glowPulse && depthIncreased ? 0.25 : 0))
+                            .frame(width: fillWidth, height: barHeight)
+                    }
             }
+        }
+    }
+
+    private var filledGradientColors: [Color] {
+        if currentDepth <= 0 { return [AppTheme.successGreen.opacity(0.5)] }
+        if currentDepth <= 3 { return [AppTheme.successGreen.opacity(0.7), AppTheme.successGreen] }
+        if currentDepth <= 5 { return [AppTheme.successGreen, AppTheme.primaryBlue] }
+        if currentDepth <= 7 { return [AppTheme.successGreen, AppTheme.primaryBlue, AppTheme.xpPurple] }
+        return [AppTheme.successGreen, AppTheme.primaryBlue, AppTheme.xpPurple, AppTheme.accentOrange]
     }
 
     @ViewBuilder
-    private func milestoneNode(marker: MilestoneMarker, totalWidth: CGFloat) -> some View {
-        let segmentWidth = totalWidth / 10.0
-        let xPos = CGFloat(marker.position) * segmentWidth - markerSize / 2
-
+    private func milestoneOnBar(marker: MilestoneMarker, totalWidth: CGFloat) -> some View {
+        let xCenter = totalWidth * marker.normalizedPosition
+        let isReached = animatedFraction >= marker.normalizedPosition
         let isNewlyUnlocked = milestones.contains(where: { $0 == marker.milestoneType })
-        let isReached = animatedDepth >= marker.position
 
-        VStack(spacing: 2) {
+        VStack(spacing: 3) {
             ZStack {
                 Circle()
-                    .fill(marker.unlocked ? marker.color : Color(.tertiarySystemFill))
-                    .frame(width: markerSize, height: markerSize)
-                    .shadow(color: marker.unlocked ? marker.color.opacity(0.4) : .clear, radius: 4)
+                    .fill(isReached && marker.unlocked ? marker.color : Color(.tertiarySystemFill))
+                    .frame(width: markerDiameter, height: markerDiameter)
 
                 Circle()
                     .strokeBorder(
-                        isReached ? marker.color.opacity(0.6) : Color(.separator),
+                        isReached ? marker.color : Color(.separator).opacity(0.5),
                         lineWidth: 2
                     )
-                    .frame(width: markerSize, height: markerSize)
+                    .frame(width: markerDiameter, height: markerDiameter)
 
                 Image(systemName: marker.icon)
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(marker.unlocked ? .white : Color(.tertiaryLabel))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(isReached && marker.unlocked ? .white : Color(.tertiaryLabel))
             }
-            .scaleEffect(isNewlyUnlocked && showMilestoneLabels ? 1.15 : 1.0)
+            .shadow(color: isReached && marker.unlocked ? marker.color.opacity(0.4) : .clear, radius: 4)
+            .scaleEffect(isNewlyUnlocked && showMilestoneLabels ? 1.2 : 1.0)
             .animation(.spring(response: 0.35, dampingFraction: 0.5), value: showMilestoneLabels)
 
             if showMilestoneLabels {
                 Text(marker.label)
                     .font(.system(size: 9, weight: .heavy, design: .rounded))
-                    .foregroundStyle(marker.unlocked ? marker.color : Color(.tertiaryLabel))
+                    .foregroundStyle(isReached && marker.unlocked ? marker.color : Color(.tertiaryLabel))
                     .transition(.opacity)
             }
         }
-        .offset(x: xPos)
+        .position(x: xCenter, y: barHeight / 2)
     }
 
     private var depthLabel: some View {
@@ -220,58 +214,54 @@ struct MasteryDepthMeterView: View {
     }
 
     private func runAnimation() {
-        animatedDepth = previousDepth
-        for i in 0..<10 {
-            segmentScales[i] = i < previousDepth ? 1.0 : 0.0
-        }
+        let startFraction = CGFloat(previousDepth) / 10.0
+        animatedFraction = startFraction
 
         let startDelay: Double = 0.3
 
         if currentDepth == 0 {
-            for i in 0..<10 {
-                let delay = startDelay + Double(i) * 0.05
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    withAnimation(.spring(response: 0.25, dampingFraction: 0.6)) {
-                        segmentScales[i] = 1.0
-                    }
+            DispatchQueue.main.asyncAfter(deadline: .now() + startDelay) {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
+                    animatedFraction = 0.02
                 }
             }
-            let emptyRevealTime = startDelay + 10.0 * 0.05 + 0.2
-            DispatchQueue.main.asyncAfter(deadline: .now() + emptyRevealTime) {
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + startDelay + 0.5) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    animatedFraction = 0
+                }
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + startDelay + 0.8) {
                 withAnimation(.spring(duration: 0.4)) { showLabel = true }
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) { showMilestoneLabels = true }
             }
             return
         }
 
-        for i in previousDepth..<currentDepth {
-            let delay = startDelay + Double(i - previousDepth) * 0.15
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                withAnimation(.spring(response: 0.35, dampingFraction: 0.55)) {
-                    segmentScales[i] = 1.0
-                    animatedDepth = i + 1
-                }
+        DispatchQueue.main.asyncAfter(deadline: .now() + startDelay) {
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.72)) {
+                animatedFraction = targetFraction
             }
         }
 
-        for i in currentDepth..<10 {
-            let delay = startDelay + Double(max(0, currentDepth - previousDepth)) * 0.15 + Double(i - currentDepth) * 0.04
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.6)) {
-                    segmentScales[i] = 1.0
-                }
-            }
-        }
+        let revealTime = startDelay + 0.6
 
-        let totalFillTime = startDelay + Double(max(0, currentDepth - previousDepth)) * 0.15 + 0.3
-        DispatchQueue.main.asyncAfter(deadline: .now() + totalFillTime) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + revealTime) {
             withAnimation(.spring(duration: 0.4)) { showLabel = true }
-            pulseNewSegments = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + totalFillTime + 0.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + revealTime + 0.15) {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
                 showMilestoneLabels = true
+            }
+        }
+
+        if depthIncreased {
+            DispatchQueue.main.asyncAfter(deadline: .now() + revealTime + 0.1) {
+                withAnimation(.easeInOut(duration: 0.6).repeatCount(2, autoreverses: true)) {
+                    glowPulse = true
+                }
             }
         }
     }
