@@ -3,15 +3,19 @@ import SwiftUI
 struct QuizResultView: View {
     let quizVM: QuizViewModel
     let gameVM: GameViewModel
+    var milestones: [MilestoneType] = []
+    var unlockState: SubsectionUnlockState = .empty
+    var previousDepth: Int = 0
     let onDismiss: () -> Void
 
     @State private var animateScore: Bool = false
-    @State private var showStars: Bool = false
+    @State private var showDepthMeter: Bool = false
     @State private var showRewards: Bool = false
     @State private var showStreak: Bool = false
     @State private var showConfetti: Bool = false
     @State private var showBonusPage: Bool = false
     @State private var showMedal: Bool = false
+    @State private var showMilestones: Bool = false
 
     private var passed: Bool { quizVM.score >= 0.8 }
     private var perfect: Bool { quizVM.score == 1.0 }
@@ -72,7 +76,15 @@ struct QuizResultView: View {
                                 .multilineTextAlignment(.center)
                         }
 
-                        if showStars && passed {
+                        if showDepthMeter && passed && unlockState.totalDrugs > 0 {
+                            MasteryDepthMeterView(
+                                currentDepth: unlockState.masteryDepth10,
+                                previousDepth: previousDepth,
+                                unlockState: unlockState,
+                                milestones: milestones
+                            )
+                            .transition(.scale.combined(with: .opacity))
+                        } else if showDepthMeter && passed {
                             let stars = gameVM.starsFor(quizVM.subsectionId)
                             HStack(spacing: 6) {
                                 ForEach(0..<5, id: \.self) { i in
@@ -146,6 +158,15 @@ struct QuizResultView: View {
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
 
+                        if showMilestones && !milestones.isEmpty {
+                            VStack(spacing: 10) {
+                                ForEach(milestones, id: \.rawValue) { milestone in
+                                    MilestoneBanner(milestone: milestone)
+                                }
+                            }
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                        }
+
                         if showStreak && gameVM.streakExtended {
                             StreakFlameView(streak: gameVM.currentStreak, previousStreak: gameVM.previousStreak)
                                 .transition(.scale.combined(with: .opacity))
@@ -196,13 +217,16 @@ struct QuizResultView: View {
         .onAppear {
             animateScore = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                withAnimation(.spring(duration: 0.5)) { showStars = true }
+                withAnimation(.spring(duration: 0.5)) { showDepthMeter = true }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 withAnimation(.spring(duration: 0.5)) { showRewards = true }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
                 withAnimation(.spring(duration: 0.6)) { showStreak = true }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                withAnimation(.spring(duration: 0.5)) { showMilestones = true }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 showConfetti = true
@@ -238,9 +262,12 @@ struct QuizResultView: View {
             return "Score 80% or higher to defeat the boss."
         }
         if passed {
-            return "You've earned a mastery star for this section."
+            if unlockState.totalDrugs > 0 && unlockState.masteryDepth10 > previousDepth {
+                return "Your mastery depth increased!"
+            }
+            return "Great work on this section."
         }
-        return "Score 80% or higher to earn a mastery star."
+        return "Score 80% or higher to level up."
     }
 
     private var bossRingColor: Color {

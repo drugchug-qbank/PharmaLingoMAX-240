@@ -55,6 +55,10 @@ class GameViewModel {
     var dailyXPRunCounts: [String: Int] = [:]
     private var dailyXPRunCountDate: String = ""
 
+    var seenQuestionIdsBySubsection: [String: Set<String>] = [:]
+    var shownMilestoneFlags: Set<String> = []
+    private var cachedUnlockStates: [String: SubsectionUnlockState] = [:]
+
     var activityDates: Set<String> = []
     var streakSaveDates: Set<String> = []
     var accountCreatedDate: Date?
@@ -293,6 +297,59 @@ class GameViewModel {
 
     func starsFor(_ subsectionId: String) -> Int {
         subsectionStars[subsectionId] ?? 0
+    }
+
+    func seenQuestionIds(for subsectionId: String) -> Set<String> {
+        seenQuestionIdsBySubsection[subsectionId] ?? []
+    }
+
+    func recordSeenQuestions(_ questionIds: [String], for subsectionId: String) {
+        var existing = seenQuestionIdsBySubsection[subsectionId] ?? []
+        for qid in questionIds { existing.insert(qid) }
+        seenQuestionIdsBySubsection[subsectionId] = existing
+        save()
+    }
+
+    func unlockState(for subsection: Subsection) -> SubsectionUnlockState {
+        if let cached = cachedUnlockStates[subsection.id] { return cached }
+        let state = computeUnlockState(for: subsection)
+        cachedUnlockStates[subsection.id] = state
+        return state
+    }
+
+    func refreshUnlockState(for subsection: Subsection) -> SubsectionUnlockState {
+        let state = computeUnlockState(for: subsection)
+        cachedUnlockStates[subsection.id] = state
+        return state
+    }
+
+    private func computeUnlockState(for subsection: Subsection) -> SubsectionUnlockState {
+        let seen = seenQuestionIds(for: subsection.id)
+        let totalPool = dataService.allQuestions(for: subsection.id)
+        return SubsectionUnlockService.computeUnlockState(
+            for: subsection,
+            masteryMap: masteryMap,
+            seenQuestionIds: seen,
+            totalEligibleCount: totalPool.count
+        )
+    }
+
+    func checkAndCollectMilestones(for subsection: Subsection, previousState: SubsectionUnlockState?) -> [MilestoneType] {
+        let current = refreshUnlockState(for: subsection)
+        let milestones = SubsectionUnlockService.newMilestones(
+            previous: previousState,
+            current: current,
+            alreadyShown: shownMilestoneFlags
+        )
+        for m in milestones {
+            shownMilestoneFlags.insert("\(subsection.id)_\(m.rawValue)")
+        }
+        if !milestones.isEmpty { save() }
+        return milestones
+    }
+
+    func invalidateUnlockCache() {
+        cachedUnlockStates.removeAll()
     }
 
     func isSubsectionUnlocked(_ subsection: Subsection) -> Bool {
@@ -1037,6 +1094,9 @@ class GameViewModel {
         accountCreatedDate = nil
         dailyXPRunCounts = [:]
         dailyXPRunCountDate = ""
+        seenQuestionIdsBySubsection = [:]
+        shownMilestoneFlags = []
+        cachedUnlockStates = [:]
         UserDefaults.standard.removeObject(forKey: "pharmaquest_game_state")
         UserDefaults.standard.removeObject(forKey: "pharmaquest_mastery_map")
         if let uid = oldUserId {
@@ -1119,6 +1179,8 @@ class GameViewModel {
             "activityDates": Array(activityDates),
             "streakSaveDates": Array(streakSaveDates),
             "accountCreatedDate": accountCreatedDate?.timeIntervalSince1970 ?? 0,
+            "seenQuestionIdsBySubsection": seenQuestionIdsBySubsection.mapValues { Array($0) },
+            "shownMilestoneFlags": Array(shownMilestoneFlags),
         ]
         UserDefaults.standard.set(state, forKey: userDefaultsKey)
     }
@@ -1163,6 +1225,10 @@ class GameViewModel {
         dailyPracticeDate = state["dailyPracticeDate"] as? String ?? ""
         dailyXPRunCounts = state["dailyXPRunCounts"] as? [String: Int] ?? [:]
         dailyXPRunCountDate = state["dailyXPRunCountDate"] as? String ?? ""
+        if let seenData = state["seenQuestionIdsBySubsection"] as? [String: [String]] {
+            seenQuestionIdsBySubsection = seenData.mapValues { Set($0) }
+        }
+        shownMilestoneFlags = Set(state["shownMilestoneFlags"] as? [String] ?? [])
         clinicalAuraPoints = state["clinicalAuraPoints"] as? Int ?? 0
         activityDates = Set(state["activityDates"] as? [String] ?? [])
         streakSaveDates = Set(state["streakSaveDates"] as? [String] ?? [])

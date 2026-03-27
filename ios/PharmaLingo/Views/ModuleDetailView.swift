@@ -125,62 +125,78 @@ struct SubsectionCard: View {
     private var stars: Int { gameVM.starsFor(subsection.id) }
     private var isCompleted: Bool { gameVM.completedSubsections.contains(subsection.id) }
 
+    private var unlockState: SubsectionUnlockState {
+        gameVM.unlockState(for: subsection)
+    }
+
+    private var hasDrugs: Bool { !subsection.drugs.isEmpty }
+
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle()
-                        .fill(circleColor)
-                        .frame(width: 50, height: 50)
+            VStack(spacing: 0) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(circleColor)
+                            .frame(width: 50, height: 50)
 
-                    if isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.title2)
+                        if isCompleted {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(.white)
+                        } else if isUnlocked {
+                            Text("\(index + 1)")
+                                .font(AppTheme.funFont(.title3, weight: .heavy))
+                                .foregroundStyle(.white)
+                        } else {
+                            Image(systemName: "lock.fill")
+                                .font(.body)
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(subsection.title)
+                            .font(AppTheme.funFont(.subheadline, weight: .bold))
+                            .foregroundStyle(isUnlocked ? .primary : .secondary)
+
+                        if isCompleted && hasDrugs {
+                            depthMeter
+                        } else if stars > 0 {
+                            StarRating(stars: stars)
+                        } else {
+                            Text(subsection.description)
+                                .font(AppTheme.funFont(.caption, weight: .medium))
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
+
+                    Spacer()
+
+                    if isUnlocked && !isCompleted {
+                        Text("START")
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
                             .foregroundStyle(.white)
-                    } else if isUnlocked {
-                        Text("\(index + 1)")
-                            .font(AppTheme.funFont(.title3, weight: .heavy))
-                            .foregroundStyle(.white)
-                    } else {
-                        Image(systemName: "lock.fill")
-                            .font(.body)
-                            .foregroundStyle(.white.opacity(0.7))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 7)
+                            .background(moduleColor)
+                            .clipShape(Capsule())
+                            .shadow(color: moduleColor.opacity(0.4), radius: 4, y: 2)
+                    } else if isCompleted {
+                        Image(systemName: "arrow.clockwise.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(moduleColor.opacity(0.6))
                     }
                 }
+                .padding(14)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(subsection.title)
-                        .font(AppTheme.funFont(.subheadline, weight: .bold))
-                        .foregroundStyle(isUnlocked ? .primary : .secondary)
-
-                    if stars > 0 {
-                        StarRating(stars: stars)
-                    } else {
-                        Text(subsection.description)
-                            .font(AppTheme.funFont(.caption, weight: .medium))
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
-                }
-
-                Spacer()
-
-                if isUnlocked && !isCompleted {
-                    Text("START")
-                        .font(AppTheme.funFont(.caption, weight: .heavy))
-                        .foregroundStyle(.white)
+                if isCompleted && hasDrugs {
+                    unlockChipsRow
                         .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(moduleColor)
-                        .clipShape(Capsule())
-                        .shadow(color: moduleColor.opacity(0.4), radius: 4, y: 2)
-                } else if isCompleted {
-                    Image(systemName: "arrow.clockwise.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(moduleColor.opacity(0.6))
+                        .padding(.bottom, 12)
                 }
             }
-            .padding(14)
             .background(Color(.secondarySystemGroupedBackground))
             .clipShape(.rect(cornerRadius: 16))
             .overlay(
@@ -194,9 +210,81 @@ struct SubsectionCard: View {
         .opacity(isUnlocked ? 1 : 0.5)
     }
 
+    private var depthMeter: some View {
+        let depth = unlockState.masteryDepth10
+        return HStack(spacing: 2) {
+            ForEach(0..<10, id: \.self) { i in
+                RoundedRectangle(cornerRadius: 1.5)
+                    .fill(i < depth ? depthColor(i) : Color(.quaternarySystemFill))
+                    .frame(width: 8, height: 6)
+            }
+            Text("\(depth)/10")
+                .font(.system(size: 9, weight: .heavy, design: .rounded))
+                .foregroundStyle(.secondary)
+                .padding(.leading, 3)
+        }
+    }
+
+    private func depthColor(_ index: Int) -> Color {
+        if index < 3 { return AppTheme.successGreen }
+        if index < 6 { return AppTheme.primaryBlue }
+        if index < 8 { return AppTheme.xpPurple }
+        return AppTheme.accentOrange
+    }
+
+    @ViewBuilder
+    private var unlockChipsRow: some View {
+        let state = unlockState
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                if state.totalDrugs > 0 {
+                    UnlockChip(
+                        label: "Dosing",
+                        fraction: state.dosingFraction,
+                        icon: "pills.fill",
+                        color: state.hasDosingUnlocked ? AppTheme.primaryBlue : Color(.tertiaryLabel)
+                    )
+                    UnlockChip(
+                        label: "Advanced",
+                        fraction: state.advancedFraction,
+                        icon: "flame.fill",
+                        color: state.hasHarderUnlocked ? AppTheme.accentOrange : Color(.tertiaryLabel)
+                    )
+                }
+                UnlockChip(
+                    label: "Seen",
+                    fraction: state.seenFraction,
+                    icon: "eye.fill",
+                    color: state.seenQuestionCount > 0 ? AppTheme.funTeal : Color(.tertiaryLabel)
+                )
+            }
+        }
+    }
+
     private var circleColor: Color {
         if isCompleted { return moduleColor }
         if isUnlocked { return moduleColor.opacity(0.7) }
         return Color(.systemGray4)
+    }
+}
+
+struct UnlockChip: View {
+    let label: String
+    let fraction: String
+    let icon: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 3) {
+            Image(systemName: icon)
+                .font(.system(size: 8, weight: .bold))
+            Text("\(label) \(fraction)")
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+        }
+        .foregroundStyle(color)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 3)
+        .background(color.opacity(0.1))
+        .clipShape(Capsule())
     }
 }

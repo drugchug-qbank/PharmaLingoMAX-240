@@ -27,6 +27,8 @@ struct QuizView: View {
     @State private var comboOpacity: Double = 0
     @State private var showBossIntro: Bool = false
     @State private var bossIntroOpacity: Double = 1.0
+    @State private var preQuizUnlockState: SubsectionUnlockState?
+    @State private var earnedMilestones: [MilestoneType] = []
     #if DEBUG
     @State private var showDiagnostics: Bool = false
     #endif
@@ -65,7 +67,14 @@ struct QuizView: View {
                 )
             } else if let quizVM {
                 if showResult {
-                    QuizResultView(quizVM: quizVM, gameVM: gameVM, onDismiss: { dismiss() })
+                    QuizResultView(
+                                quizVM: quizVM,
+                                gameVM: gameVM,
+                                milestones: earnedMilestones,
+                                unlockState: gameVM.unlockState(for: subsection),
+                                previousDepth: preQuizUnlockState?.masteryDepth10 ?? 0,
+                                onDismiss: { dismiss() }
+                            )
                 } else {
                     quizHeader(quizVM: quizVM)
                     progressBar(quizVM: quizVM)
@@ -192,6 +201,10 @@ struct QuizView: View {
         if !gameVM.hasUnlimitedHearts && gameVM.hearts <= 0 {
             showNoHeartsAlert = true
             return
+        }
+
+        if !isPracticeSession && customQuestions.isEmpty {
+            preQuizUnlockState = gameVM.unlockState(for: subsection)
         }
 
         let questions: [Question]
@@ -714,6 +727,14 @@ struct QuizView: View {
                                 coinsEarned: quizVM.coinsEarned
                             )
                             quizVM.xpBreakdown = breakdown
+
+                            let allQIds = quizVM.questions.map(\.id)
+                            gameVM.recordSeenQuestions(allQIds, for: subsection.id)
+                            gameVM.invalidateUnlockCache()
+                            earnedMilestones = gameVM.checkAndCollectMilestones(
+                                for: subsection,
+                                previousState: preQuizUnlockState
+                            )
                         }
                         onQuizComplete?()
                         withAnimation { showResult = true }
