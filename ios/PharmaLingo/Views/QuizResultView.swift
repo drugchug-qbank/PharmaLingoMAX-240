@@ -11,196 +11,119 @@ struct QuizResultView: View {
     @State private var animateScore: Bool = false
     @State private var showDepthMeter: Bool = false
     @State private var showRewards: Bool = false
-    @State private var showStreak: Bool = false
     @State private var showConfetti: Bool = false
-    @State private var showBonusPage: Bool = false
     @State private var showMedal: Bool = false
     @State private var showMilestones: Bool = false
+    @State private var showBonusSection: Bool = false
+    @State private var isLoadingAd: Bool = false
+    @State private var bonusAwarded: Bool = false
+    @State private var bonusMessage: String = ""
 
     private var passed: Bool { quizVM.score >= 0.8 }
     private var perfect: Bool { quizVM.score == 1.0 }
     private var isBoss: Bool { quizVM.isMasteryQuiz }
 
+    private var xpValue: Int {
+        quizVM.xpBreakdown?.finalAwardedXP ?? quizVM.xpEarned
+    }
+
     var body: some View {
         ZStack {
-            if showBonusPage && passed {
-                BonusRewardsView(
-                    gameVM: gameVM,
-                    quizVM: quizVM,
-                    onClaim: { onDismiss() },
-                    onSkip: { onDismiss() }
-                )
-            } else {
-                ScrollView {
-                    VStack(spacing: 24) {
-                        Spacer().frame(height: 20)
+            ScrollView {
+                VStack(spacing: 20) {
+                    Spacer().frame(height: 16)
 
-                        ZStack {
-                            Circle()
-                                .fill(bossRingColor.opacity(0.1))
-                                .frame(width: 140, height: 140)
+                    ZStack {
+                        Circle()
+                            .fill(bossRingColor.opacity(0.1))
+                            .frame(width: 130, height: 130)
 
-                            ProgressRing(
-                                progress: animateScore ? quizVM.score : 0,
-                                size: 130,
-                                lineWidth: isBoss ? 12 : 10,
-                                color: bossRingColor
-                            )
-                            .animation(.spring(duration: 1.0).delay(0.3), value: animateScore)
+                        ProgressRing(
+                            progress: animateScore ? quizVM.score : 0,
+                            size: 120,
+                            lineWidth: isBoss ? 12 : 10,
+                            color: bossRingColor
+                        )
+                        .animation(.spring(duration: 1.0).delay(0.3), value: animateScore)
 
-                            VStack(spacing: 2) {
-                                Text("\(Int(quizVM.score * 100))%")
-                                    .font(.system(.title, design: .rounded, weight: .heavy))
-                                    .foregroundStyle(bossRingColor)
-                                Text("\(quizVM.correctCount)/\(quizVM.totalQuestions)")
-                                    .font(AppTheme.funFont(.caption, weight: .bold))
-                                    .foregroundStyle(.secondary)
-                            }
-
-                            if isBoss && passed && showMedal {
-                                Image(systemName: bossMedalIcon)
-                                    .font(.system(size: 28, weight: .bold))
-                                    .foregroundStyle(bossMedalColor)
-                                    .offset(x: 48, y: -48)
-                                    .transition(.scale.combined(with: .opacity))
-                            }
-                        }
-
-                        VStack(spacing: 8) {
-                            Text(resultTitle)
-                                .font(AppTheme.funFont(.title, weight: .heavy))
-
-                            Text(resultSubtitle)
-                                .font(AppTheme.funFont(.subheadline, weight: .medium))
+                        VStack(spacing: 2) {
+                            Text("\(Int(quizVM.score * 100))%")
+                                .font(.system(.title, design: .rounded, weight: .heavy))
+                                .foregroundStyle(bossRingColor)
+                            Text("\(quizVM.correctCount)/\(quizVM.totalQuestions)")
+                                .font(AppTheme.funFont(.caption, weight: .bold))
                                 .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
                         }
 
-                        if showDepthMeter {
-                            MasteryDepthMeterView(
-                                currentDepth: unlockState.masteryDepth10,
-                                previousDepth: previousDepth,
-                                unlockState: unlockState,
-                                milestones: milestones
-                            )
-                            .transition(.scale.combined(with: .opacity))
-                        }
-
-                        if showRewards {
-                            VStack(spacing: 14) {
-                                if let breakdown = quizVM.xpBreakdown {
-                                    HStack(spacing: 24) {
-                                        RewardItem(icon: "bolt.fill", value: "+\(breakdown.finalAwardedXP)", label: "XP", color: AppTheme.primaryBlue)
-                                        RewardItem(icon: "bitcoinsign.circle.fill", value: "+\(quizVM.coinsEarned)", label: "Coins", color: AppTheme.accentOrange)
-                                    }
-
-                                    XPBreakdownCard(breakdown: breakdown)
-                                } else {
-                                    HStack(spacing: 24) {
-                                        RewardItem(icon: "bolt.fill", value: "+\(quizVM.xpEarned)", label: "XP", color: AppTheme.primaryBlue)
-                                        RewardItem(icon: "bitcoinsign.circle.fill", value: "+\(quizVM.coinsEarned)", label: "Coins", color: AppTheme.accentOrange)
-                                    }
-                                }
-
-                                if gameVM.isProUser {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "crown.fill")
-                                            .foregroundStyle(AppTheme.warningYellow)
-                                        Text("Pro Bonus: 50% extra XP & Gold!")
-                                            .font(AppTheme.funFont(.caption, weight: .heavy))
-                                            .foregroundStyle(AppTheme.warningYellow)
-                                    }
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 8)
-                                    .background(AppTheme.warningYellow.opacity(0.12))
-                                    .clipShape(Capsule())
-                                }
-
-                                if quizVM.maxConsecutive >= 3 {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "flame.fill")
-                                            .foregroundStyle(AppTheme.accentOrange)
-                                        Text("Best streak: \(quizVM.maxConsecutive) in a row!")
-                                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                                            .foregroundStyle(AppTheme.accentOrange)
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 10)
-                                    .background(AppTheme.accentOrange.opacity(0.12))
-                                    .clipShape(Capsule())
-                                }
-
-                                if perfect && quizVM.xpBreakdown == nil {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "sparkles")
-                                            .foregroundStyle(AppTheme.warningYellow)
-                                        Text("PERFECT BONUS!")
-                                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                                            .foregroundStyle(AppTheme.warningYellow)
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 10)
-                                    .background(AppTheme.warningYellow.opacity(0.12))
-                                    .clipShape(Capsule())
-                                }
-                            }
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                        }
-
-                        if showMilestones && !milestones.isEmpty {
-                            VStack(spacing: 10) {
-                                ForEach(milestones, id: \.rawValue) { milestone in
-                                    MilestoneBanner(milestone: milestone)
-                                }
-                            }
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                        }
-
-                        if showStreak && gameVM.streakExtended {
-                            StreakFlameView(streak: gameVM.currentStreak, previousStreak: gameVM.previousStreak)
+                        if isBoss && passed && showMedal {
+                            Image(systemName: bossMedalIcon)
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundStyle(bossMedalColor)
+                                .offset(x: 44, y: -44)
                                 .transition(.scale.combined(with: .opacity))
                         }
+                    }
 
+                    VStack(spacing: 6) {
+                        Text(resultTitle)
+                            .font(AppTheme.funFont(.title2, weight: .heavy))
+
+                        Text(resultSubtitle)
+                            .font(AppTheme.funFont(.subheadline, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+
+                    if showDepthMeter {
+                        MasteryDepthMeterView(
+                            currentDepth: unlockState.masteryDepth10,
+                            previousDepth: previousDepth,
+                            unlockState: unlockState,
+                            milestones: milestones
+                        )
+                        .transition(.scale.combined(with: .opacity))
+                    }
+
+                    if showRewards {
                         HStack(spacing: 16) {
-                            StatBox(label: "Correct", value: "\(quizVM.correctCount)", color: AppTheme.successGreen)
-                            StatBox(label: "Wrong", value: "\(quizVM.wrongCount)", color: AppTheme.heartRed)
-                            StatBox(label: "Best Streak", value: "\(quizVM.maxConsecutive)", color: AppTheme.accentOrange)
+                            RewardItem(icon: "bolt.fill", value: "+\(xpValue)", label: "XP", color: AppTheme.primaryBlue)
+                            RewardItem(icon: "bitcoinsign.circle.fill", value: "+\(quizVM.coinsEarned)", label: "Coins", color: AppTheme.accentOrange)
                         }
-                        .padding(.horizontal)
-
-                        Spacer().frame(height: 10)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
-                    .padding(.horizontal)
-                }
 
-                if showConfetti && passed {
-                    ConfettiView()
-                        .ignoresSafeArea()
-                }
-
-                VStack {
-                    Spacer()
-                    VStack(spacing: 0) {
-                        Divider()
-                        Button {
-                            if passed {
-                                withAnimation { showBonusPage = true }
-                            } else {
-                                onDismiss()
+                    if showMilestones && !milestones.isEmpty {
+                        VStack(spacing: 8) {
+                            ForEach(milestones, id: \.rawValue) { milestone in
+                                MilestoneBanner(milestone: milestone)
                             }
-                        } label: {
-                            Text(passed ? "Continue" : "Try Again")
-                                .font(AppTheme.funFont(.headline, weight: .bold))
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(passed ? AppTheme.successGreen : AppTheme.primaryBlue)
-                                .clipShape(.rect(cornerRadius: 14))
                         }
-                        .padding(20)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
-                    .background(Color(.systemBackground))
+
+                    if showBonusSection && passed {
+                        bonusRewardsSection
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+
+                    Spacer().frame(height: 90)
                 }
+                .padding(.horizontal)
+            }
+
+            if showConfetti && passed {
+                ConfettiView()
+                    .ignoresSafeArea()
+            }
+
+            VStack {
+                Spacer()
+                VStack(spacing: 0) {
+                    Divider()
+                    bottomButton
+                        .padding(20)
+                }
+                .background(Color(.systemBackground))
             }
         }
         .onAppear {
@@ -212,10 +135,10 @@ struct QuizResultView: View {
                 withAnimation(.spring(duration: 0.5)) { showRewards = true }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-                withAnimation(.spring(duration: 0.6)) { showStreak = true }
+                withAnimation(.spring(duration: 0.5)) { showMilestones = true }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                withAnimation(.spring(duration: 0.5)) { showMilestones = true }
+                withAnimation(.spring(duration: 0.5)) { showBonusSection = true }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 showConfetti = true
@@ -225,6 +148,168 @@ struct QuizResultView: View {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.5)) { showMedal = true }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var bonusRewardsSection: some View {
+        if bonusAwarded {
+            VStack(spacing: 12) {
+                Image(systemName: "gift.fill")
+                    .font(.system(size: 36))
+                    .foregroundStyle(AppTheme.accentOrange)
+
+                Text(bonusMessage)
+                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.primary)
+            }
+            .padding(.vertical, 8)
+        } else {
+            VStack(spacing: 14) {
+                Text("Want bonus rewards?")
+                    .font(AppTheme.funFont(.headline, weight: .bold))
+
+                if gameVM.isProUser {
+                    Button {
+                        generateBonus()
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "gift.fill")
+                                .font(.title3)
+                            Text("Claim Bonus Rewards")
+                                .font(AppTheme.funFont(.headline, weight: .bold))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            LinearGradient(
+                                colors: [AppTheme.warningYellow, AppTheme.accentOrange],
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        )
+                        .clipShape(.rect(cornerRadius: 14))
+                    }
+
+                    Text("Pro members get free bonus rewards!")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(AppTheme.warningYellow)
+                } else {
+                    Button {
+                        isLoadingAd = true
+                        AdService.shared.showRewardedAd { rewarded in
+                            isLoadingAd = false
+                            if rewarded {
+                                generateBonus()
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 10) {
+                            if isLoadingAd {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: "play.circle.fill")
+                                    .font(.title3)
+                            }
+                            Text("Get Bonus Rewards")
+                                .font(AppTheme.funFont(.headline, weight: .bold))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            LinearGradient(
+                                colors: [AppTheme.warningYellow, AppTheme.accentOrange],
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        )
+                        .clipShape(.rect(cornerRadius: 14))
+                    }
+                    .disabled(isLoadingAd)
+
+                    Text("Watch a short ad for bonus gold, streak saves, or power-ups")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var bottomButton: some View {
+        if bonusAwarded || !passed || (showBonusSection && passed) {
+            if bonusAwarded {
+                Button {
+                    onDismiss()
+                } label: {
+                    Text("Continue")
+                        .font(AppTheme.funFont(.headline, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(AppTheme.successGreen)
+                        .clipShape(.rect(cornerRadius: 14))
+                }
+            } else if !passed {
+                Button {
+                    onDismiss()
+                } label: {
+                    Text("Try Again")
+                        .font(AppTheme.funFont(.headline, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(AppTheme.primaryBlue)
+                        .clipShape(.rect(cornerRadius: 14))
+                }
+            } else {
+                Button {
+                    onDismiss()
+                } label: {
+                    Text("Skip")
+                        .font(AppTheme.funFont(.subheadline, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+            }
+        }
+    }
+
+    private func generateBonus() {
+        if let powerUpType = PowerUpRewardGenerator.rollForPowerUp() {
+            let result = gameVM.awardPowerUpFromReward(powerUpType)
+            switch result {
+            case .added:
+                bonusMessage = "You earned a \(powerUpType.displayName) power-up!"
+            case .convertedToGold(let amount):
+                bonusMessage = "\(powerUpType.displayName) full - converted to \(amount) coins!"
+            case .suggestEnhancement(let type):
+                bonusMessage = "\(type.displayName) is full! Upgrade capacity in the Shop."
+            case .suggestPro:
+                bonusMessage = "Power-up inventory full! Go Pro for +1 capacity."
+            case .lost:
+                bonusMessage = "\(powerUpType.displayName) inventory full."
+            }
+        } else {
+            let roll = Int.random(in: 1...100)
+            if roll <= 15 && gameVM.streakSaves < 3 {
+                gameVM.streakSaves += 1
+                gameVM.save()
+                bonusMessage = "You earned a Streak Save!"
+            } else if roll <= 50 {
+                gameVM.earnCoins(25)
+                bonusMessage = "You earned 25 bonus coins!"
+            } else {
+                gameVM.earnCoins(15)
+                bonusMessage = "You earned 15 bonus coins!"
+            }
+        }
+        withAnimation(.spring(duration: 0.5)) {
+            bonusAwarded = true
         }
     }
 

@@ -15,6 +15,9 @@ struct MasteryDepthMeterView: View {
     private let markerDiameter: CGFloat = 26
 
     private var depthIncreased: Bool { currentDepth > previousDepth }
+    private var minimumVisualFraction: CGFloat {
+        currentDepth == 0 && previousDepth == 0 ? 0.06 : 0
+    }
 
     private struct MilestoneMarker {
         let normalizedPosition: CGFloat
@@ -221,18 +224,12 @@ struct MasteryDepthMeterView: View {
 
         if currentDepth == 0 {
             DispatchQueue.main.asyncAfter(deadline: .now() + startDelay) {
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
-                    animatedFraction = 0.02
+                withAnimation(.spring(response: 0.8, dampingFraction: 0.72)) {
+                    animatedFraction = minimumVisualFraction
                 }
             }
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + startDelay + 0.5) {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                    animatedFraction = 0
-                }
-            }
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + startDelay + 0.8) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + startDelay + 0.6) {
                 withAnimation(.spring(duration: 0.4)) { showLabel = true }
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) { showMilestoneLabels = true }
             }
