@@ -76,24 +76,13 @@ struct QuizResultView: View {
                                 .multilineTextAlignment(.center)
                         }
 
-                        if showDepthMeter && passed && unlockState.totalDrugs > 0 {
+                        if showDepthMeter {
                             MasteryDepthMeterView(
                                 currentDepth: unlockState.masteryDepth10,
                                 previousDepth: previousDepth,
                                 unlockState: unlockState,
                                 milestones: milestones
                             )
-                            .transition(.scale.combined(with: .opacity))
-                        } else if showDepthMeter && passed {
-                            let stars = gameVM.starsFor(quizVM.subsectionId)
-                            HStack(spacing: 6) {
-                                ForEach(0..<5, id: \.self) { i in
-                                    Image(systemName: i < stars ? "star.fill" : "star")
-                                        .font(.title2)
-                                        .foregroundStyle(i < stars ? AppTheme.warningYellow : Color(.tertiaryLabel))
-                                        .scaleEffect(i < stars ? 1.1 : 1.0)
-                                }
-                            }
                             .transition(.scale.combined(with: .opacity))
                         }
 
