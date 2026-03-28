@@ -945,42 +945,36 @@ ALTER TABLE duo_activity_feed ENABLE ROW LEVEL SECURITY;
 ALTER TABLE duo_reward_claims ENABLE ROW LEVEL SECURITY;
 ALTER TABLE referrals ENABLE ROW LEVEL SECURITY;
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'duo_daily_progress_user_access') THEN
-    CREATE POLICY duo_daily_progress_user_access ON duo_daily_progress FOR ALL
-    USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid() OR partner_id = auth.uid()));
-  END IF;
+-- Fix: cast auth.uid() to text since duo_partnerships.user_id/partner_id are text columns
+DO $ BEGIN
+  DROP POLICY IF EXISTS duo_daily_progress_user_access ON duo_daily_progress;
+  CREATE POLICY duo_daily_progress_user_access ON duo_daily_progress FOR ALL
+  USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid()::text OR partner_id = auth.uid()::text));
 
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'duo_daily_missions_user_access') THEN
-    CREATE POLICY duo_daily_missions_user_access ON duo_daily_missions FOR ALL
-    USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid() OR partner_id = auth.uid()));
-  END IF;
+  DROP POLICY IF EXISTS duo_daily_missions_user_access ON duo_daily_missions;
+  CREATE POLICY duo_daily_missions_user_access ON duo_daily_missions FOR ALL
+  USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid()::text OR partner_id = auth.uid()::text));
 
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'duo_weekly_raids_user_access') THEN
-    CREATE POLICY duo_weekly_raids_user_access ON duo_weekly_raids FOR ALL
-    USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid() OR partner_id = auth.uid()));
-  END IF;
+  DROP POLICY IF EXISTS duo_weekly_raids_user_access ON duo_weekly_raids;
+  CREATE POLICY duo_weekly_raids_user_access ON duo_weekly_raids FOR ALL
+  USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid()::text OR partner_id = auth.uid()::text));
 
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'duo_milestone_claims_user_access') THEN
-    CREATE POLICY duo_milestone_claims_user_access ON duo_milestone_claims FOR ALL
-    USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid() OR partner_id = auth.uid()));
-  END IF;
+  DROP POLICY IF EXISTS duo_milestone_claims_user_access ON duo_milestone_claims;
+  CREATE POLICY duo_milestone_claims_user_access ON duo_milestone_claims FOR ALL
+  USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid()::text OR partner_id = auth.uid()::text));
 
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'duo_activity_feed_user_access') THEN
-    CREATE POLICY duo_activity_feed_user_access ON duo_activity_feed FOR ALL
-    USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid() OR partner_id = auth.uid()));
-  END IF;
+  DROP POLICY IF EXISTS duo_activity_feed_user_access ON duo_activity_feed;
+  CREATE POLICY duo_activity_feed_user_access ON duo_activity_feed FOR ALL
+  USING (partnership_id IN (SELECT id FROM duo_partnerships WHERE user_id = auth.uid()::text OR partner_id = auth.uid()::text));
 
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'duo_reward_claims_user_access') THEN
-    CREATE POLICY duo_reward_claims_user_access ON duo_reward_claims FOR ALL
-    USING (user_id = auth.uid());
-  END IF;
+  DROP POLICY IF EXISTS duo_reward_claims_user_access ON duo_reward_claims;
+  CREATE POLICY duo_reward_claims_user_access ON duo_reward_claims FOR ALL
+  USING (user_id = auth.uid());
 
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'referrals_user_access') THEN
-    CREATE POLICY referrals_user_access ON referrals FOR ALL
-    USING (referrer_user_id = auth.uid() OR referred_user_id = auth.uid());
-  END IF;
-END $$;
+  DROP POLICY IF EXISTS referrals_user_access ON referrals;
+  CREATE POLICY referrals_user_access ON referrals FOR ALL
+  USING (referrer_user_id = auth.uid() OR referred_user_id = auth.uid());
+END $;
 
 -- Keep backward compat: ensure old RPCs still work for existing weekly quests
 -- The fetch_duo_partnership and fetch_duo_weekly_quests RPCs remain unchanged
