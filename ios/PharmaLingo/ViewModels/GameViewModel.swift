@@ -308,6 +308,7 @@ class GameViewModel {
         for qid in questionIds { existing.insert(qid) }
         seenQuestionIdsBySubsection[subsectionId] = existing
         save()
+        syncProgressToCloud()
     }
 
     func unlockState(for subsection: Subsection) -> SubsectionUnlockState {
@@ -344,7 +345,10 @@ class GameViewModel {
         for m in milestones {
             shownMilestoneFlags.insert("\(subsection.id)_\(m.rawValue)")
         }
-        if !milestones.isEmpty { save() }
+        if !milestones.isEmpty {
+            save()
+            syncProgressToCloud()
+        }
         return milestones
     }
 
@@ -866,6 +870,13 @@ class GameViewModel {
         }
     }
 
+    func syncProgressToCloud() {
+        guard hasLoadedFromCloud else { return }
+        Task {
+            await SupabaseService.shared.syncGameState(from: self)
+        }
+    }
+
     func syncMasteryToCloud() {
         guard hasLoadedFromCloud else { return }
         let records: [[String: Any]] = masteryMap.map { key, record in
@@ -1125,6 +1136,14 @@ class GameViewModel {
         masteryMap.filter { $0.value.nextDueDate <= now }.map(\.key)
     }
 
+    private func loadLocalProgressData() {
+        guard let state = UserDefaults.standard.dictionary(forKey: userDefaultsKey) else { return }
+        if let seenData = state["seenQuestionIdsBySubsection"] as? [String: [String]] {
+            seenQuestionIdsBySubsection = seenData.mapValues { Set($0) }
+        }
+        shownMilestoneFlags = Set(state["shownMilestoneFlags"] as? [String] ?? [])
+    }
+
     private func saveMastery() {
         let encoded = masteryMap.mapValues { $0.toDictionary() }
         UserDefaults.standard.set(encoded, forKey: masteryDefaultsKey)
@@ -1353,6 +1372,20 @@ class GameViewModel {
             streakSaveDates = Set(arr)
         }
 
+        if let data = profile.seenQuestionIds.data(using: .utf8),
+           let dict = try? decoder2.decode([String: [String]].self, from: data), !dict.isEmpty {
+            let cloudSeen = dict.mapValues { Set($0) }
+            for (key, cloudSet) in cloudSeen {
+                let existing = seenQuestionIdsBySubsection[key] ?? []
+                seenQuestionIdsBySubsection[key] = existing.union(cloudSet)
+            }
+        }
+
+        if let data = profile.shownMilestoneFlags.data(using: .utf8),
+           let arr = try? decoder2.decode([String].self, from: data), !arr.isEmpty {
+            shownMilestoneFlags = shownMilestoneFlags.union(Set(arr))
+        }
+
         save()
     }
 
@@ -1419,6 +1452,8 @@ class GameViewModel {
 
     func loadFromProfile(_ profile: UserProfile) {
         currentUserId = profile.id
+
+        loadLocalProgressData()
 
         hydrateFromProfile(profile)
         hasLoadedFromCloud = true

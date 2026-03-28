@@ -35,6 +35,8 @@ nonisolated struct UserProfile: Codable, Sendable {
     var clinicalAuraPoints: Int
     var activityDates: String
     var streakSaveDates: String
+    var seenQuestionIds: String
+    var shownMilestoneFlags: String
     var createdAt: String?
     var updatedAt: String?
 
@@ -68,6 +70,8 @@ nonisolated struct UserProfile: Codable, Sendable {
         case clinicalAuraPoints = "clinical_aura_points"
         case activityDates = "activity_dates"
         case streakSaveDates = "streak_save_dates"
+        case seenQuestionIds = "seen_question_ids"
+        case shownMilestoneFlags = "shown_milestone_flags"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
@@ -107,11 +111,13 @@ nonisolated struct UserProfile: Codable, Sendable {
         clinicalAuraPoints = (try? container.decode(Int.self, forKey: .clinicalAuraPoints)) ?? 0
         activityDates = (try? container.decode(String.self, forKey: .activityDates)) ?? "[]"
         streakSaveDates = (try? container.decode(String.self, forKey: .streakSaveDates)) ?? "[]"
+        seenQuestionIds = (try? container.decode(String.self, forKey: .seenQuestionIds)) ?? "{}"
+        shownMilestoneFlags = (try? container.decode(String.self, forKey: .shownMilestoneFlags)) ?? "[]"
         createdAt = try? container.decode(String.self, forKey: .createdAt)
         updatedAt = try? container.decode(String.self, forKey: .updatedAt)
     }
 
-    init(id: String, username: String, profession: String, school: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, totalXP: Int, coins: Int, currentStreak: Int, streakSaves: Int, hearts: Int, level: Int, weeklyXP: Int, monthlyXP: Int, completedSubsections: String, subsectionStars: String, hasSeenLearning: String, questionsAnswered: Int, questionsCorrect: Int, lastActiveDate: String?, lastHeartLossDate: String?, ownedAvatars: String, ownedEyes: String, ownedMouths: String, ownedAccessories: String, professionDonations: Int, clinicalAuraPoints: Int, activityDates: String = "[]", streakSaveDates: String = "[]", createdAt: String?, updatedAt: String?) {
+    init(id: String, username: String, profession: String, school: String, avatarAnimal: String, avatarEyes: String, avatarMouth: String, avatarAccessory: String, avatarBodyColor: String, avatarBgColor: String, totalXP: Int, coins: Int, currentStreak: Int, streakSaves: Int, hearts: Int, level: Int, weeklyXP: Int, monthlyXP: Int, completedSubsections: String, subsectionStars: String, hasSeenLearning: String, questionsAnswered: Int, questionsCorrect: Int, lastActiveDate: String?, lastHeartLossDate: String?, ownedAvatars: String, ownedEyes: String, ownedMouths: String, ownedAccessories: String, professionDonations: Int, clinicalAuraPoints: Int, activityDates: String = "[]", streakSaveDates: String = "[]", seenQuestionIds: String = "{}", shownMilestoneFlags: String = "[]", createdAt: String?, updatedAt: String?) {
         self.id = id
         self.username = username
         self.profession = profession
@@ -145,6 +151,8 @@ nonisolated struct UserProfile: Codable, Sendable {
         self.clinicalAuraPoints = clinicalAuraPoints
         self.activityDates = activityDates
         self.streakSaveDates = streakSaveDates
+        self.seenQuestionIds = seenQuestionIds
+        self.shownMilestoneFlags = shownMilestoneFlags
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -320,6 +328,8 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
     let clinicalAuraPoints: Int
     let activityDates: String
     let streakSaveDates: String
+    let seenQuestionIds: String
+    let shownMilestoneFlags: String
 
     enum CodingKeys: String, CodingKey {
         case username, profession, school
@@ -355,6 +365,8 @@ nonisolated struct ProfileUpdateData: Encodable, Sendable {
         case clinicalAuraPoints = "clinical_aura_points"
         case activityDates = "activity_dates"
         case streakSaveDates = "streak_save_dates"
+        case seenQuestionIds = "seen_question_ids"
+        case shownMilestoneFlags = "shown_milestone_flags"
     }
 }
 
@@ -390,6 +402,8 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
     let clinicalAuraPoints: Int = 0
     let activityDates: String = "[]"
     let streakSaveDates: String = "[]"
+    let seenQuestionIds: String = "{}"
+    let shownMilestoneFlags: String = "[]"
 
     enum CodingKeys: String, CodingKey {
         case id, username, profession, school
@@ -419,6 +433,8 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
         case clinicalAuraPoints = "clinical_aura_points"
         case activityDates = "activity_dates"
         case streakSaveDates = "streak_save_dates"
+        case seenQuestionIds = "seen_question_ids"
+        case shownMilestoneFlags = "shown_milestone_flags"
     }
 }
 
@@ -572,7 +588,9 @@ class SupabaseService {
             professionDonations: profile.professionDonations,
             clinicalAuraPoints: profile.clinicalAuraPoints,
             activityDates: profile.activityDates,
-            streakSaveDates: profile.streakSaveDates
+            streakSaveDates: profile.streakSaveDates,
+            seenQuestionIds: profile.seenQuestionIds,
+            shownMilestoneFlags: profile.shownMilestoneFlags
         )
         do {
             try await client.from("profiles")
@@ -928,6 +946,9 @@ class SupabaseService {
         let ownedAccessoriesData = (try? encoder.encode(Array(gameVM.ownedAccessories))) ?? Data()
         let activityDatesData = (try? encoder.encode(Array(gameVM.activityDates))) ?? Data()
         let streakSaveDatesData = (try? encoder.encode(Array(gameVM.streakSaveDates))) ?? Data()
+        let seenQidsMap = gameVM.seenQuestionIdsBySubsection.mapValues { Array($0) }
+        let seenQidsData = (try? encoder.encode(seenQidsMap)) ?? Data()
+        let milestoneData = (try? encoder.encode(Array(gameVM.shownMilestoneFlags))) ?? Data()
 
         let isoFormatter = ISO8601DateFormatter()
         isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -974,7 +995,9 @@ class SupabaseService {
             professionDonations: profile.professionDonations,
             clinicalAuraPoints: gameVM.clinicalAuraPoints,
             activityDates: String(data: activityDatesData, encoding: .utf8) ?? "[]",
-            streakSaveDates: String(data: streakSaveDatesData, encoding: .utf8) ?? "[]"
+            streakSaveDates: String(data: streakSaveDatesData, encoding: .utf8) ?? "[]",
+            seenQuestionIds: String(data: seenQidsData, encoding: .utf8) ?? "{}",
+            shownMilestoneFlags: String(data: milestoneData, encoding: .utf8) ?? "[]"
         )
 
         do {
