@@ -271,6 +271,38 @@ nonisolated enum SupabaseServiceError: Error, LocalizedError, Sendable {
     }
 }
 
+nonisolated struct SchoolXPRow: Codable, Sendable {
+    let school: String
+    let monthlyXP: Int
+
+    enum CodingKeys: String, CodingKey {
+        case school
+        case monthlyXP = "monthly_xp"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        school = (try? c.decode(String.self, forKey: .school)) ?? ""
+        monthlyXP = (try? c.decode(Int.self, forKey: .monthlyXP)) ?? 0
+    }
+}
+
+nonisolated struct ProfessionDonationRow: Codable, Sendable {
+    let profession: String
+    let professionDonations: Int
+
+    enum CodingKeys: String, CodingKey {
+        case profession
+        case professionDonations = "profession_donations"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        profession = (try? c.decode(String.self, forKey: .profession)) ?? ""
+        professionDonations = (try? c.decode(Int.self, forKey: .professionDonations)) ?? 0
+    }
+}
+
 nonisolated struct SchoolRanking: Codable, Sendable {
     let school: String
     let totalXP: Int
@@ -288,6 +320,17 @@ nonisolated struct ProfessionRanking: Codable, Sendable {
     enum CodingKeys: String, CodingKey {
         case profession
         case totalDonations = "total_donations"
+    }
+
+    init(profession: String, totalDonations: Int) {
+        self.profession = profession
+        self.totalDonations = totalDonations
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        profession = (try? c.decode(String.self, forKey: .profession)) ?? ""
+        totalDonations = (try? c.decode(Int.self, forKey: .totalDonations)) ?? 0
     }
 }
 
@@ -1116,14 +1159,12 @@ class SupabaseService {
             if let idx = allProfiles.firstIndex(where: { $0.id == userId }) {
                 myRank = idx + 1
             } else {
-                let countResult: [AllTimeLeaderboardRecord] = try await client.from("profiles")
-                    .select("id,username,avatar_animal,avatar_eyes,avatar_mouth,avatar_accessory,avatar_body_color,avatar_bg_color,total_xp,current_streak,level,clinical_aura_points")
-                    .order("total_xp", ascending: false)
+                let countData = try await client.from("profiles")
+                    .select("id", head: false, count: .exact)
+                    .gt("total_xp", value: allProfiles.last?.totalXP ?? 0)
                     .execute()
-                    .value
-                if let idx = countResult.firstIndex(where: { $0.id == userId }) {
-                    myRank = idx + 1
-                }
+                let totalAbove = countData.count ?? allProfiles.count
+                myRank = totalAbove + 1
             }
 
             return (allProfiles, myRank)
@@ -1357,16 +1398,16 @@ class SupabaseService {
 
     func fetchSchoolRankings() async -> [SchoolRanking] {
         do {
-            let profiles: [UserProfile] = try await client.from("profiles")
-                .select()
+            let rows: [SchoolXPRow] = try await client.from("profiles")
+                .select("school,monthly_xp")
                 .neq("school", value: "")
                 .execute()
                 .value
 
             var schoolXP: [String: Int] = [:]
-            for profile in profiles {
-                guard !profile.school.isEmpty else { continue }
-                schoolXP[profile.school, default: 0] += profile.monthlyXP
+            for row in rows {
+                guard !row.school.isEmpty else { continue }
+                schoolXP[row.school, default: 0] += row.monthlyXP
             }
 
             return schoolXP.map { SchoolRanking(school: $0.key, totalXP: $0.value) }
@@ -1393,15 +1434,17 @@ class SupabaseService {
 
     private func fetchProfessionRankingsFallback() async -> [ProfessionRanking] {
         do {
-            let profiles: [UserProfile] = try await client.from("profiles")
-                .select()
+            let rows: [ProfessionDonationRow] = try await client.from("profiles")
+                .select("profession,profession_donations")
+                .neq("profession", value: "")
+                .gt("profession_donations", value: 0)
                 .execute()
                 .value
 
             var profDonations: [String: Int] = [:]
-            for profile in profiles {
-                guard !profile.profession.isEmpty, profile.professionDonations > 0 else { continue }
-                profDonations[profile.profession, default: 0] += profile.professionDonations
+            for row in rows {
+                guard !row.profession.isEmpty, row.professionDonations > 0 else { continue }
+                profDonations[row.profession, default: 0] += row.professionDonations
             }
 
             return profDonations.map { ProfessionRanking(profession: $0.key, totalDonations: $0.value) }

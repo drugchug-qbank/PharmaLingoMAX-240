@@ -16,11 +16,15 @@ struct OnboardingView: View {
     @State private var schoolSearch: String = ""
     @State private var selectedSchool: String = ""
 
-    @State private var selectedAnimal: AnimalType = .beaver
+    @State private var selectedAnimal: AnimalType = .bear
     @State private var selectedEyes: EyeStyle = .normal
     @State private var selectedMouth: MouthStyle = .smile
     @State private var selectedAccessory: AccessoryType = .none
-    @State private var selectedBodyColor: String = AnimalType.beaver.defaultColorHex
+
+    private let starterAnimals: [AnimalType] = [.bear, .cat, .dog]
+    private let starterEyes: [EyeStyle] = [.normal, .happy, .big, .sleepy]
+    private let starterMouths: [MouthStyle] = [.smile, .bigSmile, .tongue, .tiny]
+    @State private var selectedBodyColor: String = AnimalType.bear.defaultColorHex
     @State private var selectedBgColor: String = "E3F2FD"
 
     @State private var isLoading: Bool = false
@@ -455,7 +459,7 @@ struct OnboardingView: View {
                     avatarSection(title: "Choose Your Animal") {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 10) {
-                                ForEach(AnimalType.allCases, id: \.self) { animal in
+                                ForEach(starterAnimals, id: \.self) { animal in
                                     Button {
                                         withAnimation(.spring(duration: 0.3)) {
                                             selectedAnimal = animal
@@ -497,22 +501,15 @@ struct OnboardingView: View {
                     }
 
                     avatarSection(title: "Eyes") {
-                        avatarChipScroll(items: EyeStyle.allCases, selected: selectedEyes, label: \.displayName) { eye in
+                        avatarChipScroll(items: starterEyes, selected: selectedEyes, label: \.displayName) { eye in
                             withAnimation(.spring(duration: 0.3)) { selectedEyes = eye }
                             triggerAvatarBounce()
                         }
                     }
 
                     avatarSection(title: "Mouth") {
-                        avatarChipScroll(items: MouthStyle.allCases, selected: selectedMouth, label: \.displayName) { mouth in
+                        avatarChipScroll(items: starterMouths, selected: selectedMouth, label: \.displayName) { mouth in
                             withAnimation(.spring(duration: 0.3)) { selectedMouth = mouth }
-                            triggerAvatarBounce()
-                        }
-                    }
-
-                    avatarSection(title: "Accessory") {
-                        avatarChipScroll(items: AccessoryType.allCases, selected: selectedAccessory, label: \.displayName) { acc in
-                            withAnimation(.spring(duration: 0.3)) { selectedAccessory = acc }
                             triggerAvatarBounce()
                         }
                     }
@@ -567,9 +564,14 @@ struct OnboardingView: View {
                         .contentMargins(.horizontal, 24)
                     }
 
-                    Text("You can customize even more later!")
-                        .font(AppTheme.funFont(.caption, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.5))
+                    HStack(spacing: 6) {
+                        Image(systemName: "lock.fill")
+                            .font(.caption2)
+                        Text("Unlock more avatars, eyes, mouths & accessories with earned coins!")
+                    }
+                    .font(AppTheme.funFont(.caption, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .padding(.horizontal, 24)
 
                     Spacer().frame(height: 80)
                 }

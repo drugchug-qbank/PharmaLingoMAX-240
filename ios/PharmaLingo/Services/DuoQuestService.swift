@@ -85,15 +85,23 @@ class DuoQuestService {
         }
     }
 
+    var lastInviteError: String?
+
     func sendDuoInvite(toFriendId: String) async -> Bool {
+        lastInviteError = nil
         do {
             let resultData = try await supabase.client.rpc("send_duo_invite", params: [
                 "p_partner_id": toFriendId
             ]).execute().data
             let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
-            return json?["success"] as? Bool ?? false
+            let success = json?["success"] as? Bool ?? false
+            if !success {
+                lastInviteError = json?["error"] as? String
+            }
+            return success
         } catch {
             print("Failed to send duo invite: \(error)")
+            lastInviteError = error.localizedDescription
             return false
         }
     }

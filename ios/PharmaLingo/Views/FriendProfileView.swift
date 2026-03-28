@@ -245,7 +245,8 @@ struct FriendProfileView: View {
                         if success {
                             duoInviteStatus = .sent
                         } else {
-                            duoInviteStatus = .error("Could not send invite. They may already have a partner.")
+                            let errorMsg = duoService.lastInviteError ?? "Could not send invite."
+                            duoInviteStatus = .error(errorMsg)
                         }
                         isSendingDuoInvite = false
                     }
@@ -317,8 +318,8 @@ struct FriendProfileView: View {
         VStack(alignment: .leading, spacing: 12) {
             FunSectionHeader(icon: "chart.line.uptrend.xyaxis", title: "XP Comparison", color: AppTheme.successGreen)
 
-            let myDailyXP = estimateDailyXP(totalXP: gameVM.totalXP)
-            let friendDailyXP = estimateDailyXP(totalXP: friend.totalXP)
+            let myWeeklyXP = gameVM.weeklyXP
+            let friendWeeklyXP = friend.weeklyXP
             let days = last7DayLabels()
 
             VStack(spacing: 8) {
@@ -336,52 +337,60 @@ struct FriendProfileView: View {
                     Spacer()
                 }
 
-                HStack(alignment: .bottom, spacing: 6) {
-                    ForEach(0..<7, id: \.self) { i in
-                        VStack(spacing: 4) {
-                            HStack(alignment: .bottom, spacing: 2) {
-                                let myH = barHeight(xp: myDailyXP[i], maxXP: max((myDailyXP + friendDailyXP).max() ?? 1, 1))
-                                let friendH = barHeight(xp: friendDailyXP[i], maxXP: max((myDailyXP + friendDailyXP).max() ?? 1, 1))
+                VStack(spacing: 6) {
+                    HStack(spacing: 0) {
+                        let myBarWidth = max(CGFloat(myWeeklyXP) / max(CGFloat(myWeeklyXP + friendWeeklyXP), 1) * 1.0, 0.05)
+                        let friendBarWidth = max(CGFloat(friendWeeklyXP) / max(CGFloat(myWeeklyXP + friendWeeklyXP), 1) * 1.0, 0.05)
 
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(AppTheme.primaryBlue)
-                                    .frame(width: 12, height: max(myH, 4))
-
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(AppTheme.accentOrange)
-                                    .frame(width: 12, height: max(friendH, 4))
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(AppTheme.primaryBlue)
+                            .frame(height: 28)
+                            .frame(maxWidth: .infinity)
+                            .scaleEffect(x: myBarWidth, anchor: .leading)
+                            .overlay(alignment: .center) {
+                                if myWeeklyXP > 0 {
+                                    Text("\(myWeeklyXP)")
+                                        .font(AppTheme.funFont(.caption2, weight: .heavy))
+                                        .foregroundStyle(.white)
+                                }
                             }
-                            .frame(height: 80, alignment: .bottom)
 
-                            VStack(spacing: 1) {
-                                Text(days[i].day)
-                                    .font(AppTheme.funFont(.caption2, weight: .medium))
-                                    .foregroundStyle(.secondary)
-                                Text(days[i].date)
-                                    .font(.system(size: 9, weight: .medium, design: .rounded))
-                                    .foregroundStyle(.tertiary)
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(AppTheme.accentOrange)
+                            .frame(height: 28)
+                            .frame(maxWidth: .infinity)
+                            .scaleEffect(x: friendBarWidth, anchor: .trailing)
+                            .overlay(alignment: .center) {
+                                if friendWeeklyXP > 0 {
+                                    Text("\(friendWeeklyXP)")
+                                        .font(AppTheme.funFont(.caption2, weight: .heavy))
+                                        .foregroundStyle(.white)
+                                }
                             }
-                        }
-                        .frame(maxWidth: .infinity)
                     }
+
+                    Text("Weekly XP Comparison")
+                        .font(AppTheme.funFont(.caption2, weight: .medium))
+                        .foregroundStyle(.tertiary)
                 }
+                .padding(.vertical, 8)
             }
 
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Your Total")
+                    Text("Your Weekly")
                         .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.secondary)
-                    Text("\(gameVM.totalXP) XP")
+                    Text("\(myWeeklyXP) XP")
                         .font(AppTheme.funFont(.headline, weight: .heavy))
                         .foregroundStyle(AppTheme.primaryBlue)
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("\(friend.username)'s Total")
+                    Text("\(friend.username)'s Weekly")
                         .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.secondary)
-                    Text("\(friend.totalXP) XP")
+                    Text("\(friendWeeklyXP) XP")
                         .font(AppTheme.funFont(.headline, weight: .heavy))
                         .foregroundStyle(AppTheme.accentOrange)
                 }
@@ -501,14 +510,6 @@ struct FriendProfileView: View {
         .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.3))
     }
 
-    private func estimateDailyXP(totalXP: Int) -> [Int] {
-        let base = totalXP / 14
-        return (0..<7).map { i in
-            let variance = ((i * 37 + totalXP) % 5) * (base / 4 + 1)
-            return max(base + variance - (base / 2), 0)
-        }
-    }
-
     private func last7DayLabels() -> [(day: String, date: String)] {
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "EEE"
@@ -518,10 +519,5 @@ struct FriendProfileView: View {
             let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: Date()) ?? Date()
             return (dayFormatter.string(from: date), dateFormatter.string(from: date))
         }
-    }
-
-    private func barHeight(xp: Int, maxXP: Int) -> CGFloat {
-        guard maxXP > 0 else { return 4 }
-        return CGFloat(xp) / CGFloat(maxXP) * 70
     }
 }
