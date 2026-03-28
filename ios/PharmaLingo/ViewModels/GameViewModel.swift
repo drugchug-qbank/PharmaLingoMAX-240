@@ -511,7 +511,7 @@ class GameViewModel {
 
         save()
 
-        reportDuoProgress(questionsAnswered: totalCount, xpEarned: finalXP, perfectQuiz: score >= 1.0)
+        reportDuoProgress(questionsAnswered: totalCount, xpEarned: finalXP, perfectQuiz: score >= 1.0, scorePct: Int(score * 100))
 
         if hasLoadedFromCloud {
             Task {
@@ -598,7 +598,7 @@ class GameViewModel {
 
         save()
 
-        reportDuoProgress(questionsAnswered: totalCount, xpEarned: finalXP, perfectQuiz: score >= 1.0, lessonCompleted: score >= 0.8)
+        reportDuoProgress(questionsAnswered: totalCount, xpEarned: finalXP, perfectQuiz: score >= 1.0, lessonCompleted: score >= 0.8, scorePct: Int(score * 100))
 
         let idempotencyKey = "\(subsectionId)_\(Int(Date().timeIntervalSince1970 * 1000))"
         Task {
@@ -649,6 +649,7 @@ class GameViewModel {
             }
         }
         save()
+        reportDuoProgress(isBrandBlitz: true)
     }
 
     func recordPracticeComplete() {
@@ -1396,10 +1397,20 @@ class GameViewModel {
 
     private var professionDonationsFromProfile: Int = 0
 
-    func reportDuoProgress(questionsAnswered: Int = 0, xpEarned: Int = 0, perfectQuiz: Bool = false, lessonCompleted: Bool = false) {
+    func reportDuoProgress(questionsAnswered: Int = 0, xpEarned: Int = 0, perfectQuiz: Bool = false, lessonCompleted: Bool = false, scorePct: Int = 0, isBrandBlitz: Bool = false) {
         let duo = DuoQuestService.shared
-        guard duo.currentPartnership != nil else { return }
+        guard duo.currentPartnership != nil || duo.dashboard.hasPartner else { return }
         Task {
+            _ = await duo.reportDuoEvent(
+                eventType: "study_complete",
+                xpAmount: xpEarned,
+                questionCount: questionsAnswered,
+                scorePct: scorePct,
+                isBrandBlitz: isBrandBlitz,
+                isLesson: lessonCompleted,
+                isPerfect: perfectQuiz
+            )
+
             if questionsAnswered > 0 {
                 await duo.reportDuoProgress(questType: "questions", amount: questionsAnswered)
             }
