@@ -8,6 +8,7 @@ struct QuizResultView: View {
     var previousDepth: Int = 0
     let onDismiss: () -> Void
 
+    @State private var currentPage: ResultPage = .mastery
     @State private var animateScore: Bool = false
     @State private var showDepthMeter: Bool = false
     @State private var showRewards: Bool = false
@@ -15,9 +16,15 @@ struct QuizResultView: View {
     @State private var showMedal: Bool = false
     @State private var showMilestones: Bool = false
     @State private var showBonusSection: Bool = false
+    @State private var showBestStreak: Bool = false
     @State private var isLoadingAd: Bool = false
     @State private var bonusAwarded: Bool = false
     @State private var bonusMessage: String = ""
+
+    private enum ResultPage {
+        case mastery
+        case streak
+    }
 
     private var passed: Bool { quizVM.score >= 0.8 }
     private var perfect: Bool { quizVM.score == 1.0 }
@@ -28,6 +35,21 @@ struct QuizResultView: View {
     }
 
     var body: some View {
+        switch currentPage {
+        case .mastery:
+            masteryPage
+        case .streak:
+            StreakCelebrationView(
+                currentStreak: gameVM.currentStreak,
+                previousStreak: gameVM.previousStreak,
+                activityDates: gameVM.activityDates,
+                onContinue: { onDismiss() }
+            )
+            .transition(.move(edge: .trailing).combined(with: .opacity))
+        }
+    }
+
+    private var masteryPage: some View {
         ZStack {
             ScrollView {
                 VStack(spacing: 20) {
@@ -72,6 +94,11 @@ struct QuizResultView: View {
                             .font(AppTheme.funFont(.subheadline, weight: .medium))
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
+                    }
+
+                    if showBestStreak && quizVM.maxConsecutive > 0 {
+                        bestStreakBadge
+                            .transition(.scale.combined(with: .opacity))
                     }
 
                     if showDepthMeter {
@@ -128,6 +155,9 @@ struct QuizResultView: View {
         }
         .onAppear {
             animateScore = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation(.spring(duration: 0.4)) { showBestStreak = true }
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 withAnimation(.spring(duration: 0.5)) { showDepthMeter = true }
             }
@@ -149,6 +179,47 @@ struct QuizResultView: View {
                 }
             }
         }
+    }
+
+    private var bestStreakBadge: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "flame.fill")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [AppTheme.warningYellow, AppTheme.accentOrange],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Best Streak")
+                    .font(.system(size: 11, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.secondary)
+                Text("\(quizVM.maxConsecutive) in a row")
+                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    .foregroundStyle(AppTheme.accentOrange)
+            }
+
+            Spacer()
+
+            if quizVM.maxConsecutive >= 5 {
+                Text("🔥")
+                    .font(.system(size: 22))
+            } else if quizVM.maxConsecutive >= 3 {
+                Text("⚡")
+                    .font(.system(size: 22))
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(AppTheme.accentOrange.opacity(0.08))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .strokeBorder(AppTheme.accentOrange.opacity(0.2), lineWidth: 1.5)
+        )
+        .clipShape(.rect(cornerRadius: 14))
     }
 
     @ViewBuilder
@@ -243,7 +314,7 @@ struct QuizResultView: View {
         if bonusAwarded || !passed || (showBonusSection && passed) {
             if bonusAwarded {
                 Button {
-                    onDismiss()
+                    goToStreakPage()
                 } label: {
                     Text("Continue")
                         .font(AppTheme.funFont(.headline, weight: .bold))
@@ -267,7 +338,7 @@ struct QuizResultView: View {
                 }
             } else {
                 Button {
-                    onDismiss()
+                    goToStreakPage()
                 } label: {
                     Text("Skip")
                         .font(AppTheme.funFont(.subheadline, weight: .semibold))
@@ -276,6 +347,12 @@ struct QuizResultView: View {
                         .padding(.vertical, 12)
                 }
             }
+        }
+    }
+
+    private func goToStreakPage() {
+        withAnimation(.spring(duration: 0.4)) {
+            currentPage = .streak
         }
     }
 
