@@ -1664,6 +1664,32 @@ class SupabaseService {
         }
     }
 
+    func upsertDailyXP(amount: Int) async {
+        guard amount > 0 else { return }
+        do {
+            try await client.rpc("upsert_daily_xp", params: [
+                "p_xp_amount": AnyEncodableValue.int(amount),
+            ]).execute()
+        } catch {
+            print("RPC upsert_daily_xp failed: \(error)")
+        }
+    }
+
+    func fetchDailyXP(userId: String, days: Int = 7) async -> [DailyXPRecord] {
+        do {
+            let resultData = try await client.rpc("get_daily_xp", params: [
+                "p_user_id": AnyEncodableValue.string(userId),
+                "p_days": AnyEncodableValue.int(days),
+            ]).execute().data
+            let decoder = JSONDecoder()
+            let records = try decoder.decode([DailyXPRecord].self, from: resultData)
+            return records
+        } catch {
+            print("RPC get_daily_xp failed: \(error)")
+            return []
+        }
+    }
+
     func searchUsers(query: String) async -> [LeaderboardRecord] {
         guard let userId = currentUser?.id.uuidString.lowercased() else { return [] }
         let trimmed = query.trimmingCharacters(in: .whitespaces)

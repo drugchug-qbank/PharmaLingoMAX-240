@@ -429,6 +429,9 @@ class GameViewModel {
         monthlyXP += adjusted
         consumeDoubleXPIfActive()
         save()
+        if hasLoadedFromCloud {
+            Task { await SupabaseService.shared.upsertDailyXP(amount: adjusted) }
+        }
     }
 
     func earnCoins(_ amount: Int) {
@@ -514,6 +517,7 @@ class GameViewModel {
             Task {
                 await SupabaseService.shared.recordContentCompletion(contentKey: contentKey, contentType: "practice")
                 await SupabaseService.shared.syncGameState(from: self)
+                if finalXP > 0 { await SupabaseService.shared.upsertDailyXP(amount: finalXP) }
             }
         }
 
@@ -599,6 +603,7 @@ class GameViewModel {
         let idempotencyKey = "\(subsectionId)_\(Int(Date().timeIntervalSince1970 * 1000))"
         Task {
             await SupabaseService.shared.recordContentCompletion(contentKey: contentKey, contentType: "lesson")
+            if finalXP > 0 { await SupabaseService.shared.upsertDailyXP(amount: finalXP) }
             if let updatedProfile = await SupabaseService.shared.applyQuizCompletion(
                 subsectionId: subsectionId,
                 score: score,

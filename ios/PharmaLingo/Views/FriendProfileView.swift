@@ -1,4 +1,5 @@
 import SwiftUI
+import Auth
 
 struct FriendProfileView: View {
     let friendId: String
@@ -15,6 +16,8 @@ struct FriendProfileView: View {
     @State private var isSendingDuoInvite: Bool = false
     @State private var duoInviteStatus: DuoInviteStatus = .none
     @State private var duoService = DuoQuestService.shared
+    @State private var myDailyXP: [DailyXPRecord] = []
+    @State private var friendDailyXP: [DailyXPRecord] = []
 
     private enum DuoInviteStatus {
         case none
@@ -122,6 +125,13 @@ struct FriendProfileView: View {
             friendProfile = await profileTask
             friendshipStatus = await statusTask
             isLoading = false
+
+            if let myId = supabase.currentUser?.id.uuidString.lowercased() {
+                async let myXP = supabase.fetchDailyXP(userId: myId)
+                async let friendXP = supabase.fetchDailyXP(userId: friendId)
+                myDailyXP = await myXP
+                friendDailyXP = await friendXP
+            }
 
             if duoService.currentPartnership == nil {
                 await duoService.loadDuoData()
@@ -315,82 +325,74 @@ struct FriendProfileView: View {
 
     @ViewBuilder
     private func xpComparisonSection(friend: FriendDetailProfile) -> some View {
+        let days = last7DayLabels()
+        let myXPByDate = Dictionary(myDailyXP.map { ($0.date, $0.xpEarned) }, uniquingKeysWith: { $1 })
+        let friendXPByDate = Dictionary(friendDailyXP.map { ($0.date, $0.xpEarned) }, uniquingKeysWith: { $1 })
+        let myTotal = days.reduce(0) { $0 + (myXPByDate[$1.date] ?? 0) }
+        let friendTotal = days.reduce(0) { $0 + (friendXPByDate[$1.date] ?? 0) }
+        let maxDayXP = max(days.map { max(myXPByDate[$0.date] ?? 0, friendXPByDate[$0.date] ?? 0) }.max() ?? 1, 1)
+
         VStack(alignment: .leading, spacing: 12) {
-            FunSectionHeader(icon: "chart.line.uptrend.xyaxis", title: "XP Comparison", color: AppTheme.successGreen)
+            FunSectionHeader(icon: "chart.bar.fill", title: "XP Comparison", color: AppTheme.successGreen)
 
-            let myWeeklyXP = gameVM.weeklyXP
-            let friendWeeklyXP = friend.weeklyXP
-            let days = last7DayLabels()
-
-            VStack(spacing: 8) {
-                HStack(spacing: 16) {
-                    HStack(spacing: 4) {
-                        Circle().fill(AppTheme.primaryBlue).frame(width: 8, height: 8)
-                        Text("You")
-                            .font(AppTheme.funFont(.caption, weight: .bold))
-                    }
-                    HStack(spacing: 4) {
-                        Circle().fill(AppTheme.accentOrange).frame(width: 8, height: 8)
-                        Text(friend.username)
-                            .font(AppTheme.funFont(.caption, weight: .bold))
-                    }
-                    Spacer()
+            HStack(spacing: 16) {
+                HStack(spacing: 4) {
+                    Circle().fill(AppTheme.primaryBlue).frame(width: 8, height: 8)
+                    Text("You")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
                 }
-
-                VStack(spacing: 6) {
-                    HStack(spacing: 0) {
-                        let myBarWidth = max(CGFloat(myWeeklyXP) / max(CGFloat(myWeeklyXP + friendWeeklyXP), 1) * 1.0, 0.05)
-                        let friendBarWidth = max(CGFloat(friendWeeklyXP) / max(CGFloat(myWeeklyXP + friendWeeklyXP), 1) * 1.0, 0.05)
-
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(AppTheme.primaryBlue)
-                            .frame(height: 28)
-                            .frame(maxWidth: .infinity)
-                            .scaleEffect(x: myBarWidth, anchor: .leading)
-                            .overlay(alignment: .center) {
-                                if myWeeklyXP > 0 {
-                                    Text("\(myWeeklyXP)")
-                                        .font(AppTheme.funFont(.caption2, weight: .heavy))
-                                        .foregroundStyle(.white)
-                                }
-                            }
-
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(AppTheme.accentOrange)
-                            .frame(height: 28)
-                            .frame(maxWidth: .infinity)
-                            .scaleEffect(x: friendBarWidth, anchor: .trailing)
-                            .overlay(alignment: .center) {
-                                if friendWeeklyXP > 0 {
-                                    Text("\(friendWeeklyXP)")
-                                        .font(AppTheme.funFont(.caption2, weight: .heavy))
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                    }
-
-                    Text("Weekly XP Comparison")
-                        .font(AppTheme.funFont(.caption2, weight: .medium))
-                        .foregroundStyle(.tertiary)
+                HStack(spacing: 4) {
+                    Circle().fill(AppTheme.accentOrange).frame(width: 8, height: 8)
+                    Text(friend.username)
+                        .font(AppTheme.funFont(.caption, weight: .bold))
                 }
-                .padding(.vertical, 8)
+                Spacer()
+            }
+
+            HStack(alignment: .bottom, spacing: 6) {
+                ForEach(days, id: \.date) { day in
+                    let myXP = myXPByDate[day.date] ?? 0
+                    let friendXP = friendXPByDate[day.date] ?? 0
+
+                    VStack(spacing: 4) {
+                        HStack(alignment: .bottom, spacing: 2) {
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(AppTheme.primaryBlue)
+                                .frame(width: 14, height: max(CGFloat(myXP) / CGFloat(maxDayXP) * 80, 4))
+
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(AppTheme.accentOrange)
+                                .frame(width: 14, height: max(CGFloat(friendXP) / CGFloat(maxDayXP) * 80, 4))
+                        }
+                        .frame(height: 84, alignment: .bottom)
+
+                        Text(day.day)
+                            .font(AppTheme.funFont(.caption2, weight: .medium))
+                            .foregroundStyle(.secondary)
+
+                        Text(day.date)
+                            .font(.system(size: 8, weight: .medium))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
             }
 
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Your Weekly")
+                    Text("Your Total")
                         .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.secondary)
-                    Text("\(myWeeklyXP) XP")
+                    Text("\(myTotal) XP")
                         .font(AppTheme.funFont(.headline, weight: .heavy))
                         .foregroundStyle(AppTheme.primaryBlue)
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("\(friend.username)'s Weekly")
+                    Text("\(friend.username)'s Total")
                         .font(AppTheme.funFont(.caption, weight: .medium))
                         .foregroundStyle(.secondary)
-                    Text("\(friendWeeklyXP) XP")
+                    Text("\(friendTotal) XP")
                         .font(AppTheme.funFont(.headline, weight: .heavy))
                         .foregroundStyle(AppTheme.accentOrange)
                 }
