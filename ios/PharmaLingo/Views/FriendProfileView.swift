@@ -18,6 +18,9 @@ struct FriendProfileView: View {
     @State private var duoService = DuoQuestService.shared
     @State private var myDailyXP: [DailyXPRecord] = []
     @State private var friendDailyXP: [DailyXPRecord] = []
+    @State private var showBreakUpAlert: Bool = false
+    @State private var showBreakUpFinalAlert: Bool = false
+    @State private var isBreakingUp: Bool = false
 
     private enum DuoInviteStatus {
         case none
@@ -103,6 +106,27 @@ struct FriendProfileView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 32)
+                .alert("End Duo Partnership?", isPresented: $showBreakUpAlert) {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Yes, I'm sure", role: .destructive) {
+                        showBreakUpFinalAlert = true
+                    }
+                } message: {
+                    Text("Are you sure you want to break up your Duo Partnership with \(friendName)? Your shared streak and progress will be lost.")
+                }
+                .alert("This cannot be undone!", isPresented: $showBreakUpFinalAlert) {
+                    Button("Go Back", role: .cancel) {}
+                    Button("Break Up Duo", role: .destructive) {
+                        isBreakingUp = true
+                        Task {
+                            _ = await duoService.dissolveDuo()
+                            duoInviteStatus = .none
+                            isBreakingUp = false
+                        }
+                    }
+                } message: {
+                    Text("This will permanently end your Duo Partnership, reset your shared streak to 0, and remove all shared progress. Are you absolutely sure?")
+                }
             } else {
                 VStack(spacing: 12) {
                     Image(systemName: "person.fill.questionmark")
@@ -246,6 +270,41 @@ struct FriendProfileView: View {
     @ViewBuilder
     private var duoInviteButton: some View {
         switch duoInviteStatus {
+        case .alreadyPartnered:
+            VStack(spacing: 10) {
+                HStack(spacing: 6) {
+                    Image(systemName: "person.2.fill")
+                        .foregroundStyle(AppTheme.funTeal)
+                    Text("Already Duo Partners!")
+                        .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                        .foregroundStyle(AppTheme.funTeal)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(AppTheme.funTeal.opacity(0.08))
+                .clipShape(.rect(cornerRadius: 14))
+
+                Button {
+                    showBreakUpAlert = true
+                } label: {
+                    HStack(spacing: 6) {
+                        if isBreakingUp {
+                            ProgressView().tint(AppTheme.heartRed)
+                        } else {
+                            Image(systemName: "person.2.slash")
+                            Text("Break Up Duo Partnership")
+                        }
+                    }
+                    .font(AppTheme.funFont(.subheadline, weight: .medium))
+                    .foregroundStyle(AppTheme.heartRed)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(AppTheme.heartRed.opacity(0.08))
+                    .clipShape(.rect(cornerRadius: 14))
+                }
+                .buttonStyle(.plain)
+                .disabled(isBreakingUp)
+            }
         case .none:
             if duoService.currentPartnership == nil {
                 Button {
@@ -295,18 +354,6 @@ struct FriendProfileView: View {
                 Image(systemName: "paperplane.fill")
                     .foregroundStyle(AppTheme.funTeal)
                 Text("Duo Invite Sent!")
-                    .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                    .foregroundStyle(AppTheme.funTeal)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(AppTheme.funTeal.opacity(0.08))
-            .clipShape(.rect(cornerRadius: 14))
-        case .alreadyPartnered:
-            HStack(spacing: 6) {
-                Image(systemName: "person.2.fill")
-                    .foregroundStyle(AppTheme.funTeal)
-                Text("Already Duo Partners!")
                     .font(AppTheme.funFont(.subheadline, weight: .heavy))
                     .foregroundStyle(AppTheme.funTeal)
             }
