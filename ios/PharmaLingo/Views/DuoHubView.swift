@@ -4,6 +4,8 @@ struct DuoHubView: View {
     let gameVM: GameViewModel
     @State private var duoService = DuoQuestService.shared
     @State private var showDissolvAlert: Bool = false
+    @State private var showFinalDissolvAlert: Bool = false
+    @State private var isDissolvingDuo: Bool = false
     @State private var showPartnerDetail: Bool = false
     @State private var claimingId: String?
     @State private var showRewardBanner: Bool = false
@@ -25,6 +27,7 @@ struct DuoHubView: View {
                     weeklyRaidsCard(partner: partner)
                     milestoneProgressRail(partnership: partnership)
                     duoActivityFeedCard(partner: partner)
+                    breakUpDuoButton(partnerName: partner.username)
                 } else if duoService.currentPartnership != nil {
                     DuoQuestView(gameVM: gameVM)
                 } else {
@@ -43,11 +46,23 @@ struct DuoHubView: View {
         }
         .alert("End Duo Partnership?", isPresented: $showDissolvAlert) {
             Button("Cancel", role: .cancel) {}
-            Button("End Partnership", role: .destructive) {
-                Task { _ = await duoService.dissolveDuo() }
+            Button("Yes, I'm sure", role: .destructive) {
+                showFinalDissolvAlert = true
             }
         } message: {
-            Text("This will end your duo partnership and reset your shared streak.")
+            Text("Are you sure you want to break up your Duo Partnership? Your shared streak and progress will be lost.")
+        }
+        .alert("This cannot be undone!", isPresented: $showFinalDissolvAlert) {
+            Button("Go Back", role: .cancel) {}
+            Button("Break Up Duo", role: .destructive) {
+                isDissolvingDuo = true
+                Task {
+                    _ = await duoService.dissolveDuo()
+                    isDissolvingDuo = false
+                }
+            }
+        } message: {
+            Text("This will permanently end your Duo Partnership, reset your shared streak to 0, and remove all shared progress. Are you absolutely sure?")
         }
         .sheet(isPresented: $showPartnerDetail) {
             if let partner = duoService.currentPartnership {
@@ -624,6 +639,34 @@ struct DuoHubView: View {
         .padding(16)
         .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.2))
         }
+    }
+
+    // MARK: - Break Up Duo Button
+
+    @ViewBuilder
+    private func breakUpDuoButton(partnerName: String) -> some View {
+        Button {
+            showDissolvAlert = true
+        } label: {
+            HStack(spacing: 6) {
+                if isDissolvingDuo {
+                    ProgressView()
+                        .tint(AppTheme.heartRed)
+                } else {
+                    Image(systemName: "person.2.slash")
+                    Text("Break Up Duo Partnership")
+                }
+            }
+            .font(AppTheme.funFont(.subheadline, weight: .medium))
+            .foregroundStyle(AppTheme.heartRed)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(AppTheme.heartRed.opacity(0.08))
+            .clipShape(.rect(cornerRadius: 14))
+        }
+        .buttonStyle(.plain)
+        .disabled(isDissolvingDuo)
+        .padding(.top, 8)
     }
 
     // MARK: - Empty State

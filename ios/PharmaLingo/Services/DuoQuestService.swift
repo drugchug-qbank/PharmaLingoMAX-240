@@ -395,10 +395,11 @@ class DuoQuestService {
     }
 
     func dissolveDuo() async -> Bool {
-        guard let partnership = currentPartnership else { return false }
+        let partnershipId = dashboard.partnership?.id ?? currentPartnership?.partnershipId
+        guard let partnershipId, !partnershipId.isEmpty else { return false }
         do {
             let resultData = try await supabase.client.rpc("dissolve_duo", params: [
-                "p_partnership_id": partnership.partnershipId
+                "p_partnership_id": partnershipId
             ]).execute().data
             let json = try JSONSerialization.jsonObject(with: resultData) as? [String: Any]
             let success = json?["success"] as? Bool ?? false
