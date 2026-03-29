@@ -30,7 +30,7 @@ class GameViewModel {
     var avatarAccessory: String = "none"
     var avatarBodyColor: String = ""
     var avatarBgColor: String = ""
-    var ownedAvatars: Set<String> = ["beaver", "bird", "bunny", "cat"]
+    var ownedAvatars: Set<String> = ["beaver", "octopus", "bunny", "cat"]
     var ownedEyes: Set<String> = ["normal", "happy", "big"]
     var ownedMouths: Set<String> = ["smile", "bigSmile", "tiny"]
     var ownedAccessories: Set<String> = ["none"]
@@ -1090,7 +1090,7 @@ class GameViewModel {
         avatarAccessory = "none"
         avatarBodyColor = ""
         avatarBgColor = ""
-        ownedAvatars = ["beaver", "bird", "bunny", "cat"]
+        ownedAvatars = ["beaver", "octopus", "bunny", "cat"]
         ownedEyes = ["normal", "happy", "big"]
         ownedMouths = ["smile", "bigSmile", "tiny"]
         ownedAccessories = ["none"]
@@ -1234,7 +1234,7 @@ class GameViewModel {
         avatarAccessory = state["avatarAccessory"] as? String ?? "none"
         avatarBodyColor = state["avatarBodyColor"] as? String ?? ""
         avatarBgColor = state["avatarBgColor"] as? String ?? ""
-        ownedAvatars = Set(state["ownedAvatars"] as? [String] ?? ["beaver", "bird", "bunny", "cat"])
+        ownedAvatars = Set(state["ownedAvatars"] as? [String] ?? ["beaver", "octopus", "bunny", "cat"])
         ownedEyes = Set(state["ownedEyes"] as? [String] ?? ["normal", "happy", "big"])
         ownedMouths = Set(state["ownedMouths"] as? [String] ?? ["smile", "bigSmile", "tiny"])
         ownedAccessories = Set(state["ownedAccessories"] as? [String] ?? ["none"])

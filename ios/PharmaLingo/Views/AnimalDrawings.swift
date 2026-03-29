@@ -117,41 +117,34 @@ struct AnimalAvatarView: View {
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.56, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.56, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
 
-        case .bird:
-            var crest = Path()
-            crest.move(to: CGPoint(x: s * 0.44, y: s * 0.10))
-            crest.addQuadCurve(to: CGPoint(x: s * 0.50, y: s * 0.26), control: CGPoint(x: s * 0.38, y: s * 0.18))
-            crest.addQuadCurve(to: CGPoint(x: s * 0.56, y: s * 0.10), control: CGPoint(x: s * 0.56, y: s * 0.18))
-            crest.addQuadCurve(to: CGPoint(x: s * 0.55, y: s * 0.27), control: CGPoint(x: s * 0.60, y: s * 0.18))
-            crest.closeSubpath()
-            context.fill(crest, with: .color(fc))
-            context.stroke(crest, with: .color(oc), style: StrokeStyle(lineWidth: ow, lineCap: .round, lineJoin: .round))
-            let head = CGRect(x: s * 0.15, y: s * 0.24, width: s * 0.70, height: s * 0.62)
-            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.26, width: s * 0.32, height: s * 0.16)), with: .color(highlight))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.24, y: s * 0.50, width: s * 0.52, height: s * 0.32)), with: .color(belly))
-            var wingL = Path()
-            wingL.move(to: CGPoint(x: s * 0.14, y: s * 0.50))
-            wingL.addQuadCurve(to: CGPoint(x: s * 0.14, y: s * 0.72), control: CGPoint(x: s * 0.04, y: s * 0.60))
-            wingL.addQuadCurve(to: CGPoint(x: s * 0.24, y: s * 0.58), control: CGPoint(x: s * 0.18, y: s * 0.68))
-            wingL.closeSubpath()
-            context.fill(wingL, with: .color(darker(fc, by: 0.10)))
-            var wingR = Path()
-            wingR.move(to: CGPoint(x: s * 0.86, y: s * 0.50))
-            wingR.addQuadCurve(to: CGPoint(x: s * 0.86, y: s * 0.72), control: CGPoint(x: s * 0.96, y: s * 0.60))
-            wingR.addQuadCurve(to: CGPoint(x: s * 0.76, y: s * 0.58), control: CGPoint(x: s * 0.82, y: s * 0.68))
-            wingR.closeSubpath()
-            context.fill(wingR, with: .color(darker(fc, by: 0.10)))
-            var beak = Path()
-            beak.move(to: CGPoint(x: s * 0.40, y: s * 0.56))
-            beak.addQuadCurve(to: CGPoint(x: s * 0.60, y: s * 0.56), control: CGPoint(x: s * 0.50, y: s * 0.50))
-            beak.addQuadCurve(to: CGPoint(x: s * 0.50, y: s * 0.68), control: CGPoint(x: s * 0.57, y: s * 0.63))
-            beak.addQuadCurve(to: CGPoint(x: s * 0.40, y: s * 0.56), control: CGPoint(x: s * 0.43, y: s * 0.63))
-            beak.closeSubpath()
-            context.fill(beak, with: .color(Color(hex: "FFA726")))
-            context.stroke(beak, with: .color(oc), style: StrokeStyle(lineWidth: iw, lineCap: .round, lineJoin: .round))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.17, y: s * 0.56, width: s * 0.13, height: s * 0.08)), with: .color(cheek))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.70, y: s * 0.56, width: s * 0.13, height: s * 0.08)), with: .color(cheek))
+        case .octopus:
+            let octHead = CGRect(x: s * 0.15, y: s * 0.16, width: s * 0.70, height: s * 0.56)
+            fns(context: &context, path: Path(ellipseIn: octHead), fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.20, y: s * 0.18, width: s * 0.32, height: s * 0.16)), with: .color(highlight))
+            let tentaclePositions: [(CGFloat, CGFloat, CGFloat)] = [
+                (0.14, 0.62, -0.06), (0.28, 0.68, -0.02), (0.42, 0.70, 0.00),
+                (0.56, 0.70, 0.00), (0.70, 0.68, 0.02), (0.84, 0.62, 0.06)
+            ]
+            for t in tentaclePositions {
+                var tentacle = Path()
+                let tx = s * t.0
+                let ty = s * t.1
+                tentacle.move(to: CGPoint(x: tx, y: ty))
+                tentacle.addCurve(
+                    to: CGPoint(x: tx + s * t.2, y: s * 0.92),
+                    control1: CGPoint(x: tx + s * 0.04, y: ty + s * 0.08),
+                    control2: CGPoint(x: tx - s * 0.03, y: s * 0.84)
+                )
+                context.stroke(tentacle, with: .color(darker(fc, by: 0.10)), lineWidth: max(3.0, s * 0.035))
+                context.stroke(tentacle, with: .color(oc), lineWidth: max(1.0, s * 0.008))
+            }
+            for t in tentaclePositions {
+                let dotSize = s * 0.025
+                context.fill(Path(ellipseIn: CGRect(x: s * t.0 - dotSize * 0.5, y: s * 0.80, width: dotSize, height: dotSize)), with: .color(lighter(fc, by: 0.30)))
+            }
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.30, y: s * 0.50, width: s * 0.40, height: s * 0.18)), with: .color(belly))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.48, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.48, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
 
         case .bunny:
             let earL = CGRect(x: s * 0.20, y: s * 0.00, width: s * 0.20, height: s * 0.42)

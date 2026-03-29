@@ -44,7 +44,6 @@ enum AvatarAssetCatalog {
         switch animal {
         case .bear: return ["8D6E63", "795548", "A1887F", "5D4037"]
         case .beaver: return ["8B5E3C", "A1887F", "795548", "D7CCC8"]
-        case .bird: return ["4FC3F7", "42A5F5", "26C6DA", "81D4FA"]
         case .bunny: return ["F8BBD0", "F48FB1", "CE93D8", "FFCCBC"]
         case .cat: return ["FF8A65", "FFA726", "FFAB91", "FFCCBC"]
         case .chipmunk: return ["C4956A", "D2B48C", "DAA520", "8D6E63"]
@@ -54,6 +53,7 @@ enum AvatarAssetCatalog {
         case .fox: return ["FF7043", "FF8A65", "FFA726", "FFAB91"]
         case .hedgehog: return ["C4956A", "D2B48C", "DAA520", "8D6E63"]
         case .mouse: return ["B0BEC5", "90A4AE", "CFD8DC", "78909C"]
+        case .octopus: return ["CE93D8", "AB47BC", "B39DDB", "E1BEE7"]
         case .panda: return ["E0E0E0", "BDBDBD", "F5F5F5", "CFD8DC"]
         case .unicorn: return ["F8BBD0", "CE93D8", "B39DDB", "81D4FA"]
         default: return [animal.defaultColorHex]

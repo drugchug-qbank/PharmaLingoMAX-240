@@ -346,6 +346,21 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveMouseAvatarView.mouseBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .octopus {
+                    if !RiveOctopusAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveOctopusAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveOctopusAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let octopusHex = RiveOctopusAvatarView.octopusBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if octopusHex == nil {
+                        selectedBodyColor = RiveOctopusAvatarView.octopusBodyColorHexes[0].hex
+                    }
+                }
                 if newAnimal == .dragon {
                     if !RiveDragonAvatarView.supportedEyes.contains(selectedEyes) {
                         selectedEyes = .normal
@@ -516,8 +531,12 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .mouse
     }
 
+    private var isOctopusSelected: Bool {
+        selectedAnimal == .octopus
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected || isMouseSelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected || isMouseSelected || isOctopusSelected
     }
 
     private var colorGrid: some View {
@@ -550,6 +569,8 @@ struct AvatarCustomizationView: View {
                 monkeyColorGrid
             } else if isMouseSelected {
                 mouseColorGrid
+            } else if isOctopusSelected {
+                octopusColorGrid
             } else {
                 genericColorGrid
             }
@@ -744,6 +765,23 @@ struct AvatarCustomizationView: View {
         .padding(.horizontal)
     }
 
+    private var octopusColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveOctopusAvatarView.octopusBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
     private var mouseColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             ForEach(Array(RiveMouseAvatarView.mouseBodyColorHexes.enumerated()), id: \.offset) { _, color in
@@ -879,6 +917,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .mouse {
             return RiveMouseAvatarView.supportedEyes
         }
+        if selectedAnimal == .octopus {
+            return RiveOctopusAvatarView.supportedEyes
+        }
         return EyeStyle.allCases.map { $0 }
     }
 
@@ -919,6 +960,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .mouse {
             return RiveMouseAvatarView.supportedMouths
         }
+        if selectedAnimal == .octopus {
+            return RiveOctopusAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
@@ -958,6 +1002,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .mouse {
             return RiveMouseAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .octopus {
+            return RiveOctopusAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }
