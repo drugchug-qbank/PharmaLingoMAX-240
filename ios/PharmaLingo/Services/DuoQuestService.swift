@@ -30,13 +30,62 @@ class DuoQuestService {
 
         if !dashboard.hasPartner {
             await fetchPartnership()
-            if currentPartnership != nil {
+            if let partner = currentPartnership {
                 await fetchWeeklyQuests()
                 await checkMysteryChestClaimed()
+                buildSyntheticDashboard(from: partner)
             }
             await checkPendingInvites()
         } else {
             syncLegacyFromDashboard()
+        }
+    }
+
+    private func buildSyntheticDashboard(from partner: DuoPartnerInfo) {
+        let userId = supabase.currentUser?.id.uuidString.lowercased() ?? ""
+        let syntheticPartnership = DuoDashboardPartnership(
+            id: partner.partnershipId,
+            userId: userId,
+            partnerId: partner.partnerId,
+            sharedStreak: partner.sharedStreak,
+            bestSharedStreak: partner.sharedStreak,
+            sharedDuoStreakSaves: 0,
+            duoTimezone: "America/New_York",
+            lastBothSafeDate: nil,
+            mySafeToday: false,
+            partnerSafeToday: false,
+            acceptedAt: partner.createdAt,
+            createdAt: partner.createdAt
+        )
+        let syntheticPartner = DuoDashboardPartner(
+            id: partner.partnerId,
+            username: partner.partnerName,
+            avatar: partner.partnerAvatar,
+            level: partner.partnerLevel,
+            currentStreak: partner.partnerStreak,
+            weeklyXP: partner.partnerWeeklyXP
+        )
+        let emptyProgress = DuoDailyProgress(duoPoints: 0, isSafe: false, xpEarned: 0, questionsAnswered: 0, lessonsCompleted: 0, brandBlitzCompleted: 0, highScore90Count: 0)
+
+        dashboard = DuoDashboard(
+            hasPartner: true,
+            partnership: syntheticPartnership,
+            partner: syntheticPartner,
+            myProgress: emptyProgress,
+            partnerProgress: emptyProgress,
+            dailyMissions: dashboard.dailyMissions,
+            weeklyRaids: dashboard.weeklyRaids,
+            claimedMilestones: dashboard.claimedMilestones,
+            activityFeed: dashboard.activityFeed,
+            pendingInvites: dashboard.pendingInvites,
+            hoursUntilReset: 24,
+            dateKey: "",
+            isUser1: true
+        )
+
+        Task {
+            await generateDailyMissions(partnershipId: partner.partnershipId)
+            await generateWeeklyRaids(partnershipId: partner.partnershipId)
         }
     }
 
