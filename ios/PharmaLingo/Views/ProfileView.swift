@@ -316,9 +316,7 @@ struct ProfileView: View {
                 })
             }
             .sheet(isPresented: $showDuoDetail) {
-                if let partner = duoService.currentPartnership {
-                    DuoPartnerDetailSheet(partner: partner, weeklyQuests: duoService.weeklyQuests, gameVM: gameVM)
-                }
+                DuoHubView(gameVM: gameVM)
             }
             .navigationDestination(for: String.self) { userId in
                 let name = friends.first(where: { $0.id == userId })?.username ?? "User"
@@ -377,18 +375,18 @@ struct ProfileView: View {
                                 .font(AppTheme.funFont(.subheadline, weight: .bold))
                             HStack(spacing: 10) {
                                 HStack(spacing: 3) {
-                                    Image(systemName: "link.circle.fill")
+                                    Image(systemName: "flame.fill")
                                         .font(.caption2)
-                                        .foregroundStyle(AppTheme.funTeal)
-                                    Text("\(partner.sharedStreak) duo streak")
+                                        .foregroundStyle(AppTheme.accentOrange)
+                                    Text("\(partner.sharedStreak) streak")
                                         .font(AppTheme.funFont(.caption, weight: .bold))
                                         .foregroundStyle(.secondary)
                                 }
                                 HStack(spacing: 3) {
-                                    Image(systemName: "checkmark.seal.fill")
+                                    Image(systemName: "star.circle.fill")
                                         .font(.caption2)
-                                        .foregroundStyle(AppTheme.successGreen)
-                                    Text("\(duoService.weeklyQuests.filter(\.isComplete).count)/\(duoService.weeklyQuests.count) quests")
+                                        .foregroundStyle(AppTheme.warningYellow)
+                                    Text("Missions & Raids")
                                         .font(AppTheme.funFont(.caption, weight: .bold))
                                         .foregroundStyle(.secondary)
                                 }
@@ -410,47 +408,70 @@ struct ProfileView: View {
                     .font(AppTheme.funFont(.caption, weight: .heavy))
                     .foregroundStyle(AppTheme.accentOrange)
 
-                HStack(spacing: 10) {
-                    AvatarDisplayView(
-                        animal: sender.avatarAnimal,
-                        eyes: sender.avatarEyes,
-                        mouth: sender.avatarMouth,
-                        accessory: sender.avatarAccessory,
-                        bodyColor: sender.avatarBodyColor,
-                        backgroundColor: sender.avatarBgColor,
-                        size: 36
-                    )
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "bell.badge.fill")
-                                .font(.caption2)
-                                .foregroundStyle(AppTheme.accentOrange)
-                            Text("Duo invite from \(sender.username)")
-                                .font(AppTheme.funFont(.caption, weight: .bold))
-                        }
-                    }
-                    Spacer()
-                    Button {
-                        Task {
-                            if let pId = duoService.pendingPartnershipId {
-                                _ = await duoService.acceptDuoInvite(partnershipId: pId)
-                                await loadFriendsData()
+                Button {
+                    showDuoDetail = true
+                } label: {
+                    HStack(spacing: 10) {
+                        AvatarDisplayView(
+                            animal: sender.avatarAnimal,
+                            eyes: sender.avatarEyes,
+                            mouth: sender.avatarMouth,
+                            accessory: sender.avatarAccessory,
+                            bodyColor: sender.avatarBodyColor,
+                            backgroundColor: sender.avatarBgColor,
+                            size: 36
+                        )
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "bell.badge.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(AppTheme.accentOrange)
+                                Text("Duo invite from \(sender.username)")
+                                    .font(AppTheme.funFont(.caption, weight: .bold))
                             }
                         }
-                    } label: {
-                        Text("Accept")
-                            .font(AppTheme.funFont(.caption2, weight: .heavy))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(AppTheme.successGreen)
-                            .clipShape(Capsule())
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.accentOrange)
                     }
-                    .buttonStyle(.plain)
                 }
+                .buttonStyle(.plain)
             }
             .padding(16)
             .cardStyle(borderColor: AppTheme.accentOrange.opacity(0.5))
+        } else {
+            Button {
+                showDuoDetail = true
+            } label: {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("DUO PARTNER")
+                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                        .foregroundStyle(AppTheme.funTeal)
+
+                    HStack(spacing: 12) {
+                        Image(systemName: "person.2.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(
+                                LinearGradient(colors: [AppTheme.funTeal, AppTheme.primaryBlue], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            )
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Start a Duo Streak!")
+                                .font(AppTheme.funFont(.subheadline, weight: .bold))
+                            Text("Invite a classmate for daily missions & rewards")
+                                .font(AppTheme.funFont(.caption, weight: .medium))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.funTeal)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            .padding(16)
+            .cardStyle(borderColor: AppTheme.funTeal.opacity(0.3))
         }
     }
 

@@ -6,89 +6,100 @@ struct DuoHubView: View {
     @State private var showDissolvAlert: Bool = false
     @State private var showFinalDissolvAlert: Bool = false
     @State private var isDissolvingDuo: Bool = false
-    @State private var showPartnerDetail: Bool = false
     @State private var claimingId: String?
     @State private var showRewardBanner: Bool = false
     @State private var rewardBannerText: String = ""
     @State private var nudgeSent: Bool = false
     @State private var showReferralSheet: Bool = false
     @State private var referralCode: String?
+    @State private var streakPulse: Bool = false
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                if duoService.isLoading && !duoService.dashboard.hasPartner && duoService.currentPartnership == nil {
-                    ProgressView()
-                        .padding(40)
-                } else if duoService.dashboard.hasPartner, let partnership = duoService.dashboard.partnership, let partner = duoService.dashboard.partner {
-                    activePartnerHeader(partnership: partnership, partner: partner)
-                    duoStatusCard(partnership: partnership, partner: partner)
-                    dailyMissionsCard
-                    weeklyRaidsCard(partner: partner)
-                    milestoneProgressRail(partnership: partnership)
-                    duoActivityFeedCard(partner: partner)
-                    breakUpDuoButton(partnerName: partner.username)
-                } else if duoService.currentPartnership != nil {
-                    DuoQuestView(gameVM: gameVM)
-                } else {
-                    duoEmptyState
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    if duoService.isLoading && !duoService.dashboard.hasPartner && duoService.currentPartnership == nil {
+                        ProgressView()
+                            .padding(40)
+                    } else if duoService.dashboard.hasPartner, let partnership = duoService.dashboard.partnership, let partner = duoService.dashboard.partner {
+                        activePartnerHeader(partnership: partnership, partner: partner)
+                        duoStatusCard(partnership: partnership, partner: partner)
+                        howToEarnPointsCard
+                        dailyMissionsCard
+                        weeklyRaidsCard(partner: partner)
+                        milestoneProgressRail(partnership: partnership)
+                        duoActivityFeedCard(partner: partner)
+                        breakUpDuoButton(partnerName: partner.username)
+                    } else if duoService.currentPartnership != nil {
+                        legacyActiveContent
+                    } else {
+                        duoEmptyState
+                    }
                 }
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 32)
-        }
-        .scrollIndicators(.hidden)
-        .refreshable {
-            await duoService.loadDuoData()
-        }
-        .task {
-            await duoService.loadDuoData()
-        }
-        .alert("End Duo Partnership?", isPresented: $showDissolvAlert) {
-            Button("Cancel", role: .cancel) {}
-            Button("Yes, I'm sure", role: .destructive) {
-                showFinalDissolvAlert = true
-            }
-        } message: {
-            Text("Are you sure you want to break up your Duo Partnership? Your shared streak and progress will be lost.")
-        }
-        .alert("This cannot be undone!", isPresented: $showFinalDissolvAlert) {
-            Button("Go Back", role: .cancel) {}
-            Button("Break Up Duo", role: .destructive) {
-                isDissolvingDuo = true
-                Task {
-                    _ = await duoService.dissolveDuo()
-                    isDissolvingDuo = false
-                }
-            }
-        } message: {
-            Text("This will permanently end your Duo Partnership, reset your shared streak to 0, and remove all shared progress. Are you absolutely sure?")
-        }
-        .sheet(isPresented: $showPartnerDetail) {
-            if let partner = duoService.currentPartnership {
-                DuoPartnerDetailSheet(partner: partner, weeklyQuests: duoService.weeklyQuests, gameVM: gameVM)
-            }
-        }
-        .sheet(isPresented: $showReferralSheet) {
-            DuoReferralSheet(referralCode: referralCode)
-        }
-        .overlay(alignment: .top) {
-            if showRewardBanner {
-                HStack(spacing: 8) {
-                    Image(systemName: "party.popper.fill")
-                        .font(.title3)
-                    Text(rewardBannerText)
-                        .font(AppTheme.funFont(.subheadline, weight: .heavy))
-                }
-                .foregroundStyle(.white)
-                .padding(14)
-                .frame(maxWidth: .infinity)
-                .background(
-                    LinearGradient(colors: [AppTheme.successGreen, AppTheme.funTeal], startPoint: .leading, endPoint: .trailing)
-                )
-                .clipShape(.rect(cornerRadius: 14))
                 .padding(.horizontal, 16)
-                .transition(.move(edge: .top).combined(with: .opacity))
+                .padding(.bottom, 32)
+            }
+            .scrollIndicators(.hidden)
+            .navigationTitle("Duo Hub")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .refreshable {
+                await duoService.loadDuoData()
+            }
+            .task {
+                await duoService.loadDuoData()
+            }
+            .alert("End Duo Partnership?", isPresented: $showDissolvAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Yes, I'm sure", role: .destructive) {
+                    showFinalDissolvAlert = true
+                }
+            } message: {
+                Text("Are you sure you want to break up your Duo Partnership? Your shared streak and progress will be lost.")
+            }
+            .alert("This cannot be undone!", isPresented: $showFinalDissolvAlert) {
+                Button("Go Back", role: .cancel) {}
+                Button("Break Up Duo", role: .destructive) {
+                    isDissolvingDuo = true
+                    Task {
+                        _ = await duoService.dissolveDuo()
+                        isDissolvingDuo = false
+                    }
+                }
+            } message: {
+                Text("This will permanently end your Duo Partnership, reset your shared streak to 0, and remove all shared progress. Are you absolutely sure?")
+            }
+            .sheet(isPresented: $showReferralSheet) {
+                DuoReferralSheet(referralCode: referralCode)
+            }
+            .overlay(alignment: .top) {
+                if showRewardBanner {
+                    HStack(spacing: 8) {
+                        Image(systemName: "party.popper.fill")
+                            .font(.title3)
+                        Text(rewardBannerText)
+                            .font(AppTheme.funFont(.subheadline, weight: .heavy))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(14)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        LinearGradient(colors: [AppTheme.successGreen, AppTheme.funTeal], startPoint: .leading, endPoint: .trailing)
+                    )
+                    .clipShape(.rect(cornerRadius: 14))
+                    .padding(.horizontal, 16)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: false)) {
+                    streakPulse = true
+                }
             }
         }
     }
@@ -97,71 +108,103 @@ struct DuoHubView: View {
 
     @ViewBuilder
     private func activePartnerHeader(partnership: DuoDashboardPartnership, partner: DuoDashboardPartner) -> some View {
-        Button {
-            showPartnerDetail = true
-        } label: {
-            HStack(spacing: 14) {
-                AvatarDisplayView(
-                    animal: partner.avatar.animal,
-                    eyes: partner.avatar.eyes,
-                    mouth: partner.avatar.mouth,
-                    accessory: partner.avatar.accessory,
-                    bodyColor: partner.avatar.bodyColor,
-                    backgroundColor: partner.avatar.bgColor,
-                    size: 56
-                )
-
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 6) {
-                        Text(partner.username)
-                            .font(AppTheme.funFont(.body, weight: .heavy))
-                        Text("Lv.\(partner.level)")
-                            .font(AppTheme.funFont(.caption2, weight: .heavy))
-                            .foregroundStyle(AppTheme.darkBlue)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(AppTheme.warningYellow)
-                            .clipShape(Capsule())
-                    }
-                    HStack(spacing: 12) {
-                        HStack(spacing: 3) {
-                            Image(systemName: "flame.fill")
-                                .font(.caption2)
-                                .foregroundStyle(AppTheme.accentOrange)
-                            Text("\(partner.currentStreak)")
-                                .font(AppTheme.funFont(.caption, weight: .bold))
-                                .foregroundStyle(.secondary)
-                        }
-                        HStack(spacing: 3) {
-                            Image(systemName: "bolt.fill")
-                                .font(.caption2)
-                                .foregroundStyle(AppTheme.xpPurple)
-                            Text("\(partner.weeklyXP) XP")
-                                .font(AppTheme.funFont(.caption, weight: .bold))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
+        VStack(spacing: 16) {
+            HStack(spacing: 20) {
+                VStack(spacing: 4) {
+                    AvatarDisplayView(
+                        animal: gameVM.avatarAnimal,
+                        eyes: gameVM.avatarEyes,
+                        mouth: gameVM.avatarMouth,
+                        accessory: gameVM.avatarAccessory,
+                        bodyColor: gameVM.avatarBodyColor,
+                        backgroundColor: gameVM.avatarBgColor,
+                        size: 60
+                    )
+                    Text("You")
+                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                        .foregroundStyle(AppTheme.primaryBlue)
                 }
 
-                Spacer()
-
-                VStack(spacing: 2) {
-                    HStack(spacing: 3) {
-                        Image(systemName: "link.circle.fill")
-                            .foregroundStyle(AppTheme.funTeal)
-                        Text("\(partnership.sharedStreak)")
-                            .font(AppTheme.funFont(.title2, weight: .heavy))
-                            .foregroundStyle(AppTheme.funTeal)
+                VStack(spacing: 4) {
+                    ZStack {
+                        Circle()
+                            .fill(AppTheme.funTeal.opacity(0.15))
+                            .frame(width: 48, height: 48)
+                            .scaleEffect(streakPulse ? 1.2 : 1.0)
+                            .opacity(streakPulse ? 0.0 : 0.6)
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 28))
+                            .foregroundStyle(
+                                partnership.sharedStreak > 0
+                                    ? LinearGradient(colors: [AppTheme.accentOrange, AppTheme.funCoral], startPoint: .top, endPoint: .bottom)
+                                    : LinearGradient(colors: [Color(.tertiaryLabel), Color(.quaternaryLabel)], startPoint: .top, endPoint: .bottom)
+                            )
                     }
+                    Text("\(partnership.sharedStreak)")
+                        .font(AppTheme.funFont(.title, weight: .heavy))
+                        .foregroundStyle(partnership.sharedStreak > 0 ? AppTheme.accentOrange : Color(.tertiaryLabel))
                     Text("Duo Streak")
                         .font(AppTheme.funFont(.caption2, weight: .bold))
                         .foregroundStyle(.secondary)
                 }
+
+                VStack(spacing: 4) {
+                    AvatarDisplayView(
+                        animal: partner.avatar.animal,
+                        eyes: partner.avatar.eyes,
+                        mouth: partner.avatar.mouth,
+                        accessory: partner.avatar.accessory,
+                        bodyColor: partner.avatar.bodyColor,
+                        backgroundColor: partner.avatar.bgColor,
+                        size: 60
+                    )
+                    Text(partner.username)
+                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                        .foregroundStyle(AppTheme.funTeal)
+                        .lineLimit(1)
+                }
             }
-            .padding(16)
-            .cardStyle(borderColor: AppTheme.funTeal.opacity(0.4))
+
+            HStack(spacing: 16) {
+                HStack(spacing: 4) {
+                    Image(systemName: "trophy.fill")
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.warningYellow)
+                    Text("Best: \(partnership.bestSharedStreak)")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+                HStack(spacing: 4) {
+                    Image(systemName: "bolt.fill")
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.xpPurple)
+                    Text("\(partner.weeklyXP) XP/wk")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+                HStack(spacing: 4) {
+                    Image(systemName: "star.fill")
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.warningYellow)
+                    Text("Lv.\(partner.level)")
+                        .font(AppTheme.funFont(.caption, weight: .bold))
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
-        .buttonStyle(.plain)
+        .padding(18)
+        .frame(maxWidth: .infinity)
+        .background(
+            LinearGradient(
+                colors: [AppTheme.funTeal.opacity(0.08), AppTheme.primaryBlue.opacity(0.05)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+        )
+        .clipShape(.rect(cornerRadius: 18))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(AppTheme.funTeal.opacity(0.35), lineWidth: 2)
+        )
     }
 
     // MARK: - Duo Status Card
@@ -205,7 +248,7 @@ struct DuoHubView: View {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .font(.caption2)
                             .foregroundStyle(AppTheme.accentOrange)
-                        Text("Complete a study action!")
+                        Text("Study to protect your streak!")
                             .font(AppTheme.funFont(.caption, weight: .bold))
                             .foregroundStyle(AppTheme.accentOrange)
                     }
@@ -280,9 +323,9 @@ struct DuoHubView: View {
                 }
             }
 
-            Text("\(points)/3 points")
-                .font(AppTheme.funFont(.caption2, weight: .medium))
-                .foregroundStyle(.tertiary)
+            Text(isSafe ? "Safe!" : "\(points)/3 pts")
+                .font(AppTheme.funFont(.caption2, weight: isSafe ? .heavy : .medium))
+                .foregroundStyle(isSafe ? AppTheme.successGreen : Color(.tertiaryLabel))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
@@ -290,12 +333,78 @@ struct DuoHubView: View {
         .clipShape(.rect(cornerRadius: 12))
     }
 
+    // MARK: - How to Earn Points
+
+    @ViewBuilder
+    private var howToEarnPointsCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.title3)
+                    .foregroundStyle(AppTheme.warningYellow)
+                Text("How to Earn Duo Points")
+                    .font(AppTheme.funFont(.headline, weight: .heavy))
+                Spacer()
+                Text("3 max/day")
+                    .font(AppTheme.funFont(.caption2, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(AppTheme.warningYellow))
+            }
+
+            VStack(spacing: 8) {
+                duoPointExplainerRow(icon: "bolt.circle.fill", iconColor: AppTheme.accentOrange, text: "Complete a Brand Blitz round", pointValue: "+1")
+                duoPointExplainerRow(icon: "star.circle.fill", iconColor: AppTheme.warningYellow, text: "Score 90%+ on any quiz or lesson", pointValue: "+1")
+                duoPointExplainerRow(icon: "bolt.fill", iconColor: AppTheme.xpPurple, text: "Earn 100+ XP in a day", pointValue: "+1")
+                duoPointExplainerRow(icon: "book.closed.fill", iconColor: AppTheme.primaryBlue, text: "Complete a lesson with 80%+", pointValue: "+1")
+                duoPointExplainerRow(icon: "questionmark.circle.fill", iconColor: AppTheme.funTeal, text: "Answer 20+ questions in a day", pointValue: "+1")
+            }
+
+            HStack(spacing: 6) {
+                Image(systemName: "info.circle.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Text("Both partners need at least 1 point each day to protect the streak!")
+                    .font(AppTheme.funFont(.caption2, weight: .bold))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.top, 2)
+        }
+        .padding(16)
+        .cardStyle(borderColor: AppTheme.warningYellow.opacity(0.3))
+    }
+
+    @ViewBuilder
+    private func duoPointExplainerRow(icon: String, iconColor: Color, text: String, pointValue: String) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.body)
+                .foregroundStyle(iconColor)
+                .frame(width: 28)
+
+            Text(text)
+                .font(AppTheme.funFont(.caption, weight: .medium))
+                .foregroundStyle(.primary)
+
+            Spacer()
+
+            Text(pointValue)
+                .font(AppTheme.funFont(.caption, weight: .heavy))
+                .foregroundStyle(AppTheme.successGreen)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(AppTheme.successGreen.opacity(0.12))
+                .clipShape(Capsule())
+        }
+    }
+
     // MARK: - Daily Missions
 
     @ViewBuilder
     private var dailyMissionsCard: some View {
         let missions = duoService.dashboard.dailyMissions
-        if !missions.isEmpty {
+
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
                 Image(systemName: "star.circle.fill")
@@ -304,21 +413,39 @@ struct DuoHubView: View {
                 Text("Daily Duo Missions")
                     .font(AppTheme.funFont(.headline, weight: .heavy))
                 Spacer()
-                Text("\(missions.filter(\.completed).count)/\(missions.count)")
-                    .font(AppTheme.funFont(.caption, weight: .heavy))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Capsule().fill(AppTheme.warningYellow))
+                if !missions.isEmpty {
+                    Text("\(missions.filter(\.completed).count)/\(missions.count)")
+                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Capsule().fill(AppTheme.warningYellow))
+                }
             }
 
-            ForEach(missions) { mission in
-                missionRow(mission)
+            if missions.isEmpty {
+                VStack(spacing: 10) {
+                    Image(systemName: "sparkles")
+                        .font(.title2)
+                        .foregroundStyle(AppTheme.warningYellow.opacity(0.5))
+                    Text("Daily missions generate each day!")
+                        .font(AppTheme.funFont(.subheadline, weight: .bold))
+                        .foregroundStyle(.secondary)
+                    Text("Complete 3 bonus missions together for extra coins, XP, and power-ups. Missions rotate daily with easy, medium, and hard challenges.")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+            } else {
+                ForEach(missions) { mission in
+                    missionRow(mission)
+                }
             }
         }
         .padding(16)
         .cardStyle(borderColor: AppTheme.warningYellow.opacity(0.3))
-        }
     }
 
     @ViewBuilder
@@ -341,8 +468,17 @@ struct DuoHubView: View {
                 .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(mission.title)
-                    .font(AppTheme.funFont(.subheadline, weight: .bold))
+                HStack(spacing: 6) {
+                    Text(mission.title)
+                        .font(AppTheme.funFont(.subheadline, weight: .bold))
+                    Text(mission.difficulty.capitalized)
+                        .font(.system(size: 9, weight: .heavy, design: .rounded))
+                        .foregroundStyle(diffColor)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(diffColor.opacity(0.12))
+                        .clipShape(Capsule())
+                }
                 Text(mission.description)
                     .font(AppTheme.funFont(.caption, weight: .medium))
                     .foregroundStyle(.secondary)
@@ -374,16 +510,7 @@ struct DuoHubView: View {
                     .font(.body)
                     .foregroundStyle(AppTheme.successGreen)
             } else {
-                VStack(spacing: 1) {
-                    HStack(spacing: 2) {
-                        Image(systemName: "bitcoinsign.circle.fill")
-                            .font(.caption2)
-                            .foregroundStyle(AppTheme.accentOrange)
-                        Text("\(mission.rewardCoins)")
-                            .font(AppTheme.funFont(.caption, weight: .heavy))
-                            .foregroundStyle(AppTheme.accentOrange)
-                    }
-                }
+                rewardBadge(mission.rewardCoins, mission.rewardXP)
             }
         }
         .padding(10)
@@ -391,12 +518,38 @@ struct DuoHubView: View {
         .clipShape(.rect(cornerRadius: 10))
     }
 
+    @ViewBuilder
+    private func rewardBadge(_ coins: Int, _ xp: Int) -> some View {
+        VStack(spacing: 2) {
+            if coins > 0 {
+                HStack(spacing: 2) {
+                    Image(systemName: "bitcoinsign.circle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.accentOrange)
+                    Text("\(coins)")
+                        .font(AppTheme.funFont(.caption2, weight: .heavy))
+                        .foregroundStyle(AppTheme.accentOrange)
+                }
+            }
+            if xp > 0 {
+                HStack(spacing: 2) {
+                    Image(systemName: "bolt.fill")
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.xpPurple)
+                    Text("\(xp)")
+                        .font(AppTheme.funFont(.caption2, weight: .heavy))
+                        .foregroundStyle(AppTheme.xpPurple)
+                }
+            }
+        }
+    }
+
     // MARK: - Weekly Raids
 
     @ViewBuilder
     private func weeklyRaidsCard(partner: DuoDashboardPartner) -> some View {
         let raids = duoService.dashboard.weeklyRaids
-        if !raids.isEmpty {
+
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
                 Image(systemName: "target")
@@ -413,12 +566,60 @@ struct DuoHubView: View {
                     .background(Capsule().fill(AppTheme.xpPurple))
             }
 
-            ForEach(raids) { raid in
-                raidRow(raid, partner: partner)
+            if raids.isEmpty {
+                VStack(spacing: 10) {
+                    Image(systemName: "scope")
+                        .font(.title2)
+                        .foregroundStyle(AppTheme.xpPurple.opacity(0.5))
+                    Text("Weekly raids generate each Monday!")
+                        .font(AppTheme.funFont(.subheadline, weight: .bold))
+                        .foregroundStyle(.secondary)
+                    Text("5 co-op challenges each week — earn XP together, crush Brand Blitz rounds, ace quizzes, and more. Pool your efforts for bigger rewards!")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(Color(.tertiaryLabel))
+                        .multilineTextAlignment(.center)
+
+                    HStack(spacing: 12) {
+                        raidPreviewBadge(icon: "bolt.fill", label: "Earn XP", color: AppTheme.xpPurple)
+                        raidPreviewBadge(icon: "bolt.circle.fill", label: "Brand Blitz", color: AppTheme.accentOrange)
+                        raidPreviewBadge(icon: "star.fill", label: "90%+ Quizzes", color: AppTheme.warningYellow)
+                        raidPreviewBadge(icon: "book.fill", label: "Lessons", color: AppTheme.primaryBlue)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+            } else {
+                ForEach(raids) { raid in
+                    raidRow(raid, partner: partner)
+                }
+
+                if !raids.isEmpty {
+                    let completed = raids.filter(\.completed).count
+                    HStack(spacing: 6) {
+                        Image(systemName: "chart.bar.fill")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.xpPurple)
+                        Text("\(completed)/\(raids.count) raids completed this week")
+                            .font(AppTheme.funFont(.caption, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
         .padding(16)
         .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.3))
+    }
+
+    @ViewBuilder
+    private func raidPreviewBadge(icon: String, label: String, color: Color) -> some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(color)
+            Text(label)
+                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
         }
     }
 
@@ -475,14 +676,7 @@ struct DuoHubView: View {
                         .font(.body)
                         .foregroundStyle(AppTheme.successGreen)
                 } else {
-                    HStack(spacing: 2) {
-                        Image(systemName: "bitcoinsign.circle.fill")
-                            .font(.caption2)
-                            .foregroundStyle(AppTheme.accentOrange)
-                        Text("\(raid.rewardCoins)")
-                            .font(AppTheme.funFont(.caption, weight: .heavy))
-                            .foregroundStyle(AppTheme.accentOrange)
-                    }
+                    rewardBadge(raid.rewardCoins, 0)
                 }
             }
 
@@ -532,6 +726,9 @@ struct DuoHubView: View {
                 Text("Duo Milestones")
                     .font(AppTheme.funFont(.headline, weight: .heavy))
                 Spacer()
+                Text("\(streak) day\(streak == 1 ? "" : "s")")
+                    .font(AppTheme.funFont(.caption, weight: .heavy))
+                    .foregroundStyle(AppTheme.warningYellow)
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -540,12 +737,22 @@ struct DuoHubView: View {
                         let isReached = streak >= milestone.requiredStreak
                         let isClaimed = claimed.contains(milestone.rawValue)
                         let canClaim = isReached && !isClaimed
+                        let progress = min(Double(streak) / Double(milestone.requiredStreak), 1.0)
 
                         VStack(spacing: 6) {
                             ZStack {
                                 Circle()
-                                    .fill(isClaimed ? AppTheme.successGreen.opacity(0.15) : (isReached ? AppTheme.warningYellow.opacity(0.15) : Color(.tertiarySystemFill)))
+                                    .stroke(Color(.tertiarySystemFill), lineWidth: 3)
                                     .frame(width: 50, height: 50)
+                                Circle()
+                                    .trim(from: 0, to: progress)
+                                    .stroke(
+                                        isClaimed ? AppTheme.successGreen : (isReached ? AppTheme.warningYellow : AppTheme.primaryBlue),
+                                        style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                                    )
+                                    .frame(width: 50, height: 50)
+                                    .rotationEffect(.degrees(-90))
+
                                 Image(systemName: milestone.icon)
                                     .font(.title3)
                                     .foregroundStyle(isClaimed ? AppTheme.successGreen : (isReached ? AppTheme.warningYellow : Color(.tertiaryLabel)))
@@ -585,6 +792,22 @@ struct DuoHubView: View {
                 .padding(.horizontal, 4)
             }
             .contentMargins(.horizontal, 0)
+
+            HStack(spacing: 6) {
+                Image(systemName: "arrow.right.circle.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                let nextMilestone = DuoMilestone.allCases.first { streak < $0.requiredStreak }
+                if let next = nextMilestone {
+                    Text("\(next.requiredStreak - streak) more day\(next.requiredStreak - streak == 1 ? "" : "s") until \(next.displayTitle) reward!")
+                        .font(AppTheme.funFont(.caption2, weight: .bold))
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("All milestones reached! Keep the streak alive!")
+                        .font(AppTheme.funFont(.caption2, weight: .bold))
+                        .foregroundStyle(AppTheme.successGreen)
+                }
+            }
         }
         .padding(16)
         .cardStyle(borderColor: AppTheme.warningYellow.opacity(0.3))
@@ -595,7 +818,7 @@ struct DuoHubView: View {
     @ViewBuilder
     private func duoActivityFeedCard(partner: DuoDashboardPartner) -> some View {
         let feed = duoService.dashboard.activityFeed
-        if !feed.isEmpty {
+
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
                 Image(systemName: "bubble.left.and.bubble.right.fill")
@@ -606,39 +829,52 @@ struct DuoHubView: View {
                 Spacer()
             }
 
-            ForEach(feed.prefix(10)) { event in
-                HStack(spacing: 10) {
-                    Image(systemName: event.eventIcon)
-                        .font(.caption)
-                        .foregroundStyle(feedEventColor(event))
-                        .frame(width: 28, height: 28)
-                        .background(feedEventColor(event).opacity(0.12))
-                        .clipShape(Circle())
+            if feed.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "text.bubble")
+                        .font(.title2)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.4))
+                    Text("Activity will appear here as you and your partner study!")
+                        .font(AppTheme.funFont(.caption, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+            } else {
+                ForEach(feed.prefix(10)) { event in
+                    HStack(spacing: 10) {
+                        Image(systemName: event.eventIcon)
+                            .font(.caption)
+                            .foregroundStyle(feedEventColor(event))
+                            .frame(width: 28, height: 28)
+                            .background(feedEventColor(event).opacity(0.12))
+                            .clipShape(Circle())
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack(spacing: 4) {
-                            if let actorId = event.actorUserId {
-                                Text(actorId == partner.id ? partner.username : "You")
-                                    .font(AppTheme.funFont(.caption, weight: .heavy))
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 4) {
+                                if let actorId = event.actorUserId {
+                                    Text(actorId == partner.id ? partner.username : "You")
+                                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                                }
+                                Text(event.displayText)
+                                    .font(AppTheme.funFont(.caption, weight: .medium))
+                                    .foregroundStyle(.secondary)
                             }
-                            Text(event.displayText)
-                                .font(AppTheme.funFont(.caption, weight: .medium))
-                                .foregroundStyle(.secondary)
+                            .lineLimit(2)
+
+                            Text(feedTimeAgo(event.createdAt))
+                                .font(AppTheme.funFont(.caption2, weight: .medium))
+                                .foregroundStyle(.tertiary)
                         }
-                        .lineLimit(2)
 
-                        Text(feedTimeAgo(event.createdAt))
-                            .font(AppTheme.funFont(.caption2, weight: .medium))
-                            .foregroundStyle(.tertiary)
+                        Spacer()
                     }
-
-                    Spacer()
                 }
             }
         }
         .padding(16)
         .cardStyle(borderColor: AppTheme.primaryBlue.opacity(0.2))
-        }
     }
 
     // MARK: - Break Up Duo Button
@@ -669,6 +905,166 @@ struct DuoHubView: View {
         .padding(.top, 8)
     }
 
+    // MARK: - Legacy Active Content (fallback when dashboard RPC unavailable)
+
+    @ViewBuilder
+    private var legacyActiveContent: some View {
+        if let partner = duoService.currentPartnership {
+            VStack(spacing: 16) {
+                HStack(spacing: 20) {
+                    VStack(spacing: 4) {
+                        AvatarDisplayView(
+                            animal: gameVM.avatarAnimal,
+                            eyes: gameVM.avatarEyes,
+                            mouth: gameVM.avatarMouth,
+                            accessory: gameVM.avatarAccessory,
+                            bodyColor: gameVM.avatarBodyColor,
+                            backgroundColor: gameVM.avatarBgColor,
+                            size: 56
+                        )
+                        Text("You")
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                            .foregroundStyle(AppTheme.primaryBlue)
+                    }
+
+                    VStack(spacing: 4) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 28))
+                            .foregroundStyle(AppTheme.accentOrange)
+                        Text("\(partner.sharedStreak)")
+                            .font(AppTheme.funFont(.title, weight: .heavy))
+                            .foregroundStyle(AppTheme.accentOrange)
+                        Text("Duo Streak")
+                            .font(AppTheme.funFont(.caption2, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    VStack(spacing: 4) {
+                        AvatarDisplayView(
+                            animal: partner.partnerAvatar.animal,
+                            eyes: partner.partnerAvatar.eyes,
+                            mouth: partner.partnerAvatar.mouth,
+                            accessory: partner.partnerAvatar.accessory,
+                            bodyColor: partner.partnerAvatar.bodyColor,
+                            backgroundColor: partner.partnerAvatar.bgColor,
+                            size: 56
+                        )
+                        Text(partner.partnerName)
+                            .font(AppTheme.funFont(.caption, weight: .heavy))
+                            .foregroundStyle(AppTheme.funTeal)
+                    }
+                }
+                .padding(18)
+                .frame(maxWidth: .infinity)
+                .cardStyle(borderColor: AppTheme.funTeal.opacity(0.4))
+
+                howToEarnPointsCard
+
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "star.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(AppTheme.warningYellow)
+                        Text("Daily Duo Missions")
+                            .font(AppTheme.funFont(.headline, weight: .heavy))
+                    }
+                    VStack(spacing: 10) {
+                        Image(systemName: "sparkles")
+                            .font(.title2)
+                            .foregroundStyle(AppTheme.warningYellow.opacity(0.5))
+                        Text("Missions generate automatically each day!")
+                            .font(AppTheme.funFont(.subheadline, weight: .bold))
+                            .foregroundStyle(.secondary)
+                        Text("Start studying to trigger your first daily missions. Complete Brand Blitz, lessons, or quizzes to unlock them.")
+                            .font(AppTheme.funFont(.caption, weight: .medium))
+                            .foregroundStyle(.tertiary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                }
+                .padding(16)
+                .cardStyle(borderColor: AppTheme.warningYellow.opacity(0.3))
+
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "target")
+                            .font(.title3)
+                            .foregroundStyle(AppTheme.xpPurple)
+                        Text("Weekly Duo Raids")
+                            .font(AppTheme.funFont(.headline, weight: .heavy))
+                    }
+                    VStack(spacing: 10) {
+                        Image(systemName: "scope")
+                            .font(.title2)
+                            .foregroundStyle(AppTheme.xpPurple.opacity(0.5))
+                        Text("Co-op challenges refresh every Monday!")
+                            .font(AppTheme.funFont(.subheadline, weight: .bold))
+                            .foregroundStyle(.secondary)
+                        Text("5 shared challenges each week. Earn XP together, ace quizzes, and crush Brand Blitz rounds for bonus rewards.")
+                            .font(AppTheme.funFont(.caption, weight: .medium))
+                            .foregroundStyle(.tertiary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                }
+                .padding(16)
+                .cardStyle(borderColor: AppTheme.xpPurple.opacity(0.3))
+
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "trophy.fill")
+                            .font(.title3)
+                            .foregroundStyle(AppTheme.warningYellow)
+                        Text("Duo Milestones")
+                            .font(AppTheme.funFont(.headline, weight: .heavy))
+                    }
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(DuoMilestone.allCases, id: \.rawValue) { milestone in
+                                VStack(spacing: 6) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color(.tertiarySystemFill))
+                                            .frame(width: 50, height: 50)
+                                        Image(systemName: milestone.icon)
+                                            .font(.title3)
+                                            .foregroundStyle(Color(.tertiaryLabel))
+                                    }
+                                    Text("\(milestone.requiredStreak)d")
+                                        .font(AppTheme.funFont(.caption, weight: .heavy))
+                                        .foregroundStyle(.tertiary)
+                                    Text(milestone.rewardDescription)
+                                        .font(.system(size: 9, weight: .medium, design: .rounded))
+                                        .foregroundStyle(Color(.tertiaryLabel))
+                                        .lineLimit(1)
+                                }
+                                .frame(width: 80)
+                            }
+                        }
+                        .padding(.horizontal, 4)
+                    }
+                    .contentMargins(.horizontal, 0)
+
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                        Text("\(3 - partner.sharedStreak) more day\(3 - partner.sharedStreak == 1 ? "" : "s") until your first milestone!")
+                            .font(AppTheme.funFont(.caption2, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(16)
+                .cardStyle(borderColor: AppTheme.warningYellow.opacity(0.3))
+
+                breakUpDuoButton(partnerName: partner.partnerName)
+            }
+        }
+    }
+
     // MARK: - Empty State
 
     @ViewBuilder
@@ -697,37 +1093,12 @@ struct DuoHubView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
 
-                HStack(spacing: 20) {
-                    VStack(spacing: 4) {
-                        Image(systemName: "flame.fill")
-                            .font(.title2)
-                            .foregroundStyle(AppTheme.accentOrange)
-                        Text("Shared Streak")
-                            .font(AppTheme.funFont(.caption, weight: .heavy))
-                    }
-                    VStack(spacing: 4) {
-                        Image(systemName: "star.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(AppTheme.warningYellow)
-                        Text("Daily Missions")
-                            .font(AppTheme.funFont(.caption, weight: .heavy))
-                    }
-                    VStack(spacing: 4) {
-                        Image(systemName: "target")
-                            .font(.title2)
-                            .foregroundStyle(AppTheme.xpPurple)
-                        Text("Weekly Raids")
-                            .font(AppTheme.funFont(.caption, weight: .heavy))
-                    }
-                    VStack(spacing: 4) {
-                        Image(systemName: "trophy.fill")
-                            .font(.title2)
-                            .foregroundStyle(AppTheme.warningYellow)
-                        Text("Milestones")
-                            .font(AppTheme.funFont(.caption, weight: .heavy))
-                    }
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    duoFeaturePreview(icon: "flame.fill", title: "Shared Streak", subtitle: "Both study daily", color: AppTheme.accentOrange)
+                    duoFeaturePreview(icon: "star.circle.fill", title: "Daily Missions", subtitle: "3 bonus challenges", color: AppTheme.warningYellow)
+                    duoFeaturePreview(icon: "target", title: "Weekly Raids", subtitle: "5 co-op quests", color: AppTheme.xpPurple)
+                    duoFeaturePreview(icon: "trophy.fill", title: "Milestones", subtitle: "Streak rewards", color: AppTheme.warningYellow)
                 }
-                .padding(.top, 4)
 
                 Button {
                     Task {
@@ -759,6 +1130,24 @@ struct DuoHubView: View {
             .padding(20)
             .cardStyle(borderColor: AppTheme.funTeal.opacity(0.3))
         }
+    }
+
+    @ViewBuilder
+    private func duoFeaturePreview(icon: String, title: String, subtitle: String, color: Color) -> some View {
+        VStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(color)
+            Text(title)
+                .font(AppTheme.funFont(.caption, weight: .heavy))
+            Text(subtitle)
+                .font(AppTheme.funFont(.caption2, weight: .medium))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background(color.opacity(0.06))
+        .clipShape(.rect(cornerRadius: 12))
     }
 
     // MARK: - Pending Invite Cards
@@ -1025,6 +1414,10 @@ struct DuoHubView: View {
         case "milestone_claimed": return AppTheme.warningYellow
         case "partnership_started": return AppTheme.primaryBlue
         case "partnership_dissolved": return AppTheme.heartRed
+        case "brand_blitz_complete": return AppTheme.accentOrange
+        case "high_score": return AppTheme.warningYellow
+        case "perfect_quiz": return AppTheme.funPink
+        case "lesson_complete": return AppTheme.primaryBlue
         default: return AppTheme.primaryBlue
         }
     }
