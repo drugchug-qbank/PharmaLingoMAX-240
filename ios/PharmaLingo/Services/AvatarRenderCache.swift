@@ -8,8 +8,8 @@ final class AvatarRenderCache {
     private let cache = NSCache<NSString, UIImage>()
 
     private init() {
-        cache.countLimit = 150
-        cache.totalCostLimit = 30 * 1024 * 1024
+        cache.countLimit = 200
+        cache.totalCostLimit = 40 * 1024 * 1024
     }
 
     func thumbnail(for config: AvatarConfiguration, size: CGFloat) -> UIImage? {
@@ -26,26 +26,19 @@ final class AvatarRenderCache {
         cache.removeAllObjects()
     }
 
-    private static let riveAnimals: Set<String> = ["cat", "bear", "beaver", "chipmunk", "deer", "dog", "dragon", "fox", "hedgehog", "lion", "monkey", "mouse", "octopus", "panda", "raccoon", "tiger", "unicorn"]
-
     @discardableResult
     func renderAndCache(config: AvatarConfiguration, size: CGFloat) -> UIImage? {
-        if Self.riveAnimals.contains(config.animal) {
-            return nil
-        }
-
         if let existing = thumbnail(for: config, size: size) {
             return existing
         }
 
-        let canvasConfig = config
         let canvasView = AnimalAvatarView(
-            animalType: canvasConfig.animalType,
-            bodyColor: canvasConfig.bodyColor,
-            backgroundColor: canvasConfig.bgColor,
-            eyeStyle: canvasConfig.eyeStyle,
-            mouthStyle: canvasConfig.mouthStyle,
-            accessory: canvasConfig.accessoryType,
+            animalType: config.animalType,
+            bodyColor: config.bodyColor,
+            backgroundColor: config.bgColor,
+            eyeStyle: config.eyeStyle,
+            mouthStyle: config.mouthStyle,
+            accessory: config.accessoryType,
             size: size
         )
 
@@ -66,14 +59,26 @@ struct CachedAvatarView: View {
 
     @State private var cachedImage: UIImage?
 
+    private var cornerRadius: CGFloat {
+        AnimalAvatarView.tileCornerRadius(for: size)
+    }
+
     var body: some View {
         Group {
             if let cachedImage {
                 Image(uiImage: cachedImage)
                     .resizable()
                     .frame(width: size, height: size)
+                    .clipShape(.rect(cornerRadius: cornerRadius))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .stroke(Color.black.opacity(0.15), lineWidth: size * 0.015)
+                    )
+                    .shadow(color: .black.opacity(0.08), radius: size * 0.04, x: 0, y: size * 0.015)
             } else {
-                AvatarRendererView(configuration: configuration, size: size)
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(configuration.bgColor)
+                    .frame(width: size, height: size)
             }
         }
         .task(id: configuration) {

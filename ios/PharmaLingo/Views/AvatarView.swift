@@ -1,5 +1,10 @@
 import SwiftUI
 
+enum AvatarRenderMode {
+    case live
+    case thumbnail
+}
+
 struct AvatarDisplayView: View {
     let animal: String
     let eyes: String
@@ -8,8 +13,9 @@ struct AvatarDisplayView: View {
     let bodyColor: String
     let backgroundColor: String
     let size: CGFloat
+    let renderMode: AvatarRenderMode
 
-    init(animal: String, eyes: String, mouth: String, accessory: String, bodyColor: String = "", backgroundColor: String = "", size: CGFloat) {
+    init(animal: String, eyes: String, mouth: String, accessory: String, bodyColor: String = "", backgroundColor: String = "", size: CGFloat, renderMode: AvatarRenderMode = .live) {
         self.animal = animal
         self.eyes = eyes
         self.mouth = mouth
@@ -17,6 +23,7 @@ struct AvatarDisplayView: View {
         self.bodyColor = bodyColor
         self.backgroundColor = backgroundColor
         self.size = size
+        self.renderMode = renderMode
     }
 
     private var configuration: AvatarConfiguration {
@@ -31,7 +38,12 @@ struct AvatarDisplayView: View {
     }
 
     var body: some View {
-        AvatarRendererView(configuration: configuration, size: size)
+        switch renderMode {
+        case .live:
+            AvatarRendererView(configuration: configuration, size: size)
+        case .thumbnail:
+            CachedAvatarView(configuration: configuration, size: size)
+        }
     }
 }
 

@@ -176,10 +176,13 @@ struct RanksView: View {
             }
             .background(Color(.systemGroupedBackground))
             .task {
-                await loadAllData()
+                await loadTabData(for: selectedTab)
             }
             .refreshable {
-                await loadAllData()
+                await loadTabData(for: selectedTab)
+            }
+            .onChange(of: selectedTab) { _, newTab in
+                Task { await loadTabData(for: newTab) }
             }
             .sheet(isPresented: $showAddFriend) {
                 AddFriendSheet(onRequestSent: {
@@ -225,22 +228,33 @@ struct RanksView: View {
         return "\(daysLeft) days left"
     }
 
-    private func loadAllData() async {
+    @State private var loadedTabs: Set<RanksTab> = []
+
+    private func loadTabData(for tab: RanksTab) async {
         isLoadingLeaderboard = true
-        async let lb = supabase.fetchLeaderboard()
-        async let fr = supabase.fetchFriends()
-        async let pr = supabase.fetchPendingRequests()
-        async let sr = supabase.fetchSchoolRankings()
-        async let prr = supabase.fetchProfessionRankings()
-        async let at = supabase.fetchAllTimeLeaderboard()
-        leaderboard = await lb
-        friends = await fr
-        pendingRequests = await pr
-        schoolRankings = await sr
-        professionRankings = await prr
-        let allTimeResult = await at
-        allTimeLeaderboard = allTimeResult.top300
-        allTimeMyRank = allTimeResult.myRank
+        switch tab {
+        case .league:
+            leaderboard = await supabase.fetchLeaderboard()
+            print("[Ranks] League loaded: \(leaderboard.count) rows, mode=thumbnail")
+        case .hallOfFame:
+            let result = await supabase.fetchAllTimeLeaderboard()
+            allTimeLeaderboard = result.top300
+            allTimeMyRank = result.myRank
+            print("[Ranks] Hall of Fame loaded: \(allTimeLeaderboard.count) rows, mode=thumbnail")
+        case .friends:
+            async let fr = supabase.fetchFriends()
+            async let pr = supabase.fetchPendingRequests()
+            friends = await fr
+            pendingRequests = await pr
+            print("[Ranks] Friends loaded: \(friends.count) rows + \(pendingRequests.count) pending, mode=thumbnail")
+        case .school:
+            schoolRankings = await supabase.fetchSchoolRankings()
+            print("[Ranks] School loaded: \(schoolRankings.count) rows")
+        case .profession:
+            professionRankings = await supabase.fetchProfessionRankings()
+            print("[Ranks] Profession loaded: \(professionRankings.count) rows")
+        }
+        loadedTabs.insert(tab)
         isLoadingLeaderboard = false
     }
 
@@ -276,45 +290,47 @@ struct RanksView: View {
                 }
                 .padding(32)
             } else {
-                ForEach(Array(leaderboard.enumerated()), id: \.element.id) { index, entry in
-                    let isCurrentUser = entry.id == supabase.currentUser?.id.uuidString.lowercased()
-                    if isCurrentUser {
-                        LeaderboardRow(
-                            entry: LeaderboardEntry(
-                                id: entry.id,
-                                username: gameVM.username,
-                                avatarAnimal: gameVM.avatarAnimal,
-                                avatarEyes: gameVM.avatarEyes,
-                                avatarMouth: gameVM.avatarMouth,
-                                avatarAccessory: gameVM.avatarAccessory,
-                                avatarBodyColor: gameVM.avatarBodyColor,
-                                avatarBgColor: gameVM.avatarBgColor,
-                                xpThisWeek: entry.weeklyXP,
-                                streak: gameVM.currentStreak,
-                                rank: index + 1
-                            ),
-                            isCurrentUser: true
-                        )
-                    } else {
-                        NavigationLink(value: entry.id) {
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(leaderboard.enumerated()), id: \.element.id) { index, entry in
+                        let isCurrentUser = entry.id == supabase.currentUser?.id.uuidString.lowercased()
+                        if isCurrentUser {
                             LeaderboardRow(
                                 entry: LeaderboardEntry(
                                     id: entry.id,
-                                    username: entry.username,
-                                    avatarAnimal: entry.avatarAnimal,
-                                    avatarEyes: entry.avatarEyes,
-                                    avatarMouth: entry.avatarMouth,
-                                    avatarAccessory: entry.avatarAccessory,
-                                    avatarBodyColor: entry.avatarBodyColor,
-                                    avatarBgColor: entry.avatarBgColor,
+                                    username: gameVM.username,
+                                    avatarAnimal: gameVM.avatarAnimal,
+                                    avatarEyes: gameVM.avatarEyes,
+                                    avatarMouth: gameVM.avatarMouth,
+                                    avatarAccessory: gameVM.avatarAccessory,
+                                    avatarBodyColor: gameVM.avatarBodyColor,
+                                    avatarBgColor: gameVM.avatarBgColor,
                                     xpThisWeek: entry.weeklyXP,
-                                    streak: entry.currentStreak,
+                                    streak: gameVM.currentStreak,
                                     rank: index + 1
                                 ),
-                                isCurrentUser: false
+                                isCurrentUser: true
                             )
+                        } else {
+                            NavigationLink(value: entry.id) {
+                                LeaderboardRow(
+                                    entry: LeaderboardEntry(
+                                        id: entry.id,
+                                        username: entry.username,
+                                        avatarAnimal: entry.avatarAnimal,
+                                        avatarEyes: entry.avatarEyes,
+                                        avatarMouth: entry.avatarMouth,
+                                        avatarAccessory: entry.avatarAccessory,
+                                        avatarBodyColor: entry.avatarBodyColor,
+                                        avatarBgColor: entry.avatarBgColor,
+                                        xpThisWeek: entry.weeklyXP,
+                                        streak: entry.currentStreak,
+                                        rank: index + 1
+                                    ),
+                                    isCurrentUser: false
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
             }
@@ -337,7 +353,7 @@ struct RanksView: View {
                         PendingRequestRow(request: request, onAccept: {
                             Task {
                                 try? await supabase.acceptFriendRequest(requestId: request.requestId)
-                                await loadAllData()
+                                await loadTabData(for: .friends)
                             }
                         }, onDecline: {
                             Task {
@@ -387,11 +403,13 @@ struct RanksView: View {
                 .padding(24)
                 .cardStyle()
             } else {
-                ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
-                    NavigationLink(value: friend.id) {
-                        FriendRow(friend: friend, rank: index + 1)
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
+                        NavigationLink(value: friend.id) {
+                            FriendRow(friend: friend, rank: index + 1)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -527,13 +545,15 @@ struct RanksView: View {
                 }
                 .padding(32)
             } else {
-                ForEach(Array(allTimeLeaderboard.enumerated()), id: \.element.id) { index, entry in
-                    let isCurrentUser = entry.id == currentUserId
-                    HallOfFameRow(
-                        entry: entry,
-                        rank: index + 1,
-                        isCurrentUser: isCurrentUser
-                    )
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(allTimeLeaderboard.enumerated()), id: \.element.id) { index, entry in
+                        let isCurrentUser = entry.id == currentUserId
+                        HallOfFameRow(
+                            entry: entry,
+                            rank: index + 1,
+                            isCurrentUser: isCurrentUser
+                        )
+                    }
                 }
 
                 if !isInTop300, let myRank = allTimeMyRank {
@@ -596,7 +616,8 @@ struct PendingRequestRow: View {
                 accessory: request.avatarAccessory,
                 bodyColor: request.avatarBodyColor,
                 backgroundColor: request.avatarBgColor,
-                size: 40
+                size: 40,
+                renderMode: .thumbnail
             )
 
             VStack(alignment: .leading, spacing: 2) {
@@ -661,7 +682,8 @@ struct FriendRow: View {
                 accessory: friend.avatarAccessory,
                 bodyColor: friend.avatarBodyColor,
                 backgroundColor: friend.avatarBgColor,
-                size: 42
+                size: 42,
+                renderMode: .thumbnail
             )
 
             VStack(alignment: .leading, spacing: 4) {
@@ -975,7 +997,8 @@ struct LeaderboardRow: View {
                 accessory: entry.avatarAccessory,
                 bodyColor: entry.avatarBodyColor,
                 backgroundColor: entry.avatarBgColor,
-                size: 38
+                size: 38,
+                renderMode: .thumbnail
             )
 
             VStack(alignment: .leading, spacing: 2) {
@@ -1033,7 +1056,8 @@ struct HallOfFameRow: View {
                 accessory: entry.avatarAccessory,
                 bodyColor: entry.avatarBodyColor,
                 backgroundColor: entry.avatarBgColor,
-                size: 38
+                size: 38,
+                renderMode: .thumbnail
             )
 
             VStack(alignment: .leading, spacing: 3) {
@@ -1255,7 +1279,8 @@ struct AddFriendSheet: View {
                                 accessory: user.avatarAccessory,
                                 bodyColor: user.avatarBodyColor,
                                 backgroundColor: user.avatarBgColor,
-                                size: 40
+                                size: 40,
+                                renderMode: .thumbnail
                             )
 
                             VStack(alignment: .leading, spacing: 2) {
