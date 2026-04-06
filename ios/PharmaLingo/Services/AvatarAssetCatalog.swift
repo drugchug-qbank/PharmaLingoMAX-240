@@ -55,6 +55,7 @@ enum AvatarAssetCatalog {
         case .mouse: return ["B0BEC5", "90A4AE", "CFD8DC", "78909C"]
         case .octopus: return ["CE93D8", "AB47BC", "B39DDB", "E1BEE7"]
         case .panda: return ["E0E0E0", "BDBDBD", "F5F5F5", "CFD8DC"]
+        case .tiger: return ["FF8C00", "E8733A", "DAA520", "C0593A"]
         case .unicorn: return ["F8BBD0", "CE93D8", "B39DDB", "81D4FA"]
         default: return [animal.defaultColorHex]
         }

@@ -2,7 +2,7 @@ import SwiftUI
 
 nonisolated enum AnimalType: String, CaseIterable, Sendable {
     case bear, beaver, bunny, cat, chipmunk, deer, dog, dragon, fox
-    case hedgehog, lion, monkey, mouse, octopus, panda, raccoon, unicorn
+    case hedgehog, lion, monkey, mouse, octopus, panda, raccoon, tiger, unicorn
 
     var displayName: String {
         switch self {
@@ -22,6 +22,7 @@ nonisolated enum AnimalType: String, CaseIterable, Sendable {
         case .octopus: "Octopus"
         case .panda: "Panda"
         case .raccoon: "Raccoon"
+        case .tiger: "Tiger"
         case .unicorn: "Unicorn"
         }
     }
@@ -46,6 +47,7 @@ nonisolated enum AnimalType: String, CaseIterable, Sendable {
         case .octopus: "CE93D8"
         case .panda: "E0E0E0"
         case .raccoon: "78909C"
+        case .tiger: "FF8C00"
         case .unicorn: "F8BBD0"
         }
     }

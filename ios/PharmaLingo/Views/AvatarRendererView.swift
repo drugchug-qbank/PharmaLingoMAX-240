@@ -14,7 +14,7 @@ struct AvatarRendererView: View {
 
     private var isRiveAnimal: Bool {
         switch configuration.animalType {
-        case .bunny, .cat, .bear, .beaver, .chipmunk, .deer, .dog, .dragon, .fox, .hedgehog, .lion, .monkey, .mouse, .octopus: true
+        case .bunny, .cat, .bear, .beaver, .chipmunk, .deer, .dog, .dragon, .fox, .hedgehog, .lion, .monkey, .mouse, .octopus, .tiger, .unicorn, .raccoon: true
         default: false
         }
     }
@@ -153,6 +153,15 @@ struct AvatarRendererView: View {
                 .allowsHitTesting(false)
         case .octopus:
             RiveOctopusAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveOctopusAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
+        case .tiger:
+            RiveTigerAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveTigerAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
+        case .unicorn:
+            RiveUnicornAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveUnicornAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
+        case .raccoon:
+            RiveRaccoonAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveRaccoonAvatarView.bodyColorIndex(for: configuration.bodyHex))
                 .allowsHitTesting(false)
         default:
             EmptyView()

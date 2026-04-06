@@ -619,6 +619,35 @@ struct AnimalAvatarView: View {
             }
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.56, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.56, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
+
+        case .tiger:
+            let earL = CGRect(x: s * 0.10, y: s * 0.16, width: s * 0.22, height: s * 0.22)
+            let earR = CGRect(x: s * 0.68, y: s * 0.16, width: s * 0.22, height: s * 0.22)
+            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
+            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: earL.insetBy(dx: s * 0.04, dy: s * 0.04)), with: .color(Color.white.opacity(0.5)))
+            context.fill(Path(ellipseIn: earR.insetBy(dx: s * 0.04, dy: s * 0.04)), with: .color(Color.white.opacity(0.5)))
+            let tigerHead = CGRect(x: s * 0.12, y: s * 0.22, width: s * 0.76, height: s * 0.64)
+            fns(context: &context, path: Path(ellipseIn: tigerHead), fill: fc, outline: oc, lineWidth: ow)
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.16, y: s * 0.24, width: s * 0.36, height: s * 0.16)), with: .color(highlight))
+            for i in 0..<3 {
+                let xOff = s * (0.20 + CGFloat(i) * 0.12)
+                var stripe = Path()
+                stripe.move(to: CGPoint(x: xOff, y: s * 0.26))
+                stripe.addLine(to: CGPoint(x: xOff - s * 0.02, y: s * 0.36))
+                context.stroke(stripe, with: .color(darker(fc, by: 0.35)), lineWidth: max(1.5, s * 0.018))
+                var stripeR = Path()
+                stripeR.move(to: CGPoint(x: s * 1.0 - xOff, y: s * 0.26))
+                stripeR.addLine(to: CGPoint(x: s * 1.0 - xOff + s * 0.02, y: s * 0.36))
+                context.stroke(stripeR, with: .color(darker(fc, by: 0.35)), lineWidth: max(1.5, s * 0.018))
+            }
+            let tigerMuzzle = CGRect(x: s * 0.30, y: s * 0.54, width: s * 0.40, height: s * 0.26)
+            fns(context: &context, path: Path(ellipseIn: tigerMuzzle), fill: belly, outline: oc, lineWidth: iw)
+            let tigerNose = CGRect(x: s * 0.43, y: s * 0.56, width: s * 0.14, height: s * 0.10)
+            context.fill(Path(ellipseIn: tigerNose), with: .color(noseColor))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.46, y: s * 0.57, width: s * 0.05, height: s * 0.03)), with: .color(Color.white.opacity(0.35)))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.56, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
+            context.fill(Path(ellipseIn: CGRect(x: s * 0.73, y: s * 0.56, width: s * 0.12, height: s * 0.08)), with: .color(cheek))
         }
     }
 

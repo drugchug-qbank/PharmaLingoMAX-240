@@ -376,6 +376,51 @@ struct AvatarCustomizationView: View {
                         selectedBodyColor = RiveDragonAvatarView.dragonBodyColorHexes[0].hex
                     }
                 }
+                if newAnimal == .tiger {
+                    if !RiveTigerAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveTigerAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveTigerAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let tigerHex = RiveTigerAvatarView.tigerBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if tigerHex == nil {
+                        selectedBodyColor = RiveTigerAvatarView.tigerBodyColorHexes[0].hex
+                    }
+                }
+                if newAnimal == .unicorn {
+                    if !RiveUnicornAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveUnicornAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveUnicornAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let unicornHex = RiveUnicornAvatarView.unicornBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if unicornHex == nil {
+                        selectedBodyColor = RiveUnicornAvatarView.unicornBodyColorHexes[0].hex
+                    }
+                }
+                if newAnimal == .raccoon {
+                    if !RiveRaccoonAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RiveRaccoonAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RiveRaccoonAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let raccoonHex = RiveRaccoonAvatarView.raccoonBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if raccoonHex == nil {
+                        selectedBodyColor = RiveRaccoonAvatarView.raccoonBodyColorHexes[0].hex
+                    }
+                }
             }
         }
     }
@@ -535,8 +580,20 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .octopus
     }
 
+    private var isTigerSelected: Bool {
+        selectedAnimal == .tiger
+    }
+
+    private var isUnicornSelected: Bool {
+        selectedAnimal == .unicorn
+    }
+
+    private var isRaccoonSelected: Bool {
+        selectedAnimal == .raccoon
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected || isMouseSelected || isOctopusSelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected || isMouseSelected || isOctopusSelected || isTigerSelected || isUnicornSelected || isRaccoonSelected
     }
 
     private var colorGrid: some View {
@@ -571,6 +628,12 @@ struct AvatarCustomizationView: View {
                 mouseColorGrid
             } else if isOctopusSelected {
                 octopusColorGrid
+            } else if isTigerSelected {
+                tigerColorGrid
+            } else if isUnicornSelected {
+                unicornColorGrid
+            } else if isRaccoonSelected {
+                raccoonColorGrid
             } else {
                 genericColorGrid
             }
@@ -782,6 +845,57 @@ struct AvatarCustomizationView: View {
         .padding(.horizontal)
     }
 
+    private var tigerColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveTigerAvatarView.tigerBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var unicornColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveUnicornAvatarView.unicornBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var raccoonColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RiveRaccoonAvatarView.raccoonBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
     private var mouseColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             ForEach(Array(RiveMouseAvatarView.mouseBodyColorHexes.enumerated()), id: \.offset) { _, color in
@@ -920,6 +1034,15 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .octopus {
             return RiveOctopusAvatarView.supportedEyes
         }
+        if selectedAnimal == .tiger {
+            return RiveTigerAvatarView.supportedEyes
+        }
+        if selectedAnimal == .unicorn {
+            return RiveUnicornAvatarView.supportedEyes
+        }
+        if selectedAnimal == .raccoon {
+            return RiveRaccoonAvatarView.supportedEyes
+        }
         return EyeStyle.allCases.map { $0 }
     }
 
@@ -963,6 +1086,15 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .octopus {
             return RiveOctopusAvatarView.supportedMouths
         }
+        if selectedAnimal == .tiger {
+            return RiveTigerAvatarView.supportedMouths
+        }
+        if selectedAnimal == .unicorn {
+            return RiveUnicornAvatarView.supportedMouths
+        }
+        if selectedAnimal == .raccoon {
+            return RiveRaccoonAvatarView.supportedMouths
+        }
         return MouthStyle.allCases.map { $0 }
     }
 
@@ -1005,6 +1137,15 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .octopus {
             return RiveOctopusAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .tiger {
+            return RiveTigerAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .unicorn {
+            return RiveUnicornAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .raccoon {
+            return RiveRaccoonAvatarView.supportedAccessories
         }
         return AccessoryType.allCases.map { $0 }
     }
