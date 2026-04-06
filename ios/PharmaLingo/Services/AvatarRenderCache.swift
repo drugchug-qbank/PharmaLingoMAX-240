@@ -38,32 +38,60 @@ final class AvatarRenderCache {
         pendingKeys.insert(key)
         defer { pendingKeys.remove(key) }
 
-        let renderSize = size * 2.0
+        let renderSize = size * 3.0
         let avatarView = AvatarRendererView(configuration: config, size: renderSize)
+            .frame(width: renderSize, height: renderSize)
+            .ignoresSafeArea()
 
-        let hostingController = UIHostingController(rootView: avatarView)
+        let hostingController = UIHostingController(rootView: AnyView(avatarView))
+        hostingController.safeAreaRegions = []
         hostingController.view.frame = CGRect(x: 0, y: 0, width: renderSize, height: renderSize)
         hostingController.view.backgroundColor = .clear
+        hostingController.view.insetsLayoutMarginsFromSafeArea = false
 
-        let offscreenWindow = UIWindow(frame: CGRect(x: -9999, y: -9999, width: renderSize, height: renderSize))
+        let scene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first
+        let offscreenWindow: UIWindow
+        if let scene {
+            offscreenWindow = UIWindow(windowScene: scene)
+        } else {
+            offscreenWindow = UIWindow()
+        }
+        offscreenWindow.frame = CGRect(x: 0, y: 0, width: renderSize, height: renderSize)
+        offscreenWindow.windowLevel = UIWindow.Level(rawValue: -1000)
         offscreenWindow.rootViewController = hostingController
         offscreenWindow.isHidden = false
         offscreenWindow.layoutIfNeeded()
         hostingController.view.layoutIfNeeded()
 
-        try? await Task.sleep(for: .milliseconds(400))
+        try? await Task.sleep(for: .milliseconds(700))
 
+        hostingController.view.setNeedsLayout()
         hostingController.view.layoutIfNeeded()
 
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: renderSize, height: renderSize))
+        let renderer = UIGraphicsImageRenderer(
+            size: CGSize(width: renderSize, height: renderSize),
+            format: {
+                let fmt = UIGraphicsImageRendererFormat()
+                fmt.scale = 1.0
+                fmt.opaque = false
+                return fmt
+            }()
+        )
         let image = renderer.image { _ in
-            hostingController.view.drawHierarchy(in: CGRect(x: 0, y: 0, width: renderSize, height: renderSize), afterScreenUpdates: true)
+            hostingController.view.drawHierarchy(
+                in: CGRect(x: 0, y: 0, width: renderSize, height: renderSize),
+                afterScreenUpdates: true
+            )
         }
 
         offscreenWindow.isHidden = true
         offscreenWindow.rootViewController = nil
 
-        let finalImage = UIImage(cgImage: image.cgImage!, scale: 2.0, orientation: .up)
+        guard let cgImage = image.cgImage else { return nil }
+        let targetScale = renderSize / size
+        let finalImage = UIImage(cgImage: cgImage, scale: targetScale, orientation: .up)
         storeThumbnail(finalImage, for: config, size: size)
         return finalImage
     }
@@ -100,6 +128,7 @@ struct CachedAvatarView: View {
     let size: CGFloat
 
     @State private var cachedImage: UIImage?
+    @State private var retryCount: Int = 0
 
     private var cornerRadius: CGFloat {
         AnimalAvatarView.tileCornerRadius(for: size)
@@ -110,6 +139,7 @@ struct CachedAvatarView: View {
             if let cachedImage {
                 Image(uiImage: cachedImage)
                     .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: size, height: size)
                     .clipShape(.rect(cornerRadius: cornerRadius))
                     .overlay(
@@ -127,12 +157,18 @@ struct CachedAvatarView: View {
                     }
             }
         }
-        .task(id: configuration) {
+        .task(id: "\(configuration.cacheKey)_\(retryCount)") {
             if let existing = AvatarRenderCache.shared.thumbnail(for: configuration, size: size) {
                 cachedImage = existing
                 return
             }
-            cachedImage = await AvatarRenderCache.shared.snapshotRiveAvatar(config: configuration, size: size)
+            let result = await AvatarRenderCache.shared.snapshotRiveAvatar(config: configuration, size: size)
+            if let result {
+                cachedImage = result
+            } else if retryCount < 2 {
+                try? await Task.sleep(for: .milliseconds(300))
+                retryCount += 1
+            }
         }
     }
 }
