@@ -437,7 +437,7 @@ nonisolated struct SignUpProfileData: Encodable, Sendable {
     let hasSeenLearning: String = "[]"
     let questionsAnswered: Int = 0
     let questionsCorrect: Int = 0
-    let ownedAvatars: String = "[\"beaver\",\"octopus\",\"bunny\",\"cat\"]"
+    let ownedAvatars: String = "[\"beaver\",\"octopus\",\"cat\"]"
     let ownedEyes: String = "[\"normal\",\"happy\",\"big\"]"
     let ownedMouths: String = "[\"smile\",\"bigSmile\",\"tiny\"]"
     let ownedAccessories: String = "[\"none\"]"

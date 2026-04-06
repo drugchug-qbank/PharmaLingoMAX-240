@@ -178,8 +178,20 @@ struct AvatarCustomizationView: View {
                 Text(purchaseMessage)
             }
             .onChange(of: selectedAnimal) { _, newAnimal in
-                if newAnimal == .bunny && !RiveBunnyAvatarView.supportedEyes.contains(selectedEyes) {
-                    selectedEyes = .normal
+                if newAnimal == .panda {
+                    if !RivePandaAvatarView.supportedEyes.contains(selectedEyes) {
+                        selectedEyes = .normal
+                    }
+                    if !RivePandaAvatarView.supportedMouths.contains(selectedMouth) {
+                        selectedMouth = .smile
+                    }
+                    if !RivePandaAvatarView.supportedAccessories.contains(selectedAccessory) {
+                        selectedAccessory = .none
+                    }
+                    let pandaHex = RivePandaAvatarView.pandaBodyColorHexes.first(where: { $0.hex == selectedBodyColor })
+                    if pandaHex == nil {
+                        selectedBodyColor = RivePandaAvatarView.pandaBodyColorHexes[0].hex
+                    }
                 }
                 if newAnimal == .cat {
                     if !RiveCatAvatarView.supportedEyes.contains(selectedEyes) {
@@ -592,8 +604,12 @@ struct AvatarCustomizationView: View {
         selectedAnimal == .raccoon
     }
 
+    private var isPandaSelected: Bool {
+        selectedAnimal == .panda
+    }
+
     private var isRiveAnimalSelected: Bool {
-        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected || isMouseSelected || isOctopusSelected || isTigerSelected || isUnicornSelected || isRaccoonSelected
+        isBearSelected || isBeaverSelected || isCatSelected || isChipmunkSelected || isDeerSelected || isDogSelected || isDragonSelected || isFoxSelected || isHedgehogSelected || isLionSelected || isMonkeySelected || isMouseSelected || isOctopusSelected || isPandaSelected || isTigerSelected || isUnicornSelected || isRaccoonSelected
     }
 
     private var colorGrid: some View {
@@ -628,6 +644,8 @@ struct AvatarCustomizationView: View {
                 mouseColorGrid
             } else if isOctopusSelected {
                 octopusColorGrid
+            } else if isPandaSelected {
+                pandaColorGrid
             } else if isTigerSelected {
                 tigerColorGrid
             } else if isUnicornSelected {
@@ -845,6 +863,23 @@ struct AvatarCustomizationView: View {
         .padding(.horizontal)
     }
 
+    private var pandaColorGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+            ForEach(Array(RivePandaAvatarView.pandaBodyColorHexes.enumerated()), id: \.offset) { _, color in
+                Button {
+                    withAnimation(.spring(duration: 0.2)) {
+                        selectedBodyColor = color.hex
+                    }
+                    triggerBounce()
+                } label: {
+                    colorCell(hex: color.hex, name: color.name, isSelected: selectedBodyColor == color.hex)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal)
+    }
+
     private var tigerColorGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
             ForEach(Array(RiveTigerAvatarView.tigerBodyColorHexes.enumerated()), id: \.offset) { _, color in
@@ -992,8 +1027,8 @@ struct AvatarCustomizationView: View {
     }
 
     private var availableEyes: [EyeStyle] {
-        if selectedAnimal == .bunny {
-            return RiveBunnyAvatarView.supportedEyes
+        if selectedAnimal == .panda {
+            return RivePandaAvatarView.supportedEyes
         }
         if selectedAnimal == .cat {
             return RiveCatAvatarView.supportedEyes
@@ -1034,6 +1069,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .octopus {
             return RiveOctopusAvatarView.supportedEyes
         }
+        if selectedAnimal == .panda {
+            return RivePandaAvatarView.supportedEyes
+        }
         if selectedAnimal == .tiger {
             return RiveTigerAvatarView.supportedEyes
         }
@@ -1047,6 +1085,9 @@ struct AvatarCustomizationView: View {
     }
 
     private var availableMouths: [MouthStyle] {
+        if selectedAnimal == .panda {
+            return RivePandaAvatarView.supportedMouths
+        }
         if selectedAnimal == .bear {
             return RiveBearAvatarView.supportedMouths
         }
@@ -1086,6 +1127,9 @@ struct AvatarCustomizationView: View {
         if selectedAnimal == .octopus {
             return RiveOctopusAvatarView.supportedMouths
         }
+        if selectedAnimal == .panda {
+            return RivePandaAvatarView.supportedMouths
+        }
         if selectedAnimal == .tiger {
             return RiveTigerAvatarView.supportedMouths
         }
@@ -1099,6 +1143,9 @@ struct AvatarCustomizationView: View {
     }
 
     private var availableAccessories: [AccessoryType] {
+        if selectedAnimal == .panda {
+            return RivePandaAvatarView.supportedAccessories
+        }
         if selectedAnimal == .bear {
             return RiveBearAvatarView.supportedAccessories
         }
@@ -1137,6 +1184,9 @@ struct AvatarCustomizationView: View {
         }
         if selectedAnimal == .octopus {
             return RiveOctopusAvatarView.supportedAccessories
+        }
+        if selectedAnimal == .panda {
+            return RivePandaAvatarView.supportedAccessories
         }
         if selectedAnimal == .tiger {
             return RiveTigerAvatarView.supportedAccessories

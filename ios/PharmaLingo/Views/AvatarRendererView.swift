@@ -14,7 +14,7 @@ struct AvatarRendererView: View {
 
     private var isRiveAnimal: Bool {
         switch configuration.animalType {
-        case .bunny, .cat, .bear, .beaver, .chipmunk, .deer, .dog, .dragon, .fox, .hedgehog, .lion, .monkey, .mouse, .octopus, .tiger, .unicorn, .raccoon: true
+        case .cat, .bear, .beaver, .chipmunk, .deer, .dog, .dragon, .fox, .hedgehog, .lion, .monkey, .mouse, .octopus, .panda, .tiger, .unicorn, .raccoon: true
         default: false
         }
     }
@@ -100,21 +100,9 @@ struct AvatarRendererView: View {
         }
     }
 
-    private var useBunnyImagePath: Bool {
-        let effectiveEye = isBlinking ? EyeStyle.sleepy : configuration.eyeStyle
-        return BunnyImageAvatarView.canUseImagePath(animalType: configuration.animalType, eyeStyle: effectiveEye)
-    }
-
-    private var bunnyContentScale: CGFloat {
-        size > 100 ? 1.25 : 1.0
-    }
-
     @ViewBuilder
     private var riveLayer: some View {
         switch configuration.animalType {
-        case .bunny:
-            RiveBunnyAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle)
-                .allowsHitTesting(false)
         case .cat:
             RiveCatAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveCatAvatarView.bodyColorIndex(for: configuration.bodyHex))
                 .allowsHitTesting(false)
@@ -154,6 +142,9 @@ struct AvatarRendererView: View {
         case .octopus:
             RiveOctopusAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveOctopusAvatarView.bodyColorIndex(for: configuration.bodyHex))
                 .allowsHitTesting(false)
+        case .panda:
+            RivePandaAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RivePandaAvatarView.bodyColorIndex(for: configuration.bodyHex))
+                .allowsHitTesting(false)
         case .tiger:
             RiveTigerAvatarView(size: size, eyeStyle: configuration.eyeStyle, mouthStyle: configuration.mouthStyle, accessoryType: configuration.accessoryType, bodyColorIndex: RiveTigerAvatarView.bodyColorIndex(for: configuration.bodyHex))
                 .allowsHitTesting(false)
@@ -170,27 +161,16 @@ struct AvatarRendererView: View {
 
     @ViewBuilder
     private var animalLayer: some View {
-        if !isRiveAnimal && useBunnyImagePath {
-            BunnyImageAvatarView(
-                eyeStyle: .normal,
-                mouthStyle: configuration.mouthStyle,
-                accessory: configuration.accessoryType,
-                size: size,
-                contentScale: bunnyContentScale
-            )
-            .allowsHitTesting(false)
-        } else {
-            AnimalAvatarView(
-                animalType: configuration.animalType,
-                bodyColor: configuration.bodyColor,
-                backgroundColor: .clear,
-                eyeStyle: isBlinking ? .sleepy : configuration.eyeStyle,
-                mouthStyle: configuration.mouthStyle,
-                accessory: configuration.accessoryType,
-                size: size
-            )
-            .allowsHitTesting(false)
-        }
+        AnimalAvatarView(
+            animalType: configuration.animalType,
+            bodyColor: configuration.bodyColor,
+            backgroundColor: .clear,
+            eyeStyle: isBlinking ? .sleepy : configuration.eyeStyle,
+            mouthStyle: configuration.mouthStyle,
+            accessory: configuration.accessoryType,
+            size: size
+        )
+        .allowsHitTesting(false)
     }
 
     private var shadingOverlay: some View {

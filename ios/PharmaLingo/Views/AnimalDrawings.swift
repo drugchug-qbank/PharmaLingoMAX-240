@@ -146,30 +146,6 @@ struct AnimalAvatarView: View {
             context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.48, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
             context.fill(Path(ellipseIn: CGRect(x: s * 0.71, y: s * 0.48, width: s * 0.14, height: s * 0.09)), with: .color(cheek))
 
-        case .bunny:
-            let earL = CGRect(x: s * 0.20, y: s * 0.00, width: s * 0.20, height: s * 0.42)
-            let earR = CGRect(x: s * 0.60, y: s * 0.00, width: s * 0.20, height: s * 0.42)
-            fns(context: &context, path: Path(ellipseIn: earL), fill: fc, outline: oc, lineWidth: ow)
-            fns(context: &context, path: Path(ellipseIn: earR), fill: fc, outline: oc, lineWidth: ow)
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.24, y: s * 0.06, width: s * 0.12, height: s * 0.30)), with: .color(Color(hex: "F48FB1").opacity(0.5)))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.64, y: s * 0.06, width: s * 0.12, height: s * 0.30)), with: .color(Color(hex: "F48FB1").opacity(0.5)))
-            let head = CGRect(x: s * 0.13, y: s * 0.28, width: s * 0.74, height: s * 0.62)
-            fns(context: &context, path: Path(ellipseIn: head), fill: fc, outline: oc, lineWidth: ow)
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.18, y: s * 0.30, width: s * 0.34, height: s * 0.16)), with: .color(highlight))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.34, y: s * 0.56, width: s * 0.32, height: s * 0.20)), with: .color(belly))
-            let nose = CGRect(x: s * 0.44, y: s * 0.56, width: s * 0.12, height: s * 0.08)
-            context.fill(Path(ellipseIn: nose), with: .color(Color(hex: "F48FB1")))
-            context.stroke(Path(ellipseIn: nose), with: .color(oc), style: StrokeStyle(lineWidth: iw * 0.6, lineCap: .round, lineJoin: .round))
-            for whisker in [(s * 0.34, s * 0.61, s * 0.12, s * 0.58), (s * 0.34, s * 0.65, s * 0.12, s * 0.68),
-                            (s * 0.66, s * 0.61, s * 0.88, s * 0.58), (s * 0.66, s * 0.65, s * 0.88, s * 0.68)] {
-                var w = Path()
-                w.move(to: CGPoint(x: whisker.0, y: whisker.1))
-                w.addLine(to: CGPoint(x: whisker.2, y: whisker.3))
-                context.stroke(w, with: .color(Color.black.opacity(0.18)), lineWidth: max(1.2, s * 0.010))
-            }
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.15, y: s * 0.54, width: s * 0.16, height: s * 0.10)), with: .color(cheek))
-            context.fill(Path(ellipseIn: CGRect(x: s * 0.69, y: s * 0.54, width: s * 0.16, height: s * 0.10)), with: .color(cheek))
-
         case .chipmunk:
             let earL = CGRect(x: s * 0.10, y: s * 0.22, width: s * 0.20, height: s * 0.18)
             let earR = CGRect(x: s * 0.70, y: s * 0.22, width: s * 0.20, height: s * 0.18)

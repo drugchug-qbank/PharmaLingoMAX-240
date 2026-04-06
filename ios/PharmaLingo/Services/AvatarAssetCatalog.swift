@@ -44,7 +44,6 @@ enum AvatarAssetCatalog {
         switch animal {
         case .bear: return ["8D6E63", "795548", "A1887F", "5D4037"]
         case .beaver: return ["8B5E3C", "A1887F", "795548", "D7CCC8"]
-        case .bunny: return ["F8BBD0", "F48FB1", "CE93D8", "FFCCBC"]
         case .cat: return ["FF8A65", "FFA726", "FFAB91", "FFCCBC"]
         case .chipmunk: return ["C4956A", "D2B48C", "DAA520", "8D6E63"]
         case .deer: return ["C4956A", "D2B48C", "DAA520", "8D6E63"]
